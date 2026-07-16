@@ -4,7 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { motion, AnimatePresence } from "framer-motion";
 import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
-import lukaLogo from "@/assets/luka-logo.png";
+import { LukaIcon } from "@/components/LukaIcon";
 import EditableStatementTable from "./EditableStatementTable";
 import { StmtRow } from "./EditableStatementTable";
 import { buildCcStatementRows, buildBankStatementRows, buildIcStatementRows } from "./statementData";
@@ -1246,7 +1246,7 @@ const ReconciliationFlow = ({ onActivity, activityMinimized }: ReconciliationFlo
 
                 {/* Success Message */}
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-start gap-3 mb-2">
-                  <img src={lukaLogo} alt="Luka" className="w-7 h-7 rounded-full mt-0.5" />
+                  <LukaIcon size={28} className="mt-0.5" />
                   <p className="text-[15px] leading-relaxed" style={{ color: "hsl(var(--foreground))" }}>
                     <strong>Successfully reconciled the credit card statement with the general ledger account for ABC Pvt. Ltd.</strong>
                   </p>
@@ -2096,7 +2096,7 @@ const ReconciliationFlow = ({ onActivity, activityMinimized }: ReconciliationFlo
                       <AnimatePresence>
                         {loanPostedItems.size === loanUnmatchedData.length && (
                           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-start gap-3 mt-6 mb-2">
-                            <img src={lukaLogo} alt="Luka" className="w-7 h-7 rounded-full mt-0.5" />
+                            <LukaIcon size={28} className="mt-0.5" />
                             <p className="text-[15px] leading-relaxed" style={{ color: "hsl(var(--foreground))" }}>
                               <strong>Successfully reconciled the selected Loan/Debt accounts.</strong>
                             </p>
@@ -2903,7 +2903,7 @@ const ReconciliationFlow = ({ onActivity, activityMinimized }: ReconciliationFlo
                 <AnimatePresence>
                   {step === "bank-results" && (
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-start gap-3 mt-6 mb-2">
-                      <img src={lukaLogo} alt="Luka" className="w-7 h-7 rounded-full mt-0.5" />
+                      <LukaIcon size={28} className="mt-0.5" />
                       <p className="text-[15px] leading-relaxed" style={{ color: "hsl(var(--foreground))" }}>
                         <strong>Successfully reconciled the bank statements with the general ledger account for ABC Pvt. Ltd.</strong>
                       </p>
@@ -4005,7 +4005,7 @@ const ReconciliationFlow = ({ onActivity, activityMinimized }: ReconciliationFlo
                 <AnimatePresence>
                   {icAdjPosted && (
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-start gap-3 mt-6 mb-2">
-                      <img src={lukaLogo} alt="Luka" className="w-7 h-7 rounded-full mt-0.5" />
+                      <LukaIcon size={28} className="mt-0.5" />
                       <p className="text-[15px] leading-relaxed" style={{ color: "hsl(var(--foreground))" }}>
                         <strong>Successfully reconciled the selected Inter-company/Related Party accounts.</strong>
                       </p>

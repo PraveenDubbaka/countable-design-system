@@ -17,8 +17,7 @@ import {
   AlertTriangle,
   FileCheck2,
 } from "lucide-react";
-import lukaIdle from "@/assets/luka-idle.gif";
-import lukaResponding from "@/assets/luka-responding.gif";
+import { LukaIcon } from "@/components/LukaIcon";
 import BottomPrompter from "./BottomPrompter";
 
 const FONT = "'DM Sans', system-ui, sans-serif";
@@ -169,15 +168,7 @@ const CompletionArchiveView = () => {
       <div className="flex-1 w-full max-w-full md:max-w-[92%] lg:max-w-[960px] mx-auto px-6 py-8 transition-all duration-500 ease-out">
         <div className="flex items-start gap-4">
           <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-            <img
-              src={phase === "completing" || phase === "archiving" ? lukaResponding : lukaIdle}
-              alt="Luka"
-              className={
-                phase === "completing" || phase === "archiving"
-                  ? "w-11 h-11 object-contain -m-1.5"
-                  : "w-8 h-8 object-contain"
-              }
-            />
+            <LukaIcon size={44} animated={phase === "completing" || phase === "archiving"} />
           </div>
 
           <div className="min-w-0 flex-1">
@@ -463,15 +454,7 @@ const CompletionArchiveView = () => {
                   }}
                 >
                   <div className="shrink-0 w-8 h-8 flex items-center justify-center">
-                    <img
-                      src={phase === "archived" ? lukaIdle : lukaResponding}
-                      alt="Luka"
-                      className={
-                        phase === "archived"
-                          ? "w-8 h-8 object-contain"
-                          : "w-11 h-11 object-contain -m-1.5"
-                      }
-                    />
+                    <LukaIcon size={44} animated={phase !== "archived"} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p

@@ -6,8 +6,7 @@ import {
 } from "lucide-react";
 import { PBC_TEMPLATES, type PBCTemplate } from "@/lib/pbcTemplates";
 import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
-import lukaResponding from "@/assets/luka-responding.gif";
-import lukaIdle from "@/assets/luka-idle.gif";
+import { LukaIcon } from "@/components/LukaIcon";
 import { cn } from "@/lib/utils";
 
 type Phase =
@@ -103,11 +102,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
 function LukaAvatar({ done }: { done?: boolean }) {
   return (
     <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-      <img
-        src={done ? lukaIdle : lukaResponding}
-        alt="Luka"
-        className="w-11 h-11 object-contain -m-1.5 transition-transform duration-200 hover:scale-110"
-      />
+      <LukaIcon size={32} animated={!done} />
     </div>
   );
 }
@@ -364,7 +359,7 @@ function GeneratingSteps({ wpNumbers }: { wpNumbers: string[] }) {
   return (
     <div className="flex items-start gap-4">
       <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-        <img src={lukaResponding} alt="Luka" className="w-11 h-11 object-contain -m-1.5" />
+        <LukaIcon size={32} animated />
       </div>
       <div className="min-w-0 flex-1">
         <p

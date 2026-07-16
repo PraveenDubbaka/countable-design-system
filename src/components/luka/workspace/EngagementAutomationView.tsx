@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp, CheckCircle2, AlertCircle, ArrowRight, ChevronDown, Lock, LockOpen, Plus, Minus, RefreshCw, ArrowLeft, X, PanelRightOpen, ListChecks, MoreVertical, UserPlus, Check } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import lukaResponding from "@/assets/luka-responding.gif";
-import lukaIdle from "@/assets/luka-idle.gif";
+import { LukaIcon } from "@/components/LukaIcon";
 import PopulateChecklistsView from "./PopulateChecklistsView";
 import ChecklistPreviewPanel from "./ChecklistPreviewPanel";
 import LetterPreviewPanel from "./LetterPreviewPanel";
@@ -358,15 +357,7 @@ const EngagementAutomationView = ({ onRerun, onComplete, variant = "default" }: 
         <div className="w-full max-w-full md:max-w-[92%] lg:max-w-[960px] mx-auto px-6 py-8 transition-all duration-500 ease-out">
           <div className="flex items-start gap-4">
             <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-              <img
-                src={allDone ? lukaIdle : lukaResponding}
-                alt="Luka"
-                className={
-                  allDone
-                    ? "w-8 h-8 object-contain"
-                    : "w-11 h-11 object-contain -m-1.5"
-                }
-              />
+              <LukaIcon size={44} animated={!allDone} />
             </div>
 
             <div className="min-w-0 flex-1">
@@ -522,7 +513,7 @@ const EngagementAutomationView = ({ onRerun, onComplete, variant = "default" }: 
                     }}
                   >
                     <div className="shrink-0 w-8 h-8 flex items-center justify-center">
-                      <img src={lukaIdle} alt="Luka" className="w-8 h-8 object-contain" />
+                      <LukaIcon size={32} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p

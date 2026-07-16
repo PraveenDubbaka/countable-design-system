@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import lukaLogo from "@/assets/luka-logo.png";
+import { LukaIcon } from "@/components/LukaIcon";
 import LukaCreditsEstimator from "./LukaCreditsEstimator";
 import { Database, HardDrive, FileSpreadsheet, Cloud } from "lucide-react";
 import {
@@ -207,7 +207,7 @@ const EngagementWizard = ({ onClose }: EngagementWizardProps) => {
                 className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0"
                 style={{ background: "linear-gradient(135deg, #9747FF, #115697)" }}
               >
-                <img src={lukaLogo} alt="Luka" className="w-5 h-5 object-contain" />
+                <LukaIcon size={20} />
               </motion.div>
               <span
                 className="text-base font-bold"
@@ -329,7 +329,7 @@ const EngagementWizard = ({ onClose }: EngagementWizardProps) => {
                       className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center shrink-0"
                       style={{ background: "linear-gradient(135deg, #9747FF, #115697)" }}
                     >
-                      <img src={lukaLogo} alt="Luka" className="w-3.5 h-3.5 object-contain" />
+                      <LukaIcon size={14} />
                     </motion.div>
                     <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "hsl(220 15% 50%)" }}>
                       Summary

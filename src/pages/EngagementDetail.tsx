@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Layout } from "@/components/Layout";
+import { LukaIcon } from "@/components/LukaIcon";
 import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
@@ -2046,7 +2047,7 @@ export default function EngagementDetail() {
                     }}
                     className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
                   >
-                    <Zap className="h-3.5 w-3.5 fill-white stroke-0" />
+                    <LukaIcon size={16} bare />
                     Run on workspace
                   </button>
                   {hasUsedLuka && (

@@ -12,7 +12,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import lukaIdle from "@/assets/luka-idle.gif";
+import { LukaIcon } from "@/components/LukaIcon";
 import BottomPrompter from "./BottomPrompter";
 
 const FONT = "'DM Sans', system-ui, sans-serif";
@@ -87,7 +87,7 @@ const CapitalAssetAmortizationView = () => {
       <div className="flex-1 w-full max-w-full md:max-w-[92%] lg:max-w-[960px] mx-auto px-6 py-8 transition-all duration-500 ease-out">
         <div className="flex items-start gap-4">
           <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-            <img src={lukaIdle} alt="Luka" className="w-8 h-8 object-contain" />
+            <LukaIcon size={32} />
           </div>
           <div className="min-w-0 flex-1">
             <p
@@ -601,7 +601,7 @@ const AmortizationSchedule = () => {
   return (
     <div className="mt-8 flex items-start gap-4">
       <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-        <img src={lukaIdle} alt="Luka" className="w-8 h-8 object-contain" />
+        <LukaIcon size={32} />
       </div>
       <div className="min-w-0 flex-1">
         <p

@@ -3,9 +3,7 @@ import { setLukaOpen, subscribeLukaConfig } from "@/lib/lukaOpenStore";
 import { loadEngagements } from "@/store/engagementsStore";
 
 import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
-import lukaLogo from "@/assets/luka-logo.png";
-import lukaResponding from "@/assets/luka-responding.gif";
-import lukaIdle from "@/assets/luka-idle.gif";
+import { LukaIcon } from "@/components/LukaIcon";
 import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
 import xeroLogo from "@/assets/xero-logo.png";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
@@ -1889,7 +1887,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                           {/* Previous generation (muted) */}
                           <div className="flex items-start gap-3 opacity-40 mb-1">
                             <div className="shrink-0 w-8 h-8 flex items-center justify-center">
-                              <img src={lukaIdle} alt="Luka" className="w-8 h-8 object-contain" />
+                              <LukaIcon size={32} />
                             </div>
                             <div className="flex-1 min-w-0 pt-1.5">
                               <p className="text-sm" style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
@@ -1923,11 +1921,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
                       {/* Luka icon + status header */}
                       <div className="flex items-start gap-3 mb-5">
                         <div className="shrink-0 w-8 h-8 flex items-center justify-center">
-                          <img
-                            src={pap501Phase === 'artifact' ? lukaIdle : lukaResponding}
-                            alt="Luka"
-                            className={pap501Phase === 'artifact' ? "w-8 h-8 object-contain" : "w-11 h-11 object-contain -m-1.5"}
-                          />
+                          <LukaIcon size={pap501Phase === 'artifact' ? 32 : 44} animated={pap501Phase !== 'artifact'} />
                         </div>
                         <div className="flex-1 min-w-0 pt-0.5">
                           <div className="flex items-center gap-2">

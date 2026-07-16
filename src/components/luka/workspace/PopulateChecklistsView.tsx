@@ -17,7 +17,7 @@ import {
   CheckCircle2,
   Check,
 } from "lucide-react";
-import lukaIdle from "@/assets/luka-idle.gif";
+import { LukaIcon } from "@/components/LukaIcon";
 import BottomPrompter from "./BottomPrompter";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -301,7 +301,7 @@ const PopulateChecklistsView = ({ variant = "default", activePreview = null, onP
       {variant === "upload" && (
         <div className="flex items-start gap-4 mb-8">
           <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-            <img src={lukaIdle} alt="Luka" className="w-8 h-8 object-contain" />
+            <LukaIcon size={32} />
           </div>
           <div className="min-w-0 flex-1">
             <UploadBlock />
@@ -312,7 +312,7 @@ const PopulateChecklistsView = ({ variant = "default", activePreview = null, onP
       {/* Header */}
       <div ref={resultsRef} className="flex items-start gap-4 scroll-mt-6">
         <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
-          <img src={lukaIdle} alt="Luka" className="w-8 h-8 object-contain" />
+          <LukaIcon size={32} />
         </div>
         <div className="min-w-0 flex-1">
           <p
