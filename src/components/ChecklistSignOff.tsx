@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CheckCircle2, ChevronDown, ChevronRight, Clock, PenLine, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { RichTextToolbar } from "@/components/RichTextToolbar";
 import { cn } from "@/lib/utils";
 import type { Checklist } from "@/types/checklist";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
@@ -120,11 +120,42 @@ export function ChecklistSignOff({
   const [data, setData] = useState<SignOffData>(() => loadData(checklist.id));
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [draftTitle, setDraftTitle] = useState(data.title ?? DEFAULT_TITLE);
+
+  const editorRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* noop */ }
   }, [data, key]);
+
+  // Initialise editor content and focus when editing starts
+  useEffect(() => {
+    if (!isEditingTitle || !editorRef.current) return;
+    editorRef.current.innerHTML = data.title ?? DEFAULT_TITLE;
+    editorRef.current.focus();
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(editorRef.current);
+    range.collapse(false);
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+  }, [isEditingTitle]);
+
+  // Commit on click outside (skip clicks inside the toolbar)
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    const target = e.target as Element;
+    if (editorRef.current?.contains(target)) return;
+    if (toolbarRef.current?.contains(target)) return;
+    if (target.closest('[data-radix-menu-content]')) return;
+    if (target.closest('[data-rich-text-toolbar]')) return;
+    commitTitle();
+  }, []);
+
+  useEffect(() => {
+    if (!isEditingTitle) return;
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isEditingTitle, handleClickOutside]);
 
   const assigned = useMemo<Record<RoleId, string>>(() => {
     const result = {} as Record<RoleId, string>;
@@ -138,10 +169,34 @@ export function ChecklistSignOff({
   }, [ctx.team]);
 
   function commitTitle() {
-    const t = draftTitle.trim() || DEFAULT_TITLE;
-    setDraftTitle(t);
+    const html = editorRef.current?.innerHTML ?? '';
+    const t = html.trim() || DEFAULT_TITLE;
     setData(d => ({ ...d, title: t === DEFAULT_TITLE ? undefined : t }));
     setIsEditingTitle(false);
+  }
+
+  function handleTitleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Escape') { setIsEditingTitle(false); }
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); commitTitle(); }
+  }
+
+  function handleFormatAction(action: string, value?: string) {
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.focus();
+    switch (action) {
+      case 'bold':          document.execCommand('bold', false); break;
+      case 'italic':        document.execCommand('italic', false); break;
+      case 'underline':     document.execCommand('underline', false); break;
+      case 'bulletList':    document.execCommand('insertUnorderedList', false); break;
+      case 'numberedList':  document.execCommand('insertOrderedList', false); break;
+      case 'alignLeft':     document.execCommand('justifyLeft', false); break;
+      case 'alignCenter':   document.execCommand('justifyCenter', false); break;
+      case 'alignRight':    document.execCommand('justifyRight', false); break;
+      case 'undo':          document.execCommand('undo', false); break;
+      case 'redo':          document.execCommand('redo', false); break;
+      case 'textStyle':     if (value) document.execCommand('formatBlock', false, value); break;
+    }
   }
 
   function signRole(roleId: RoleId) {
@@ -203,15 +258,25 @@ export function ChecklistSignOff({
       className="dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors mt-2"
       style={{ borderColor: "var(--dv-separator)" }}
     >
-      {/* Section header — matches dv-section-header exactly */}
+      {/* Section header */}
       <div
-        className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b"
-        style={{ borderColor: "var(--dv-separator)", height: "48px", minHeight: "48px" }}
+        className={cn(
+          "dv-section-header flex items-center gap-2 pl-[38px] pr-4 relative border-b",
+          isEditingTitle ? "py-2 flex-col items-start" : "py-0"
+        )}
+        style={{
+          borderColor: "var(--dv-separator)",
+          ...(isEditingTitle ? {} : { height: "48px", minHeight: "48px" }),
+        }}
       >
         {/* Collapse toggle */}
         <button
           onClick={() => setIsExpanded(v => !v)}
-          className="dv-collapse-btn absolute left-4 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors z-10"
+          className={cn(
+            "dv-collapse-btn p-0.5 rounded hover:bg-muted transition-colors z-10",
+            isEditingTitle ? "self-start mt-0.5 relative" : "absolute left-4 top-1/2 -translate-y-1/2"
+          )}
+          style={isEditingTitle ? {} : { left: "1rem" }}
         >
           {isExpanded
             ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -219,20 +284,22 @@ export function ChecklistSignOff({
           }
         </button>
 
-        {/* Editable title */}
+        {/* Rich text title editor */}
         {isEditingTitle && canEditTitle ? (
-          <Input
-            value={draftTitle}
-            onChange={e => setDraftTitle(e.target.value)}
-            onBlur={commitTitle}
-            onKeyDown={e => {
-              if (e.key === "Enter") commitTitle();
-              if (e.key === "Escape") { setDraftTitle(currentTitle); setIsEditingTitle(false); }
-            }}
-            autoFocus
-            onClick={e => e.stopPropagation()}
-            className="h-7 text-sm font-semibold bg-transparent border-none shadow-none text-category-title flex-1 px-1 focus-visible:ring-1"
-          />
+          <div className="flex flex-col w-full gap-1 pl-6">
+            <RichTextToolbar
+              inline
+              toolbarRef={toolbarRef}
+              onFormatAction={handleFormatAction}
+            />
+            <div
+              ref={editorRef}
+              contentEditable
+              suppressContentEditableWarning
+              onKeyDown={handleTitleKeyDown}
+              className="dv-section-title text-sm font-semibold text-category-title outline-none border border-border rounded px-2 py-0.5 min-h-[1.75rem] bg-transparent"
+            />
+          </div>
         ) : (
           <h3
             onClick={() => { if (canEditTitle) setIsEditingTitle(true); }}
@@ -240,9 +307,8 @@ export function ChecklistSignOff({
               "dv-section-title text-sm font-semibold text-category-title flex-1 pl-[6px]",
               canEditTitle ? "cursor-text" : ""
             )}
-          >
-            {currentTitle}
-          </h3>
+            dangerouslySetInnerHTML={{ __html: currentTitle }}
+          />
         )}
       </div>
 
@@ -324,7 +390,7 @@ export function ChecklistSignOff({
           })}
 
           {/* Extra rows */}
-          {data.extraRows.map((row, idx) => {
+          {data.extraRows.map((row) => {
             const role = ROLES.find(r => r.id === row.roleId)!;
             const isSigned = !!row.signedAt;
             const displayName = isSigned ? (row.signedBy ?? "") : assigned[row.roleId];
