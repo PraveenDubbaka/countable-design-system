@@ -233,14 +233,24 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { engagements: allEngagements } = useEngagements();
   const [searchQuery, setSearchQuery] = useState("");
-  const dashboardEngagements = allEngagements.map(e => ({
-    id: e.id,
-    client: e.client,
-    yearEnd: e.yearEnd,
-    integration: null as string | null,
-    status: e.status,
-    statusVariant: e.status === "New" ? ("secondary" as const) : ("default" as const),
-  }));
+  const dashboardEngagements = allEngagements.map(e => {
+    let integration: string | null = null;
+    try {
+      const stored = localStorage.getItem(`connectors-${e.id}`);
+      if (stored) {
+        const apps: string[] = JSON.parse(stored);
+        integration = apps[0] ?? null;
+      }
+    } catch {}
+    return {
+      id: e.id,
+      client: e.client,
+      yearEnd: e.yearEnd,
+      integration,
+      status: e.status,
+      statusVariant: e.status === "New" ? ("secondary" as const) : ("default" as const),
+    };
+  });
   return <Layout title="Dashboard">
       <div className="flex-1 p-6 overflow-auto bg-background h-full">
 
