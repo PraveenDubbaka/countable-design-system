@@ -1,15 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  CheckCircle2, ChevronDown, ChevronRight, Clock, PenLine, Plus, Trash2,
+  CheckCircle2, ChevronDown, ChevronRight, Clock, PenLine, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { Checklist } from "@/types/checklist";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
@@ -202,7 +196,6 @@ export function ChecklistSignOff({
   const locked = isPreviewMode && !isEngagementMode;
   const canEditTitle = !locked;
   const hasExtraRows = data.extraRows.length > 0;
-  const showAddRow = isEngagementMode && !locked;
   const currentTitle = data.title ?? DEFAULT_TITLE;
 
   return (
@@ -266,7 +259,7 @@ export function ChecklistSignOff({
             const avatarColorClass = hasAssignee
               ? getAvatarColor(displayName)
               : "bg-muted text-muted-foreground";
-            const isLast = idx === ROLES.length - 1 && !hasExtraRows && !showAddRow;
+            const isLast = idx === ROLES.length - 1 && !hasExtraRows;
 
             return (
               <div
@@ -403,32 +396,6 @@ export function ChecklistSignOff({
               </div>
             );
           })}
-
-          {/* Add row */}
-          {showAddRow && (
-            <div
-              className="flex items-center justify-center border-t px-4 py-2.5"
-              style={{ borderColor: "var(--dv-separator)" }}
-            >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="h-7 w-7 p-0 rounded border border-border text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors flex items-center justify-center"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  {ROLES.map(role => (
-                    <DropdownMenuItem key={role.id} onClick={() => addExtraRow(role.id)}>
-                      {role.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
 
         </div>
       )}
