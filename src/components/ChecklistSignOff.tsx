@@ -123,12 +123,13 @@ export function ChecklistSignOff({
 
   const editorRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     try { localStorage.setItem(key, JSON.stringify(data)); } catch { /* noop */ }
   }, [data, key]);
 
-  // Initialise editor content and focus when editing starts
+  // Initialise editor content, focus, and position floating toolbar when editing starts
   useEffect(() => {
     if (!isEditingTitle || !editorRef.current) return;
     editorRef.current.innerHTML = data.title ?? DEFAULT_TITLE;
@@ -139,6 +140,14 @@ export function ChecklistSignOff({
     range.collapse(false);
     sel?.removeAllRanges();
     sel?.addRange(range);
+
+    // Float toolbar above the editor (same pattern as AITextarea)
+    const rect = editorRef.current.getBoundingClientRect();
+    const toolbarHeight = 40;
+    let x = rect.left + rect.width / 2;
+    let y = rect.top - toolbarHeight - 6;
+    if (y < 10) y = rect.bottom + 6;
+    setToolbarPosition({ x, y });
   }, [isEditingTitle]);
 
   // Commit on click outside (skip clicks inside the toolbar)
@@ -258,25 +267,24 @@ export function ChecklistSignOff({
       className="dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors mt-2"
       style={{ borderColor: "var(--dv-separator)" }}
     >
-      {/* Section header */}
+      {/* Floating toolbar — rendered outside header so it doesn't shift layout */}
+      {isEditingTitle && canEditTitle && (
+        <RichTextToolbar
+          position={toolbarPosition}
+          onFormatAction={handleFormatAction}
+          toolbarRef={toolbarRef}
+        />
+      )}
+
+      {/* Section header — always 48px, no layout shift */}
       <div
-        className={cn(
-          "dv-section-header flex items-center gap-2 pl-[38px] pr-4 relative border-b",
-          isEditingTitle ? "py-2 flex-col items-start" : "py-0"
-        )}
-        style={{
-          borderColor: "var(--dv-separator)",
-          ...(isEditingTitle ? {} : { height: "48px", minHeight: "48px" }),
-        }}
+        className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b"
+        style={{ borderColor: "var(--dv-separator)", height: "48px", minHeight: "48px" }}
       >
         {/* Collapse toggle */}
         <button
           onClick={() => setIsExpanded(v => !v)}
-          className={cn(
-            "dv-collapse-btn p-0.5 rounded hover:bg-muted transition-colors z-10",
-            isEditingTitle ? "self-start mt-0.5 relative" : "absolute left-4 top-1/2 -translate-y-1/2"
-          )}
-          style={isEditingTitle ? {} : { left: "1rem" }}
+          className="dv-collapse-btn absolute left-4 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors z-10"
         >
           {isExpanded
             ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -284,22 +292,15 @@ export function ChecklistSignOff({
           }
         </button>
 
-        {/* Rich text title editor */}
+        {/* Title — switches to contenteditable in-place, no height change */}
         {isEditingTitle && canEditTitle ? (
-          <div className="flex flex-col w-full gap-1 pl-6">
-            <RichTextToolbar
-              inline
-              toolbarRef={toolbarRef}
-              onFormatAction={handleFormatAction}
-            />
-            <div
-              ref={editorRef}
-              contentEditable
-              suppressContentEditableWarning
-              onKeyDown={handleTitleKeyDown}
-              className="dv-section-title text-sm font-semibold text-category-title outline-none border border-border rounded px-2 py-0.5 min-h-[1.75rem] bg-transparent"
-            />
-          </div>
+          <div
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            onKeyDown={handleTitleKeyDown}
+            className="dv-section-title text-sm font-semibold text-category-title flex-1 pl-[6px] outline-none"
+          />
         ) : (
           <h3
             onClick={() => { if (canEditTitle) setIsEditingTitle(true); }}
