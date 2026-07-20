@@ -115,7 +115,7 @@ export const templateTree: TreeItem[] = [
     label: "Compilation",
     type: "folder",
     children: [
-      { id: "comp4200", label: "Compilation — CSRS 4200", type: "file", suggested: true },
+      { id: "comp4200", label: "Compilation CSRS 4200", type: "file", suggested: true },
     ],
   },
   {
