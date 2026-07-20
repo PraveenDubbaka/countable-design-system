@@ -287,7 +287,7 @@ const review2400: TemplateView = {
         { section: "Management representation letter", category: "letter", mappedTemplate: "Management representation Section 2400" },
         { section: "Completion", category: "checklist", mappedTemplate: "Final Completion Section 2400" },
         { section: "Subsequent events", category: "checklist", mappedTemplate: "Subsequent events Section 2400" },
-        { section: "Disclosure", category: "checklist", mappedTemplate: "ASPE -General - Disclosure checklist" },
+        { section: "Disclosure", category: "checklist", mappedTemplate: "ASPE - General - Disclosure checklist" },
         { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
         { section: "Final Review", category: "module", mappedTemplate: "Automated" },
       ],
