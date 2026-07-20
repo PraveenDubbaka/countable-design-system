@@ -2294,6 +2294,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                     <MessageSquare className="h-4 w-4" /> Add comment
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddDocModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setPendingDocFiles([]); }}>
+                                    <FilePlus2 className="h-4 w-4" /> Add document
+                                  </DropdownMenuItem>
                                   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddNoteModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setAddNoteName(''); }}>
                                     <NotebookPen className="h-4 w-4" /> Add note
                                   </DropdownMenuItem>
