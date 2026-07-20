@@ -2254,7 +2254,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
                       if (section.category === 'folder') {
                         const isOpen = expandedSections.has(section.id);
-                        const hasAnyChildren = customSections.some(s => s.parentId === section.id);
+                        const hasAnyChildren = customSections.some(s => s.parentId === section.id) || (nodeDocuments[section.id]?.length ?? 0) > 0;
                         return (
                           <div key={section.id}>
                             <div
@@ -2325,6 +2325,45 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </div>
+                            {isOpen && (nodeDocuments[section.id] ?? []).filter(d => d.type !== 'note').map(doc => (
+                              <div
+                                key={doc.id}
+                                className="group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm mt-0.5"
+                                style={{ paddingLeft: `${(depth + 2) * 16 + 8}px` }}
+                              >
+                                {getFileTypeIcon(doc.name, 'h-4 w-4')}
+                                <span className="truncate flex-1 text-black dark:text-white font-medium">{doc.name}</span>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                                    <button className="opacity-0 group-hover/doc:opacity-100 p-0.5 rounded hover:bg-muted transition-all flex-shrink-0 text-muted-foreground hover:text-foreground">
+                                      <MoreVertical className="h-4 w-4" />
+                                    </button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent side="right" align="start" className="min-w-max">
+                                    <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                      <Pencil className="h-3.5 w-3.5 mr-2" /> Rename
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                      <Move className="h-3.5 w-3.5 mr-2" /> Move
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={e => { e.stopPropagation(); toast({ title: 'Coming soon' }); }}>
+                                      <Download className="h-3.5 w-3.5 mr-2" /> Download
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      className="text-destructive focus:text-destructive"
+                                      onClick={e => {
+                                        e.stopPropagation();
+                                        const updated = { ...nodeDocuments, [section.id]: (nodeDocuments[section.id] ?? []).filter(d => d.id !== doc.id) };
+                                        saveNodeDocs(updated);
+                                      }}
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            ))}
                             {isOpen && renderCustomSections(section.id, depth + 1)}
                           </div>
                         );
