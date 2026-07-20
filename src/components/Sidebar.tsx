@@ -2254,6 +2254,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
                       if (section.category === 'folder') {
                         const isOpen = expandedSections.has(section.id);
+                        const hasAnyChildren = customSections.some(s => s.parentId === section.id);
                         return (
                           <div key={section.id}>
                             <div
@@ -2261,6 +2262,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                               className="group relative flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm"
                               onClick={e => {
                                 e.stopPropagation();
+                                if (!hasAnyChildren) return;
                                 setExpandedSections(prev => {
                                   const next = new Set(prev);
                                   isOpen ? next.delete(section.id) : next.add(section.id);
@@ -2268,9 +2270,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                 });
                               }}
                             >
-                              {isOpen
-                                ? <FolderMinusIcon className="h-4 w-4 flex-shrink-0 text-primary" />
-                                : <FolderPlusIcon className="h-4 w-4 flex-shrink-0 text-primary" />}
+                              {hasAnyChildren
+                                ? isOpen
+                                  ? <FolderMinusIcon className="h-4 w-4 flex-shrink-0 text-primary" />
+                                  : <FolderPlusIcon className="h-4 w-4 flex-shrink-0 text-primary" />
+                                : <FolderSolidIcon className="h-4 w-4 flex-shrink-0 text-primary" />}
                               <span className="font-semibold text-primary">{code}</span>
                               <span className="truncate flex-1 text-black dark:text-white font-semibold">{section.name}</span>
                               <DropdownMenu>
@@ -2424,7 +2428,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       >
                         {/* +/- toggle: absolutely positioned in the indent space, zero flex impact */}
                         {/* Suppressed for leaf folder nodes with docs — the icon itself handles toggling */}
-                        {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id)) && !(isLeaf && node.icon === "folder" && (nodeDocuments[node.id]?.length ?? 0) > 0) && (
+                        {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id) || (isLeaf && customSections.some(s => s.parentId === node.id))) && !(isLeaf && node.icon === "folder" && ((nodeDocuments[node.id]?.length ?? 0) > 0 || customSections.some(s => s.parentId === node.id))) && (
                           <button
                             className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
                             style={{ left: '10px', width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
@@ -2443,7 +2447,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         )}
                         {/* Leaf/folder icon follows the toggle (or leads if no attachments) */}
                         {isLeaf ? (
-                          node.icon === "folder" && (nodeDocuments[node.id]?.length ?? 0) > 0 ? (
+                          node.icon === "folder" && ((nodeDocuments[node.id]?.length ?? 0) > 0 || customSections.some(s => s.parentId === node.id)) ? (
                             <button
                               className="flex-shrink-0 p-0 leading-none"
                               onClick={e => {
@@ -2714,7 +2718,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
                       {/* User-added sections under this node (recursive, supports nested folders) */}
                       {!isLeaf && isOpen && renderCustomSections(node.id, depth)}
-                      {isLeaf && renderCustomSections(node.id, depth)}
+                      {isLeaf && !collapsedNodeDocs.has(node.id) && renderCustomSections(node.id, depth)}
                     </div>
                   );
                 };
