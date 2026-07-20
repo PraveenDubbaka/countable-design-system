@@ -150,7 +150,6 @@ export const templateTree: TreeItem[] = [
     label: "Tax",
     type: "folder",
     children: [
-      { id: "tax-t1", label: "T1 Personal Return", type: "file" },
       { id: "tax-t2", label: "T2 Corporate Return", type: "file" },
     ],
   },
