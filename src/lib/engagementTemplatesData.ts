@@ -159,7 +159,7 @@ export const templateTree: TreeItem[] = [
 // ── Compilation Section 4200 ──
 const comp4200: TemplateView = {
   id: "comp4200",
-  title: "Compilation Section 4200",
+  title: "Compilation CSRS 4200",
   subtitle: "CSRS 4200 — Compilation Engagement",
   standardsBanner: {
     label: "Standard:",
@@ -171,19 +171,12 @@ const comp4200: TemplateView = {
     {
       name: "Client Onboarding",
       rows: [
-        { section: "New engagement acceptance", category: "checklist", mappedTemplate: "New engagement acceptance Section 4200" },
-        { section: "Existing engagement continuance", category: "checklist", mappedTemplate: "Existing engagement continuance Section 4200" },
-        { section: "Engagement Letter", category: "letter", mappedTemplate: "Compilation engagement letter Section 4200" },
-        { section: "Independence", category: "checklist", mappedTemplate: "Independence Section 4200" },
-      ],
-    },
-    {
-      name: "Planning",
-      rows: [
-        { section: "Knowledge of the Business", category: "checklist", mappedTemplate: "Knowledge of the business Section 4200" },
-        { section: "Understanding the entity - Basics", category: "checklist", mappedTemplate: "Understanding the entity basics Section 4200" },
-        { section: "Engagement Planning", category: "checklist", mappedTemplate: "Engagement Planning Section 4200" },
-        { section: "Withdrawal", category: "checklist", mappedTemplate: "Withdrawal Section 4200" },
+        { section: "Client acceptance and continuance", category: "checklist", mappedTemplate: "Client Acceptance & Continuance CSRS 4200" },
+        { section: "Independence", category: "checklist", mappedTemplate: "Independence CSRS 4200" },
+        { section: "Knowledge of client business", category: "checklist", mappedTemplate: "Knowledge of client business CSRS 4200" },
+        { section: "Planning", category: "checklist", mappedTemplate: "Planning CSRS 4200" },
+        { section: "Engagement Letter", category: "letter", mappedTemplate: "Engagement compilation CSRS 4200" },
+        { section: "Management responsibility and acknowledgement", category: "letter", mappedTemplate: "Management responsibility & acknowledgement CSRS 4200" },
       ],
     },
     {
@@ -199,6 +192,12 @@ const comp4200: TemplateView = {
       name: "Trial Balance & Adjusting entries",
       rows: [
         { section: "Trial Balance & Adjusting entries", category: "module", mappedTemplate: "Automated" },
+      ],
+    },
+    {
+      name: "Procedures",
+      rows: [
+        { section: "Procedures", category: "module", mappedTemplate: "Automated" },
       ],
     },
     {
