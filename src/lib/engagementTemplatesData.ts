@@ -150,7 +150,7 @@ export const templateTree: TreeItem[] = [
     label: "Tax",
     type: "folder",
     children: [
-      { id: "tax-t2", label: "T2 Corporate Return", type: "file" },
+      { id: "tax-t2", label: "T2 (Corporations)", type: "file" },
     ],
   },
 ];
@@ -2019,33 +2019,35 @@ const taxT1: TemplateView = {
 
 const taxT2: TemplateView = {
   id: "tax-t2",
-  title: "T2 Corporate Return",
-  subtitle: "CRA T2 — Corporation Income Tax Return",
-  standardsBanner: { label: "Standard:", standards: "ITA — Income Tax Act (Canada) · CRA T2 · CBCA", badge: "CPA Canada", color: "blue" },
+  title: "T2 (Corporations)",
   sections: [
-    { name: "Engagement & Intake", rows: [
-      { section: "Engagement letter (T2)", category: "letter", mappedTemplate: "T2 engagement letter" },
-      { section: "Corporate profile & year-end confirmation", category: "checklist", mappedTemplate: "T2 corporate profile checklist" },
-      { section: "Prior-year T2 & GIFI review", category: "checklist", mappedTemplate: "T2 prior year checklist" },
+    { name: "Client Onboarding", rows: [
+      { section: "Engagement Letter", category: "letter", mappedTemplate: "Engagement Letter" },
     ]},
-    { name: "Financial Statement Tie-in", rows: [
-      { section: "GIFI code mapping — Balance Sheet", category: "worksheet", mappedTemplate: "GIFI balance sheet worksheet" },
-      { section: "GIFI code mapping — Income Statement", category: "worksheet", mappedTemplate: "GIFI income statement worksheet" },
-      { section: "Reconciliation: accounting income → taxable income (S1)", category: "worksheet", mappedTemplate: "Schedule 1 reconciliation" },
+    { name: "Documents", rows: [
+      { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+      { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
+      { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
+      { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
     ]},
-    { name: "Tax Schedules", rows: [
-      { section: "Capital cost allowance (Schedule 8)", category: "worksheet", mappedTemplate: "CCA schedule worksheet" },
-      { section: "Shareholder loans & related party (Schedule 11)", category: "worksheet", mappedTemplate: "Schedule 11 worksheet" },
-      { section: "Small business deduction (Schedule 7)", category: "worksheet", mappedTemplate: "Small business deduction worksheet" },
-      { section: "Investment tax credits (T2038)", category: "checklist", mappedTemplate: "ITC checklist" },
-      { section: "Dividends paid (Schedule 3 / T5)", category: "worksheet", mappedTemplate: "Dividend worksheet" },
-      { section: "GRIP / LRIP calculations", category: "worksheet", mappedTemplate: "GRIP LRIP worksheet" },
+    { name: "Trial Balance & Adjusting entries", rows: [
+      { section: "Trial Balance & Adjusting entries", category: "module", mappedTemplate: "Automated" },
     ]},
-    { name: "Review & Filing", rows: [
-      { section: "T2 review checklist", category: "checklist", mappedTemplate: "T2 review checklist" },
-      { section: "Balance owing / instalment confirmation", category: "worksheet", mappedTemplate: "T2 balance worksheet" },
-      { section: "CRA NET File transmission", category: "checklist", mappedTemplate: "T2 NET File checklist" },
-      { section: "Corporate minutes & signed authorization", category: "checklist", mappedTemplate: "T2 authorization checklist" },
+    { name: "Procedures", rows: [
+      { section: "Procedures", category: "module", mappedTemplate: "Automated" },
+    ]},
+    { name: "Financial Statements", rows: [
+      { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "T2 template" },
+      { section: "Cover Page", category: "financial-statement", mappedTemplate: "T2 template" },
+      { section: "Table of Contents", category: "financial-statement", mappedTemplate: "T2 template" },
+      { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "T2 template" },
+      { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "T2 template" },
+      { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: "T2 template" },
+    ]},
+    { name: "Completion & Signoffs", rows: [
+      { section: "Completion", category: "checklist", mappedTemplate: "Completion" },
+      { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
+      { section: "Final Review", category: "module", mappedTemplate: "Automated" },
     ]},
   ],
 };

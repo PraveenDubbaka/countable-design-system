@@ -200,11 +200,11 @@ const TAX_SECTIONS: TemplateSection[] = [
     title: "Financial Statements",
     rows: [
       { name: "Financial Statement Docs", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "T2 template" },
-      { name: "Cover Page", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "Automated" },
-      { name: "Table of Contents", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "Automated" },
-      { name: "Balance Sheet", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "Automated" },
-      { name: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "Automated" },
-      { name: "Notes to Financial Statements", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "Automated" },
+      { name: "Cover Page", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "T2 template" },
+      { name: "Table of Contents", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "T2 template" },
+      { name: "Balance Sheet", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "T2 template" },
+      { name: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "T2 template" },
+      { name: "Notes to Financial Statements", category: "Financial Statements", categoryColor: "fs", categoryBg: "fs", categoryIcon: "fs", mappedTemplate: "T2 template" },
     ],
   },
   {
