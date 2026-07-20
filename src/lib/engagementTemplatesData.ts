@@ -123,7 +123,7 @@ export const templateTree: TreeItem[] = [
     label: "Review",
     type: "folder",
     children: [
-      { id: "rev2400", label: "Review — CSRE 2400", type: "file", suggested: true },
+      { id: "rev2400", label: "Review Section 2400", type: "file", suggested: true },
     ],
   },
   {
