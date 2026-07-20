@@ -215,8 +215,9 @@ const comp4200: TemplateView = {
     {
       name: "Completion & Signoffs",
       rows: [
-        { section: "Completion Checklist", category: "checklist", mappedTemplate: "Completion Section 4200" },
-        { section: "Partner/Manager Review", category: "checklist", mappedTemplate: "Review sign-off Section 4200" },
+        { section: "Completion", category: "checklist", mappedTemplate: "Final Completion CSRS 4200" },
+        { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
+        { section: "Final Review", category: "module", mappedTemplate: "Automated" },
       ],
     },
   ],
