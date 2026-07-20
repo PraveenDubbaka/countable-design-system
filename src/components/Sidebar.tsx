@@ -58,7 +58,7 @@ export interface SavedChecklist {
 export interface CustomSection {
   id: string;
   name: string;
-  category: 'checklist' | 'letter';
+  category: 'checklist' | 'letter' | 'folder';
   parentId: string;
   engId: string;
   createdAt: string;
@@ -1441,6 +1441,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [addSectionModal, setAddSectionModal] = useState<{ open: boolean; parentNodeId: string } | null>(null);
   const [addSectionName, setAddSectionName] = useState('');
   const [addSectionCategory, setAddSectionCategory] = useState<'checklist' | 'letter'>('checklist');
+  const [addFolderModal, setAddFolderModal] = useState<{ parentNodeId: string } | null>(null);
+  const [addFolderName, setAddFolderName] = useState('');
 
   useEffect(() => {
     const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
@@ -1463,6 +1465,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     setAddSectionModal(null);
     setAddSectionName('');
     navigate(`/engagements/${engId}/checklist/${id}`);
+  };
+
+  const handleAddFolder = () => {
+    const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+    if (!engId || !addFolderModal || !addFolderName.trim()) return;
+    const id = `custom-${Date.now()}`;
+    const newSection: CustomSection = { id, name: addFolderName.trim(), category: 'folder', parentId: addFolderModal.parentNodeId, engId, createdAt: new Date().toISOString() };
+    const existing = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []);
+    writeJsonToLocalStorage(`engagement-custom-sections-${engId}`, [...existing, newSection]);
+    window.dispatchEvent(new CustomEvent('custom-sections-updated'));
+    setAddFolderModal(null);
+    setAddFolderName('');
   };
 
   // Listen for Luka fill status changes in localStorage
@@ -2231,6 +2245,138 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   return <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />;
                 };
 
+                const renderCustomSections = (parentId: string, depth: number): React.ReactNode[] =>
+                  customSections
+                    .filter(s => s.parentId === parentId)
+                    .map(section => {
+                      const code = section.name.slice(0, 2).toUpperCase();
+                      const isActive = !!engId && location.pathname.includes(`/checklist/${section.id}`);
+
+                      if (section.category === 'folder') {
+                        const isOpen = expandedSections.has(section.id);
+                        return (
+                          <div key={section.id}>
+                            <div
+                              style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                              className="group relative flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setExpandedSections(prev => {
+                                  const next = new Set(prev);
+                                  isOpen ? next.delete(section.id) : next.add(section.id);
+                                  return next;
+                                });
+                              }}
+                            >
+                              {isOpen
+                                ? <FolderMinusIcon className="h-4 w-4 flex-shrink-0 text-primary" />
+                                : <FolderPlusIcon className="h-4 w-4 flex-shrink-0 text-primary" />}
+                              <span className="font-semibold text-primary">{code}</span>
+                              <span className="truncate flex-1 text-black dark:text-white font-semibold">{section.name}</span>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                                  <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
+                                    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                                  </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48">
+                                  <DropdownMenuItem className="gap-2 cursor-pointer text-primary font-medium" onClick={e => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('raise-doc-request', { detail: { folder: section.name, subFolder: '' } })); }}>
+                                    <Send className="h-4 w-4" /> Raise a request
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <AlertCircle className="h-4 w-4" /> Raise issue
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                    <MessageSquare className="h-4 w-4" /> Add comment
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddNoteModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setAddNoteName(''); }}>
+                                    <NotebookPen className="h-4 w-4" /> Add note
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: section.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
+                                    <FolderPlus className="h-4 w-4" /> Add section
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddFolderModal({ parentNodeId: section.id }); setAddFolderName(''); }}>
+                                    <FolderPlus className="h-4 w-4" /> Add folder
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      if (!engId) return;
+                                      const all = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []);
+                                      const toDelete = new Set<string>();
+                                      const collect = (id: string) => { toDelete.add(id); all.filter(s => s.parentId === id).forEach(s => collect(s.id)); };
+                                      collect(section.id);
+                                      writeJsonToLocalStorage(`engagement-custom-sections-${engId}`, all.filter(s => !toDelete.has(s.id)));
+                                      window.dispatchEvent(new CustomEvent('custom-sections-updated'));
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" /> Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                            {isOpen && renderCustomSections(section.id, depth + 1)}
+                          </div>
+                        );
+                      }
+
+                      // Leaf (checklist / letter)
+                      return (
+                        <div
+                          key={section.id}
+                          style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                          className={cn("group relative flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm", isActive && "bg-primary/10 ring-1 ring-primary/25")}
+                          onClick={() => engId && navigate(`/engagements/${engId}/checklist/${section.id}`)}
+                        >
+                          {section.category === 'letter' ? <LetterIcon className="h-4 w-4 flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
+                          <span className="font-semibold text-primary">{code}</span>
+                          <span className="truncate flex-1 text-black dark:text-white font-medium">{section.name}</span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                              <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
+                                <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem className="gap-2 cursor-pointer text-primary font-medium" onClick={e => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('raise-doc-request', { detail: { folder: section.name, subFolder: '' } })); }}>
+                                <Send className="h-4 w-4" /> Raise a request
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <AlertCircle className="h-4 w-4" /> Raise issue
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
+                                <MessageSquare className="h-4 w-4" /> Add comment
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddDocModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setPendingDocFiles([]); }}>
+                                <FilePlus2 className="h-4 w-4" /> Add document
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddFolderModal({ parentNodeId: section.id }); setAddFolderName(''); }}>
+                                <FolderPlus className="h-4 w-4" /> Add folder
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  if (!engId) return;
+                                  const existing = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []);
+                                  writeJsonToLocalStorage(`engagement-custom-sections-${engId}`, existing.filter(s => s.id !== section.id));
+                                  window.dispatchEvent(new CustomEvent('custom-sections-updated'));
+                                  if (isActive) navigate(`/engagements/${engId}`);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" /> Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      );
+                    });
+
                 const renderNode = (node: SectionNode, depth: number = 0, parentLabel?: string): React.ReactNode => {
                   const hasChildren = node.children && node.children.length > 0;
                   const isOpen = expandedSections.has(node.id);
@@ -2375,16 +2521,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               {isLeaf ? (
-                                <DropdownMenuItem
-                                  className="gap-2 cursor-pointer"
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                    setAddDocModal({ nodeId: node.id, nodeCode: node.code, nodeLabel: node.label });
-                                    setPendingDocFiles([]);
-                                  }}
-                                >
-                                  <FilePlus2 className="h-4 w-4" /> Add document
-                                </DropdownMenuItem>
+                                <>
+                                  <DropdownMenuItem
+                                    className="gap-2 cursor-pointer"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      setAddDocModal({ nodeId: node.id, nodeCode: node.code, nodeLabel: node.label });
+                                      setPendingDocFiles([]);
+                                    }}
+                                  >
+                                    <FilePlus2 className="h-4 w-4" /> Add document
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddFolderModal({ parentNodeId: node.id }); setAddFolderName(''); }}>
+                                    <FolderPlus className="h-4 w-4" /> Add folder
+                                  </DropdownMenuItem>
+                                </>
                               ) : (
                                 <>
                                   <DropdownMenuItem
@@ -2399,6 +2550,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                                   </DropdownMenuItem>
                                   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddSectionModal({ open: true, parentNodeId: node.id }); setAddSectionName(''); setAddSectionCategory('checklist'); }}>
                                     <FolderPlus className="h-4 w-4" /> Add section
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddFolderModal({ parentNodeId: node.id }); setAddFolderName(''); }}>
+                                    <FolderPlus className="h-4 w-4" /> Add folder
                                   </DropdownMenuItem>
                                   {node.children && node.children.length > 0 && (
                                     <>
@@ -2558,62 +2712,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                         </div>
                       )}
 
-                      {/* User-added sections under this folder */}
-                      {!isLeaf && isOpen && customSections
-                        .filter(s => s.parentId === node.id)
-                        .map(section => {
-                          const isActive = !!engId && location.pathname.includes(`/checklist/${section.id}`);
-                          const code = section.name.slice(0, 2).toUpperCase();
-                          return (
-                            <div
-                              key={section.id}
-                              style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
-                              className={cn("group relative flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm", isActive && "bg-primary/10 ring-1 ring-primary/25")}
-                              onClick={() => engId && navigate(`/engagements/${engId}/checklist/${section.id}`)}
-                            >
-                              {section.category === 'letter' ? <LetterIcon className="h-4 w-4 flex-shrink-0" /> : <ChecklistIcon className="h-4 w-4 flex-shrink-0" />}
-                              <span className="font-semibold text-primary">{code}</span>
-                              <span className="truncate flex-1 text-black dark:text-white font-medium">{section.name}</span>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
-                                  <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
-                                    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
-                                  </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48">
-                                  <DropdownMenuItem className="gap-2 cursor-pointer text-primary font-medium" onClick={e => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('raise-doc-request', { detail: { folder: section.name, subFolder: '' } })); }}>
-                                    <Send className="h-4 w-4" /> Raise a request
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                    <AlertCircle className="h-4 w-4" /> Raise issue
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => e.stopPropagation()}>
-                                    <MessageSquare className="h-4 w-4" /> Add comment
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setAddDocModal({ nodeId: section.id, nodeCode: code, nodeLabel: section.name }); setPendingDocFiles([]); }}>
-                                    <FilePlus2 className="h-4 w-4" /> Add document
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      if (!engId) return;
-                                      const existing = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engId}`, []);
-                                      writeJsonToLocalStorage(`engagement-custom-sections-${engId}`, existing.filter(s => s.id !== section.id));
-                                      window.dispatchEvent(new CustomEvent('custom-sections-updated'));
-                                      if (isActive) navigate(`/engagements/${engId}`);
-                                    }}
-                                  >
-                                    <Trash2 className="h-4 w-4" /> Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          );
-                        })
-                      }
+                      {/* User-added sections under this node (recursive, supports nested folders) */}
+                      {!isLeaf && isOpen && renderCustomSections(node.id, depth)}
+                      {isLeaf && renderCustomSections(node.id, depth)}
                     </div>
                   );
                 };
@@ -3103,6 +3204,37 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddSectionModal(null)}>Cancel</Button>
             <Button onClick={handleAddSection} disabled={!addSectionName.trim()}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Folder Dialog */}
+      <Dialog open={!!addFolderModal} onOpenChange={open => !open && setAddFolderModal(null)}>
+        <DialogContent className="sm:max-w-[380px]">
+          <DialogHeader>
+            <div className="flex items-start gap-3 mb-1">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <FolderPlus className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <DialogTitle>Add Folder</DialogTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">Enter a name for the new folder</p>
+              </div>
+            </div>
+          </DialogHeader>
+          <div className="py-2">
+            <label className="text-sm font-medium mb-1.5 block">Folder name <span className="text-destructive">*</span></label>
+            <Input
+              value={addFolderName}
+              onChange={e => setAddFolderName(e.target.value)}
+              placeholder="Folder name"
+              autoFocus
+              onKeyDown={e => e.key === 'Enter' && addFolderName.trim() && handleAddFolder()}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddFolderModal(null)}>Cancel</Button>
+            <Button onClick={handleAddFolder} disabled={!addFolderName.trim()}>Add</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
