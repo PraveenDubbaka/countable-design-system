@@ -13,9 +13,79 @@ import { dispatchChecklistSync } from '@/lib/checklistSync';
 import { getGlobalTemplateChecklist } from '@/lib/globalTemplates';
 import { LetterView } from '@/components/LetterView';
 import { WorksheetView } from '@/components/WorksheetView';
+import { AuditMaterialityWorksheet } from '@/components/AuditMaterialityWorksheet';
+import { AuditSAEWorksheet } from '@/components/AuditSAEWorksheet';
+import { AuditOASWorksheet } from '@/components/AuditOASWorksheet';
+import { AuditTeamPlanningWorksheet } from '@/components/AuditTeamPlanningWorksheet';
+import { AuditTimeTrackerWorksheet } from '@/components/AuditTimeTrackerWorksheet';
+import { AuditPAP501Worksheet } from '@/components/AuditPAP501Worksheet';
+import { Audit506Worksheet } from '@/components/Audit506Worksheet';
+import { Audit507Worksheet } from '@/components/Audit507Worksheet';
+import { Audit510Worksheet } from '@/components/Audit510Worksheet';
+import { Audit511Worksheet } from '@/components/Audit511Worksheet';
+import { Audit513Worksheet } from '@/components/Audit513Worksheet';
+import { Audit514Worksheet } from '@/components/Audit514Worksheet';
+import { Audit515Worksheet } from '@/components/Audit515Worksheet';
+import { Audit520Worksheet } from '@/components/Audit520Worksheet';
+import { Audit535Worksheet } from '@/components/Audit535Worksheet';
+import { Audit540Worksheet } from '@/components/Audit540Worksheet';
+import { Audit550Worksheet } from '@/components/Audit550Worksheet';
+import { Audit551Worksheet } from '@/components/Audit551Worksheet';
+import { Audit575Worksheet } from '@/components/Audit575Worksheet';
+import { Audit580Worksheet } from '@/components/Audit580Worksheet';
+import { Audit590Worksheet } from '@/components/Audit590Worksheet';
+import { Audit605Worksheet } from '@/components/Audit605Worksheet';
+import { Audit610Worksheet } from '@/components/Audit610Worksheet';
+import { Audit625Worksheet } from '@/components/Audit625Worksheet';
+import { Audit630Worksheet } from '@/components/Audit630Worksheet';
+import { Audit635Worksheet } from '@/components/Audit635Worksheet';
+import { Audit645Worksheet } from '@/components/Audit645Worksheet';
+import { Audit650Worksheet } from '@/components/Audit650Worksheet';
+import { Audit655Worksheet } from '@/components/Audit655Worksheet';
+import { Audit666Worksheet } from '@/components/Audit666Worksheet';
+import { Audit670Worksheet } from '@/components/Audit670Worksheet';
+import { Audit680Worksheet } from '@/components/Audit680Worksheet';
 
 const WORKSHEET_ID_PREFIXES = ['global-4-7', 'global-4-8', 'global-4-9', 'global-4-10', 'global-4-11', 'global-4-12', 'global-4-13', 'global-4-14', 'global-us-4-', 'worksheet-going-concern', 'worksheet-accounting-estimates', 'gca-ws-', 'gus-ws-'];
 const isWorksheetTemplateId = (id: string) => WORKSHEET_ID_PREFIXES.some(p => id.startsWith(p));
+
+function getGlobalWorksheetComponent(id: string): React.ReactNode | null {
+  switch (id) {
+    case 'gca-ws-mat':  return <AuditMaterialityWorksheet isUS={false} />;
+    case 'gca-ws-sae':  return <AuditSAEWorksheet isUS={false} />;
+    case 'gca-ws-asm':  return <AuditOASWorksheet isUS={false} />;
+    case 'gca-ws-plan': return <AuditTeamPlanningWorksheet isUS={false} />;
+    case 'gca-ws-tt':   return <AuditTimeTrackerWorksheet />;
+    case 'gca-ws-501b': return <AuditPAP501Worksheet />;
+    case 'gca-ws-506':  return <Audit506Worksheet />;
+    case 'gca-ws-507':  return <Audit507Worksheet isUS={false} />;
+    case 'gca-ws-510':  return <Audit510Worksheet />;
+    case 'gca-ws-511':  return <Audit511Worksheet />;
+    case 'gca-ws-513':  return <Audit513Worksheet />;
+    case 'gca-ws-514':  return <Audit514Worksheet />;
+    case 'gca-ws-515':  return <Audit515Worksheet />;
+    case 'gca-ws-520':  return <Audit520Worksheet />;
+    case 'gca-ws-535':  return <Audit535Worksheet />;
+    case 'gca-ws-540':  return <Audit540Worksheet />;
+    case 'gca-ws-550':  return <Audit550Worksheet />;
+    case 'gca-ws-551':  return <Audit551Worksheet />;
+    case 'gca-ws-575':  return <Audit575Worksheet />;
+    case 'gca-ws-580':  return <Audit580Worksheet />;
+    case 'gca-ws-590':  return <Audit590Worksheet />;
+    case 'gca-ws-605':  return <Audit605Worksheet />;
+    case 'gca-ws-610':  return <Audit610Worksheet />;
+    case 'gca-ws-625':  return <Audit625Worksheet />;
+    case 'gca-ws-630':  return <Audit630Worksheet />;
+    case 'gca-ws-635':  return <Audit635Worksheet />;
+    case 'gca-ws-645':  return <Audit645Worksheet />;
+    case 'gca-ws-650':  return <Audit650Worksheet />;
+    case 'gca-ws-655':  return <Audit655Worksheet />;
+    case 'gca-ws-666':  return <Audit666Worksheet />;
+    case 'gca-ws-670':  return <Audit670Worksheet />;
+    case 'gca-ws-680':  return <Audit680Worksheet />;
+    default: return null;
+  }
+}
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {
   const sections: Section[] = [
@@ -323,6 +393,7 @@ export default function Index() {
   const [isReportTemplate, setIsReportTemplate] = useState(false);
   const [isWorksheetTemplate, setIsWorksheetTemplate] = useState(false);
   const [currentGlobalTemplateId, setCurrentGlobalTemplateId] = useState<string | null>(null);
+  const [globalWorksheetComponent, setGlobalWorksheetComponent] = useState<React.ReactNode | null>(null);
 
   const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string, checklistName?: string) => {
     setIsGenerating(true);
@@ -371,10 +442,23 @@ export default function Index() {
 
     // Load global template by ID (user clicked on a global template)
     if (globalTemplateId) {
+      const dedicatedComponent = getGlobalWorksheetComponent(globalTemplateId);
+      if (dedicatedComponent) {
+        setGlobalWorksheetComponent(dedicatedComponent);
+        setChecklist(null);
+        setCurrentChecklistId(null);
+        setCurrentGlobalTemplateId(globalTemplateId);
+        setIsGlobalTemplatePreview(true);
+        setIsSavedTemplate(false);
+        setIsWorksheetTemplate(false);
+        setIsReportTemplate(false);
+        return;
+      }
       const templateChecklist = getGlobalTemplateChecklist(globalTemplateId);
       if (templateChecklist) {
         const isLetter = globalTemplateId.startsWith('grpt-') || globalTemplateId.startsWith('glt-');
         const isWS = isWorksheetTemplateId(globalTemplateId);
+        setGlobalWorksheetComponent(null);
         setChecklist(templateChecklist);
         setCurrentChecklistId(null);
         setCurrentGlobalTemplateId(globalTemplateId);
@@ -392,6 +476,7 @@ export default function Index() {
       setIsReportTemplate(false);
       setIsWorksheetTemplate(false);
       setCurrentGlobalTemplateId(null);
+      setGlobalWorksheetComponent(null);
     }
 
     // Load saved checklist by ID (user clicked on existing checklist)
@@ -472,6 +557,8 @@ export default function Index() {
               <p className="text-sm text-muted-foreground mt-1">AI is analyzing your requirements</p>
             </div>
           </div>
+        ) : globalWorksheetComponent ? (
+          <div className="flex-1 overflow-auto">{globalWorksheetComponent}</div>
         ) : checklist && isWorksheetTemplate ? (
           <WorksheetView checklist={checklist} onUpdate={handleChecklistUpdate} />
         ) : checklist && isReportTemplate ? (
