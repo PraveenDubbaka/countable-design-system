@@ -214,8 +214,8 @@ export function AuditCashWorksheet() {
               <tr className="bg-muted/40">
                 <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[140px]">Nature</th>
                 <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[150px]">Type</th>
-                <th className="text-left px-3 py-2.5 font-medium border-b border-border">Description</th>
-                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[200px]">Comments</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[300px]">Description</th>
+                <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[300px]">Comments</th>
                 <th className="text-center px-3 py-2.5 font-medium border-b border-border w-[80px]">W/P Ref</th>
                 <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[120px]">Status</th>
               </tr>
