@@ -1835,48 +1835,99 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {
                         id: "aud-us-pr-assets", label: "Assets", icon: "folder",
                         children: [
-                          { id: "aud-us-wp-a-a", code: "A", label: "Cash & Bank Reconciliation", icon: "book" },
-                          { id: "aud-us-wp-a-b", code: "B", label: "Accounts Receivable & Confirmations", icon: "book" },
-                          { id: "aud-us-wp-a-c", code: "C", label: "Inventory & Observation", icon: "book" },
-                          { id: "aud-us-wp-a-d", code: "D", label: "Prepaid Expenses", icon: "book" },
-                          { id: "aud-us-wp-a-e", code: "E", label: "Other Current Assets", icon: "book" },
-                          { id: "aud-us-wp-a-f", code: "F", label: "Long-Term Assets / PP&E Roll-forward", icon: "book" },
-                          { id: "aud-us-wp-a-g", code: "G", label: "Intangibles & Goodwill", icon: "book" },
-                          { id: "aud-us-wp-a-h", code: "H", label: "Investments", icon: "book" },
+                          {
+                            id: "aud-us-pr-ca", label: "Current assets", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-a", code: "A", label: "Cash and cash equivalents", icon: "book" },
+                              { id: "aud-us-wp-b", code: "B", label: "Accounts receivable", icon: "book" },
+                              { id: "aud-us-wp-c", code: "C", label: "Inventories", icon: "book" },
+                              { id: "aud-us-wp-d", code: "D", label: "Short-term investments", icon: "book" },
+                              { id: "aud-us-wp-e", code: "E", label: "Loans and notes receivable", icon: "book" },
+                              { id: "aud-us-wp-i", code: "I", label: "Other current assets", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-us-pr-ppe", label: "Property, plant and equipment", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-h", code: "H", label: "Property, plant and equipment", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-us-pr-lta", label: "Long-term assets", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-k", code: "K", label: "Long-term investments", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-us-pr-liab", label: "Liabilities", icon: "folder",
                         children: [
-                          { id: "aud-us-wp-l-aa", code: "AA", label: "Accounts Payable & Accrued Liabilities", icon: "book" },
-                          { id: "aud-us-wp-l-bb", code: "BB", label: "Long-Term Debt & Covenant Compliance", icon: "book" },
-                          { id: "aud-us-wp-l-cc", code: "CC", label: "Deferred Revenue", icon: "book" },
-                          { id: "aud-us-wp-l-dd", code: "DD", label: "Income Taxes & Deferred Tax", icon: "book" },
-                          { id: "aud-us-wp-l-ee", code: "EE", label: "Other Liabilities & Provisions", icon: "book" },
+                          {
+                            id: "aud-us-pr-cl", label: "Current liabilities", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-bb", code: "BB", label: "Accounts payable", icon: "book" },
+                              { id: "aud-us-wp-cc", code: "CC", label: "Taxes payable", icon: "book" },
+                              { id: "aud-us-wp-dd", code: "DD", label: "Short-term debt", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-us-pr-ltl", label: "Long-term liabilities", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
+                              { id: "aud-us-wp-kk", code: "KK", label: "Long-term debt", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-us-pr-equity", label: "Equity", icon: "folder",
                         children: [
-                          { id: "aud-us-wp-l-ff", code: "FF", label: "Share Capital & Equity Roll-forward", icon: "book" },
-                          { id: "aud-us-wp-l-gg", code: "GG", label: "Related Party Transactions", icon: "book" },
+                          {
+                            id: "aud-us-pr-sc", label: "Share capital", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-tt", code: "TT", label: "Equity", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-us-pr-rev", label: "Revenue", icon: "folder",
                         children: [
-                          { id: "aud-us-wp-i-700", code: "700", label: "Revenue Testing", icon: "book" },
+                          {
+                            id: "aud-us-pr-rev-sub", label: "Revenue", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-20", code: "20", label: "Revenue", icon: "book" },
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        id: "aud-us-pr-cos", label: "Cost of sales", icon: "folder",
+                        children: [
+                          {
+                            id: "aud-us-pr-cos-sub", label: "Cost of sales", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-30", code: "30", label: "Cost of sales", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-us-pr-exp", label: "Expenses", icon: "folder",
                         children: [
-                          { id: "aud-us-wp-i-710", code: "710", label: "Cost of Sales / COGS", icon: "book" },
-                          { id: "aud-us-wp-i-720", code: "720", label: "Payroll & Benefits", icon: "book" },
-                          { id: "aud-us-wp-i-730", code: "730", label: "Operating Expenses", icon: "book" },
-                          { id: "aud-us-wp-i-740", code: "740", label: "Depreciation & Amortization", icon: "book" },
-                          { id: "aud-us-wp-i-750", code: "750", label: "Interest & Finance Costs", icon: "book" },
-                          { id: "aud-us-wp-i-760", code: "760", label: "Other Income & Gains", icon: "book" },
+                          {
+                            id: "aud-us-pr-opex", label: "Operating expenses", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-40", code: "40", label: "Expenses", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-us-pr-oie", label: "Other Income(Expenses)", icon: "folder",
+                            children: [
+                              { id: "aud-us-wp-80", code: "80", label: "Other expenses (income)", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                     ]
@@ -2023,48 +2074,99 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       {
                         id: "aud-pr-assets", label: "Assets", icon: "folder",
                         children: [
-                          { id: "aud-wp-a-a", code: "A", label: "Cash & Bank Reconciliation", icon: "book" },
-                          { id: "aud-wp-a-b", code: "B", label: "Accounts Receivable & Confirmations", icon: "book" },
-                          { id: "aud-wp-a-c", code: "C", label: "Inventory & Observation", icon: "book" },
-                          { id: "aud-wp-a-d", code: "D", label: "Prepaid Expenses", icon: "book" },
-                          { id: "aud-wp-a-e", code: "E", label: "Other Current Assets", icon: "book" },
-                          { id: "aud-wp-a-f", code: "F", label: "Long-Term Assets / PP&E Roll-forward", icon: "book" },
-                          { id: "aud-wp-a-g", code: "G", label: "Intangibles & Goodwill", icon: "book" },
-                          { id: "aud-wp-a-h", code: "H", label: "Investments", icon: "book" },
+                          {
+                            id: "aud-pr-ca", label: "Current assets", icon: "folder",
+                            children: [
+                              { id: "aud-wp-a", code: "A", label: "Cash and cash equivalents", icon: "book" },
+                              { id: "aud-wp-b", code: "B", label: "Accounts receivable", icon: "book" },
+                              { id: "aud-wp-c", code: "C", label: "Inventories", icon: "book" },
+                              { id: "aud-wp-d", code: "D", label: "Short-term investments", icon: "book" },
+                              { id: "aud-wp-e", code: "E", label: "Loans and notes receivable", icon: "book" },
+                              { id: "aud-wp-i", code: "I", label: "Other current assets", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-pr-ppe", label: "Property, plant and equipment", icon: "folder",
+                            children: [
+                              { id: "aud-wp-h", code: "H", label: "Property, plant and equipment", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-pr-lta", label: "Long-term assets", icon: "folder",
+                            children: [
+                              { id: "aud-wp-k", code: "K", label: "Long-term investments", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-pr-liab", label: "Liabilities", icon: "folder",
                         children: [
-                          { id: "aud-wp-l-aa", code: "AA", label: "Accounts Payable & Accrued Liabilities", icon: "book" },
-                          { id: "aud-wp-l-bb", code: "BB", label: "Long-Term Debt & Covenant Compliance", icon: "book" },
-                          { id: "aud-wp-l-cc", code: "CC", label: "Deferred Revenue", icon: "book" },
-                          { id: "aud-wp-l-dd", code: "DD", label: "Income Taxes & Deferred Tax", icon: "book" },
-                          { id: "aud-wp-l-ee", code: "EE", label: "Other Liabilities & Provisions", icon: "book" },
+                          {
+                            id: "aud-pr-cl", label: "Current liabilities", icon: "folder",
+                            children: [
+                              { id: "aud-wp-bb", code: "BB", label: "Accounts payable", icon: "book" },
+                              { id: "aud-wp-cc", code: "CC", label: "Taxes payable", icon: "book" },
+                              { id: "aud-wp-dd", code: "DD", label: "Short-term debt", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-pr-ltl", label: "Long-term liabilities", icon: "folder",
+                            children: [
+                              { id: "aud-wp-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
+                              { id: "aud-wp-kk", code: "KK", label: "Long-term debt", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-pr-equity", label: "Equity", icon: "folder",
                         children: [
-                          { id: "aud-wp-l-ff", code: "FF", label: "Share Capital & Equity Roll-forward", icon: "book" },
-                          { id: "aud-wp-l-gg", code: "GG", label: "Related Party Transactions", icon: "book" },
+                          {
+                            id: "aud-pr-sc", label: "Share capital", icon: "folder",
+                            children: [
+                              { id: "aud-wp-tt", code: "TT", label: "Equity", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-pr-rev", label: "Revenue", icon: "folder",
                         children: [
-                          { id: "aud-wp-i-700", code: "700", label: "Revenue Testing", icon: "book" },
+                          {
+                            id: "aud-pr-rev-sub", label: "Revenue", icon: "folder",
+                            children: [
+                              { id: "aud-wp-20", code: "20", label: "Revenue", icon: "book" },
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        id: "aud-pr-cos", label: "Cost of sales", icon: "folder",
+                        children: [
+                          {
+                            id: "aud-pr-cos-sub", label: "Cost of sales", icon: "folder",
+                            children: [
+                              { id: "aud-wp-30", code: "30", label: "Cost of sales", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                       {
                         id: "aud-pr-exp", label: "Expenses", icon: "folder",
                         children: [
-                          { id: "aud-wp-i-710", code: "710", label: "Cost of Sales / COGS", icon: "book" },
-                          { id: "aud-wp-i-720", code: "720", label: "Payroll & Benefits", icon: "book" },
-                          { id: "aud-wp-i-730", code: "730", label: "Operating Expenses", icon: "book" },
-                          { id: "aud-wp-i-740", code: "740", label: "Depreciation & Amortization", icon: "book" },
-                          { id: "aud-wp-i-750", code: "750", label: "Interest & Finance Costs", icon: "book" },
-                          { id: "aud-wp-i-760", code: "760", label: "Other Income & Gains", icon: "book" },
+                          {
+                            id: "aud-pr-opex", label: "Operating expenses", icon: "folder",
+                            children: [
+                              { id: "aud-wp-40", code: "40", label: "Expenses", icon: "book" },
+                            ]
+                          },
+                          {
+                            id: "aud-pr-oie", label: "Other Income(Expenses)", icon: "folder",
+                            children: [
+                              { id: "aud-wp-80", code: "80", label: "Other expenses (income)", icon: "book" },
+                            ]
+                          },
                         ]
                       },
                     ]
