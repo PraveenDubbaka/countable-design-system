@@ -14,7 +14,7 @@ import { getGlobalTemplateChecklist } from '@/lib/globalTemplates';
 import { LetterView } from '@/components/LetterView';
 import { WorksheetView } from '@/components/WorksheetView';
 
-const WORKSHEET_ID_PREFIXES = ['global-4-7', 'global-4-8', 'global-4-9', 'global-4-10', 'global-4-11', 'global-4-12', 'global-4-13', 'global-4-14', 'global-us-4-', 'worksheet-going-concern', 'worksheet-accounting-estimates'];
+const WORKSHEET_ID_PREFIXES = ['global-4-7', 'global-4-8', 'global-4-9', 'global-4-10', 'global-4-11', 'global-4-12', 'global-4-13', 'global-4-14', 'global-us-4-', 'worksheet-going-concern', 'worksheet-accounting-estimates', 'gca-ws-'];
 const isWorksheetTemplateId = (id: string) => WORKSHEET_ID_PREFIXES.some(p => id.startsWith(p));
 
 const generateClientMeetingChecklist = (prompt: string): Checklist => {

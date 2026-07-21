@@ -8633,6 +8633,54 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
  case 'glt-us-5': return generateInquiryToLegalCounselUS();
  case 'glt-us-6': return generateLetterToManagementSignificantDeficienciesUS();
  case 'glt-us-7': return generateCommunicationToPredecessorAuditorUS();
+ // ── CA Audit Checklists (gca-cl-*) ─────────────────────────────────────
+ case 'gca-cl-408':  return generateForm408InitialAuditEngagements();
+ case 'gca-cl-410':  return generateForm410AcceptanceContinuance();
+ case 'gca-cl-500':  return generate500OIChecklist();
+ case 'gca-cl-501a': return generate501APAPChecklist();
+ case 'gca-cl-505':  return generate505MgmtInquiriesChecklist();
+ case 'gca-cl-525':  return generate525GoingConcernChecklist();
+ case 'gca-cl-530':  return generate530PervasiveRisksChecklist();
+ case 'gca-cl-iar':  return generateAuditorsReportChecklist();
+ case 'gca-cl-aim':  return generateAccumulationOfMisstatementsChecklist();
+ case 'gca-cl-far':  return generateFinalAnalyticalReviewChecklist();
+ case 'gca-cl-se':   return generate650SubsequentEventsChecklist2();
+ case 'gca-cl-gc':   return generateGoingConcernFinalAssessmentChecklist();
+ case 'gca-cl-mr':   return generateManagementRepresentationsChecklist();
+ case 'gca-cl-disc': return generateASPEGeneralDisclosureChecklist();
+ // ── CA Audit Worksheets (gca-ws-*) ─────────────────────────────────────
+ case 'gca-ws-mat':  return generateAuditMaterialityChecklist();
+ case 'gca-ws-sae':  return generateSelectingAuditorExpertChecklist();
+ case 'gca-ws-asm':  return generateAuditStrategyMemorandumChecklist();
+ case 'gca-ws-plan': return generateEngagementPlanningChecklist();
+ case 'gca-ws-tt':   return generateAuditProceduresSummaryChecklist();
+ case 'gca-ws-501b': return generatePreliminaryAnalyticalProceduresChecklist();
+ case 'gca-ws-507':  return generateTCWGPlanningCommunicationChecklist();
+ case 'gca-ws-510':  return generate510IdentifyingRisksChecklist();
+ case 'gca-ws-511':  return generate511ITEnvironmentChecklist();
+ case 'gca-ws-514':  return generateRMMChecklist();
+ case 'gca-ws-506':  return generateFraudRiskAssessmentChecklist();
+ case 'gca-ws-513':  return generate513AccountingEstimatesChecklist();
+ case 'gca-ws-515':  return generate515RelatedPartiesChecklist();
+ case 'gca-ws-580':  return generateTestOfDetailsRevenueChecklist();
+ case 'gca-ws-520':  return generateSignificantRisksRegisterChecklist();
+ case 'gca-ws-590':  return generateEngagementScopeChecklist();
+ case 'gca-ws-535':  return generate535InfoSystemChecklist();
+ case 'gca-ws-540':  return generateUnderstandingInternalControlsChecklist();
+ case 'gca-ws-550':  return generate550ControlActivitiesChecklist();
+ case 'gca-ws-551':  return generate551ITGCChecklist();
+ case 'gca-ws-575':  return generate580SignificantDeficienciesChecklist();
+ case 'gca-ws-605':  return generate605RespondingToRiskChecklist();
+ case 'gca-ws-610':  return generateTestOfControlsChecklist();
+ case 'gca-ws-625':  return generateGoingConcernInitialAssessmentChecklist();
+ case 'gca-ws-630':  return generateOverallAuditResponseChecklist();
+ case 'gca-ws-635':  return generate513AccountingEstimatesChecklist();
+ case 'gca-ws-645':  return generate645LitigationClaimsChecklist();
+ case 'gca-ws-650':  return generate650SubsequentEventsChecklist2();
+ case 'gca-ws-655':  return generateSubstantiveAnalyticalProceduresChecklist();
+ case 'gca-ws-666':  return generate515RelatedPartiesChecklist();
+ case 'gca-ws-670':  return generate670JournalEntryTestingChecklist();
+ case 'gca-ws-680':  return generateASPESupplementaryDisclosureChecklist();
  default:
  return null;
  }
