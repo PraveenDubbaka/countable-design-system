@@ -8681,6 +8681,48 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
  case 'gca-ws-666':  return generate515RelatedPartiesChecklist();
  case 'gca-ws-670':  return generate670JournalEntryTestingChecklist();
  case 'gca-ws-680':  return generateASPESupplementaryDisclosureChecklist();
+ // ── CA Procedures Work Programs (gca-ws-proc-*) ──────────────────────────
+ case 'gca-ws-proc-cash':     return generateCashWorkprogram();
+ case 'gca-ws-proc-ar':       return generateAccountsReceivableWorkprogram();
+ case 'gca-ws-proc-inv':      return generateInventoryWorkprogram();
+ case 'gca-ws-proc-invest':   return generateShortTermInvestmentsWorkprogram();
+ case 'gca-ws-proc-lr':       return generateLoansReceivableWorkprogram();
+ case 'gca-ws-proc-rp':       return generate515RelatedPartiesChecklist();
+ case 'gca-ws-proc-ppe':      return generatePPEWorkprogram();
+ case 'gca-ws-proc-intang':   return generateIntangiblesGoodwillWorkprogram();
+ case 'gca-ws-proc-ltinv':    return generateLongTermInvestmentsWorkprogram();
+ case 'gca-ws-proc-bankdebt': return generateBankDebtWorkprogram();
+ case 'gca-ws-proc-ap':       return generateAccountsPayableWorkprogram();
+ case 'gca-ws-proc-tax':      return generateIncomeTaxesWorkprogram();
+ case 'gca-ws-proc-notedebt': return generateBankDebtWorkprogram();
+ case 'gca-ws-proc-lp':       return generateLoansPayableWorkprogram();
+ case 'gca-ws-proc-ltd':      return generateLongTermDebtWorkprogram();
+ case 'gca-ws-proc-equity':   return generateEquityWorkprogram();
+ case 'gca-ws-proc-rev':      return generateTestOfDetailsRevenueChecklist();
+ case 'gca-ws-proc-cos':      return generateTestOfDetailsExpensesChecklist();
+ case 'gca-ws-proc-payroll':  return generateSCOTPayrollCycleChecklist();
+ case 'gca-ws-proc-exp':      return generateTestOfDetailsExpensesChecklist();
+ // ── US Procedures Work Programs (gus-ws-proc-*) ──────────────────────────
+ case 'gus-ws-proc-cash':     return generateCashWorkprogram();
+ case 'gus-ws-proc-ar':       return generateAccountsReceivableWorkprogram();
+ case 'gus-ws-proc-inv':      return generateInventoryWorkprogram();
+ case 'gus-ws-proc-invest':   return generateShortTermInvestmentsWorkprogram();
+ case 'gus-ws-proc-lr':       return generateLoansReceivableWorkprogram();
+ case 'gus-ws-proc-rp':       return generate515RelatedPartiesChecklist();
+ case 'gus-ws-proc-ppe':      return generatePPEWorkprogram();
+ case 'gus-ws-proc-intang':   return generateIntangiblesGoodwillWorkprogram();
+ case 'gus-ws-proc-ltinv':    return generateLongTermInvestmentsWorkprogram();
+ case 'gus-ws-proc-bankdebt': return generateBankDebtWorkprogram();
+ case 'gus-ws-proc-ap':       return generateAccountsPayableWorkprogram();
+ case 'gus-ws-proc-tax':      return generateIncomeTaxesWorkprogram();
+ case 'gus-ws-proc-notedebt': return generateBankDebtWorkprogram();
+ case 'gus-ws-proc-lp':       return generateLoansPayableWorkprogram();
+ case 'gus-ws-proc-ltd':      return generateLongTermDebtWorkprogram();
+ case 'gus-ws-proc-equity':   return generateEquityWorkprogram();
+ case 'gus-ws-proc-rev':      return generateTestOfDetailsRevenueChecklist();
+ case 'gus-ws-proc-cos':      return generateTestOfDetailsExpensesChecklist();
+ case 'gus-ws-proc-payroll':  return generateSCOTPayrollCycleChecklist();
+ case 'gus-ws-proc-exp':      return generateTestOfDetailsExpensesChecklist();
  default:
  return null;
  }
@@ -14924,6 +14966,391 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
  sections,
  createdAt: new Date(),
  updatedAt: new Date(),
+ };
+};
+
+// ── Procedures Work Programs ────────────────────────────────────────────────
+
+const mkProc = () => {
+ const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
+  id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference,
+ });
+ const la = (id: string, text: string, answer = ''): Question => ({
+  id, text, answerType: 'long-answer' as const, options: [], required: false, answer,
+ });
+ return { q, la };
+};
+
+export const generateCashWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-cash', title: 'Cash and Cash Equivalents — Audit Work Program',
+  description: 'Audit procedures for cash and bank balances.',
+  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, accuracy and cutoff of cash and cash equivalents.',
+  sections: [
+   { id: 'wp-cash-1', title: '1. Bank Confirmations', isExpanded: true, questions: [
+    q('cash-1a', '<p>Have bank confirmation requests been sent to all banks where the entity maintains accounts?</p>', 'Yes', 'Confirmations sent to RBC, TD and HSBC on March 28, 2024. All confirmations received and agreed to GL.', 'W/P A-01'),
+    q('cash-1b', '<p>Have confirmation responses been agreed to the cash balances per the trial balance?</p>', 'Yes', 'Bank confirmations reconciled to GL — no unexplained differences.', 'W/P A-01'),
+    q('cash-1c', '<p>Have any outstanding items or differences noted in the confirmations been investigated and resolved?</p>', 'NA', 'No differences noted.'),
+   ]},
+   { id: 'wp-cash-2', title: '2. Bank Reconciliation Review', isExpanded: true, questions: [
+    q('cash-2a', '<p>Has the bank reconciliation for the year-end date been obtained and reviewed for reasonableness?</p>', 'Yes', 'Bank reconciliations reviewed for all accounts. Reconciling items traced to subsequent clearance.', 'W/P A-02'),
+    q('cash-2b', '<p>Have outstanding cheques been reviewed for old or unusual items?</p>', 'Yes', 'Outstanding cheques reviewed — no stale-dated items identified. All clear within 30 days post year-end.'),
+    q('cash-2c', '<p>Have deposits in transit been agreed to bank statement entries shortly after year-end?</p>', 'Yes', 'All deposits in transit confirmed cleared within 3 business days after March 31, 2024.', 'W/P A-02'),
+    q('cash-2d', '<p>Has any kiting or window dressing been considered and ruled out?</p>', 'Yes', 'Cash movements reviewed around year-end. No evidence of kiting or window dressing identified.'),
+   ]},
+   { id: 'wp-cash-3', title: '3. Restricted Cash and Presentation', isExpanded: true, questions: [
+    q('cash-3a', '<p>Has any restricted cash been identified and confirmed as appropriately classified and disclosed?</p>', 'NA', 'No restricted cash balances identified.'),
+    q('cash-3b', '<p>Has petty cash been counted or confirmed as immaterial?</p>', 'Yes', 'Petty cash balance of $500 — confirmed as immaterial and not tested.'),
+    la('cash-3c', '<p>Conclusion — cash and cash equivalents:</p>', 'Based on procedures performed, cash balances are fairly presented. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateAccountsReceivableWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-ar', title: 'Accounts Receivable — Audit Work Program',
+  description: 'Audit procedures for accounts receivable.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation (net realizable value) and cutoff of accounts receivable.',
+  sections: [
+   { id: 'wp-ar-1', title: '1. AR Confirmations', isExpanded: true, questions: [
+    q('ar-1a', '<p>Have positive confirmations been sent to a sample of customers?</p>', 'Yes', '40 positive confirmations dispatched on day 1 of fieldwork. 35 received; 5 follow-up procedures performed.', 'W/P B-01'),
+    q('ar-1b', '<p>Have non-responses been subjected to alternative procedures (cash receipts after year-end, shipping documents)?</p>', 'Yes', 'Alternative procedures performed for 5 non-responses — all agreed to subsequent cash receipts.', 'W/P B-01'),
+    q('ar-1c', '<p>Have confirmation exceptions been investigated and resolved?</p>', 'Yes', 'Two timing differences identified — both resolved as in-transit payments at year-end. No errors.', 'W/P B-01'),
+   ]},
+   { id: 'wp-ar-2', title: '2. Valuation — Allowance for Doubtful Accounts', isExpanded: true, questions: [
+    q('ar-2a', '<p>Has the aged accounts receivable listing been obtained and agreed to the trial balance?</p>', 'Yes', 'Aged AR listing obtained and footed. Total agreed to GL balance.', 'W/P B-02'),
+    q('ar-2b', '<p>Has management\'s allowance for doubtful accounts been assessed for reasonableness?</p>', 'Yes', 'Allowance calculation reviewed. Management\'s 90+ day provision rate assessed as reasonable given collection history.', 'W/P B-02'),
+    q('ar-2c', '<p>Have large or old balances been specifically reviewed for collectability?</p>', 'Yes', 'All balances >$50K and all accounts >90 days reviewed. Specific allowances recorded for two doubtful accounts totaling $28K.', 'W/P B-03'),
+   ]},
+   { id: 'wp-ar-3', title: '3. Cutoff', isExpanded: true, questions: [
+    q('ar-3a', '<p>Have the last sales transactions before year-end been traced to shipping documentation and the sales journal?</p>', 'Yes', 'Last 15 invoices tested — all correctly recorded in the period earned.', 'W/P B-04'),
+    q('ar-3b', '<p>Have the first sales transactions after year-end been reviewed to confirm they are not included in the current period?</p>', 'Yes', 'First 15 April invoices reviewed — none improperly included in March AR.', 'W/P B-04'),
+    la('ar-3c', '<p>Conclusion — accounts receivable:</p>', 'AR balance is fairly stated at net realizable value. Allowance is adequate. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateInventoryWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-inv', title: 'Inventories — Audit Work Program',
+  description: 'Audit procedures for inventories.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and cutoff of inventory balances.',
+  sections: [
+   { id: 'wp-inv-1', title: '1. Physical Count Observation', isExpanded: true, questions: [
+    q('inv-1a', '<p>Was attendance at the physical inventory count performed?</p>', 'Yes', 'Physical count attended on March 31, 2024. Count sheets reviewed and test counts performed.', 'W/P C-01'),
+    q('inv-1b', '<p>Were test counts performed and agreed to management\'s count sheets?</p>', 'Yes', '50 test counts performed — all agreed within acceptable tolerance to management\'s count.', 'W/P C-01'),
+    q('inv-1c', '<p>Has the final inventory listing been agreed to the physical count results and the trial balance?</p>', 'Yes', 'Inventory listing footed and agreed to GL. Roll-back procedures from count date to year-end performed.', 'W/P C-02'),
+   ]},
+   { id: 'wp-inv-2', title: '2. Valuation — Lower of Cost and NRV', isExpanded: true, questions: [
+    q('inv-2a', '<p>Has the cost method (FIFO, weighted average, specific identification) been confirmed and applied consistently?</p>', 'Yes', 'Weighted average cost method confirmed — consistent with prior year.', 'W/P C-03'),
+    q('inv-2b', '<p>Has a sample of inventory items been tested to confirm that cost does not exceed NRV?</p>', 'Yes', 'Sample of 30 SKUs tested. NRV confirmed as exceeding cost for all items tested. No write-down required.', 'W/P C-03'),
+    q('inv-2c', '<p>Have slow-moving, obsolete or damaged inventory items been identified and assessed for write-down?</p>', 'Yes', 'Aged inventory report reviewed. $15K write-down recorded for slow-moving items — assessed as reasonable.'),
+   ]},
+   { id: 'wp-inv-3', title: '3. Cutoff', isExpanded: true, questions: [
+    q('inv-3a', '<p>Have receiving records for the last 10 days before year-end been reviewed to confirm goods are included in inventory?</p>', 'Yes', 'Last 10 receiving reports agreed to inventory listing. Appropriate cutoff confirmed.', 'W/P C-04'),
+    q('inv-3b', '<p>Have shipping records for the last 10 days before year-end been reviewed to confirm goods shipped are excluded from inventory?</p>', 'Yes', 'Last 10 shipping records confirmed as removed from inventory and recorded as cost of sales.'),
+    la('inv-3c', '<p>Conclusion — inventories:</p>', 'Inventory is fairly presented at the lower of cost and NRV. Physical count results support the recorded balance.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateShortTermInvestmentsWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-invest', title: 'Short-Term Investments — Audit Work Program',
+  description: 'Audit procedures for short-term investments and marketable securities.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, valuation and disclosure of short-term investments.',
+  sections: [
+   { id: 'wp-inv-s1', title: '1. Existence and Completeness', isExpanded: true, questions: [
+    q('invest-1a', '<p>Have investment holdings been confirmed directly with custodians or brokers?</p>', 'Yes', 'Broker confirmation received and agreed to investment schedule and GL.', 'W/P D-01'),
+    q('invest-1b', '<p>Has the investment schedule been agreed to the trial balance?</p>', 'Yes', 'Investment schedule footed and agreed to GL balance.', 'W/P D-01'),
+    q('invest-1c', '<p>Have investment income (interest, dividends) been traced and agreed to the investment schedule?</p>', 'Yes', 'Investment income traced to broker statements and confirmed as properly accrued.'),
+   ]},
+   { id: 'wp-inv-s2', title: '2. Valuation', isExpanded: true, questions: [
+    q('invest-2a', '<p>Have investments been classified appropriately under the applicable financial reporting framework (held-for-trading, AFS, held-to-maturity)?</p>', 'Yes', 'Classification reviewed — investments appropriately designated as held-for-trading and measured at fair value.', 'W/P D-02'),
+    q('invest-2b', '<p>Have fair values been agreed to independent market data (exchange prices, broker quotes)?</p>', 'Yes', 'Market prices as at March 31, 2024 confirmed via Bloomberg/exchange data. No significant differences from management\'s values.', 'W/P D-02'),
+    q('invest-2c', '<p>Have unrealized gains and losses been appropriately recorded and classified?</p>', 'Yes', 'Unrealized gains/losses recalculated and agreed to OCI/P&L classification per the accounting policy.'),
+   ]},
+   { id: 'wp-inv-s3', title: '3. Disclosure', isExpanded: true, questions: [
+    q('invest-3a', '<p>Have investments been appropriately disclosed in the notes, including fair value hierarchy and concentrations?</p>', 'Yes', 'Note disclosure reviewed — fair value hierarchy and concentration disclosures confirmed as adequate.'),
+    la('invest-3b', '<p>Conclusion — short-term investments:</p>', 'Investments are fairly presented at fair value. Disclosures are adequate. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateLoansReceivableWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-lr', title: 'Loans and Advances Receivable — Audit Work Program',
+  description: 'Audit procedures for loans and advances receivable.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and disclosure of loans and advances receivable.',
+  sections: [
+   { id: 'wp-lr-1', title: '1. Existence and Terms', isExpanded: true, questions: [
+    q('lr-1a', '<p>Have loan agreements been obtained and reviewed for key terms (amount, interest rate, maturity, covenants)?</p>', 'Yes', 'Loan agreements reviewed for all material balances. Key terms agreed to the loan schedule.', 'W/P E-01'),
+    q('lr-1b', '<p>Have loan balances been confirmed directly with debtors for material amounts?</p>', 'Yes', 'Confirmations sent and received for all balances >$25K. All agreed to the loan schedule.', 'W/P E-01'),
+    q('lr-1c', '<p>Has accrued interest been recalculated and agreed to the general ledger?</p>', 'Yes', 'Interest accruals independently recalculated and agreed to GL within rounding tolerance.', 'W/P E-02'),
+   ]},
+   { id: 'wp-lr-2', title: '2. Collectability and Valuation', isExpanded: true, questions: [
+    q('lr-2a', '<p>Has the collectability of each loan been assessed, considering the debtor\'s financial position and payment history?</p>', 'Yes', 'Collectability assessed for each loan — no impairment indicators identified. All loans are current.', 'W/P E-03'),
+    q('lr-2b', '<p>Are any loans to related parties, and if so, have they been reviewed for arm\'s-length terms and appropriate disclosure?</p>', 'Yes', 'Two related party loans identified. Terms assessed as arm\'s length and disclosed in Note 12.'),
+    q('lr-2c', '<p>Has the classification of loans as current vs. long-term been reviewed for appropriateness?</p>', 'Yes', 'Classification reviewed based on contractual maturity dates. Presentation confirmed as appropriate.'),
+   ]},
+   { id: 'wp-lr-3', title: '3. Disclosure', isExpanded: true, questions: [
+    q('lr-3a', '<p>Are loans appropriately disclosed in the notes (terms, interest rates, maturity, security)?</p>', 'Yes', 'Note disclosures reviewed and confirmed as adequate per ASPE Section 3856.'),
+    la('lr-3b', '<p>Conclusion — loans and advances receivable:</p>', 'Loans receivable are fairly presented. All amounts are collectible. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generatePPEWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-ppe', title: 'Property, Plant and Equipment — Audit Work Program',
+  description: 'Audit procedures for property, plant and equipment.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and accuracy of property, plant and equipment balances and related depreciation.',
+  sections: [
+   { id: 'wp-ppe-1', title: '1. Additions and Disposals', isExpanded: true, questions: [
+    q('ppe-1a', '<p>Has a schedule of PPE movements (opening balance, additions, disposals, closing balance) been obtained and agreed to the trial balance?</p>', 'Yes', 'PPE continuity schedule obtained, footed and agreed to GL. Opening balance agreed to prior year closing.', 'W/P H-01'),
+    q('ppe-1b', '<p>Have additions been tested by vouching to invoices, purchase agreements or other supporting documents?</p>', 'Yes', 'All additions >$10K tested (100% coverage). All agreed to supplier invoices and confirmed as capital expenditures.', 'W/P H-02'),
+    q('ppe-1c', '<p>Have disposals been tested to confirm that gains/losses are properly calculated and recorded?</p>', 'Yes', 'Two disposals identified and tested. Gain/loss calculations recalculated and agreed to the G/L.', 'W/P H-03'),
+   ]},
+   { id: 'wp-ppe-2', title: '2. Depreciation', isExpanded: true, questions: [
+    q('ppe-2a', '<p>Have depreciation methods and useful lives been confirmed as consistent with prior year (or changes explained)?</p>', 'Yes', 'Depreciation policies reviewed — methods and useful lives consistent with prior year.', 'W/P H-04'),
+    q('ppe-2b', '<p>Has depreciation expense been independently recalculated for a sample of assets?</p>', 'Yes', 'Depreciation recalculated for assets representing 70% of total NBV. Results agreed to recorded depreciation within rounding.', 'W/P H-04'),
+    q('ppe-2c', '<p>Has a half-year or proportionate convention for additions been applied consistently?</p>', 'Yes', 'Pro-rata depreciation confirmed for all additions in the year.'),
+   ]},
+   { id: 'wp-ppe-3', title: '3. Physical Existence and Impairment', isExpanded: true, questions: [
+    q('ppe-3a', '<p>Has a physical inspection of significant assets been performed?</p>', 'Yes', 'Physical inspection of major assets performed during fieldwork. All significant assets confirmed in use and in good condition.', 'W/P H-05'),
+    q('ppe-3b', '<p>Have impairment indicators been assessed, including changes in market conditions, asset underperformance or obsolescence?</p>', 'Yes', 'No impairment indicators identified. Assets are in productive use and generating expected cash flows.'),
+    q('ppe-3c', '<p>Is title to significant assets confirmed (deed, title documents, vehicle registration)?</p>', 'Yes', 'Title documents reviewed for major assets. Entity is confirmed as legal owner.'),
+    la('ppe-3d', '<p>Conclusion — property, plant and equipment:</p>', 'PPE is fairly presented. Depreciation is calculated consistently. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateIntangiblesGoodwillWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-intang', title: 'Intangibles and Goodwill — Audit Work Program',
+  description: 'Audit procedures for intangible assets and goodwill.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, valuation and impairment assessment of intangible assets and goodwill.',
+  sections: [
+   { id: 'wp-intang-1', title: '1. Recognition and Measurement', isExpanded: true, questions: [
+    q('intang-1a', '<p>Have intangible assets been reviewed for compliance with recognition criteria (identifiable, controlled by entity, future economic benefits)?</p>', 'Yes', 'All intangible assets reviewed against ASPE Section 3064 recognition criteria. All amounts qualify.', 'W/P IA-01'),
+    q('intang-1b', '<p>Has the continuity schedule for intangibles been agreed to the trial balance?</p>', 'Yes', 'Intangibles continuity schedule obtained and agreed to GL. No unexplained differences.', 'W/P IA-01'),
+    q('intang-1c', '<p>Have capitalized development costs been assessed for appropriateness (technical feasibility, intent to complete, ability to sell/use)?</p>', 'NA', 'No development costs capitalized in the current year.'),
+   ]},
+   { id: 'wp-intang-2', title: '2. Amortization', isExpanded: true, questions: [
+    q('intang-2a', '<p>Have amortization methods and useful lives for finite-life intangibles been confirmed as consistent with prior year?</p>', 'Yes', 'Amortization methods confirmed — straight-line over useful life, consistent with prior year.', 'W/P IA-02'),
+    q('intang-2b', '<p>Has amortization been independently recalculated for significant intangible assets?</p>', 'Yes', 'Amortization recalculated for all finite-life intangibles. Results agreed within rounding.', 'W/P IA-02'),
+    q('intang-2c', '<p>For indefinite-life intangibles or goodwill, has a useful life assessment been reviewed?</p>', 'Yes', 'Goodwill confirmed as subject to annual impairment test — not amortized.'),
+   ]},
+   { id: 'wp-intang-3', title: '3. Impairment Assessment', isExpanded: true, questions: [
+    q('intang-3a', '<p>Have impairment indicators been reviewed (loss of key customers, technology obsolescence, adverse market conditions)?</p>', 'Yes', 'No impairment indicators identified. Business continues to generate positive cash flows.', 'W/P IA-03'),
+    q('intang-3b', '<p>Has management\'s impairment test (for goodwill or indefinite-life intangibles) been obtained and assessed for reasonableness?</p>', 'Yes', 'Impairment test reviewed — recoverable amount exceeds carrying value by a significant margin. No impairment required.', 'W/P IA-03'),
+    la('intang-3c', '<p>Conclusion — intangibles and goodwill:</p>', 'Intangible assets and goodwill are fairly presented. No impairment required. Amortization is calculated consistently.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateLongTermInvestmentsWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-ltinv', title: 'Long-Term Investments — Audit Work Program',
+  description: 'Audit procedures for long-term investments and equity-method investees.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, classification, valuation and disclosure of long-term investments.',
+  sections: [
+   { id: 'wp-ltinv-1', title: '1. Existence and Ownership', isExpanded: true, questions: [
+    q('ltinv-1a', '<p>Has evidence of ownership been obtained and reviewed (share certificates, broker statements, partnership agreements)?</p>', 'Yes', 'Share certificates and broker confirmations obtained for all long-term investment holdings.', 'W/P K-01'),
+    q('ltinv-1b', '<p>Has the investment schedule been footed and agreed to the trial balance?</p>', 'Yes', 'Investment continuity schedule agreed to GL. Opening balance agreed to prior year closing balance.', 'W/P K-01'),
+   ]},
+   { id: 'wp-ltinv-2', title: '2. Classification and Valuation', isExpanded: true, questions: [
+    q('ltinv-2a', '<p>Has the appropriate accounting method been confirmed (equity method for significant influence; cost method for others)?</p>', 'Yes', 'Equity method applied for 28% investee. Cost method for other holdings — classification confirmed as appropriate.', 'W/P K-02'),
+    q('ltinv-2b', '<p>For equity-method investees, has the entity\'s share of income/loss been agreed to the investee\'s financial statements?</p>', 'Yes', 'Equity pickup recalculated using investee draft financials. Agreed within rounding to GL.', 'W/P K-02'),
+    q('ltinv-2c', '<p>Has management assessed investments for impairment (permanent decline in value)?</p>', 'Yes', 'No indicators of other-than-temporary impairment identified. Investees are profitable and hold adequate assets.', 'W/P K-03'),
+   ]},
+   { id: 'wp-ltinv-3', title: '3. Disclosure', isExpanded: true, questions: [
+    q('ltinv-3a', '<p>Are long-term investments adequately disclosed (cost, carrying value, method, impairment)?</p>', 'Yes', 'Note disclosures reviewed — adequate disclosure of investee names, ownership percentages and carrying amounts.'),
+    la('ltinv-3b', '<p>Conclusion — long-term investments:</p>', 'Long-term investments are fairly presented under the applicable accounting method. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateBankDebtWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-bankdebt', title: 'Bank Indebtedness / Notes Payable — Audit Work Program',
+  description: 'Audit procedures for bank indebtedness, operating lines of credit and notes payable.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and disclosure of bank indebtedness and notes payable.',
+  sections: [
+   { id: 'wp-bankdebt-1', title: '1. Bank Confirmation', isExpanded: true, questions: [
+    q('bankdebt-1a', '<p>Have bank confirmations been sent to all lending institutions, requesting confirmation of all outstanding facilities, balances, and security?</p>', 'Yes', 'Bank confirmations sent to RBC and TD. All confirmations received, signed by bank officers.', 'W/P DD-01'),
+    q('bankdebt-1b', '<p>Have confirmed balances been agreed to the trial balance?</p>', 'Yes', 'Bank debt per confirmation agreed to GL. No unexplained differences.', 'W/P DD-01'),
+    q('bankdebt-1c', '<p>Has the interest rate confirmed by the bank been agreed to the interest expense calculation?</p>', 'Yes', 'Interest rate per confirmation agreed to loan agreement and interest expense recalculation.', 'W/P DD-02'),
+   ]},
+   { id: 'wp-bankdebt-2', title: '2. Terms and Covenants', isExpanded: true, questions: [
+    q('bankdebt-2a', '<p>Have loan/credit facility agreements been obtained and reviewed for key terms (limit, interest rate, maturity, security, covenants)?</p>', 'Yes', 'Credit agreement reviewed. Key terms noted — $2M operating line at prime + 1.5%, secured by AR and inventory.', 'W/P DD-03'),
+    q('bankdebt-2b', '<p>Has compliance with financial covenants at year-end been assessed?</p>', 'Yes', 'DSCR and current ratio covenants tested at March 31, 2024. Entity is compliant with all covenants.', 'W/P DD-03'),
+    q('bankdebt-2c', '<p>Has accrued interest been independently recalculated?</p>', 'Yes', 'Accrued interest recalculated for each facility. Agreed to GL within rounding.', 'W/P DD-04'),
+   ]},
+   { id: 'wp-bankdebt-3', title: '3. Classification and Disclosure', isExpanded: true, questions: [
+    q('bankdebt-3a', '<p>Is bank debt classified as current vs. long-term based on contractual maturity and covenant compliance?</p>', 'Yes', 'Classification confirmed as current — operating line matures within 12 months. No covenant breaches requiring reclassification.'),
+    q('bankdebt-3b', '<p>Is the nature and amount of security pledged disclosed appropriately?</p>', 'Yes', 'Security interests (AR, inventory, general security agreement) disclosed in the notes.'),
+    la('bankdebt-3c', '<p>Conclusion — bank indebtedness / notes payable:</p>', 'Bank debt is fairly presented. Covenants are complied with. Disclosures are adequate. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateAccountsPayableWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-ap', title: 'Accounts Payable and Accrued Liabilities — Audit Work Program',
+  description: 'Audit procedures for accounts payable and accrued liabilities.',
+  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, valuation and cutoff of accounts payable and accrued liabilities.',
+  sections: [
+   { id: 'wp-ap-1', title: '1. Vendor Reconciliations and Completeness', isExpanded: true, questions: [
+    q('ap-1a', '<p>Has the AP listing been footed and agreed to the trial balance?</p>', 'Yes', 'AP subledger footed and agreed to GL control account.', 'W/P BB-01'),
+    q('ap-1b', '<p>Have vendor statement reconciliations been performed for significant suppliers?</p>', 'Yes', 'Vendor statement reconciliations performed for top 10 vendors by volume. No unrecorded liabilities identified.', 'W/P BB-02'),
+    q('ap-1c', '<p>Has a search for unrecorded liabilities been performed (review of post-year-end disbursements)?</p>', 'Yes', 'Cash disbursements for 30 days after year-end reviewed. No invoices >$5K found relating to pre-year-end goods/services that were not recorded.', 'W/P BB-03'),
+   ]},
+   { id: 'wp-ap-2', title: '2. Cutoff', isExpanded: true, questions: [
+    q('ap-2a', '<p>Have the last 10 days of receiving reports before year-end been reviewed to confirm goods received are included in AP?</p>', 'Yes', 'Last 10 business days of receiving reports reviewed. All goods received before March 31 are recorded in AP.', 'W/P BB-04'),
+    q('ap-2b', '<p>Have any significant invoices received after year-end but relating to pre-year-end goods/services been accrued?</p>', 'Yes', 'Two invoices ($48K combined) received April 1–5 for goods received in March — confirmed as accrued at year-end.', 'W/P BB-04'),
+   ]},
+   { id: 'wp-ap-3', title: '3. Accrued Liabilities', isExpanded: true, questions: [
+    q('ap-3a', '<p>Have major accruals been reviewed and supported by underlying calculations or agreements (e.g., accrued wages, bonuses, professional fees)?</p>', 'Yes', 'All accruals >$10K reviewed and agreed to supporting calculations or external confirmations.', 'W/P BB-05'),
+    q('ap-3b', '<p>Have prior year accruals been reviewed for payment/reversal, and over/under-accruals from prior year assessed?</p>', 'Yes', 'Prior year accruals compared to actual payments — no systematic over/under-accrual pattern identified.'),
+    la('ap-3c', '<p>Conclusion — accounts payable and accrued liabilities:</p>', 'AP and accruals are complete and fairly presented. No material unrecorded liabilities identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateIncomeTaxesWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-tax', title: 'Income Taxes — Audit Work Program',
+  description: 'Audit procedures for current and deferred income taxes.',
+  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence and accuracy of current and deferred income tax balances.',
+  sections: [
+   { id: 'wp-tax-1', title: '1. Current Income Tax', isExpanded: true, questions: [
+    q('tax-1a', '<p>Has the current income tax provision been reviewed and agreed to the tax return or management\'s tax calculation?</p>', 'Yes', 'Tax provision reviewed and agreed to management\'s T2 corporate tax estimate. Effective rate assessed as reasonable.', 'W/P CC-01'),
+    q('tax-1b', '<p>Have current tax payments during the year been traced to bank statements?</p>', 'Yes', 'All quarterly installments traced to bank statements and agreed to the tax account.', 'W/P CC-02'),
+    q('tax-1c', '<p>Has the income tax payable (refundable) been independently assessed for reasonableness?</p>', 'Yes', 'Tax payable recalculated using taxable income and applicable rates. Agreed to management\'s calculation.', 'W/P CC-02'),
+   ]},
+   { id: 'wp-tax-2', title: '2. Deferred Income Tax', isExpanded: true, questions: [
+    q('tax-2a', '<p>Have temporary differences been identified and agreed to the deferred tax schedule?</p>', 'Yes', 'Deferred tax arising from CCA vs. accounting depreciation and other temporary differences reviewed.', 'W/P CC-03'),
+    q('tax-2b', '<p>Has the deferred tax balance been recalculated using the enacted tax rate?</p>', 'Yes', 'Deferred tax independently recalculated using applicable enacted rates. Agreed to management\'s calculation within rounding.', 'W/P CC-03'),
+    q('tax-2c', '<p>Have recoverability of deferred tax assets been assessed (probability of sufficient future taxable income)?</p>', 'NA', 'Net deferred tax liability position — no recoverability assessment required.'),
+   ]},
+   { id: 'wp-tax-3', title: '3. Disclosure and Compliance', isExpanded: true, questions: [
+    q('tax-3a', '<p>Are income tax disclosures complete and appropriate (current/deferred split, effective rate reconciliation)?</p>', 'Yes', 'Note disclosures reviewed — current/deferred split and major components of tax expense disclosed.'),
+    q('tax-3b', '<p>Are there any uncertain tax positions that should be disclosed or accrued?</p>', 'No', 'Management representations obtained that no material uncertain tax positions exist. No CRA audit or reassessment is in progress.'),
+    la('tax-3c', '<p>Conclusion — income taxes:</p>', 'Income taxes are fairly presented. Current and deferred tax balances are reasonable. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateLoansPayableWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-lp', title: 'Loans and Advances Payable — Audit Work Program',
+  description: 'Audit procedures for loans and advances payable.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, accuracy and disclosure of loans and advances payable.',
+  sections: [
+   { id: 'wp-lp-1', title: '1. Existence and Confirmation', isExpanded: true, questions: [
+    q('lp-1a', '<p>Have loan agreements been obtained and reviewed for key terms (principal, rate, maturity, security, repayment schedule)?</p>', 'Yes', 'All loan agreements obtained and reviewed. Key terms noted and agreed to the loan continuity schedule.', 'W/P LP-01'),
+    q('lp-1b', '<p>Have loan balances been confirmed directly with lenders?</p>', 'Yes', 'Lender confirmations received and agreed to GL. No unexplained differences.', 'W/P LP-01'),
+    q('lp-1c', '<p>Has accrued interest been independently recalculated?</p>', 'Yes', 'Accrued interest recalculated and agreed to GL within rounding.', 'W/P LP-02'),
+   ]},
+   { id: 'wp-lp-2', title: '2. Classification and Presentation', isExpanded: true, questions: [
+    q('lp-2a', '<p>Have current portions of long-term debt been correctly identified and classified?</p>', 'Yes', 'Principal repayments due within 12 months confirmed and reclassified to current liabilities.', 'W/P LP-03'),
+    q('lp-2b', '<p>Are loans to/from related parties identified and reviewed for arm\'s-length terms?</p>', 'Yes', 'One related party loan identified. Terms reviewed and confirmed as arm\'s length. Disclosed in Note 12.'),
+   ]},
+   { id: 'wp-lp-3', title: '3. Disclosure', isExpanded: true, questions: [
+    q('lp-3a', '<p>Are all material loan balances disclosed with rates, maturity dates and security?</p>', 'Yes', 'Note disclosures reviewed — adequate disclosure of all material loans including terms and security.'),
+    la('lp-3b', '<p>Conclusion — loans and advances payable:</p>', 'Loans payable are fairly presented. Classification and disclosures are appropriate. No material misstatements identified.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateLongTermDebtWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-ltd', title: 'Long-Term Debt — Audit Work Program',
+  description: 'Audit procedures for long-term debt.',
+  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, accuracy, classification and disclosure of long-term debt.',
+  sections: [
+   { id: 'wp-ltd-1', title: '1. Existence and Confirmation', isExpanded: true, questions: [
+    q('ltd-1a', '<p>Have long-term debt agreements been obtained and reviewed?</p>', 'Yes', 'All term loan and debenture agreements obtained and reviewed. Key terms agreed to debt continuity schedule.', 'W/P KK-01'),
+    q('ltd-1b', '<p>Have lender confirmations been obtained for all material long-term debt?</p>', 'Yes', 'Confirmations received from all lenders and agreed to GL. No unexplained differences.', 'W/P KK-01'),
+    q('ltd-1c', '<p>Have principal payments made during the year been traced to bank statements?</p>', 'Yes', 'All principal repayments agreed to bank statements and traced to the debt schedule.', 'W/P KK-02'),
+   ]},
+   { id: 'wp-ltd-2', title: '2. Interest and Covenants', isExpanded: true, questions: [
+    q('ltd-2a', '<p>Has interest expense been independently recalculated and agreed to GL?</p>', 'Yes', 'Interest expense recalculated for each debt instrument. Agreed to GL within immaterial rounding differences.', 'W/P KK-03'),
+    q('ltd-2b', '<p>Has compliance with all financial covenants at year-end been assessed?</p>', 'Yes', 'All financial covenants tested at March 31, 2024. Entity is in compliance with all covenants.', 'W/P KK-04'),
+    q('ltd-2c', '<p>Have any waived covenant violations or amendments been obtained and reviewed?</p>', 'NA', 'No covenant violations or waivers during the year.'),
+   ]},
+   { id: 'wp-ltd-3', title: '3. Classification and Disclosure', isExpanded: true, questions: [
+    q('ltd-3a', '<p>Has the current vs. long-term classification been confirmed based on maturity and covenant compliance?</p>', 'Yes', 'Current and long-term portions confirmed. Scheduled repayments in next 12 months classified as current.'),
+    q('ltd-3b', '<p>Are note disclosures adequate (terms, rates, maturity, security, covenant summary, minimum repayments)?</p>', 'Yes', 'Disclosures reviewed — maturity schedule, interest rates and security are fully disclosed.'),
+    la('ltd-3c', '<p>Conclusion — long-term debt:</p>', 'Long-term debt is fairly presented. Entity is compliant with all covenants. Classification and disclosures are appropriate.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
+ };
+};
+
+export const generateEquityWorkprogram = (): Checklist => {
+ const { q, la } = mkProc();
+ return {
+  id: 'wp-equity', title: 'Equity — Audit Work Program',
+  description: 'Audit procedures for share capital, retained earnings and other equity components.',
+  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, accuracy and disclosure of equity balances.',
+  sections: [
+   { id: 'wp-equity-1', title: '1. Share Capital', isExpanded: true, questions: [
+    q('equity-1a', '<p>Has the share capital continuity been agreed to the prior year and any issuances or repurchases during the year have been reviewed?</p>', 'Yes', 'Share capital continuity schedule reviewed. No share issuances or repurchases during the year.', 'W/P TT-01'),
+    q('equity-1b', '<p>Have share registers or corporate minute books been reviewed to confirm authorized and issued share capital?</p>', 'Yes', 'Corporate minute book reviewed — authorized and issued shares confirmed. Minute book is current.', 'W/P TT-01'),
+    q('equity-1c', '<p>Have any share-based compensation arrangements been identified and assessed for proper accounting?</p>', 'NA', 'No share-based compensation arrangements exist.'),
+   ]},
+   { id: 'wp-equity-2', title: '2. Retained Earnings and Dividends', isExpanded: true, questions: [
+    q('equity-2a', '<p>Has the opening retained earnings balance been agreed to the prior year closing balance?</p>', 'Yes', 'Opening retained earnings agreed to prior year audited financial statements without adjustment.', 'W/P TT-02'),
+    q('equity-2b', '<p>Have dividends declared during the year been traced to board resolutions and confirmed as appropriately recorded?</p>', 'Yes', 'One dividend of $150K declared in Q3 — traced to board minutes and confirmed as recorded.', 'W/P TT-03'),
+    q('equity-2c', '<p>Has any appropriation of retained earnings (reserves) been reviewed for appropriateness?</p>', 'NA', 'No reserves or appropriations of retained earnings during the year.'),
+   ]},
+   { id: 'wp-equity-3', title: '3. Disclosure', isExpanded: true, questions: [
+    q('equity-3a', '<p>Are equity components (share capital, contributed surplus, retained earnings, AOCI) appropriately disclosed?</p>', 'Yes', 'Statement of changes in equity and note disclosures reviewed and confirmed as adequate.'),
+    q('equity-3b', '<p>Have any related party transactions involving equity (loans converted to equity, distributions) been identified and disclosed?</p>', 'NA', 'No related party equity transactions identified.'),
+    la('equity-3c', '<p>Conclusion — equity:</p>', 'Equity is fairly presented. Share capital and retained earnings are supported by underlying documentation. Disclosures are adequate.'),
+   ]},
+  ],
+  createdAt: new Date(), updatedAt: new Date(),
  };
 };
 

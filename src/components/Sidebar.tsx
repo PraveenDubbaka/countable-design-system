@@ -323,6 +323,30 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
           { id: "gca-ws-666",  name: "666 Related Parties", type: "file" },
           { id: "gca-ws-670",  name: "670 Use of Journal Entries", type: "file" },
           { id: "gca-ws-680",  name: "680 ASPE Supplementary Audit Procedures", type: "file" },
+          {
+            id: "gca-ws-proc", name: "Procedures", type: "folder", isExpanded: false, children: [
+              { id: "gca-ws-proc-cash",     name: "Cash", type: "file" },
+              { id: "gca-ws-proc-ar",       name: "Accounts Receivable", type: "file" },
+              { id: "gca-ws-proc-inv",      name: "Inventory", type: "file" },
+              { id: "gca-ws-proc-invest",   name: "Investments", type: "file" },
+              { id: "gca-ws-proc-lr",       name: "Loans & Advances Receivable", type: "file" },
+              { id: "gca-ws-proc-rp",       name: "Related party", type: "file" },
+              { id: "gca-ws-proc-ppe",      name: "Property, Plant and Equipment", type: "file" },
+              { id: "gca-ws-proc-intang",   name: "Intangibles and Goodwill", type: "file" },
+              { id: "gca-ws-proc-ltinv",    name: "Other Investments", type: "file" },
+              { id: "gca-ws-proc-bankdebt", name: "Bank indebtedness", type: "file" },
+              { id: "gca-ws-proc-ap",       name: "Accounts Payable and Accrued Liability", type: "file" },
+              { id: "gca-ws-proc-tax",      name: "Income Taxes", type: "file" },
+              { id: "gca-ws-proc-notedebt", name: "Note Payable and Bank Debt", type: "file" },
+              { id: "gca-ws-proc-lp",       name: "Loans & Advances Payable", type: "file" },
+              { id: "gca-ws-proc-ltd",      name: "Long term debt", type: "file" },
+              { id: "gca-ws-proc-equity",   name: "Equity", type: "file" },
+              { id: "gca-ws-proc-rev",      name: "Revenue", type: "file" },
+              { id: "gca-ws-proc-cos",      name: "Cost of Sales", type: "file" },
+              { id: "gca-ws-proc-payroll",  name: "Payroll", type: "file" },
+              { id: "gca-ws-proc-exp",      name: "Other Expenses", type: "file" },
+            ]
+          },
         ]
       },
       {
@@ -339,6 +363,30 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
           { id: "global-us-4-6", name: "Matters Communicated to Those Charged with Governance (AU-C 260)", type: "file" },
           { id: "global-us-4-7", name: "Matters for Future Consideration", type: "file" },
           { id: "global-us-4-8", name: "Documenting Consultation", type: "file" },
+          {
+            id: "gus-ws-proc", name: "Procedures", type: "folder", isExpanded: false, children: [
+              { id: "gus-ws-proc-cash",     name: "Cash", type: "file" },
+              { id: "gus-ws-proc-ar",       name: "Accounts Receivable", type: "file" },
+              { id: "gus-ws-proc-inv",      name: "Inventory", type: "file" },
+              { id: "gus-ws-proc-invest",   name: "Investments", type: "file" },
+              { id: "gus-ws-proc-lr",       name: "Loans & Advances Receivable", type: "file" },
+              { id: "gus-ws-proc-rp",       name: "Related party", type: "file" },
+              { id: "gus-ws-proc-ppe",      name: "Property, Plant and Equipment", type: "file" },
+              { id: "gus-ws-proc-intang",   name: "Intangibles and Goodwill", type: "file" },
+              { id: "gus-ws-proc-ltinv",    name: "Other Investments", type: "file" },
+              { id: "gus-ws-proc-bankdebt", name: "Bank indebtedness", type: "file" },
+              { id: "gus-ws-proc-ap",       name: "Accounts Payable and Accrued Liability", type: "file" },
+              { id: "gus-ws-proc-tax",      name: "Income Taxes", type: "file" },
+              { id: "gus-ws-proc-notedebt", name: "Note Payable and Bank Debt", type: "file" },
+              { id: "gus-ws-proc-lp",       name: "Loans & Advances Payable", type: "file" },
+              { id: "gus-ws-proc-ltd",      name: "Long term debt", type: "file" },
+              { id: "gus-ws-proc-equity",   name: "Equity", type: "file" },
+              { id: "gus-ws-proc-rev",      name: "Revenue", type: "file" },
+              { id: "gus-ws-proc-cos",      name: "Cost of Sales", type: "file" },
+              { id: "gus-ws-proc-payroll",  name: "Payroll", type: "file" },
+              { id: "gus-ws-proc-exp",      name: "Other Expenses", type: "file" },
+            ]
+          },
         ]
       },
     ]
@@ -1078,7 +1126,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       "global-us-4-1","global-us-4-2","global-us-4-3","global-us-4-4","global-us-4-5","global-us-4-6","global-us-4-7","global-us-4-8",
       "global-2-17","global-2-18",
     ]);
-    const isWorksheetItem = template.type === "file" && (WORKSHEET_IDS.has(template.id) || template.id.startsWith("gca-ws-"));
+    const isWorksheetItem = template.type === "file" && (WORKSHEET_IDS.has(template.id) || template.id.startsWith("gca-ws-") || template.id.startsWith("gus-ws-"));
     const isReportItem = template.type === "file" && template.id.startsWith("grpt-");
     const isLetterItem = template.type === "file" && template.id.startsWith("glt-");
     
