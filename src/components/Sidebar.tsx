@@ -1918,24 +1918,24 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-us-pr-ca", label: "Current assets", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-a", code: "A", label: "Cash and cash equivalents", icon: "book" },
-                              { id: "aud-us-wp-b", code: "B", label: "Accounts receivable", icon: "book" },
-                              { id: "aud-us-wp-c", code: "C", label: "Inventories", icon: "book" },
-                              { id: "aud-us-wp-d", code: "D", label: "Short-term investments", icon: "book" },
-                              { id: "aud-us-wp-e", code: "E", label: "Loans and notes receivable", icon: "book" },
-                              { id: "aud-us-wp-i", code: "I", label: "Other current assets", icon: "book" },
+                              { id: "aud-us-wp-a", code: "A", label: "Cash and cash equivalents", icon: "book", route: "procedure/aud-us-wp-a" },
+                              { id: "aud-us-wp-b", code: "B", label: "Accounts receivable", icon: "book", route: "procedure/aud-us-wp-b" },
+                              { id: "aud-us-wp-c", code: "C", label: "Inventories", icon: "book", route: "procedure/aud-us-wp-c" },
+                              { id: "aud-us-wp-d", code: "D", label: "Short-term investments", icon: "book", route: "procedure/aud-us-wp-d" },
+                              { id: "aud-us-wp-e", code: "E", label: "Loans and notes receivable", icon: "book", route: "procedure/aud-us-wp-e" },
+                              { id: "aud-us-wp-i", code: "I", label: "Other current assets", icon: "book", route: "procedure/aud-us-wp-i" },
                             ]
                           },
                           {
                             id: "aud-us-pr-ppe", label: "Property, plant and equipment", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-h", code: "H", label: "Property, plant and equipment", icon: "book" },
+                              { id: "aud-us-wp-h", code: "H", label: "Property, plant and equipment", icon: "book", route: "procedure/aud-us-wp-h" },
                             ]
                           },
                           {
                             id: "aud-us-pr-lta", label: "Long-term assets", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-k", code: "K", label: "Long-term investments", icon: "book" },
+                              { id: "aud-us-wp-k", code: "K", label: "Long-term investments", icon: "book", route: "procedure/aud-us-wp-k" },
                             ]
                           },
                         ]
@@ -1946,16 +1946,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-us-pr-cl", label: "Current liabilities", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-bb", code: "BB", label: "Accounts payable", icon: "book" },
-                              { id: "aud-us-wp-cc", code: "CC", label: "Taxes payable", icon: "book" },
-                              { id: "aud-us-wp-dd", code: "DD", label: "Short-term debt", icon: "book" },
+                              { id: "aud-us-wp-bb", code: "BB", label: "Accounts payable", icon: "book", route: "procedure/aud-us-wp-bb" },
+                              { id: "aud-us-wp-cc", code: "CC", label: "Taxes payable", icon: "book", route: "procedure/aud-us-wp-cc" },
+                              { id: "aud-us-wp-dd", code: "DD", label: "Short-term debt", icon: "book", route: "procedure/aud-us-wp-dd" },
                             ]
                           },
                           {
                             id: "aud-us-pr-ltl", label: "Long-term liabilities", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
-                              { id: "aud-us-wp-kk", code: "KK", label: "Long-term debt", icon: "book" },
+                              { id: "aud-us-wp-jj", code: "JJ", label: "Other long-term liabilities", icon: "book", route: "procedure/aud-us-wp-jj" },
+                              { id: "aud-us-wp-kk", code: "KK", label: "Long-term debt", icon: "book", route: "procedure/aud-us-wp-kk" },
                             ]
                           },
                         ]
@@ -1966,7 +1966,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-us-pr-sc", label: "Share capital", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-tt", code: "TT", label: "Equity", icon: "book" },
+                              { id: "aud-us-wp-tt", code: "TT", label: "Equity", icon: "book", route: "procedure/aud-us-wp-tt" },
                             ]
                           },
                         ]
@@ -1977,7 +1977,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-us-pr-rev-sub", label: "Revenue", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-20", code: "20", label: "Revenue", icon: "book" },
+                              { id: "aud-us-wp-20", code: "20", label: "Revenue", icon: "book", route: "procedure/aud-us-wp-20" },
                             ]
                           },
                         ]
@@ -1988,7 +1988,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-us-pr-cos-sub", label: "Cost of sales", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-30", code: "30", label: "Cost of sales", icon: "book" },
+                              { id: "aud-us-wp-30", code: "30", label: "Cost of sales", icon: "book", route: "procedure/aud-us-wp-30" },
                             ]
                           },
                         ]
@@ -1999,13 +1999,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-us-pr-opex", label: "Operating expenses", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-40", code: "40", label: "Expenses", icon: "book" },
+                              { id: "aud-us-wp-40", code: "40", label: "Expenses", icon: "book", route: "procedure/aud-us-wp-40" },
                             ]
                           },
                           {
                             id: "aud-us-pr-oie", label: "Other Income(Expenses)", icon: "folder",
                             children: [
-                              { id: "aud-us-wp-80", code: "80", label: "Other expenses (income)", icon: "book" },
+                              { id: "aud-us-wp-80", code: "80", label: "Other expenses (income)", icon: "book", route: "procedure/aud-us-wp-80" },
                             ]
                           },
                         ]
@@ -2157,24 +2157,24 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-pr-ca", label: "Current assets", icon: "folder",
                             children: [
-                              { id: "aud-wp-a", code: "A", label: "Cash and cash equivalents", icon: "book" },
-                              { id: "aud-wp-b", code: "B", label: "Accounts receivable", icon: "book" },
-                              { id: "aud-wp-c", code: "C", label: "Inventories", icon: "book" },
-                              { id: "aud-wp-d", code: "D", label: "Short-term investments", icon: "book" },
-                              { id: "aud-wp-e", code: "E", label: "Loans and notes receivable", icon: "book" },
-                              { id: "aud-wp-i", code: "I", label: "Other current assets", icon: "book" },
+                              { id: "aud-wp-a", code: "A", label: "Cash and cash equivalents", icon: "book", route: "procedure/aud-wp-a" },
+                              { id: "aud-wp-b", code: "B", label: "Accounts receivable", icon: "book", route: "procedure/aud-wp-b" },
+                              { id: "aud-wp-c", code: "C", label: "Inventories", icon: "book", route: "procedure/aud-wp-c" },
+                              { id: "aud-wp-d", code: "D", label: "Short-term investments", icon: "book", route: "procedure/aud-wp-d" },
+                              { id: "aud-wp-e", code: "E", label: "Loans and notes receivable", icon: "book", route: "procedure/aud-wp-e" },
+                              { id: "aud-wp-i", code: "I", label: "Other current assets", icon: "book", route: "procedure/aud-wp-i" },
                             ]
                           },
                           {
                             id: "aud-pr-ppe", label: "Property, plant and equipment", icon: "folder",
                             children: [
-                              { id: "aud-wp-h", code: "H", label: "Property, plant and equipment", icon: "book" },
+                              { id: "aud-wp-h", code: "H", label: "Property, plant and equipment", icon: "book", route: "procedure/aud-wp-h" },
                             ]
                           },
                           {
                             id: "aud-pr-lta", label: "Long-term assets", icon: "folder",
                             children: [
-                              { id: "aud-wp-k", code: "K", label: "Long-term investments", icon: "book" },
+                              { id: "aud-wp-k", code: "K", label: "Long-term investments", icon: "book", route: "procedure/aud-wp-k" },
                             ]
                           },
                         ]
@@ -2185,16 +2185,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-pr-cl", label: "Current liabilities", icon: "folder",
                             children: [
-                              { id: "aud-wp-bb", code: "BB", label: "Accounts payable", icon: "book" },
-                              { id: "aud-wp-cc", code: "CC", label: "Taxes payable", icon: "book" },
-                              { id: "aud-wp-dd", code: "DD", label: "Short-term debt", icon: "book" },
+                              { id: "aud-wp-bb", code: "BB", label: "Accounts payable", icon: "book", route: "procedure/aud-wp-bb" },
+                              { id: "aud-wp-cc", code: "CC", label: "Taxes payable", icon: "book", route: "procedure/aud-wp-cc" },
+                              { id: "aud-wp-dd", code: "DD", label: "Short-term debt", icon: "book", route: "procedure/aud-wp-dd" },
                             ]
                           },
                           {
                             id: "aud-pr-ltl", label: "Long-term liabilities", icon: "folder",
                             children: [
-                              { id: "aud-wp-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
-                              { id: "aud-wp-kk", code: "KK", label: "Long-term debt", icon: "book" },
+                              { id: "aud-wp-jj", code: "JJ", label: "Other long-term liabilities", icon: "book", route: "procedure/aud-wp-jj" },
+                              { id: "aud-wp-kk", code: "KK", label: "Long-term debt", icon: "book", route: "procedure/aud-wp-kk" },
                             ]
                           },
                         ]
@@ -2205,7 +2205,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-pr-sc", label: "Share capital", icon: "folder",
                             children: [
-                              { id: "aud-wp-tt", code: "TT", label: "Equity", icon: "book" },
+                              { id: "aud-wp-tt", code: "TT", label: "Equity", icon: "book", route: "procedure/aud-wp-tt" },
                             ]
                           },
                         ]
@@ -2216,7 +2216,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-pr-rev-sub", label: "Revenue", icon: "folder",
                             children: [
-                              { id: "aud-wp-20", code: "20", label: "Revenue", icon: "book" },
+                              { id: "aud-wp-20", code: "20", label: "Revenue", icon: "book", route: "procedure/aud-wp-20" },
                             ]
                           },
                         ]
@@ -2227,7 +2227,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-pr-cos-sub", label: "Cost of sales", icon: "folder",
                             children: [
-                              { id: "aud-wp-30", code: "30", label: "Cost of sales", icon: "book" },
+                              { id: "aud-wp-30", code: "30", label: "Cost of sales", icon: "book", route: "procedure/aud-wp-30" },
                             ]
                           },
                         ]
@@ -2238,13 +2238,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "aud-pr-opex", label: "Operating expenses", icon: "folder",
                             children: [
-                              { id: "aud-wp-40", code: "40", label: "Expenses", icon: "book" },
+                              { id: "aud-wp-40", code: "40", label: "Expenses", icon: "book", route: "procedure/aud-wp-40" },
                             ]
                           },
                           {
                             id: "aud-pr-oie", label: "Other Income(Expenses)", icon: "folder",
                             children: [
-                              { id: "aud-wp-80", code: "80", label: "Other expenses (income)", icon: "book" },
+                              { id: "aud-wp-80", code: "80", label: "Other expenses (income)", icon: "book", route: "procedure/aud-wp-80" },
                             ]
                           },
                         ]
@@ -2322,16 +2322,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                             id: "pr-ca", label: "Current assets", icon: "folder",
                             children: [
                               { id: "pr-ca-a", code: "A", label: "Cash and cash equivalents", icon: "book", route: "procedure/pr-ca-a" },
-                              { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "book" },
-                              { id: "pr-ca-c", code: "C", label: "Inventories", icon: "book" },
-                              { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "book" },
-                              { id: "pr-ca-i", code: "I", label: "Other current assets", icon: "book" },
+                              { id: "pr-ca-b", code: "B", label: "Accounts receivable", icon: "book", route: "procedure/pr-ca-b" },
+                              { id: "pr-ca-c", code: "C", label: "Inventories", icon: "book", route: "procedure/pr-ca-c" },
+                              { id: "pr-ca-d", code: "D", label: "Short-term investments", icon: "book", route: "procedure/pr-ca-d" },
+                              { id: "pr-ca-i", code: "I", label: "Other current assets", icon: "book", route: "procedure/pr-ca-i" },
                             ]
                           },
                           {
                             id: "pr-ppe", label: "Property, plant and equipment", icon: "folder",
                             children: [
-                              { id: "pr-ppe-h", code: "H", label: "Property, plant and equipment", icon: "book" },
+                              { id: "pr-ppe-h", code: "H", label: "Property, plant and equipment", icon: "book", route: "procedure/pr-ppe-h" },
                             ]
                           },
                         ]
@@ -2342,16 +2342,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-cl", label: "Current liabilities", icon: "folder",
                             children: [
-                              { id: "pr-cl-aa", code: "AA", label: "Bank overdraft", icon: "book" },
-                              { id: "pr-cl-bb", code: "BB", label: "Accounts payable", icon: "book" },
-                              { id: "pr-cl-dd", code: "DD", label: "Short-term debt", icon: "book" },
-                              { id: "pr-cl-ee", code: "EE", label: "Deferred income", icon: "book" },
+                              { id: "pr-cl-aa", code: "AA", label: "Bank overdraft", icon: "book", route: "procedure/pr-cl-aa" },
+                              { id: "pr-cl-bb", code: "BB", label: "Accounts payable", icon: "book", route: "procedure/pr-cl-bb" },
+                              { id: "pr-cl-dd", code: "DD", label: "Short-term debt", icon: "book", route: "procedure/pr-cl-dd" },
+                              { id: "pr-cl-ee", code: "EE", label: "Deferred income", icon: "book", route: "procedure/pr-cl-ee" },
                             ]
                           },
                           {
                             id: "pr-ltl", label: "Long-term liabilities", icon: "folder",
                             children: [
-                              { id: "pr-ltl-jj", code: "JJ", label: "Other long-term liabilities", icon: "book" },
+                              { id: "pr-ltl-jj", code: "JJ", label: "Other long-term liabilities", icon: "book", route: "procedure/pr-ltl-jj" },
                             ]
                           },
                         ]
@@ -2362,7 +2362,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-sc", label: "Share capital", icon: "folder",
                             children: [
-                              { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "book" },
+                              { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "book", route: "procedure/pr-sc-tt" },
                             ]
                           },
                         ]
@@ -2373,7 +2373,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-rev-sub", label: "Revenue", icon: "folder",
                             children: [
-                              { id: "pr-rev-20", code: "20", label: "Revenue", icon: "book" },
+                              { id: "pr-rev-20", code: "20", label: "Revenue", icon: "book", route: "procedure/pr-rev-20" },
                             ]
                           },
                         ]
@@ -2384,7 +2384,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           {
                             id: "pr-opex", label: "Operating expenses", icon: "folder",
                             children: [
-                              { id: "pr-opex-40", code: "40", label: "Operating expenses", icon: "book" },
+                              { id: "pr-opex-40", code: "40", label: "Operating expenses", icon: "book", route: "procedure/pr-opex-40" },
                             ]
                           },
                         ]

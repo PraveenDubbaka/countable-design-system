@@ -33,6 +33,7 @@ import {
   Send,
 } from "lucide-react";
 import intuitLogo from "@/assets/intuit-quickbooks-logo.svg";
+import { getAccountsForProcedure } from "@/lib/tbGroups";
 
 // Engagement data for breadcrumb (shared)
 const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
@@ -54,34 +55,6 @@ const getEngagementsForClient = (clientName: string) => {
   return Object.values(engagementsData).filter(e => e.client === clientName);
 };
 
-// Procedure metadata
-const procedureData: Record<string, {
-  breadcrumb: string[];
-  title: string;
-  code: string;
-  accounts: {
-    id: string;
-    accNo: string;
-    description: string;
-    original: number;
-    adj: number;
-    final: number;
-    py1: number;
-    changePct: string;
-    ref: string;
-    ticks: string;
-  }[];
-}> = {
-  "pr-ca-a": {
-    breadcrumb: ["Assets", "A"],
-    title: "Cash and cash equivalents",
-    code: "A",
-    accounts: [
-      { id: "1", accNo: "", description: "Savings", original: 800.00, adj: 0.00, final: 800.00, py1: 800.00, changePct: "0.00%", ref: "-", ticks: "-" },
-      { id: "2", accNo: "", description: "Undeposited Funds", original: 2062.52, adj: 0.00, final: 2062.52, py1: 2062.52, changePct: "0.00%", ref: "-", ticks: "-" },
-    ],
-  },
-};
 
 // Custom TB Check icon
 const TBCheckIcon = ({ className }: { className?: string }) => (
@@ -118,8 +91,8 @@ export default function ProcedureDetail() {
   const uniqueClients = getUniqueClients();
   const clientEngagements = getEngagementsForClient(clientName);
 
-  const procedure = procedureId ? procedureData[procedureId] : null;
-  const accounts = procedure?.accounts || [];
+  const procedureInfo = procedureId ? getAccountsForProcedure(procedureId) : null;
+  const accounts = procedureInfo?.rows || [];
 
   // Compute totals
   const totals = accounts.reduce(
@@ -132,8 +105,8 @@ export default function ProcedureDetail() {
     { original: 0, adj: 0, final: 0, py1: 0 }
   );
 
-  const breadcrumbParts = procedure?.breadcrumb || [];
-  const title = procedure?.title || "Procedure";
+  const breadcrumbParts = procedureInfo?.breadcrumb || [];
+  const title = procedureInfo?.title || "Procedure";
 
   const procedureBreadcrumb = (
     <div className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
@@ -292,9 +265,9 @@ export default function ProcedureDetail() {
                     <div className="py-2.5 px-2 text-right font-bold text-foreground">{formatNumber(row.final)}</div>
                     <div className="py-2.5 px-2 text-right text-foreground">{formatNumber(row.py1)}</div>
                     <div className="py-2.5 px-2 text-right text-foreground">{row.changePct}</div>
-                    <div className="py-2.5 px-2 text-center text-muted-foreground">{row.ref}</div>
+                    <div className="py-2.5 px-2 text-center text-muted-foreground">{row.ref ?? "-"}</div>
                     <div className="py-2.5 px-2 text-center flex items-center justify-center gap-1">
-                      <span className="text-muted-foreground">{row.ticks}</span>
+                      <span className="text-muted-foreground">-</span>
                       <ChevronDown className="h-3 w-3 text-muted-foreground" />
                     </div>
                     <div className="py-2.5 px-2 flex items-center justify-center gap-1">
