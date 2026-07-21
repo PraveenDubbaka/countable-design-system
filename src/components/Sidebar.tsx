@@ -1078,7 +1078,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       "global-us-4-1","global-us-4-2","global-us-4-3","global-us-4-4","global-us-4-5","global-us-4-6","global-us-4-7","global-us-4-8",
       "global-2-17","global-2-18",
     ]);
-    const isWorksheetItem = template.type === "file" && WORKSHEET_IDS.has(template.id);
+    const isWorksheetItem = template.type === "file" && (WORKSHEET_IDS.has(template.id) || template.id.startsWith("gca-ws-"));
     const isReportItem = template.type === "file" && template.id.startsWith("grpt-");
     const isLetterItem = template.type === "file" && template.id.startsWith("glt-");
     
