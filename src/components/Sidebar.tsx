@@ -1419,7 +1419,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       </div>;
   };
   const [isNavExpanded, setIsNavExpanded] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(["co"]));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('sidebar-expanded-sections');
+      if (stored) return new Set<string>(JSON.parse(stored));
+    } catch {}
+    return new Set(["co"]);
+  });
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(false);
   const [showSignoffs, setShowSignoffs] = useState(false);
   const [signoffsMode, setSignoffsMode] = useState(false);
@@ -1436,6 +1442,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   const [addNoteModal, setAddNoteModal] = useState<{ nodeId: string; nodeCode?: string; nodeLabel: string } | null>(null);
   const [addNoteName, setAddNoteName] = useState('');
   const [hiddenChildren, setHiddenChildren] = useState<Record<string, string[]>>({});
+
+  // Persist expanded sections across route changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('sidebar-expanded-sections', JSON.stringify([...expandedSections]));
+    } catch {}
+  }, [expandedSections]);
 
   // Load hidden-children state per engagement
   useEffect(() => {
