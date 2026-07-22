@@ -78,7 +78,7 @@ const toolsMenuActions = [
 const formatNumber = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const formatChangePct = (final: number, py1: number): string => {
-  if (Math.abs(py1) <= 0.01) return "-";
+  if (Math.abs(py1) <= 0.01) return "0.00%";
   const pct = ((final - py1) / Math.abs(py1)) * 100;
   const abs = Math.abs(pct).toFixed(2);
   return pct < 0 ? `(${abs})%` : `${abs}%`;
