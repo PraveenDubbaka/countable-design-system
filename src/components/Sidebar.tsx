@@ -3018,6 +3018,16 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 const activeTree = isUSAuditEngagement ? usAuditEngagementTree : isAuditEngagement ? auditEngagementTree : engagementTree;
                 allNodeIdsRef.current = collectIds(activeTree);
 
+                const hasEngSidebarMatch = !engSidebarQ || activeTree.some(engSidebarNodeMatches);
+                if (!hasEngSidebarMatch) {
+                  return (
+                    <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+                      <Search className="h-6 w-6 mb-2 text-muted-foreground/40" />
+                      <p className="text-xs font-medium text-foreground">No results for &ldquo;{engSidebarSearchQuery}&rdquo;</p>
+                      <p className="text-[10px] mt-0.5 text-muted-foreground">Try a different term</p>
+                    </div>
+                  );
+                }
                 return activeTree.map(node => renderNode(node, 0));
               })()}
             </div>
@@ -3148,7 +3158,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       </div>
                     </div>
                     <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-                      {templateTree.map((item) => renderEngTemplateTreeNode(item, 0))}
+                      {(() => {
+                        const etq = engTemplateSearchQuery.trim().toLowerCase();
+                        const engTreeHasMatch = !etq || templateTree.some(function check(it): boolean {
+                          return it.label.toLowerCase().includes(etq) || (it.children?.some(check) ?? false);
+                        });
+                        if (!engTreeHasMatch) return (
+                          <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+                            <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
+                            <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{engTemplateSearchQuery}&rdquo;</p>
+                            <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+                          </div>
+                        );
+                        return templateTree.map((item) => renderEngTemplateTreeNode(item, 0));
+                      })()}
                     </div>
                   </>
                 ) : (
@@ -3264,11 +3287,33 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 </div>
 
                 <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
-                  {activeTab === "firm" ? (
-                    templates.map(template => renderTemplate(template))
-                  ) : (
-                    globalTemplates.map(template => renderGlobalTemplate(template))
-                  )}
+                  {(() => {
+                    const sq = searchQuery.trim().toLowerCase();
+                    if (!sq) {
+                      return activeTab === "firm"
+                        ? templates.map(template => renderTemplate(template))
+                        : globalTemplates.map(template => renderGlobalTemplate(template));
+                    }
+                    const globalMatch = (t: GlobalTemplate): boolean =>
+                      t.name.toLowerCase().includes(sq) || (t.children?.some(globalMatch) ?? false);
+                    const myMatch = (t: Template): boolean =>
+                      t.name.toLowerCase().includes(sq) ||
+                      getChecklistsForFolder(t.id).some(c => c.name.toLowerCase().includes(sq)) ||
+                      (t.children?.some(myMatch) ?? false);
+                    const hasMatch = activeTab === "firm"
+                      ? templates.some(myMatch)
+                      : globalTemplates.some(globalMatch);
+                    if (!hasMatch) return (
+                      <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+                        <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
+                        <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
+                        <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+                      </div>
+                    );
+                    return activeTab === "firm"
+                      ? templates.map(template => renderTemplate(template))
+                      : globalTemplates.map(template => renderGlobalTemplate(template));
+                  })()}
                 </div>
               </>
             ) : selectedDropdown === "worksheets" ? (
@@ -3309,9 +3354,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No worksheets yet</p>
                       <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
                     </div>
-                  ) : (
-                    globalWorksheets.map(t => renderGlobalTemplate(t, 0, toggleGlobalWorksheet))
-                  )}
+                  ) : (() => {
+                    const sq = searchQuery.trim().toLowerCase();
+                    const wsMatch = (t: GlobalTemplate): boolean =>
+                      t.name.toLowerCase().includes(sq) || (t.children?.some(wsMatch) ?? false);
+                    if (sq && !globalWorksheets.some(wsMatch)) return (
+                      <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+                        <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
+                        <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
+                        <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+                      </div>
+                    );
+                    return globalWorksheets.map(t => renderGlobalTemplate(t, 0, toggleGlobalWorksheet));
+                  })()}
                 </div>
               </>
             ) : selectedDropdown === "reports" ? (
