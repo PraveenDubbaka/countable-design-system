@@ -336,6 +336,15 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
+                  {filteredDashboardEngagements.length === 0 && searchQuery.trim() && (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-16 text-center">
+                        <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
+                        <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
+                        <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
+                      </td>
+                    </tr>
+                  )}
                   {filteredDashboardEngagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
                       <td className="px-6 py-2 whitespace-nowrap">
                         <span className="text-sm text-link font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>

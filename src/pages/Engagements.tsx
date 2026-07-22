@@ -229,6 +229,15 @@ export default function Engagements() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
+                  {filteredEngagements.length === 0 && searchQuery.trim() && (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-16 text-center">
+                        <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
+                        <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
+                        <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
+                      </td>
+                    </tr>
+                  )}
                   {filteredEngagements.map((engagement) => (
                     <tr 
                       key={engagement.id} 
