@@ -40,6 +40,23 @@ import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { FinancialStatementsPanelContent } from "@/components/FinancialStatementsPanelContent";
 import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
+function SidebarHighlight({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 rounded-sm px-0.5 not-italic">{part}</mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 interface Template {
   id: string;
   name: string;
@@ -646,6 +663,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   );
   const engTemplateSelectedId = searchParams.get("template") || "comp4200";
   const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
+  const [engSidebarSearchQuery, setEngSidebarSearchQuery] = useState("");
 
   const toggleEngTemplateFolder = useCallback((id: string) => {
     setEngTemplateExpandedFolders((prev) => {
@@ -1116,11 +1134,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   // Render global template item with checkbox.
   // onToggle overrides the default toggleGlobalFolder — pass toggleGlobalWorksheet for the worksheets panel.
   const renderGlobalTemplate = (template: GlobalTemplate, depth = 0, onToggle?: (id: string) => void) => {
+    const q = searchQuery.trim().toLowerCase();
+    const globalTemplateMatches = (t: GlobalTemplate): boolean => {
+      if (t.name.toLowerCase().includes(q)) return true;
+      return t.children?.some(globalTemplateMatches) ?? false;
+    };
+    if (q && !globalTemplateMatches(template)) return null;
+
     const hasChildren = template.children && template.children.length > 0;
     const isSelected = selectedGlobalTemplate === template.id;
     const isTemplateChecked = selectedTemplates.has(template.id);
     const isFolderChecked = template.type === "folder" && isFolderSelected(template);
     const folderDisabled = template.type === "folder" && isFolderDisabled(template.id);
+    const isExpanded = q ? true : template.isExpanded;
     const WORKSHEET_IDS = new Set([
       "global-4-7","global-4-8","global-4-9","global-4-10","global-4-11","global-4-12","global-4-13","global-4-14",
       "global-us-4-1","global-us-4-2","global-us-4-3","global-us-4-4","global-us-4-5","global-us-4-6","global-us-4-7","global-us-4-8",
@@ -1162,13 +1188,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 onClick={() => (onToggle ?? toggleGlobalFolder)(template.id)}
               >
                 {hasChildren ? (
-                  template.isExpanded
+                  isExpanded
                     ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
                     : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 ) : (
                   <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
                 )}
-                <span className="truncate flex-1 font-semibold">{template.name}</span>
+                <span className="truncate flex-1 font-semibold"><SidebarHighlight text={template.name} query={searchQuery} /></span>
               </div>
             </>
           ) : (
@@ -1196,12 +1222,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                 "truncate flex-1",
                 isSelected ? "font-semibold" : ""
               )}>
-                {template.name}
+                <SidebarHighlight text={template.name} query={searchQuery} />
               </span>
             </div>
           )}
         </div>
-        {template.type === "folder" && template.isExpanded && template.children && (
+        {template.type === "folder" && isExpanded && template.children && (
           <div>
             {template.children.map(child => renderGlobalTemplate(child, depth + 1, onToggle))}
           </div>
@@ -1212,7 +1238,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
   // ── Engagement Template Tree Node (for sidebar) ──
   const renderEngTemplateTreeNode = (item: TreeItem, depth: number): React.ReactNode => {
-    const isExpanded = engTemplateExpandedFolders.has(item.id);
+    const q = engTemplateSearchQuery.trim().toLowerCase();
+    const engItemMatches = (it: TreeItem): boolean => {
+      if (it.label.toLowerCase().includes(q)) return true;
+      return it.children?.some(engItemMatches) ?? false;
+    };
+    if (q && !engItemMatches(item)) return null;
+
+    const isExpanded = q ? true : engTemplateExpandedFolders.has(item.id);
 
     if (item.type === "folder") {
       const folderChecked = isEngFolderChecked(item);
@@ -1241,7 +1274,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               ) : (
                 <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
               )}
-              <span className="flex-1 text-left truncate">{item.label}</span>
+              <span className="flex-1 text-left truncate"><SidebarHighlight text={item.label} query={engTemplateSearchQuery} /></span>
             </div>
           </div>
           {isExpanded && item.children?.map((child) => renderEngTemplateTreeNode(child, depth + 1))}
@@ -1276,7 +1309,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <span className="flex-1 text-left truncate">{item.label}</span>
+          <span className="flex-1 text-left truncate"><SidebarHighlight text={item.label} query={engTemplateSearchQuery} /></span>
         </div>
       </div>
     );
@@ -1336,6 +1369,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     return savedChecklists.filter(c => c.folderId === folderId);
   };
   const renderTemplate = (template: Template, depth = 0) => {
+    const q = searchQuery.trim().toLowerCase();
+    const myTemplateMatches = (t: Template): boolean => {
+      if (t.name.toLowerCase().includes(q)) return true;
+      if (getChecklistsForFolder(t.id).some(c => c.name.toLowerCase().includes(q))) return true;
+      return t.children?.some(myTemplateMatches) ?? false;
+    };
+    if (q && !myTemplateMatches(template)) return null;
+
     const folderChecklists = template.type === "folder" ? getChecklistsForFolder(template.id) : [];
     const hasChildren = template.children && template.children.length > 0 || folderChecklists.length > 0;
     return <div key={template.id}>
@@ -1355,12 +1396,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
               <span className="w-4 flex-shrink-0" />
               <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
             </>}
-          <span className="truncate flex-1 text-foreground font-semibold">{template.name}</span>
+          <span className="truncate flex-1 text-foreground font-semibold"><SidebarHighlight text={template.name} query={searchQuery} /></span>
           {folderChecklists.length > 0 && <span className="text-xs text-muted-foreground">{folderChecklists.length}</span>}
         </div>
-        {template.type === "folder" && template.isExpanded && <>
+        {template.type === "folder" && (q ? true : template.isExpanded) && <>
             {/* Render saved checklists */}
-            {folderChecklists.map(checklist => <div key={checklist.id} className="group flex items-center gap-2 py-1.5 px-2 pl-8 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm" onClick={() => {
+            {folderChecklists.filter(c => !q || c.name.toLowerCase().includes(q)).map(checklist => <div key={checklist.id} className="group flex items-center gap-2 py-1.5 px-2 pl-8 rounded-md cursor-pointer hover:bg-muted transition-colors text-sm" onClick={() => {
           // Navigate to builder with saved checklist ID
           navigate("/builder", {
             state: {
@@ -1371,7 +1412,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         }}>
                 <Checkbox className="h-4 w-4" onClick={e => e.stopPropagation()} />
                 <ChecklistIcon className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate flex-1 text-foreground font-semibold">{checklist.name}</span>
+                <span className="truncate flex-1 text-foreground font-semibold"><SidebarHighlight text={checklist.name} query={searchQuery} /></span>
 
                 {/* Context Menu */}
                 <DropdownMenu>
@@ -1752,6 +1793,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                   <Input
                     placeholder="Search"
                     className="pl-9 h-9 text-sm"
+                    value={engSidebarSearchQuery}
+                    onChange={e => setEngSidebarSearchQuery(e.target.value)}
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                   />
@@ -2618,9 +2661,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                       );
                     });
 
+                const engSidebarQ = engSidebarSearchQuery.trim().toLowerCase();
+                const engSidebarNodeMatches = (n: SectionNode): boolean => {
+                  if (!engSidebarQ) return true;
+                  if (n.label.toLowerCase().includes(engSidebarQ)) return true;
+                  if (n.code?.toLowerCase().includes(engSidebarQ)) return true;
+                  return n.children?.some(engSidebarNodeMatches) ?? false;
+                };
+
                 const renderNode = (node: SectionNode, depth: number = 0, parentLabel?: string): React.ReactNode => {
+                  if (engSidebarQ && !engSidebarNodeMatches(node)) return null;
                   const hasChildren = node.children && node.children.length > 0;
-                  const isOpen = expandedSections.has(node.id);
+                  const isOpen = engSidebarQ ? hasChildren : expandedSections.has(node.id);
                   const isLeaf = !hasChildren;
                   const currentSubPath = engId ? location.pathname.replace(`/engagements/${engId}/`, '').replace(`/engagements/${engId}`, '') : '';
                   const defaultRoute = isUSAuditEngagement ? 'checklist/aud-us-new-accept' : isAuditEngagement ? 'checklist/aud-new-accept' : 'checklist/co-ca';
@@ -2712,7 +2764,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
                           </span>
                         )}
                         {node.code && <span className="font-semibold text-primary">{node.code}</span>}
-                        <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}>{node.label}</span>
+                        <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}><SidebarHighlight text={node.label} query={engSidebarSearchQuery} /></span>
                         {!isLeaf && sectionFillStatus[node.code ?? ''] && (
                           <span className="w-2 h-2 rounded-full flex-shrink-0 ml-auto luka-dot-filled" title="Luka filled" />
                         )}
