@@ -77,6 +77,13 @@ const toolsMenuActions = [
 
 const formatNumber = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+const formatChangePct = (final: number, py1: number): string => {
+  if (Math.abs(py1) <= 0.01) return "-";
+  const pct = ((final - py1) / Math.abs(py1)) * 100;
+  const abs = Math.abs(pct).toFixed(2);
+  return pct < 0 ? `(${abs})%` : `${abs}%`;
+};
+
 export default function ProcedureDetail() {
   const { engagementId, procedureId } = useParams<{ engagementId: string; procedureId: string }>();
   const navigate = useNavigate();
@@ -228,9 +235,10 @@ export default function ProcedureDetail() {
               </div>
 
               {/* Accounts Table */}
-              <div className="border border-border rounded-lg overflow-hidden bg-card">
+              <div className="border border-border rounded-lg overflow-hidden bg-card overflow-x-auto">
+                <div className="min-w-[960px]">
                 {/* Table Header */}
-                <div className="grid grid-cols-[40px_100px_1fr_110px_80px_110px_110px_90px_60px_80px_160px] bg-muted border-b border-border text-xs font-semibold text-muted-foreground">
+                <div className="grid grid-cols-[40px_100px_minmax(120px,1fr)_110px_80px_110px_110px_90px_60px_80px_160px] bg-muted border-b border-border text-xs font-semibold text-muted-foreground">
                   <div className="flex items-center justify-center py-2.5">
                     <Checkbox className="h-4 w-4" />
                   </div>
@@ -253,7 +261,7 @@ export default function ProcedureDetail() {
                 {accounts.map((row) => (
                   <div
                     key={row.id}
-                    className="grid grid-cols-[40px_100px_1fr_110px_80px_110px_110px_90px_60px_80px_160px] border-b border-border hover:bg-muted/30 transition-colors text-sm"
+                    className="grid grid-cols-[40px_100px_minmax(120px,1fr)_110px_80px_110px_110px_90px_60px_80px_160px] border-b border-border hover:bg-muted/30 transition-colors text-sm"
                   >
                     <div className="flex items-center justify-center py-2.5">
                       <Checkbox className="h-4 w-4" />
@@ -264,7 +272,7 @@ export default function ProcedureDetail() {
                     <div className="py-2.5 px-2 text-right font-bold text-foreground">{formatNumber(row.adj)}</div>
                     <div className="py-2.5 px-2 text-right font-bold text-foreground">{formatNumber(row.final)}</div>
                     <div className="py-2.5 px-2 text-right text-foreground">{formatNumber(row.py1)}</div>
-                    <div className="py-2.5 px-2 text-right text-foreground">{row.changePct}</div>
+                    <div className="py-2.5 px-2 text-right text-foreground">{formatChangePct(row.final, row.py1)}</div>
                     <div className="py-2.5 px-2 text-center text-muted-foreground">{row.ref ?? "-"}</div>
                     <div className="py-2.5 px-2 text-center flex items-center justify-center gap-1">
                       <span className="text-muted-foreground">-</span>
@@ -291,7 +299,7 @@ export default function ProcedureDetail() {
                 ))}
 
                 {/* Total Row */}
-                <div className="grid grid-cols-[40px_100px_1fr_110px_80px_110px_110px_90px_60px_80px_160px] bg-muted/50 text-sm font-bold">
+                <div className="grid grid-cols-[40px_100px_minmax(120px,1fr)_110px_80px_110px_110px_90px_60px_80px_160px] bg-muted/50 text-sm font-bold">
                   <div className="py-2.5" />
                   <div className="py-2.5" />
                   <div className="py-2.5 px-2 text-foreground">Total</div>
@@ -303,6 +311,7 @@ export default function ProcedureDetail() {
                   <div className="py-2.5 px-2" />
                   <div className="py-2.5 px-2" />
                   <div className="py-2.5 px-2" />
+                </div>
                 </div>
               </div>
 
