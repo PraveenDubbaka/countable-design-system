@@ -12,6 +12,23 @@ import { StyledCard } from "@/components/ui/card";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import sageLogo from "@/assets/sage-logo.svg";
 
+function Highlight({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 rounded-sm px-0.5 not-italic">{part}</mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 // Sample data for stats
 const stats = [{
   label: "Total Engagements",
@@ -251,6 +268,12 @@ export default function Dashboard() {
       statusVariant: e.status === "New" ? ("secondary" as const) : ("default" as const),
     };
   });
+  const filteredDashboardEngagements = dashboardEngagements.filter(e =>
+    !searchQuery.trim() ||
+    e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    e.client.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return <Layout title="Dashboard">
       <div className="flex-1 p-6 overflow-auto bg-background h-full">
 
@@ -313,13 +336,13 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {dashboardEngagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
+                  {filteredDashboardEngagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
                       <td className="px-6 py-2 whitespace-nowrap">
                         <span className="text-sm text-link font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
-                          {engagement.id}
+                          <Highlight text={engagement.id} query={searchQuery} />
                         </span>
                       </td>
-                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]">{engagement.client}</td>
+                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]"><Highlight text={engagement.client} query={searchQuery} /></td>
                       <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
                       <td className="px-6 py-2 whitespace-nowrap">
                         <IntegrationBadge type={engagement.integration} />

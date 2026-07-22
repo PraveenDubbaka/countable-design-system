@@ -1,4 +1,22 @@
 import { useState } from "react";
+import React from "react";
+
+function Highlight({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 rounded-sm px-0.5 not-italic">{part}</mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { toast } from "sonner";
@@ -218,14 +236,14 @@ export default function Engagements() {
                       style={{ maxHeight: '50px' }}
                     >
                       <td className="px-6 py-2 whitespace-nowrap">
-                        <span 
+                        <span
                           onClick={() => navigate(`/engagements/${engagement.id}`)}
                           className="text-sm text-link font-medium cursor-pointer hover:underline"
                         >
-                          {engagement.id}
+                          <Highlight text={engagement.id} query={searchQuery} />
                         </span>
                       </td>
-                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]">{engagement.client}</td>
+                      <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]"><Highlight text={engagement.client} query={searchQuery} /></td>
                       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
                       <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
                       <td className="px-6 py-2 whitespace-nowrap">

@@ -1,4 +1,21 @@
 import React, { useState } from "react";
+
+function Highlight({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 rounded-sm px-0.5 not-italic">{part}</mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound } from "lucide-react";
@@ -320,14 +337,14 @@ export default function Clients() {
                         <td className="px-6 py-2 whitespace-nowrap">
                           <Checkbox checked={selectedClient === client.id} />
                         </td>
-                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.id}</td>
+                        <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={client.id} query={searchQuery} /></td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           <Link
                             to={`/clients/${client.id}`}
                             className="text-sm text-link font-medium hover:underline"
                             onClick={e => e.stopPropagation()}
                           >
-                            {client.entityName}
+                            <Highlight text={client.entityName} query={searchQuery} />
                           </Link>
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
@@ -338,7 +355,7 @@ export default function Clients() {
                           <IntegrationCell type={client.integration} />
                         </td>
                         <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
-                        <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap">{client.email}</td>
+                        <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap"><Highlight text={client.email} query={searchQuery} /></td>
                         <td className="px-6 py-2 whitespace-nowrap">
                           <span className="text-sm text-link cursor-pointer hover:underline">{client.repository}</span>
                         </td>
