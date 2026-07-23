@@ -406,7 +406,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
  <span className="text-sm font-semibold text-foreground">Action Steps</span>
- <Button size="sm" variant="outline" onClick={addAction} className="h-8">
+ <Button size="sm" variant="outline" onClick={addAction} className="h-7 text-xs gap-1">
  <Plus className="h-3.5 w-3.5 mr-1.5" /> Add row
  </Button>
  </div>

@@ -481,10 +481,10 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  {!locked && (
  <div className="px-4 py-2.5 border-t border-border">
  <Button
- variant="ghost"
  size="sm"
+ variant="outline"
  onClick={addPartCRow}
- className="text-muted-foreground hover:text-foreground gap-1.5"
+ className="h-7 text-xs gap-1"
  >
  <Plus className="h-3.5 w-3.5" />
  Add row
