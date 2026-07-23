@@ -690,6 +690,14 @@ export default function DesignSystem() {
                     </SelectContent>
                   </Select>
                   <Textarea placeholder="Write a description..." />
+                  <p className="text-label-xs text-muted-foreground">Disabled states</p>
+                  <Select disabled>
+                    <SelectTrigger disabled><SelectValue placeholder="Choose option..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="opt1">Option One</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Textarea placeholder="Write a description..." disabled />
                 </div>
               </SampleCard>
 
@@ -719,6 +727,7 @@ export default function DesignSystem() {
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="details">Details</TabsTrigger>
                     <TabsTrigger value="activity">Activity</TabsTrigger>
+                    <TabsTrigger value="disabled" disabled>Disabled</TabsTrigger>
                   </TabsList>
                   <TabsContent value="overview" className="text-body-sm text-muted-foreground">
                     Overview tab content — high-level summary.
@@ -744,6 +753,25 @@ export default function DesignSystem() {
                   <div className="flex items-center gap-3">
                     <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
                     <Label className="text-sm">Switch {switchOn ? "On" : "Off"}</Label>
+                  </div>
+                  <p className="text-label-xs text-muted-foreground">Disabled states</p>
+                  <div className="flex flex-wrap gap-x-6 gap-y-2">
+                    <div className="flex items-center gap-3">
+                      <Checkbox disabled />
+                      <Label className="text-sm text-muted-foreground">Unchecked</Label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox checked disabled />
+                      <Label className="text-sm text-muted-foreground">Checked</Label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Switch disabled />
+                      <Label className="text-sm text-muted-foreground">Off</Label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Switch checked disabled />
+                      <Label className="text-sm text-muted-foreground">On</Label>
+                    </div>
                   </div>
                 </div>
               </SampleCard>
