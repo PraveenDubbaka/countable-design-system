@@ -14825,7 +14825,7 @@ export const generate501APAPChecklist = (): Checklist => {
 
  return {
  id: 'global-template-501a-pap',
- title: '501-A — Preliminary Analytical Procedures',
+ title: '501-B — Preliminary Analytical Procedures',
  description: 'Preliminary analytical procedures — Part A. Identify relationships, risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use in conjunction with — Parts B & C.',
  objective: 'To identify relationships (for possible use in substantive analytical procedures), risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use this form to perform the analytical procedures noted PSC = Procedure successfully completed.',
  sections,
