@@ -1403,7 +1403,7 @@ function QuestionInlineColumns({
  <AttributionBadge attr={expAttr.attr} />
  </div>
  )}
- {isEngagementMode && question.answeredBy && (question.answer || question.explanation) && (
+ {isEngagementMode && question.answeredBy && question.answer && (
  <div className="mt-1 mb-1 px-1.5">
  <Tooltip>
  <TooltipTrigger asChild>
