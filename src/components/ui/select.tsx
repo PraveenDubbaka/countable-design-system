@@ -39,7 +39,7 @@ const SelectTrigger = React.forwardRef<
       "hover:border-[hsl(210_25%_75%)]",
       "dark:hover:border-[hsl(220_15%_40%)]",
       // Disabled state
-      "disabled:cursor-not-allowed disabled:bg-muted disabled:border-muted disabled:text-muted-foreground disabled:opacity-70",
+      "disabled:cursor-not-allowed disabled:bg-muted/100 disabled:border-muted disabled:text-muted-foreground disabled:opacity-70",
       // Error state
       error && "border-destructive hover:border-destructive",
       className,
