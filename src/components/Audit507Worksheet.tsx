@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Info, Plus, Sparkles } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -15,7 +16,7 @@ import { toast } from "sonner";
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface ProcRow { doneBy: string; comments: string; wpRef: RefDoc[] }
-interface ExtractRow { mt: string; date: string; extract: string; riskForm520: boolean; wpRef: RefDoc[] }
+interface ExtractRow { mt: string; mtOther?: string; date: string; extract: string; riskForm520: boolean; wpRef: RefDoc[] }
 interface Data507 {
  partA: Record<string, ProcRow>;
  dateAuditedFS: string;
@@ -134,6 +135,15 @@ const PART_B: PartBItem[] = [
 const PART_C_INITIAL = 3;
 
 function emptyProc(): ProcRow { return { doneBy: '', comments: '', wpRef: [] }; }
+const MEETING_TYPES = [
+ 'Board of Directors',
+ 'Audit Committee',
+ 'Shareholders / AGM',
+ 'Management',
+ 'Special Committee',
+ 'Other',
+];
+
 function emptyExtract(): ExtractRow { return { mt: '', date: '', extract: '', riskForm520: false, wpRef: [] }; }
 
 function buildDefault(): Data507 {
@@ -202,6 +212,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  }
 
  const [importOpen, setImportOpen] = useState(false);
+ const [importPartCOpen, setImportPartCOpen] = useState(false);
 
  function applyImport(result: ImportResult) {
  setData(d => {
@@ -218,6 +229,26 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  const sourceLabel = result.source.charAt(0).toUpperCase() + result.source.slice(1);
  toast.success(`Worksheet populated from ${sourceLabel}`, {
  description: 'Review and refine the auto-filled content before sign-off.',
+ });
+ }
+
+ function applyPartCImport(result: ImportResult) {
+ if (result.meetingExtracts?.length) {
+ setData(d => {
+ const rows = result.meetingExtracts!.map(ex => ({
+ mt: ex.mt,
+ mtOther: undefined as string | undefined,
+ date: ex.date,
+ extract: ex.extract,
+ riskForm520: false,
+ wpRef: [] as import("@/components/RefButton").RefDoc[],
+ }));
+ return {...d, partC: rows };
+ });
+ }
+ const sourceLabel = result.source.charAt(0).toUpperCase() + result.source.slice(1);
+ toast.success(`Part C populated from ${sourceLabel}`, {
+ description: 'Review and refine the extracted minutes before sign-off.',
  });
  }
 
@@ -327,6 +358,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  </div>
 
  <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
+ <ImportNotesDialog open={importPartCOpen} onOpenChange={setImportPartCOpen} onImport={applyPartCImport} />
 
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-4">
@@ -357,9 +389,15 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  {/* Part C */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
- <div className="px-6 py-3.5 bg-card border-b border-border">
+ <div className="px-6 py-3.5 bg-card border-b border-border flex items-start justify-between gap-4">
+ <div>
  <span className="text-sm font-semibold text-foreground">Part C — Extracts from minutes and other matters that have audit implications</span>
  <p className="text-xs text-muted-foreground mt-0.5">MT = Meeting type, such as directors, audit committee or other committees.</p>
+ </div>
+ <Button size="sm" onClick={() => setImportPartCOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
+ <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+ Import
+ </Button>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full">
@@ -376,13 +414,29 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  {data.partC.map((row, i) => (
  <tr key={i} className="hover:bg-muted/50 transition-colors">
  <td className="w-[140px] px-4 py-2 align-top" style={{ minWidth: 140 }}>
- <Input
+ <Select
  disabled={locked}
  value={row.mt}
- onChange={e => setPC(i, { mt: e.target.value })}
- placeholder="e.g. Directors"
- className="h-8 text-sm bg-background"
+ onValueChange={val => setPC(i, { mt: val, mtOther: val === 'Other' ? row.mtOther : undefined })}
+ >
+ <SelectTrigger className="h-8 text-sm bg-background">
+ <SelectValue placeholder="Select type" />
+ </SelectTrigger>
+ <SelectContent>
+ {MEETING_TYPES.map(t => (
+ <SelectItem key={t} value={t}>{t}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ {row.mt === 'Other' && (
+ <Input
+ disabled={locked}
+ value={row.mtOther || ''}
+ onChange={e => setPC(i, { mtOther: e.target.value })}
+ placeholder="Specify meeting type"
+ className="h-8 text-sm bg-background mt-1.5"
  />
+ )}
  </td>
  <td className="w-[130px] px-4 py-2 align-top border-l border-border" style={{ minWidth: 130 }}>
  <Input

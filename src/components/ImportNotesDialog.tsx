@@ -19,6 +19,7 @@ export interface ImportResult {
  attendees?: { name: string; role: string }[];
  agendaNotes?: Record<string, string>; // keyed by agenda item id (a1, a2,... b13)
  actionSteps?: { action: string; person: string; deadline: string }[];
+ meetingExtracts?: { mt: string; date: string; extract: string }[];
 }
 
 interface SourceOption {
@@ -63,6 +64,11 @@ const DEMO_RESULT: Omit<ImportResult, "source"> = {
  b12: "Reminded team on professional skepticism, ongoing communication, and updates if scope changes.",
  b13: "Discussed roll-forward of going-concern memo — no material doubt indicators.",
  },
+ meetingExtracts: [
+  { mt: 'Board of Directors', date: new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10), extract: 'Board approved Q3 financial results. Noted significant increase in accounts receivable. No related-party transactions flagged.' },
+  { mt: 'Audit Committee', date: new Date(Date.now() - 14 * 86_400_000).toISOString().slice(0, 10), extract: 'Auditor independence confirmed. Discussed key audit matters: revenue recognition and inventory valuation. Management representation letter reviewed.' },
+  { mt: 'Shareholders / AGM', date: new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10), extract: 'Annual results presented. Dividend declared. No significant concerns raised by shareholders regarding financial reporting.' },
+ ],
  actionSteps: [
  { action: "Send PBC list to client and confirm delivery date", person: "L. Garcia — Manager", deadline: new Date(Date.now() + 3 * 86_400_000).toISOString().slice(0, 10) },
  { action: "Schedule physical inventory observation at main warehouse", person: "Senior 2 — Expenses / ASC 842", deadline: new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10) },
