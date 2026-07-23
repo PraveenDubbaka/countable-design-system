@@ -381,6 +381,28 @@ export function AuditCashBankRecWorksheet() {
       onAdd={locked ? undefined : () => addRow("bankRecProcedures", 0)}
       objective="Perform bank reconciliation procedures to verify that the bank statement balances agree to the general ledger and that reconciling items are valid and properly recorded."
     >
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
+            <Select disabled value="Cash">
+              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cash" className="text-xs">Cash</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
+            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
+            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+          </div>
+        </div>
+      </div>
+
       <WorksheetSection title="A.110 · Bank Reconciliation Procedures" bodyClassName="p-0">
         <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>
@@ -398,6 +420,28 @@ export function AuditCashCountWorksheet() {
       onAdd={locked ? undefined : () => addRow("cashCountProcedures", 2)}
       objective="Count cash on hand to verify existence and completeness of cash balances at the period end date."
     >
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
+            <Select disabled value="Cash">
+              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cash" className="text-xs">Cash</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
+            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
+            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+          </div>
+        </div>
+      </div>
+
       <WorksheetSection title="A.115 · Cash Count Procedures" bodyClassName="p-0">
         <ProcTable docKey="cashCountProcedures" sections={data.cashCountProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>
