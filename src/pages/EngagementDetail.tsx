@@ -899,6 +899,7 @@ export default function EngagementDetail() {
  const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
  const priorYearFileInputRef = useRef<HTMLInputElement>(null);
  const initialChecklistRef = useRef<Checklist | null>(null);
+ const preBulkAnswerRef = useRef<Checklist | null>(null);
  const [priorYearState, setPriorYearState] = useState<'idle' | 'processing' | 'summary' | 'populating' | 'done'>('idle');
  const [showShareDialog, setShowShareDialog] = useState(false);
  const [showResponseDialog, setShowResponseDialog] = useState(false);
@@ -1198,6 +1199,7 @@ export default function EngagementDetail() {
  setIsLoading(true);
  setChecklist(null);
  initialChecklistRef.current = null;
+ preBulkAnswerRef.current = null;
 
  // One-time migration: clear stale sample checklists saved before the
  // global template library was pulled in, so the engagement reflects the
@@ -1703,6 +1705,7 @@ export default function EngagementDetail() {
 
  const handleBulkAnswer = (answer: string, unansweredOnly: boolean) => {
  if (!checklist) return;
+ if (!preBulkAnswerRef.current) preBulkAnswerRef.current = checklist;
  const applyToQuestion = (q: Question): Question => {
  const isYesNo = q.answerType === 'yes-no' || q.answerType === 'yes-no-na';
  if (!isYesNo) return q.subQuestions ? { ...q, subQuestions: q.subQuestions.map(applyToQuestion) } : q;
@@ -1718,6 +1721,7 @@ export default function EngagementDetail() {
 
  const handleBulkClear = () => {
  if (!checklist) return;
+ if (!preBulkAnswerRef.current) preBulkAnswerRef.current = checklist;
  const clearQuestion = (q: Question): Question => {
  const isYesNo = q.answerType === 'yes-no' || q.answerType === 'yes-no-na';
  const cleared = isYesNo ? { ...q, answer: undefined } : q;
@@ -1730,7 +1734,9 @@ export default function EngagementDetail() {
  };
 
  const handleBulkRestore = () => {
- if (initialChecklistRef.current) handleChecklistUpdate(initialChecklistRef.current);
+ if (!preBulkAnswerRef.current) return;
+ handleChecklistUpdate(preBulkAnswerRef.current);
+ preBulkAnswerRef.current = null;
  };
 
  const allTopLevelQuestionIds = checklist
