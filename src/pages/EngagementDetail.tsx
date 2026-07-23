@@ -982,11 +982,11 @@ export default function EngagementDetail() {
 
  useEffect(() => {
  const handler = (e: Event) => {
- const ce = e as CustomEvent<{ engagementId: string; isUS: boolean; label: string; sources: string[] }>;
+ const ce = e as CustomEvent<{ engagementId: string; isUS: boolean; label: string; sources: string[]; isRegenerate?: boolean }>;
  if (ce.detail?.engagementId !== engagementId) return;
  const client = engagementId ? engagementsData[engagementId]?.client : undefined;
  const engLabel = [client, engagementId].filter(Boolean).join(' · ');
- setLukaPap501Config({ engLabel, sources: ce.detail.sources });
+ setLukaPap501Config({ engLabel, sources: ce.detail.sources, isRegenerate: ce.detail.isRegenerate });
  setLukaOpen(true);
  };
  window.addEventListener('pap501-generate', handler);
@@ -1235,7 +1235,15 @@ export default function EngagementDetail() {
  const missing = defaults.filter(d => !existingIds.has(d.id));
  const refreshed = savedChecklists
 .filter((c: any) => !LEGACY_COMPILATION_CHECKLIST_IDS.has(c?.id))
-.map((c: any) => defaultById.get(c?.id) ?? c);
+.map((c: any) => {
+ const def = defaultById.get(c?.id);
+ if (!def) return c;
+ // Preserve entries that have user-filled answers (e.g. Luka autofill)
+ const hasAnswers = c?.data?.sections?.some((s: any) =>
+ s?.questions?.some((q: any) => q?.answer && q.answer !== '')
+ );
+ return hasAnswers ? c : def;
+});
  if (missing.length > 0 || refreshed.length !== savedChecklists.length || refreshed.some((item: any, idx: number) => item !== savedChecklists[idx])) {
  savedChecklists = [...refreshed,...missing];
  writeJsonToLocalStorage('savedChecklists', savedChecklists);
