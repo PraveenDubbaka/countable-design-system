@@ -8,23 +8,23 @@ import type { Checklist } from "@/types/checklist";
  * worksheet via a synthetic checklist id.
  */
 export function WorksheetSignOff({
-  worksheetKey,
-  engagementId = "default",
-  isEngagementMode = true,
-  isPreviewMode = false,
+ worksheetKey,
+ engagementId = "default",
+ isEngagementMode = true,
+ isPreviewMode = false,
 }: {
-  worksheetKey: string;
-  engagementId?: string;
-  isEngagementMode?: boolean;
-  isPreviewMode?: boolean;
+ worksheetKey: string;
+ engagementId?: string;
+ isEngagementMode?: boolean;
+ isPreviewMode?: boolean;
 }) {
-  const id = `worksheet:${engagementId}:${worksheetKey}`;
-  const pseudoChecklist = { id } as unknown as Checklist;
-  return (
-    <ChecklistSignOff
-      checklist={pseudoChecklist}
-      isEngagementMode={isEngagementMode}
-      isPreviewMode={isPreviewMode}
-    />
-  );
+ const id = `worksheet:${engagementId}:${worksheetKey}`;
+ const pseudoChecklist = { id } as unknown as Checklist;
+ return (
+ <ChecklistSignOff
+ checklist={pseudoChecklist}
+ isEngagementMode={isEngagementMode}
+ isPreviewMode={isPreviewMode}
+ />
+ );
 }

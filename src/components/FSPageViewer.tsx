@@ -9,35 +9,35 @@ import NotesPreview from "@/components/dashboard/workspace/NotesPreview";
 export type FSPageType = 'cover' | 'toc' | 'bs' | 'is' | 'cf' | 'eq' | 'notes' | 'comp-report';
 
 interface FSPageViewerProps {
-  pageType: FSPageType;
-  isEditing?: boolean;
-  isCompilation?: boolean;
-  isUS?: boolean;
-  engagementId?: string;
+ pageType: FSPageType;
+ isEditing?: boolean;
+ isCompilation?: boolean;
+ isUS?: boolean;
+ engagementId?: string;
 }
 
 const FSPageContent = ({ pageType, isEditing, isCompilation }: FSPageViewerProps) => {
-  const templateType = isCompilation ? 'compilation' : null;
+ const templateType = isCompilation ? 'compilation' : null;
 
-  switch (pageType) {
-    case 'cover':
-      return <CoverPagePreview isEditMode={isEditing} templateType={templateType} />;
-    case 'toc':
-      return <TableOfContentsPreview />;
-    case 'comp-report':
-      return <CompilationReportPreview isEditMode={isEditing} />;
-    case 'bs':
-      return <BalanceSheetPreview isEditMode={isEditing} />;
-    case 'is':
-    case 'eq':
-      return <IncomeStatementPreview isEditMode={isEditing} />;
-    case 'cf':
-      return <CashFlowsPreview isEditMode={isEditing} />;
-    case 'notes':
-      return <NotesPreview isEditMode={isEditing} />;
-    default:
-      return null;
-  }
+ switch (pageType) {
+ case 'cover':
+ return <CoverPagePreview isEditMode={isEditing} templateType={templateType} />;
+ case 'toc':
+ return <TableOfContentsPreview />;
+ case 'comp-report':
+ return <CompilationReportPreview isEditMode={isEditing} />;
+ case 'bs':
+ return <BalanceSheetPreview isEditMode={isEditing} />;
+ case 'is':
+ case 'eq':
+ return <IncomeStatementPreview isEditMode={isEditing} />;
+ case 'cf':
+ return <CashFlowsPreview isEditMode={isEditing} />;
+ case 'notes':
+ return <NotesPreview isEditMode={isEditing} />;
+ default:
+ return null;
+ }
 };
 
 const FSPageViewer = (props: FSPageViewerProps) => <FSPageContent {...props} />;

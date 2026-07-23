@@ -513,7 +513,7 @@ export const generateCompletionChecklist = (): Checklist => {
  questions: [
  {
  id: 'comp-q1',
- text: '<p><strong>Change in intended use</strong> – Has there been a change in the intended use of the FI? If so, discuss with management whether the intended basis of accounting applied is appropriate.</p><p><em>Note: Consider obtaining a revised engagement letter. (See Form Client acceptance and continuance.)</em></p>',
+ text: '<p><strong>Change in intended use</strong> – Has there been a change in the intended use of the FI? If so, discuss with management whether the intended basis of accounting applied is appropriate.</p><p><em>Note: Consider obtaining a revised engagement letter. (lient acceptance and continuance.)</em></p>',
  answerType: 'yes-no-na',
  options: ['Yes', 'No', 'NA'],
  required: false,
@@ -1585,25 +1585,25 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
  la('tpd-pA-4g', '<p>New accounting standards and changes to accounting policies.</p>', 'No new ASPE standards effective for year ended March 31, 2024 with material impact. Accounting policies consistent with prior year.'),
  la('tpd-pA-4-doc', '<p>Document matters arising and decisions reached:</p>', 'USD revenue exposure (~35%) flagged as new significant risk — USD translation testing and FX gain/loss procedures to be added to audit plan. New crew management software: assess design and implementation of controls over crew cost recording. DSCR covenant compliance to be confirmed.'),
  ]),
- h('tpd-pA-5', '<p><strong>5. Preliminary analytical review</strong><br/>Review the results of the preliminary analytical review (Form 501) and discuss:</p>', [
+ h('tpd-pA-5', '<p><strong>5. Preliminary analytical review</strong><br/>Review the results of the preliminary analytical review and discuss:</p>', [
  la('tpd-pA-5a', '<p>How actual results aligned or differed with expectations based on the economic and industry trends, changes to operations, etc.</p>', 'Revenue of $12.5M is up 8% from prior year ($11.6M) — consistent with new contracts and rate increases. Gross margin declined slightly from 38% to 35% — consistent with increased fuel costs. USD FX gain of $142K recognized — consistent with USD contract exposure and CAD/USD rate movements.'),
- la('tpd-pA-5b', '<p>Whether any variances or balances require further analysis, investigation or could be indicative of possible RMMs (note on Form 520).</p>', 'Accrued liabilities decreased $180K year-over-year despite revenue growth — flagged for investigation (possible underaccrual consistent with prior year finding). Accounts receivable DSO increased from 38 to 47 days — collection follow-up and bad debt assessment required. Noted on Form 520.'),
- la('tpd-pA-5-doc', '<p>Document matters arising and decisions reached:</p>', 'Accrued liabilities variance and AR DSO increase both carried to Form 520 as potential RMMs. Voyage cut-off and accrued freight cost procedures to be expanded. Preliminary analytics completed by S. Chen and reviewed by J. Williams on April 12, 2024.'),
+ la('tpd-pA-5b', '<p>Whether any variances or balances require further analysis, investigation or could be indicative of possible RMMs.</p>', 'Accrued liabilities decreased $180K year-over-year despite revenue growth — flagged for investigation (possible underaccrual consistent with prior year finding). Accounts receivable DSO increased from 38 to 47 days — collection follow-up and bad debt assessment required. Noted'),
+ la('tpd-pA-5-doc', '<p>Document matters arising and decisions reached:</p>', 'Accrued liabilities variance and AR DSO increase both carried as potential RMMs. Voyage cut-off and accrued freight cost procedures to be expanded. Preliminary analytics completed by S. Chen and reviewed by J. Williams on April 12, 2024.'),
  ]),
  h('tpd-pA-6', '<p><strong>6. Identifying potential risks of material misstatement</strong><br/>Discuss where RMMs could be identified, including the susceptibility of the entity\'s F/S to material misstatement (fraud or error). Consider the following:</p>', [
  la('tpd-pA-6a', '<p>Material account balances and transactions.</p>', 'Material areas: Revenue $12.5M, Vessels & PP&E $8.2M, Long-term debt $4.8M, AR $2.1M, Inventory $750K. All exceed performance materiality of $87.5K.'),
  la('tpd-pA-6b', '<p>Complex areas in the applicable financial reporting framework, including classification and disclosures.</p>', 'ASPE s.3061 — PP&E: vessel dry-dock capitalization and useful life. ASPE s.1651 — Foreign currency: USD contract translation. ASPE s.3840 — Related party disclosures: related party charter agreement with sibling entity (flagged for confirmation).'),
  la('tpd-pA-6c', '<p>Extent and nature of related-party relationships and transactions.</p>', 'Charter agreement with sibling company (common shareholder) — vessel lease payments of approximately $420K per year. Related party terms to be confirmed as at arm\'s length or disclosed.'),
- la('tpd-pA-6d', '<p>The application of key accounting policies, including revenue recognition and the rebuttable assumption that revenue recognition is a significant risk.</p>', 'Revenue recognized on voyage completion method (ASPE s.3400). Revenue recognition is a significant risk — rebuttable presumption applies. Voyage cut-off at March 31, 2024 requires testing. Significant risk carried to Form 520.'),
+ la('tpd-pA-6d', '<p>The application of key accounting policies, including revenue recognition and the rebuttable assumption that revenue recognition is a significant risk.</p>', 'Revenue recognized on voyage completion method (ASPE s.3400). Revenue recognition is a significant risk — rebuttable presumption applies. Voyage cut-off at March 31, 2024 requires testing. Significant risk carried'),
  la('tpd-pA-6e', '<p>Nature of estimates, including the level of complexity, change and estimation uncertainty.</p>', 'Key estimates: (1) vessel useful lives and residual values; (2) dry-dock cost capitalization vs. expense; (3) accrued voyage costs at period end; (4) bad debt provision ($38K).'),
  la('tpd-pA-6f', '<p>Significant deficiencies in internal control.</p>', 'No significant deficiencies communicated in prior year. New crew management software — control design and implementation to be assessed in current year. No IT general controls assessment planned.'),
- la('tpd-pA-6g', '<p>Significant risks (Form 520) and, if applicable, any key audit matters.</p>', 'Two significant risks identified: (1) Revenue recognition — voyage cut-off (ASPE s.3400); (2) Vessel impairment — management estimate ($8.2M book value). Both carried to Form 520. ASPE engagement — key audit matters not applicable.'),
+ la('tpd-pA-6g', '<p>Significant risks and, if applicable, any key audit matters.</p>', 'Two significant risks identified: (1) Revenue recognition — voyage cut-off (ASPE s.3400); (2) Vessel impairment — management estimate ($8.2M book value). Both carried ASPE engagement — key audit matters not applicable.'),
  la('tpd-pA-6h', '<p>Financing arrangements and covenants.</p>', 'RBC credit facility — DSCR covenant 1.25x minimum. Management representation of covenant compliance required. Covenant calculation to be recalculated and agreed to loan agreement.'),
  la('tpd-pA-6i', '<p>Management incentive plans.</p>', 'No management bonus or profit-sharing plans. Shareholder dividends — no formal plan; distributions by board resolution. No incentive-based misstatement motivation identified.'),
  la('tpd-pA-6j', '<p>Operating losses and negative business trends.</p>', 'No operating losses. Revenue growth 8%. Net income positive. No negative business trends identified.'),
  la('tpd-pA-6k', '<p>Going-concern events or conditions.</p>', 'Prior year going concern disclosures removed — covenant breach cured. No current year going concern indicators identified based on preliminary analytics.'),
  la('tpd-pA-6l', '<p>Significant litigation.</p>', 'No known litigation. Management inquiry planned at fieldwork commencement to confirm.'),
- la('tpd-pA-6-doc', '<p>Document matters arising and decisions reached:</p>', 'Two significant risks carried to Form 520: revenue recognition and vessel impairment. Related party charter agreement to be confirmed. USD translation procedures to be included in audit plan. Accrued liabilities underaccrual risk from prior year carried forward as a heightened risk area.'),
+ la('tpd-pA-6-doc', '<p>Document matters arising and decisions reached:</p>', 'Two significant risks carried: revenue recognition and vessel impairment. Related party charter agreement to be confirmed. USD translation procedures to be included in audit plan. Accrued liabilities underaccrual risk from prior year carried forward as a heightened risk area.'),
  ]),
  h('tpd-pA-7', '<p><strong>7. Risk assessment procedures</strong><br/>Discuss what RAPs will be performed and who will perform them. Consider:</p>', [
  la('tpd-pA-7a', '<p>Nature and extent of information to be provided by the entity.</p>', 'Client to provide: signed trial balance, aged AR, aged AP, fixed asset continuity schedule, debt continuity, vessel dry-dock records, crew management system export, USD contract schedule, bank confirmations package. PBC list issued to R. Patel and M. Singh on April 15, 2024.'),
@@ -1619,42 +1619,42 @@ export const generateEngagementPlanningChecklist = (): Checklist => {
  id: 'tpd-pB',
  title: 'PART B — Agenda: Risk Response Planning',
  questions: [
- h('tpd-pB-8', '<p><strong>8. Assessed risks</strong><br/>Review the assessed risks identified as a result of performing RAPs (Form 520) and discuss:</p>', [
- la('tpd-pB-8a', '<p>Whether all identified risks of material misstatement have been carried forward onto the risk register (Form 520).</p>', 'Risk register (Form 520) reviewed. Two significant risks carried: revenue recognition and vessel impairment. USD FX translation carried as elevated risk. Accrued liabilities underaccrual carried as elevated risk. All RMMs confirmed on register.'),
+ h('tpd-pB-8', '<p><strong>8. Assessed risks</strong><br/>Review the assessed risks identified as a result of performing RAPs and discuss:</p>', [
+ la('tpd-pB-8a', '<p>Whether all identified risks of material misstatement have been carried forward onto the risk register.</p>', 'Risk register reviewed. Two significant risks carried: revenue recognition and vessel impairment. USD FX translation carried as elevated risk. Accrued liabilities underaccrual carried as elevated risk. All RMMs confirmed on register.'),
  la('tpd-pB-8b', '<p>The assessment of risk at the F/S level, and their impact on assertion level risks (if any).</p>', 'F/S level: management bias in estimates (vessel useful life, accrued freight). No pervasive F/S-level misstatement risk identified. Impact: increased substantive procedures in estimates and accruals.'),
  la('tpd-pB-8c', '<p>The assessment of risk at the assertion level and conclusions on planned control reliance.</p>', 'Revenue — completeness and cut-off: significant risk, no control reliance. Vessels — valuation: significant risk, no control reliance. Accrued liabilities — completeness: elevated risk, no control reliance. All other areas: moderate risk, substantive approach.'),
  la('tpd-pB-8d', '<p>Any significant risks identified and their potential impact on the audit response.</p>', 'Revenue cut-off: voyage completion documentation testing for all voyages in transit at March 31, 2024 (estimated 8-12 voyages). Vessel impairment: assess impairment indicators, review management impairment analysis.'),
  la('tpd-pB-8e', '<p>Any unexpected results, missing information, or evidence of management override or bias.</p>', 'No evidence of management override or bias identified at planning stage. Preliminary analytics variances (accrued liabilities, DSO) explained by business factors. No red flags identified.'),
- la('tpd-pB-8-doc', '<p>Document matters arising and decisions reached:</p>', 'Risk register finalized on Form 520. Audit responses designed for each significant and elevated risk. No changes to planned approach.'),
+ la('tpd-pB-8-doc', '<p>Document matters arising and decisions reached:</p>', 'Risk register finalized Audit responses designed for each significant and elevated risk. No changes to planned approach.'),
  ]),
  h('tpd-pB-9', '<p><strong>9. Fraud risks and scenarios</strong></p>', [
- la('tpd-pB-9a', '<p>Review Form 506 (or equivalent).</p>', 'Form 506 reviewed. Fraud risk assessment completed. Revenue recognition identified as fraud risk (rebuttable presumption — ASPE). Management override of internal controls: universal significant risk.'),
+ la('tpd-pB-9a', '<p>Review (or equivalent).</p>', 'Fraud risk assessment completed. Revenue recognition identified as fraud risk (rebuttable presumption — ASPE). Management override of internal controls: universal significant risk.'),
  la('tpd-pB-9b', '<p>Discuss how fraud might occur in the entity, notwithstanding past experience of the honesty and integrity of management and TCWG.</p>', 'Potential fraud scenarios discussed: (1) premature revenue recognition by accelerating voyage completion dates; (2) misclassification of dry-dock costs to inflate asset values; (3) understating accrued freight costs to improve net income. No specific concerns about management integrity — scenarios discussed for completeness.'),
- la('tpd-pB-9c', '<p>Identify any pressures, attitudes or rationalizations that exist among senior management/accounting personnel that could lead to fraud. Refer to Appendix 1</p>', 'No significant pressure indicators identified. DSCR covenant recently reset — minor pressure to maintain profitability ratios. No management bonus or profit-sharing arrangements. Refer to Form 506 and fraud risk factors.'),
+ la('tpd-pB-9c', '<p>Identify any pressures, attitudes or rationalizations that exist among senior management/accounting personnel that could lead to fraud. Refer to Appendix 1</p>', 'No significant pressure indicators identified. DSCR covenant recently reset — minor pressure to maintain profitability ratios. No management bonus or profit-sharing arrangements. Refer and fraud risk factors.'),
  la('tpd-pB-9-doc', '<p>Document matters arising and decisions reached:</p>', 'Fraud discussion completed April 14, 2024. Unpredictable procedures planned: (1) unannounced AR confirmation dispatch; (2) journal entry population testing for unusual entries. Revenue recognition fraud risk addressed with expanded cut-off procedures.'),
  ]),
  h('tpd-pB-10', '<p><strong>10. Design an appropriate audit response</strong><br/>Design F/S-level and assertion-level responses. Review and discuss:</p>', [
- la('tpd-pB-10a', '<p>Specific procedures to address significant risks assessed on Form 520.</p>', 'Revenue cut-off: test all voyages in transit at March 31 — obtain voyage completion logs, compare to revenue posting dates, recalculate revenue recognition. Vessel impairment: review management\'s indicator assessment, compare book value to appraisal, assess dry-dock remaining life.'),
+ la('tpd-pB-10a', '<p>Specific procedures to address significant risks assessed</p>', 'Revenue cut-off: test all voyages in transit at March 31 — obtain voyage completion logs, compare to revenue posting dates, recalculate revenue recognition. Vessel impairment: review management\'s indicator assessment, compare book value to appraisal, assess dry-dock remaining life.'),
  la('tpd-pB-10b', '<p>Planned tests of controls.</p>', 'No formal tests of controls planned. Design and implementation assessment only for: (1) crew management software; (2) MarineTrack voyage billing.'),
  la('tpd-pB-10c', '<p>Planned tests of details.</p>', 'Revenue: voyage log substantive testing, cut-off sample. AR: confirmation package (40 items, >$5K threshold). PP&E: additions/disposals, dry-dock amortization recalculation. Debt: confirmation, covenant recalculation. Payroll: gross-to-net recalculation sample. FX: USD transaction translation recalculation sample.'),
  la('tpd-pB-10d', '<p>Unpredictable procedures (required for fraud risks).</p>', 'Unpredictable procedure 1: unannounced AR confirmation dispatch on day 1 of fieldwork. Unpredictable procedure 2: full journal entry population testing using MariTrack GL export for unusual entries.'),
  la('tpd-pB-10e', '<p>Substantive analytical procedures: consider the source of data and its reliability.</p>', 'Analytical procedures: (1) revenue by voyage type — compare monthly trends; (2) gross margin by service line — compare to prior year and expectation; (3) payroll by department — compare headcount-adjusted to prior year. Source: management-prepared trial balance and MarineTrack export — reliability assessed as moderate; analytical conclusions corroborated by tests of detail.'),
  la('tpd-pB-10f', '<p>SCOTABDs and procedures for which confirmations will be obtained.</p>', 'Confirmations planned: (1) AR — 40 positive confirmations; (2) RBC bank account and credit facility (balance, covenants, collateral); (3) legal counsel — contingencies and litigation. No SCOTABDs identified.'),
- la('tpd-pB-10-doc', '<p>Document matters arising and decisions reached:</p>', 'Audit responses finalized and documented in Form 520 and individual audit programs. Confirmation package to be prepared by T. Nguyen by May 28, 2024 for dispatch on June 3 (day 1 of fieldwork).'),
+ la('tpd-pB-10-doc', '<p>Document matters arising and decisions reached:</p>', 'Audit responses finalized and documented in and individual audit programs. Confirmation package to be prepared by T. Nguyen by May 28, 2024 for dispatch on June 3 (day 1 of fieldwork).'),
  ]),
- h('tpd-pB-11', '<p><strong>11. Audit plans and overall audit strategy</strong><br/>Finalize the audit plans, and update the overall audit strategy (Form 430). Address:</p>', [
+ h('tpd-pB-11', '<p><strong>11. Audit plans and overall audit strategy</strong><br/>Finalize the audit plans, and update the overall audit strategy. Address:</p>', [
  la('tpd-pB-11a', '<p>Extent (if any) of pre-period-end work.</p>', 'No interim procedures planned. All procedures to be performed at year-end (June 3–14, 2024).'),
  la('tpd-pB-11b', '<p>Audit timing and management/TCWG communications, including the communication of the overall audit plan.</p>', 'Planning letter communicated to management (R. Patel) on April 16, 2024. Board/TCWG communication planned for June 18, 2024 (post-fieldwork, pre-sign-off). Signed report target: June 30, 2024.'),
  la('tpd-pB-11c', '<p>Where applicable, coordination with experts, service auditors and group component auditors.</p>', 'No experts, service auditors or component auditors required.'),
  la('tpd-pB-11d', '<p>Schedules and analysis to be completed by the client.</p>', 'PBC list issued April 15, 2024. Key items: trial balance by May 27, vessel continuity and dry-dock records by May 30, crew system export by June 1, bank confirmation package by May 28.'),
  la('tpd-pB-11e', '<p>Audit team roles, scheduling and timing of file reviews.</p>', 'A. Kumar (Senior) on-site June 3–14. T. Nguyen (Staff) on-site June 3–10. S. Chen (Manager) reviews June 10 and June 14. J. Williams (Partner) review June 17. File complete June 30.'),
- la('tpd-pB-11-doc', '<p>Document matters arising and decisions reached:</p>', 'Overall audit strategy (Form 430) updated April 14, 2024. Audit plan finalized. PBC list distributed. Engagement timeline confirmed with management.'),
+ la('tpd-pB-11-doc', '<p>Document matters arising and decisions reached:</p>', 'Overall audit strategy updated April 14, 2024. Audit plan finalized. PBC list distributed. Engagement timeline confirmed with management.'),
  ]),
  h('tpd-pB-12', '<p><strong>12. Team reminders</strong><br/>Remind team members about the need for:</p>', [
  la('tpd-pB-12a', '<p>Exercising professional skepticism at all times.</p>'),
  la('tpd-pB-12b', '<p>Maintaining independence and ethics.</p>'),
  la('tpd-pB-12c', '<p>Ongoing communication among the engagement team, especially where misstatements are found, tests fail or the client is not providing information on a timely basis.</p>'),
- la('tpd-pB-12d', '<p>Updating the overall audit strategy (Form 430) for changes to proposed plans.</p>'),
+ la('tpd-pB-12d', '<p>Updating the overall audit strategy for changes to proposed plans.</p>'),
  la('tpd-pB-12e', '<p>Remaining alert throughout the audit for indicators of fraud, related parties, going-concern uncertainties or new information. (Note: Notify the engagement partner immediately about new information obtained that, if known earlier, may have caused the firm to decline the audit engagement.)</p>'),
  la('tpd-pB-12-doc', '<p>Document matters arising and decisions reached:</p>', 'Reminders issued to all team members. Team confirmed understanding. A. Kumar to notify S. Chen immediately if vessel dry-dock records are not received by May 30 per PBC list.'),
  ]),
@@ -2864,7 +2864,7 @@ export const generateASPEGeneralDisclosureChecklist = (): Checklist => {
  id: 'section-aspe-related',
  title: 'Related-Party Transactions',
  questions: [
- { id: 'q-aspe-rp-1', text: '<p>Have all related parties been identified and documented (including the nature of the relationship, nature and purpose of the transaction, measurement basis, etc.) on Form 510 or 515?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
+ { id: 'q-aspe-rp-1', text: '<p>Have all related parties been identified and documented (including the nature of the relationship, nature and purpose of the transaction, measurement basis, etc.) or 515?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
  { id: 'q-aspe-rp-2', text: '<p>Where there are transactions with related parties, do the financial statements disclose: (a) recognized amount and measurement basis; (b) balances with description, amount and terms; (c) contractual obligations separately; (d) contingencies separately?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
  { id: 'q-aspe-rp-3', text: '<p>Where an entity recognizes the forgiveness of a related-party financial asset, has it been disclosed?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' },
  { id: 'q-aspe-rp-4', text: '<p>Where an entity recognizes the extinguishment of a financial liability in a related-party transaction in net income, has that fact and nature been disclosed?</p>', answerType: 'yes-no-na', options: ['Yes', 'No', 'NA'], required: false, answer: '' }
@@ -3994,7 +3994,7 @@ const generateTaxCompletionChecklist = (): Checklist => {
  q('tc-5-6', 'Of the dividends paid in the year, confirm if any were paid to connected corporations. If yes:\na. Obtain the business number and taxation year.\nb. Report the total amount and eligible dividend designation.'),
  q('tc-5-7', 'Were there any deemed dividends resulting from changes to the share structure, including redemption of shares? If so, ensure appropriately reported.'),
  q('tc-5-8', 'For dividends paid to individuals and trusts, does tax on split income (TOSI) apply?'),
- q('tc-5-9', 'Were there dividends paid out of the capital dividend account? If so, has Form T2054 been prepared and filed with CRA?'),
+ q('tc-5-9', 'Were there dividends paid out of the capital dividend account? If so, has been prepared and filed with CRA?'),
  ]),
  s('tc-s6', 'Schedule 4 - Corporation Loss Continuity and Application', [
  q('tc-6-1', 'Have the capital and non-capital losses carried forward from prior year been confirmed with CRA either online or through the prior year notice of assessment?'),
@@ -4298,10 +4298,10 @@ export const generateAuditCompletionChecklist = (): Checklist => {
  q('ac-q135', '<p>Subsequent events — Have subsequent events procedures been performed up to the report date?</p>', undefined, 'Yes', '<p>Subsequent events procedures completed through May 2, 2024 (date of audit report). Management inquiry conducted on April 25, 2024. No subsequent events requiring adjustment or disclosure identified.</p>', 'W/P Ref: SE-01'),
  q('ac-q136', '<p>Have subsequent events that may require adjustment of, or disclosure in, the F/S been identified and addressed?</p>', undefined, 'No', '<p>No subsequent events identified requiring adjustment or disclosure.</p>'),
  q('ac-q137', '<p>If there is a significant delay in the approval of the F/S by management or TCWG after the date of the F/S, have inquiries been made regarding the reasons for the delay?</p>', undefined, 'NA', '<p>No significant delay in approval. Financial statements approved by management on May 2, 2024 (32 days after year-end).</p>'),
- q('ac-q138', '<p>Has Form 625 been completed if the delay is believed to be related to events or conditions relating to the going concern assessment?</p>', undefined, 'NA', '<p>No delay attributable to going concern issues. Going concern is not in doubt.</p>'),
+ q('ac-q138', '<p>Has been completed if the delay is believed to be related to events or conditions relating to the going concern assessment?</p>', undefined, 'NA', '<p>No delay attributable to going concern issues. Going concern is not in doubt.</p>'),
  q('ac-q139', '<p>Is a signed management representation letter (dated on or before date of audit report) included in the audit file?</p>', undefined, 'Yes', '<p>Signed management representation letter dated April 25, 2024 (before audit report date of May 2, 2024) is included in the audit file. Signed by CEO and CFO of Shipping Line Inc.</p>', 'W/P Ref: MRL-01'),
  q('ac-q140', '<p>Where applicable, was the engagement quality review completed and the approval evidenced in the file (signed off) on or before the audit report was dated?</p>', undefined, 'NA', '<p>EQCR not required for this engagement.</p>'),
- q('ac-q141', '<p>Has Form 305 been completed to ensure the form and content of the auditor\'s report are appropriate?</p>', undefined, 'Yes', '<p>Auditor\'s report checklist (Form 305) completed. Unmodified opinion issued Report date: May 2, 2024.</p>', 'W/P Ref: AR-01'),
+ q('ac-q141', '<p>Has been completed to ensure the form and content of the auditor\'s report are appropriate?</p>', undefined, 'Yes', '<p>Auditor\'s report checklist completed. Unmodified opinion issued Report date: May 2, 2024.</p>', 'W/P Ref: AR-01'),
  ],
  isExpanded: true
  },
@@ -4527,7 +4527,7 @@ export const generateAuditorsReportChecklist = (): Checklist => {
  q('ar305-q2o', '<p>F/S do not achieve fair presentation (and are prepared in accordance with a fair presentation framework)?</p>', undefined, 'No', '<p>Financial statements achieve fair presentation in accordance with ASPE.</p>'),
  q('ar305-q2p', '<p>Management-imposed limitation of scope resulting in the inability to obtain sufficient appropriate audit evidence?</p>', undefined, 'No'),
  ]),
- q('ar305-q3', '<p>If a modified opinion is required due to circumstances applicable in procedure 2 above, or if either of the below circumstances apply, has Form 306 been completed to ensure the auditor\'s report appropriately reflects the modified opinion?</p><p>• Based on the audit evidence obtained, the F/S as a whole are not free from material misstatement; or</p><p>• Sufficient appropriate audit evidence cannot be obtained to conclude that the F/S as a whole are free from material misstatement.</p>', undefined, 'NA', '<p>No modified opinion required. An unmodified opinion is issued. Form 306 not applicable.</p>'),
+ q('ar305-q3', '<p>If a modified opinion is required due to circumstances applicable in procedure 2 above, or if either of the below circumstances apply, has been completed to ensure the auditor\'s report appropriately reflects the modified opinion?</p><p>• Based on the audit evidence obtained, the F/S as a whole are not free from material misstatement; or</p><p>• Sufficient appropriate audit evidence cannot be obtained to conclude that the F/S as a whole are free from material misstatement.</p>', undefined, 'NA', '<p>No modified opinion required. An unmodified opinion is issued. not applicable.</p>'),
  ],
  isExpanded: true
  },
@@ -4679,8 +4679,8 @@ export const generateAuditorsReportChecklist = (): Checklist => {
  id: 'section-ar305-14',
  title: '14. Supplementary Information & Other Information',
  questions: [
- q('ar305-q33', '<p>If supplementary information is presented with the F/S, complete Form 313 and update the auditor\'s report as required.</p>', undefined, 'NA', '<p>No supplementary information presented with the financial statements.</p>'),
- q('ar305-q34', '<p>If other information is included in the entity\'s annual report, complete Form 313 and update the auditor\'s report as required.</p>', undefined, 'NA', '<p>Shipping Line Inc. does not publish a formal annual report with other information. Audit report covers the financial statements only.</p>'),
+ q('ar305-q33', '<p>If supplementary information is presented with the F/S, complete and update the auditor\'s report as required.</p>', undefined, 'NA', '<p>No supplementary information presented with the financial statements.</p>'),
+ q('ar305-q34', '<p>If other information is included in the entity\'s annual report, complete and update the auditor\'s report as required.</p>', undefined, 'NA', '<p>Shipping Line Inc. does not publish a formal annual report with other information. Audit report covers the financial statements only.</p>'),
  ],
  isExpanded: true
  },
@@ -4950,7 +4950,7 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
  id: 'section-mr314-5',
  title: '5. Other Information',
  questions: [
- q('mr314-q16', '<p>As noted on Form 313, if some or all of the other information will not be available until after the date of the auditor\'s report, has management been requested to provide a written representation that the final version will be provided when available, and prior to its issuance by the entity?</p>', undefined, 'NA', '<p>No other information (annual report, etc.) issued with the financial statements. Not applicable.</p>'),
+ q('mr314-q16', '<p>As noted, if some or all of the other information will not be available until after the date of the auditor\'s report, has management been requested to provide a written representation that the final version will be provided when available, and prior to its issuance by the entity?</p>', undefined, 'NA', '<p>No other information (annual report, etc.) issued with the financial statements. Not applicable.</p>'),
  ],
  isExpanded: true
  },
@@ -4972,8 +4972,8 @@ export const generateManagementRepresentationsChecklist = (): Checklist => {
  id: 'section-mr314-7',
  title: '7. Audit Opinion',
  questions: [
- q('mr314-q20', '<p>If the written representations are determined not to be reliable, has the possible effect on the opinion in the auditor\'s report been determined (use Form 306 if the opinion is modified)?</p>', undefined, 'NA', '<p>Written representations assessed as reliable and consistent with audit evidence. No modifications required.</p>'),
- q('mr314-q21', '<p>Has the opinion on the F/S been disclaimed (use Form 306) if:</p>', [
+ q('mr314-q20', '<p>If the written representations are determined not to be reliable, has the possible effect on the opinion in the auditor\'s report been determined (use if the opinion is modified)?</p>', undefined, 'NA', '<p>Written representations assessed as reliable and consistent with audit evidence. No modifications required.</p>'),
+ q('mr314-q21', '<p>Has the opinion on the F/S been disclaimed (use) if:</p>', [
  q('mr314-q21a', '<p>There is sufficient doubt about the integrity of management such that the written representations required by procedure 6 are not reliable?</p>', undefined, 'NA', '<p>No doubt about management integrity. Unmodified opinion issued.</p>'),
  q('mr314-q21b', '<p>Management does not provide the written representations required by procedure 6?</p>', undefined, 'NA', '<p>Management provided all required representations.</p>'),
  ]),
@@ -8634,95 +8634,95 @@ export const getGlobalTemplateChecklist = (templateId: string): Checklist | null
  case 'glt-us-6': return generateLetterToManagementSignificantDeficienciesUS();
  case 'glt-us-7': return generateCommunicationToPredecessorAuditorUS();
  // ── CA Audit Checklists (gca-cl-*) ─────────────────────────────────────
- case 'gca-cl-408':  return generateForm408InitialAuditEngagements();
- case 'gca-cl-410':  return generateForm410AcceptanceContinuance();
- case 'gca-cl-500':  return generate500OIChecklist();
+ case 'gca-cl-408': return generateForm408InitialAuditEngagements();
+ case 'gca-cl-410': return generateForm410AcceptanceContinuance();
+ case 'gca-cl-500': return generate500OIChecklist();
  case 'gca-cl-501a': return generate501APAPChecklist();
- case 'gca-cl-505':  return generate505MgmtInquiriesChecklist();
- case 'gca-cl-525':  return generate525GoingConcernChecklist();
- case 'gca-cl-530':  return generate530PervasiveRisksChecklist();
- case 'gca-cl-iar':  return generateAuditorsReportChecklist();
- case 'gca-cl-aim':  return generateAccumulationOfMisstatementsChecklist();
- case 'gca-cl-far':  return generateFinalAnalyticalReviewChecklist();
- case 'gca-cl-se':   return generate650SubsequentEventsChecklist2();
- case 'gca-cl-gc':   return generateGoingConcernFinalAssessmentChecklist();
- case 'gca-cl-mr':   return generateManagementRepresentationsChecklist();
+ case 'gca-cl-505': return generate505MgmtInquiriesChecklist();
+ case 'gca-cl-525': return generate525GoingConcernChecklist();
+ case 'gca-cl-530': return generate530PervasiveRisksChecklist();
+ case 'gca-cl-iar': return generateAuditorsReportChecklist();
+ case 'gca-cl-aim': return generateAccumulationOfMisstatementsChecklist();
+ case 'gca-cl-far': return generateFinalAnalyticalReviewChecklist();
+ case 'gca-cl-se': return generate650SubsequentEventsChecklist2();
+ case 'gca-cl-gc': return generateGoingConcernFinalAssessmentChecklist();
+ case 'gca-cl-mr': return generateManagementRepresentationsChecklist();
  case 'gca-cl-disc': return generateASPEGeneralDisclosureChecklist();
  // ── CA Audit Worksheets (gca-ws-*) ─────────────────────────────────────
- case 'gca-ws-mat':  return generateAuditMaterialityChecklist();
- case 'gca-ws-sae':  return generateSelectingAuditorExpertChecklist();
- case 'gca-ws-asm':  return generateAuditStrategyMemorandumChecklist();
+ case 'gca-ws-mat': return generateAuditMaterialityChecklist();
+ case 'gca-ws-sae': return generateSelectingAuditorExpertChecklist();
+ case 'gca-ws-asm': return generateAuditStrategyMemorandumChecklist();
  case 'gca-ws-plan': return generateEngagementPlanningChecklist();
- case 'gca-ws-tt':   return generateAuditProceduresSummaryChecklist();
+ case 'gca-ws-tt': return generateAuditProceduresSummaryChecklist();
  case 'gca-ws-501b': return generatePreliminaryAnalyticalProceduresChecklist();
- case 'gca-ws-507':  return generateTCWGPlanningCommunicationChecklist();
- case 'gca-ws-510':  return generate510IdentifyingRisksChecklist();
- case 'gca-ws-511':  return generate511ITEnvironmentChecklist();
- case 'gca-ws-514':  return generateRMMChecklist();
- case 'gca-ws-506':  return generateFraudRiskAssessmentChecklist();
- case 'gca-ws-513':  return generate513AccountingEstimatesChecklist();
- case 'gca-ws-515':  return generate515RelatedPartiesChecklist();
- case 'gca-ws-580':  return generateTestOfDetailsRevenueChecklist();
- case 'gca-ws-520':  return generateSignificantRisksRegisterChecklist();
- case 'gca-ws-590':  return generateEngagementScopeChecklist();
- case 'gca-ws-535':  return generate535InfoSystemChecklist();
- case 'gca-ws-540':  return generateUnderstandingInternalControlsChecklist();
- case 'gca-ws-550':  return generate550ControlActivitiesChecklist();
- case 'gca-ws-551':  return generate551ITGCChecklist();
- case 'gca-ws-575':  return generate580SignificantDeficienciesChecklist();
- case 'gca-ws-605':  return generate605RespondingToRiskChecklist();
- case 'gca-ws-610':  return generateTestOfControlsChecklist();
- case 'gca-ws-625':  return generateGoingConcernInitialAssessmentChecklist();
- case 'gca-ws-630':  return generateOverallAuditResponseChecklist();
- case 'gca-ws-635':  return generate513AccountingEstimatesChecklist();
- case 'gca-ws-645':  return generate645LitigationClaimsChecklist();
- case 'gca-ws-650':  return generate650SubsequentEventsChecklist2();
- case 'gca-ws-655':  return generateSubstantiveAnalyticalProceduresChecklist();
- case 'gca-ws-666':  return generate515RelatedPartiesChecklist();
- case 'gca-ws-670':  return generate670JournalEntryTestingChecklist();
- case 'gca-ws-680':  return generateASPESupplementaryDisclosureChecklist();
+ case 'gca-ws-507': return generateTCWGPlanningCommunicationChecklist();
+ case 'gca-ws-510': return generate510IdentifyingRisksChecklist();
+ case 'gca-ws-511': return generate511ITEnvironmentChecklist();
+ case 'gca-ws-514': return generateRMMChecklist();
+ case 'gca-ws-506': return generateFraudRiskAssessmentChecklist();
+ case 'gca-ws-513': return generate513AccountingEstimatesChecklist();
+ case 'gca-ws-515': return generate515RelatedPartiesChecklist();
+ case 'gca-ws-580': return generateTestOfDetailsRevenueChecklist();
+ case 'gca-ws-520': return generateSignificantRisksRegisterChecklist();
+ case 'gca-ws-590': return generateEngagementScopeChecklist();
+ case 'gca-ws-535': return generate535InfoSystemChecklist();
+ case 'gca-ws-540': return generateUnderstandingInternalControlsChecklist();
+ case 'gca-ws-550': return generate550ControlActivitiesChecklist();
+ case 'gca-ws-551': return generate551ITGCChecklist();
+ case 'gca-ws-575': return generate580SignificantDeficienciesChecklist();
+ case 'gca-ws-605': return generate605RespondingToRiskChecklist();
+ case 'gca-ws-610': return generateTestOfControlsChecklist();
+ case 'gca-ws-625': return generateGoingConcernInitialAssessmentChecklist();
+ case 'gca-ws-630': return generateOverallAuditResponseChecklist();
+ case 'gca-ws-635': return generate513AccountingEstimatesChecklist();
+ case 'gca-ws-645': return generate645LitigationClaimsChecklist();
+ case 'gca-ws-650': return generate650SubsequentEventsChecklist2();
+ case 'gca-ws-655': return generateSubstantiveAnalyticalProceduresChecklist();
+ case 'gca-ws-666': return generate515RelatedPartiesChecklist();
+ case 'gca-ws-670': return generate670JournalEntryTestingChecklist();
+ case 'gca-ws-680': return generateASPESupplementaryDisclosureChecklist();
  // ── CA Procedures Work Programs (gca-ws-proc-*) ──────────────────────────
- case 'gca-ws-proc-cash':     return generateCashWorkprogram();
- case 'gca-ws-proc-ar':       return generateAccountsReceivableWorkprogram();
- case 'gca-ws-proc-inv':      return generateInventoryWorkprogram();
- case 'gca-ws-proc-invest':   return generateShortTermInvestmentsWorkprogram();
- case 'gca-ws-proc-lr':       return generateLoansReceivableWorkprogram();
- case 'gca-ws-proc-rp':       return generate515RelatedPartiesChecklist();
- case 'gca-ws-proc-ppe':      return generatePPEWorkprogram();
- case 'gca-ws-proc-intang':   return generateIntangiblesGoodwillWorkprogram();
- case 'gca-ws-proc-ltinv':    return generateLongTermInvestmentsWorkprogram();
+ case 'gca-ws-proc-cash': return generateCashWorkprogram();
+ case 'gca-ws-proc-ar': return generateAccountsReceivableWorkprogram();
+ case 'gca-ws-proc-inv': return generateInventoryWorkprogram();
+ case 'gca-ws-proc-invest': return generateShortTermInvestmentsWorkprogram();
+ case 'gca-ws-proc-lr': return generateLoansReceivableWorkprogram();
+ case 'gca-ws-proc-rp': return generate515RelatedPartiesChecklist();
+ case 'gca-ws-proc-ppe': return generatePPEWorkprogram();
+ case 'gca-ws-proc-intang': return generateIntangiblesGoodwillWorkprogram();
+ case 'gca-ws-proc-ltinv': return generateLongTermInvestmentsWorkprogram();
  case 'gca-ws-proc-bankdebt': return generateBankDebtWorkprogram();
- case 'gca-ws-proc-ap':       return generateAccountsPayableWorkprogram();
- case 'gca-ws-proc-tax':      return generateIncomeTaxesWorkprogram();
+ case 'gca-ws-proc-ap': return generateAccountsPayableWorkprogram();
+ case 'gca-ws-proc-tax': return generateIncomeTaxesWorkprogram();
  case 'gca-ws-proc-notedebt': return generateBankDebtWorkprogram();
- case 'gca-ws-proc-lp':       return generateLoansPayableWorkprogram();
- case 'gca-ws-proc-ltd':      return generateLongTermDebtWorkprogram();
- case 'gca-ws-proc-equity':   return generateEquityWorkprogram();
- case 'gca-ws-proc-rev':      return generateTestOfDetailsRevenueChecklist();
- case 'gca-ws-proc-cos':      return generateTestOfDetailsExpensesChecklist();
- case 'gca-ws-proc-payroll':  return generateSCOTPayrollCycleChecklist();
- case 'gca-ws-proc-exp':      return generateTestOfDetailsExpensesChecklist();
+ case 'gca-ws-proc-lp': return generateLoansPayableWorkprogram();
+ case 'gca-ws-proc-ltd': return generateLongTermDebtWorkprogram();
+ case 'gca-ws-proc-equity': return generateEquityWorkprogram();
+ case 'gca-ws-proc-rev': return generateTestOfDetailsRevenueChecklist();
+ case 'gca-ws-proc-cos': return generateTestOfDetailsExpensesChecklist();
+ case 'gca-ws-proc-payroll': return generateSCOTPayrollCycleChecklist();
+ case 'gca-ws-proc-exp': return generateTestOfDetailsExpensesChecklist();
  // ── US Procedures Work Programs (gus-ws-proc-*) ──────────────────────────
- case 'gus-ws-proc-cash':     return generateCashWorkprogram();
- case 'gus-ws-proc-ar':       return generateAccountsReceivableWorkprogram();
- case 'gus-ws-proc-inv':      return generateInventoryWorkprogram();
- case 'gus-ws-proc-invest':   return generateShortTermInvestmentsWorkprogram();
- case 'gus-ws-proc-lr':       return generateLoansReceivableWorkprogram();
- case 'gus-ws-proc-rp':       return generate515RelatedPartiesChecklist();
- case 'gus-ws-proc-ppe':      return generatePPEWorkprogram();
- case 'gus-ws-proc-intang':   return generateIntangiblesGoodwillWorkprogram();
- case 'gus-ws-proc-ltinv':    return generateLongTermInvestmentsWorkprogram();
+ case 'gus-ws-proc-cash': return generateCashWorkprogram();
+ case 'gus-ws-proc-ar': return generateAccountsReceivableWorkprogram();
+ case 'gus-ws-proc-inv': return generateInventoryWorkprogram();
+ case 'gus-ws-proc-invest': return generateShortTermInvestmentsWorkprogram();
+ case 'gus-ws-proc-lr': return generateLoansReceivableWorkprogram();
+ case 'gus-ws-proc-rp': return generate515RelatedPartiesChecklist();
+ case 'gus-ws-proc-ppe': return generatePPEWorkprogram();
+ case 'gus-ws-proc-intang': return generateIntangiblesGoodwillWorkprogram();
+ case 'gus-ws-proc-ltinv': return generateLongTermInvestmentsWorkprogram();
  case 'gus-ws-proc-bankdebt': return generateBankDebtWorkprogram();
- case 'gus-ws-proc-ap':       return generateAccountsPayableWorkprogram();
- case 'gus-ws-proc-tax':      return generateIncomeTaxesWorkprogram();
+ case 'gus-ws-proc-ap': return generateAccountsPayableWorkprogram();
+ case 'gus-ws-proc-tax': return generateIncomeTaxesWorkprogram();
  case 'gus-ws-proc-notedebt': return generateBankDebtWorkprogram();
- case 'gus-ws-proc-lp':       return generateLoansPayableWorkprogram();
- case 'gus-ws-proc-ltd':      return generateLongTermDebtWorkprogram();
- case 'gus-ws-proc-equity':   return generateEquityWorkprogram();
- case 'gus-ws-proc-rev':      return generateTestOfDetailsRevenueChecklist();
- case 'gus-ws-proc-cos':      return generateTestOfDetailsExpensesChecklist();
- case 'gus-ws-proc-payroll':  return generateSCOTPayrollCycleChecklist();
- case 'gus-ws-proc-exp':      return generateTestOfDetailsExpensesChecklist();
+ case 'gus-ws-proc-lp': return generateLoansPayableWorkprogram();
+ case 'gus-ws-proc-ltd': return generateLongTermDebtWorkprogram();
+ case 'gus-ws-proc-equity': return generateEquityWorkprogram();
+ case 'gus-ws-proc-rev': return generateTestOfDetailsRevenueChecklist();
+ case 'gus-ws-proc-cos': return generateTestOfDetailsExpensesChecklist();
+ case 'gus-ws-proc-payroll': return generateSCOTPayrollCycleChecklist();
+ case 'gus-ws-proc-exp': return generateTestOfDetailsExpensesChecklist();
  default:
  return null;
  }
@@ -8891,11 +8891,11 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
  title: '3. Factors to Consider in the Audit',
  questions: [
  h('asm-s3-h', '<p>Identify key areas to be addressed in the audit:</p>', [
- la('asm-s3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', 'Material FS areas: Vessels & PP&E ($8.2M), Long-term debt ($4.8M), Revenue ($12.5M), Accounts receivable ($2.1M), Inventory ($750K). Key disclosures: related party charter agreement, USD FX risk. See Form 590.'),
+ la('asm-s3-1', '<p>Material financial statement areas and disclosures.</p>', 'Material FS areas: Vessels & PP&E ($8.2M), Long-term debt ($4.8M), Revenue ($12.5M), Accounts receivable ($2.1M), Inventory ($750K). Key disclosures: related party charter agreement, USD FX risk. '),
  la('asm-s3-2', '<p>Major operational or control changes during the period.</p>', 'Two new USD freight contracts commenced Q3 FY2024 (~35% of revenue USD-denominated). New crew management software system implemented Q2 FY2024. New port call agreements with 3 eastern ports effective February 2024.'),
  la('asm-s3-3', '<p>Impact of changes in accounting standards.</p>', 'No new ASPE standards effective for year ended March 31, 2024 with material impact. Accounting policies consistent with prior year.'),
  la('asm-s3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', 'Prior year significant AJE for accrued freight costs (~$185K underaccrual). Prior year going concern disclosures (covenant breach subsequently cured). Revenue cut-off identified as significant risk in prior year.'),
- la('asm-s3-5', '<p>Significant risks and going-concern uncertainties.</p>', 'Significant risks: (1) Revenue recognition — voyage completion method cut-off (ASPE s.3400); (2) Vessel impairment ($8.2M book value). USD FX translation elevated risk. Going concern: no indicators identified. See Form 520.'),
+ la('asm-s3-5', '<p>Significant risks and going-concern uncertainties.</p>', 'Significant risks: (1) Revenue recognition — voyage completion method cut-off (ASPE s.3400); (2) Vessel impairment ($8.2M book value). USD FX translation elevated risk. Going concern: no indicators identified. '),
  la('asm-s3-6', '<p>Use of auditor experts.</p>', 'No auditor\'s experts required for this engagement.'),
  la('asm-s3-7', '<p>Use of service organization reports.</p>', 'No service organization reports applicable.'),
  la('asm-s3-8', '<p>Use of component auditors.</p>', 'Single entity — no component auditors.'),
@@ -8926,7 +8926,7 @@ export const generateAuditStrategyMemorandumChecklist = (): Checklist => {
  id: 'asm-s5',
  title: '5. Budget',
  questions: [
- la('asm-s5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', 'Budgeted fee: $28,500. Estimated hours: 185. See Form 450 for detailed time budget by team member and audit area.'),
+ la('asm-s5-1', '<p>Establish the budgeted audit fee and labour hours.</p>', 'Budgeted fee: $28,500. Estimated hours: 185..'),
  ],
  isExpanded: true
  },
@@ -11020,25 +11020,25 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
  la('us-tpd-pA-4g', '<p>New accounting standards and changes to accounting policies.</p>', 'ASC 842 (Leases) first adopted in 2024 — new ROU assets ($2.8M) and finance lease liabilities ($2.74M) recognized. No other new FASB ASC standards effective for year ended December 31, 2024 with material impact.'),
  la('us-tpd-pA-4-doc', '<p>Document matters arising and decisions reached:</p>', 'ASC 842 adoption is the most significant accounting change — specific procedures planned for ROU asset valuation, discount rate assessment, and lease classification. LoadMaster Pro upgrade: DI assessment to be performed by Senior 1. Revenue growth from new contract: revenue recognition procedures to include new contract terms review.'),
  ]),
- h('us-tpd-pA-5', '<p><strong>5. Preliminary analytical review</strong><br/>Review the results of the preliminary analytical review (Form 501) and discuss:</p>', [
+ h('us-tpd-pA-5', '<p><strong>5. Preliminary analytical review</strong><br/>Review the results of the preliminary analytical review and discuss:</p>', [
  la('us-tpd-pA-5a', '<p>How actual results aligned or differed with expectations based on the economic and industry trends, changes to operations, etc.</p>', 'Revenue of $18.4M up 8.2% from $17.0M — consistent with new contract and rate increases. Operating ratio 91.4%. EBITDA margin 8.6% — consistent with regional trucking/warehousing benchmarks. D&A increase of $280K attributable to ASC 842 ROU asset amortization.'),
- la('us-tpd-pA-5b', '<p>Whether any variances or balances require further analysis, investigation or could be indicative of possible RMMs (note on Form 520).</p>', 'Three items flagged: (1) deferred revenue increase of $44K — revenue cutoff testing planned; (2) accrued expenses decrease $68K vs. expectation — search for unrecorded liabilities planned; (3) brokerage revenue increase to 8% — ASC 606 contract terms review required. All noted on Form 520.'),
- la('us-tpd-pA-5-doc', '<p>Document matters arising and decisions reached:</p>', 'Deferred revenue variance and accrued expenses variance carried to Form 520. Cutoff testing scope expanded to include brokerage revenue. Preliminary analytics completed by L. Garcia and reviewed by M. Thompson on January 13, 2025.'),
+ la('us-tpd-pA-5b', '<p>Whether any variances or balances require further analysis, investigation or could be indicative of possible RMMs.</p>', 'Three items flagged: (1) deferred revenue increase of $44K — revenue cutoff testing planned; (2) accrued expenses decrease $68K vs. expectation — search for unrecorded liabilities planned; (3) brokerage revenue increase to 8% — ASC 606 contract terms review required. All noted'),
+ la('us-tpd-pA-5-doc', '<p>Document matters arising and decisions reached:</p>', 'Deferred revenue variance and accrued expenses variance carried Cutoff testing scope expanded to include brokerage revenue. Preliminary analytics completed by L. Garcia and reviewed by M. Thompson on January 13, 2025.'),
  ]),
  h('us-tpd-pA-6', '<p><strong>6. Identifying potential risks of material misstatement</strong><br/>Discuss where RMMs could be identified, including the susceptibility of the entity\'s F/S to material misstatement (fraud or error). Consider the following:</p>', [
  la('us-tpd-pA-6a', '<p>Material account balances and transactions.</p>', 'Material areas: Revenue $18.4M, ROU assets $2.8M, Finance lease liabilities $2.74M, AR $3.1M, Long-term debt $5.6M, Goodwill $1.42M. All exceed performance materiality of $128,800.'),
  la('us-tpd-pA-6b', '<p>Complex areas in the applicable financial reporting framework, including classification and disclosures.</p>', 'ASC 842 — ROU asset recognition and measurement, finance vs. operating lease classification, discount rate. ASC 606 — revenue recognition for brokerage arrangements (principal vs. agent). ASC 350 — goodwill impairment (quantitative test required given first-year engagement).'),
  la('us-tpd-pA-6c', '<p>Extent and nature of related-party relationships and transactions.</p>', 'LLC member transactions — distributions and capital accounts. No other significant related party transactions identified in preliminary inquiries. Related party disclosures (ASC 850) to be confirmed.'),
- la('us-tpd-pA-6d', '<p>The application of key accounting policies, including revenue recognition and the rebuttable assumption that revenue recognition is a significant risk.</p>', 'Revenue recognized per ASC 606 — point in time for freight delivery completion. Revenue recognition is a significant risk — rebuttable presumption applies. Cut-off at December 31, 2024 requires testing. Brokerage: principal vs. agent assessment required for new third-party carrier arrangements. Significant risk carried to Form 520.'),
+ la('us-tpd-pA-6d', '<p>The application of key accounting policies, including revenue recognition and the rebuttable assumption that revenue recognition is a significant risk.</p>', 'Revenue recognized per ASC 606 — point in time for freight delivery completion. Revenue recognition is a significant risk — rebuttable presumption applies. Cut-off at December 31, 2024 requires testing. Brokerage: principal vs. agent assessment required for new third-party carrier arrangements. Significant risk carried'),
  la('us-tpd-pA-6e', '<p>Nature of estimates, including the level of complexity, change and estimation uncertainty.</p>', 'Key estimates: (1) goodwill impairment — management specialist engaged, significant estimation uncertainty; (2) ASC 842 discount rates (IBR used — 4.8%); (3) allowance for doubtful accounts ($92K); (4) accrued liabilities at period end.'),
  la('us-tpd-pA-6f', '<p>Significant deficiencies in internal control.</p>', 'No significant deficiencies communicated in prior year (first-year engagement — no prior auditor). LoadMaster Pro upgrade: DI assessment planned. ADP payroll: SOC 1 Type II report to be reviewed.'),
- la('us-tpd-pA-6g', '<p>Significant risks (Form 520) and, if applicable, any key audit matters.</p>', 'Two significant risks: (1) Revenue recognition — ASC 606 cut-off and principal/agent determination; (2) Goodwill impairment — management specialist assessment (ASC 350). Both carried to Form 520. Private company US GAAS — key audit matters not applicable.'),
+ la('us-tpd-pA-6g', '<p>Significant risks and, if applicable, any key audit matters.</p>', 'Two significant risks: (1) Revenue recognition — ASC 606 cut-off and principal/agent determination; (2) Goodwill impairment — management specialist assessment (ASC 350). Both carried Private company US GAAS — key audit matters not applicable.'),
  la('us-tpd-pA-6h', '<p>Financing arrangements and covenants.</p>', 'Credit facility — lender covenant: audited F/S within 120 days of year-end (by April 30, 2025). Debt-service coverage ratio covenant. Covenant calculation to be recalculated and agreed to loan agreement.'),
  la('us-tpd-pA-6i', '<p>Management incentive plans.</p>', 'No management bonus plans. Member distributions by resolution. No incentive-based misstatement motivation identified.'),
  la('us-tpd-pA-6j', '<p>Operating losses and negative business trends.</p>', 'No operating losses. Revenue growth 8.2%. Operating ratio stable. No negative business trends identified.'),
  la('us-tpd-pA-6k', '<p>Going-concern events or conditions.</p>', 'No going concern indicators identified. Current ratio 1.8x. Positive operating cash flow. Revenue growth trajectory positive. No events or conditions identified.'),
  la('us-tpd-pA-6l', '<p>Significant litigation.</p>', 'No known litigation. Management inquiry planned at fieldwork commencement to confirm.'),
- la('us-tpd-pA-6-doc', '<p>Document matters arising and decisions reached:</p>', 'Two significant risks carried to Form 520. ASC 842 first-year adoption added as elevated risk. Brokerage principal/agent analysis to be included in revenue procedures. Goodwill valuation specialist report evaluation procedures planned.'),
+ la('us-tpd-pA-6-doc', '<p>Document matters arising and decisions reached:</p>', 'Two significant risks carried ASC 842 first-year adoption added as elevated risk. Brokerage principal/agent analysis to be included in revenue procedures. Goodwill valuation specialist report evaluation procedures planned.'),
  ]),
  h('us-tpd-pA-7', '<p><strong>7. Risk assessment procedures</strong><br/>Discuss what RAPs will be performed and who will perform them. Consider:</p>', [
  la('us-tpd-pA-7a', '<p>Nature and extent of information to be provided by the entity.</p>', 'Client to provide: signed trial balance, aged AR, fixed asset continuity, goodwill valuation report, lease schedules (ASC 842), LoadMaster Pro revenue export, ADP payroll summary, bank confirmation package. PBC list issued to J. Reyes and K. Park on January 17, 2025.'),
@@ -11054,13 +11054,13 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
  id: 'us-tpd-pB',
  title: 'PART B — Agenda: Risk Response Planning',
  questions: [
- h('us-tpd-pB-8', '<p><strong>8. Assessed risks</strong><br/>Review the assessed risks identified as a result of performing RAPs (Form 520) and discuss:</p>', [
- la('us-tpd-pB-8a', '<p>Whether all identified risks of material misstatement have been carried forward onto the risk register (Form 520).</p>', 'Risk register (Form 520) reviewed. Two significant risks: revenue recognition (ASC 606) and goodwill impairment (ASC 350). ASC 842 first-year adoption and accrued liabilities completeness carried as elevated risks. All RMMs confirmed on register.'),
+ h('us-tpd-pB-8', '<p><strong>8. Assessed risks</strong><br/>Review the assessed risks identified as a result of performing RAPs and discuss:</p>', [
+ la('us-tpd-pB-8a', '<p>Whether all identified risks of material misstatement have been carried forward onto the risk register.</p>', 'Risk register reviewed. Two significant risks: revenue recognition (ASC 606) and goodwill impairment (ASC 350). ASC 842 first-year adoption and accrued liabilities completeness carried as elevated risks. All RMMs confirmed on register.'),
  la('us-tpd-pB-8b', '<p>The assessment of risk at the F/S level, and their impact on assertion level risks (if any).</p>', 'F/S level: management bias in estimates (goodwill valuation, ASC 842 discount rates). No pervasive F/S-level misstatement risk identified. Impact: expanded procedures for all estimates and judgmental areas.'),
  la('us-tpd-pB-8c', '<p>The assessment of risk at the assertion level and conclusions on planned control reliance.</p>', 'Revenue — completeness and cut-off: significant risk, no control reliance. Goodwill — valuation: significant risk, evaluation of management\'s specialist. ASC 842 — accuracy and completeness: elevated risk, no control reliance. All other: moderate risk, substantive approach.'),
  la('us-tpd-pB-8d', '<p>Any significant risks identified and their potential impact on the audit response.</p>', 'Revenue cut-off: test shipments in transit at December 31, 2024 — obtain delivery confirmations, compare to revenue posting dates. Goodwill: evaluate management\'s specialist qualifications, assumptions, and conclusions'),
  la('us-tpd-pB-8e', '<p>Any unexpected results, missing information, or evidence of management override or bias.</p>', 'No evidence of management override or bias at planning stage. Accrued expenses variance explained by timing. No red flags identified.'),
- la('us-tpd-pB-8-doc', '<p>Document matters arising and decisions reached:</p>', 'Risk register finalized on Form 520. Audit responses designed. No changes to planned approach.'),
+ la('us-tpd-pB-8-doc', '<p>Document matters arising and decisions reached:</p>', 'Risk register finalized Audit responses designed. No changes to planned approach.'),
  ]),
  h('us-tpd-pB-9', '<p><strong>9. Fraud risks and scenarios</strong></p>', [
  la('us-tpd-pB-9a', '<p>Review the fraud risk assessment form (or equivalent).</p>', 'Fraud risk assessment completed Revenue recognition identified as fraud risk (rebuttable presumption). Management override of internal controls: universal significant risk.'),
@@ -11069,15 +11069,15 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
  la('us-tpd-pB-9-doc', '<p>Document matters arising and decisions reached:</p>', 'Fraud discussion completed January 15, 2025. Unpredictable procedures planned: (1) unannounced AR confirmation dispatch; (2) journal entry population testing. Revenue recognition fraud risk addressed with expanded cut-off and principal/agent procedures.'),
  ]),
  h('us-tpd-pB-10', '<p><strong>10. Design an appropriate audit response</strong><br/>Design F/S-level and assertion-level responses. Review and discuss:</p>', [
- la('us-tpd-pB-10a', '<p>Specific procedures to address significant risks assessed on Form 520.</p>', 'Revenue cut-off: test shipments in transit December 31 — obtain delivery confirmations, compare to revenue posting. Principal/agent: review new brokerage contract terms against ASC 606 indicators. Goodwill: evaluate management specialist qualifications, assess assumptions and key inputs, independently verify market data used in DCF.'),
+ la('us-tpd-pB-10a', '<p>Specific procedures to address significant risks assessed</p>', 'Revenue cut-off: test shipments in transit December 31 — obtain delivery confirmations, compare to revenue posting. Principal/agent: review new brokerage contract terms against ASC 606 indicators. Goodwill: evaluate management specialist qualifications, assess assumptions and key inputs, independently verify market data used in DCF.'),
  la('us-tpd-pB-10b', '<p>Planned tests of controls.</p>', 'No formal tests of controls planned. DI assessment for LoadMaster Pro and ADP. SOC 1 Type II review for ADP payroll.'),
  la('us-tpd-pB-10c', '<p>Planned tests of details.</p>', 'Revenue: cut-off testing for shipments in transit, brokerage contract review. AR: positive confirmation package (40 items, >$10K threshold). ASC 842: recalculate ROU asset and lease liability for each lease, verify discount rate. Goodwill: evaluate specialist\'s report. Debt: confirmation from lender, covenant recalculation. Payroll: gross-to-net recalculation sample (10 employees).'),
  la('us-tpd-pB-10d', '<p>Unpredictable procedures (required for fraud risks).</p>', 'Unpredictable procedure 1: unannounced AR confirmation dispatch on day 1 of fieldwork. Unpredictable procedure 2: full journal entry population testing using LoadMaster Pro GL export for unusual or large entries.'),
  la('us-tpd-pB-10e', '<p>Substantive analytical procedures: consider the source of data and its reliability.</p>', 'Analytical procedures: (1) revenue by service type — compare monthly trends and mix; (2) operating cost ratios — compare to prior year and industry; (3) payroll headcount-adjusted comparison. Source: management-prepared trial balance and LoadMaster Pro export — reliability moderate; analytical conclusions corroborated by tests of detail.'),
  la('us-tpd-pB-10f', '<p>SCOTABDs and procedures for which confirmations will be obtained.</p>', 'Confirmations: (1) AR — 40 positive confirmations; (2) credit facility (balance, covenants, collateral); (3) legal counsel — contingencies and litigation. No SCOTABDs identified.'),
- la('us-tpd-pB-10-doc', '<p>Document matters arising and decisions reached:</p>', 'Audit responses finalized on Form 520 and individual audit programs. Confirmation package to be prepared by Staff 1 by January 17, 2025 for dispatch on January 20 (day 1 of fieldwork).'),
+ la('us-tpd-pB-10-doc', '<p>Document matters arising and decisions reached:</p>', 'Audit responses finalized and individual audit programs. Confirmation package to be prepared by Staff 1 by January 17, 2025 for dispatch on January 20 (day 1 of fieldwork).'),
  ]),
- h('us-tpd-pB-11', '<p><strong>11. Audit plans and overall audit strategy</strong><br/>Finalize the audit plans, and update the overall audit strategy (Form 430). Address:</p>', [
+ h('us-tpd-pB-11', '<p><strong>11. Audit plans and overall audit strategy</strong><br/>Finalize the audit plans, and update the overall audit strategy. Address:</p>', [
  la('us-tpd-pB-11a', '<p>Extent (if any) of pre-period-end work.</p>', 'No interim procedures planned. All procedures to be performed at year-end (January 20 – February 7, 2025).'),
  la('us-tpd-pB-11b', '<p>Audit timing and management/TCWG communications, including the communication of the overall audit plan.</p>', 'Planning letter communicated to management (J. Reyes) January 17, 2025. Board of Managers (TCWG) communication planned for February 28, 2025. Signed report target March 15, 2025.'),
  la('us-tpd-pB-11c', '<p>Where applicable, coordination with experts, service auditors and group component auditors.</p>', 'Management\'s goodwill valuation specialist (Horizon Valuation Group) — report to be received by January 15, 2025. ADP: SOC 1 Type II report to be obtained. No group component auditors.'),
@@ -11089,7 +11089,7 @@ export const generateUSEngagementPlanningChecklist = (): Checklist => {
  la('us-tpd-pB-12a', '<p>Exercising professional skepticism at all times.</p>'),
  la('us-tpd-pB-12b', '<p>Maintaining independence and ethics.</p>'),
  la('us-tpd-pB-12c', '<p>Ongoing communication among the engagement team, especially where misstatements are found, tests fail or the client is not providing information on a timely basis.</p>'),
- la('us-tpd-pB-12d', '<p>Updating the overall audit strategy (Form 430) for changes to proposed plans.</p>'),
+ la('us-tpd-pB-12d', '<p>Updating the overall audit strategy for changes to proposed plans.</p>'),
  la('us-tpd-pB-12e', '<p>Remaining alert throughout the audit for indicators of fraud, related parties, going-concern uncertainties or new information. (Note: Notify the engagement partner immediately about new information obtained that, if known earlier, may have caused the firm to decline the audit engagement.)</p>'),
  la('us-tpd-pB-12-doc', '<p>Document matters arising and decisions reached:</p>', 'Reminders issued to all team members. Senior 1 to notify L. Garcia immediately if goodwill valuation report or LoadMaster Pro extract are not received by January 17 per PBC list.'),
  ]),
@@ -11377,11 +11377,11 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
  title: '3. Factors to Consider in the Audit',
  questions: [
  h('us-asm-s3-h', '<p>Identify key areas to be addressed in the audit:</p>', [
- la('us-asm-s3-1', '<p>Material financial statement areas and disclosures (Form 590).</p>', 'Material FS areas: Revenue ($18.4M), Right-of-use assets ($2.8M), Finance lease liabilities ($2.74M), Accounts receivable ($3.1M), Long-term debt ($5.6M), Goodwill ($1.42M). Key disclosures: ASC 842 lease disclosures, ASC 350 goodwill. See Form 590.'),
+ la('us-asm-s3-1', '<p>Material financial statement areas and disclosures.</p>', 'Material FS areas: Revenue ($18.4M), Right-of-use assets ($2.8M), Finance lease liabilities ($2.74M), Accounts receivable ($3.1M), Long-term debt ($5.6M), Goodwill ($1.42M). Key disclosures: ASC 842 lease disclosures, ASC 350 goodwill. '),
  la('us-asm-s3-2', '<p>Major operational or control changes during the period.</p>', 'ASC 842 adopted for new finance leases Q1 2024. LoadMaster Pro billing system upgraded Q2 2024. Expansion to 3 additional states (10 to 12 states) Q3 2024.'),
  la('us-asm-s3-3', '<p>Impact of changes in accounting standards.</p>', 'ASC 842 (Leases) — new right-of-use assets and finance lease liabilities recognized for the first time this year. No other new FASB ASC standards effective for year ended December 31, 2024 with material impact.'),
  la('us-asm-s3-4', '<p>Matters raised (such as problem areas) from past experience.</p>', 'First-year engagement with Harbor Freight Logistics LLC. No predecessor findings received. Prior year financial statements reviewed — no unusual items noted. Opening balance procedures required'),
- la('us-asm-s3-5', '<p>Significant risks and going-concern uncertainties.</p>', 'Significant risks: (1) Revenue recognition — ASC 606 cut-off and principal/agent determination; (2) Goodwill impairment — management specialist assessment (ASC 350). ASC 842 first-year adoption elevated risk. Going concern: no indicators identified. See Form 520.'),
+ la('us-asm-s3-5', '<p>Significant risks and going-concern uncertainties.</p>', 'Significant risks: (1) Revenue recognition — ASC 606 cut-off and principal/agent determination; (2) Goodwill impairment — management specialist assessment (ASC 350). ASC 842 first-year adoption elevated risk. Going concern: no indicators identified. '),
  la('us-asm-s3-6', '<p>Use of auditor experts.</p>', 'No auditor\'s experts required. Management\'s valuation specialist (goodwill impairment) to be evaluated'),
  la('us-asm-s3-7', '<p>Use of service organization reports.</p>', 'ADP payroll processing — SOC 1 Type II report to be reviewed for payroll controls reliance.'),
  la('us-asm-s3-8', '<p>Use of component auditors.</p>', 'Single entity — no component auditors.'),
@@ -11412,7 +11412,7 @@ export const generateUSAuditStrategyMemorandumChecklist = (): Checklist => {
  id: 'us-asm-s5',
  title: '5. Budget',
  questions: [
- la('us-asm-s5-1', '<p>Establish the budgeted audit fee and labour hours (Form 450).</p>', 'Budgeted fee: $42,000. Estimated hours: 400. Planning 40 hrs, Fieldwork 280 hrs, Completion 80 hrs. See Form 450 for detailed time budget by team member and audit area.'),
+ la('us-asm-s5-1', '<p>Establish the budgeted audit fee and labour hours.</p>', 'Budgeted fee: $42,000. Estimated hours: 400. Planning 40 hrs, Fieldwork 280 hrs, Completion 80 hrs..'),
  ],
  isExpanded: true
  },
@@ -13125,7 +13125,7 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
  q('f408-pC-bi-3j', '<p>Material contracts and lease agreements.</p>', undefined, 'Yes'),
  q('f408-pC-bi-3k', '<p>Chart of accounts.</p>', undefined, 'Yes'),
  q('f408-pC-bi-3l', '<p>Organization charts and job descriptions.</p>', undefined, 'Yes'),
- q('f408-pC-bi-3m', '<p>Risk registers (similar to Form 520).</p>', undefined, 'Yes'),
+ q('f408-pC-bi-3m', '<p>Risk registers (similar).</p>', undefined, 'Yes'),
  q('f408-pC-bi-3n', '<p>Internal control documentation.</p>', undefined, 'Yes'),
  q('f408-pC-bi-3o', '<p>Policies and procedures.</p>', undefined, 'Yes'),
  q('f408-pC-bi-3p', '<p>Board governance documents.</p>', undefined, 'Yes'),
@@ -13170,7 +13170,7 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
  {
  id: 'f408-conc',
  title: 'Conclusion',
- note: 'We have obtained sufficient appropriate audit evidence regarding whether:\n1. To accept the new audit client or new engagement (see Form 410).\n2. Opening balances contain misstatements that materially affect the current period\'s F/S.\n3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.',
+ note: 'We have obtained sufficient appropriate audit evidence regarding whether:\n1. To accept the new audit client or new engagement.\n2. Opening balances contain misstatements that materially affect the current period\'s F/S.\n3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.',
  questions: [
  { id: 'f408-conc-pb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f408-conc-pb-c1', content: 'Prepared by', blockType: 'text' as const }, { id: 'f408-conc-pb-c2', content: '2024-04-05', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
  { id: 'f408-conc-rb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'f408-conc-rb-c1', content: 'Reviewed by', blockType: 'text' as const }, { id: 'f408-conc-rb-c2', content: '2024-04-08', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
@@ -13182,9 +13182,9 @@ export const generateForm408InitialAuditEngagements = (): Checklist => {
  return {
  id: 'global-template-form-408-initial-audit',
  title: 'Form 408 — Initial Audit Engagements',
- description: 'CPA Canada PEG Form 408 — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures, and opening balances procedures for Shipping Line Inc. year ended March 31, 2024.',
+ description: 'CPA Canada PEG — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures, and opening balances procedures for Shipping Line Inc. year ended March 31, 2024.',
  objective: 'To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies have been consistently applied, appropriately accounted for and adequately presented/disclosed.',
- note: 'This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.<br/><br/><ul style="list-style:none;padding:0;margin:0 0 12px 0;"><li style="padding:2px 0;">Part A – Pre-acceptance considerations</li><li style="padding:2px 0;">Part B – Predecessor auditor/practitioner considerations</li><li style="padding:2px 0;">Part C – Procedures on opening balances</li></ul><em>PSC = Procedure successfully completed. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
+ note: 'This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.<br/><br/><ul style="list-style:none;padding:0;margin:0 0 12px 0;"><li style="padding:2px 0;">Part A – Pre-acceptance considerations</li><li style="padding:2px 0;">Part B – Predecessor auditor/practitioner considerations</li><li style="padding:2px 0;">Part C – Procedures on opening balances</li></ul><em>PSC = Procedure successfully completed. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
  sections,
  createdAt: new Date(),
  updatedAt: new Date(),
@@ -13245,7 +13245,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
  q('f410-era-4e', '<p>The need for technological resources, such as IT applications to perform procedures on the entity\'s data (where required).</p>', undefined, 'No'),
  q('f410-era-4f', '<p>The need for intellectual resources (such as a methodology, industry or subject matter-specific guides, or access to information sources).</p>', undefined, 'No'),
  ], 'Yes', '<p>Firm has sufficient resources and marine industry knowledge. Year-end fieldwork scheduled April 14–25, 2024 is achievable with planned staffing. Engagement partner J. Williams has prior marine transportation audit experience. EQR not required. No external experts required.</p>', 'AC-04'),
- q('f410-era-5', '<p><strong>Engagement risk factors</strong><br/>Identify significant matters that may have implications for accepting or continuing the engagement.<br/><a href="#f410-appA" class="text-primary underline text-xs font-medium hover:opacity-80">Refer to Appendix A</a><em> for a list of possible engagement risk factors.</em><br/><em>Note: Use Form 520 to document any risks of material misstatement identified.</em><br/>Consider:</p>', [
+ q('f410-era-5', '<p><strong>Engagement risk factors</strong><br/>Identify significant matters that may have implications for accepting or continuing the engagement.<br/><a href="#f410-appA" class="text-primary underline text-xs font-medium hover:opacity-80">Refer to Appendix A</a><em> for a list of possible engagement risk factors.</em><br/><em>Note: Use to document any risks of material misstatement identified.</em><br/>Consider:</p>', [
  q('f410-era-5a', '<p>Making inquiries of other firm staff and partners.</p>', undefined, 'Yes'),
  q('f410-era-5b', '<p>Making inquiries of management/TCWG.</p>', undefined, 'Yes'),
  q('f410-era-5c', '<p>Identifying engagement risk factors from other engagements performed for the entity (such as addressed by CSRS 4460 and other advisory and tax planning services).</p>', undefined, 'No'),
@@ -13333,7 +13333,7 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
  {
  id: 'f410-appA',
  title: 'Appendix A – Listing of potential engagement risk factors',
- note: 'This appendix can be used to complete engagement risk assessment procedure #5, engagement risk factors. Depending on the complexity, the risk can be described either under the responses/comments column above or in the chart below and referenced to the question above. Only document the information once.\n\nReview Form 510, and identify engagement risk factors that may influence the acceptance/continuance decision.',
+ note: 'This appendix can be used to complete engagement risk assessment procedure #5, engagement risk factors. Depending on the complexity, the risk can be described either under the responses/comments column above or in the chart below and referenced to the question above. Only document the information once.\n\nReview, and identify engagement risk factors that may influence the acceptance/continuance decision.',
  questions: [
  h('f410-appA-int-hdr', '<p><strong>Integrity and ethical values</strong></p>', [
  q('f410-appA-int-1', '<p>Management or TCWG have a history of unethical behaviour or suspected fraud.</p>', undefined, 'No'),
@@ -13383,9 +13383,9 @@ export const generateForm410AcceptanceContinuance = (): Checklist => {
  return {
  id: 'global-template-form-410-acceptance-continuance',
  title: 'New or Existing Engagement — Acceptance/Continuance',
- description: 'CPA Canada PEG Form 410 — New or Existing Engagement Acceptance/Continuance for Shipping Line Inc. year ended March 31, 2024.',
+ description: 'CPA Canada PEG — New or Existing Engagement Acceptance/Continuance for Shipping Line Inc. year ended March 31, 2024.',
  objective: 'To accept or continue the engagement by assessing whether: the level of engagement risk is acceptable to the firm; the firm has the necessary competencies; the firm and staff comply with the independence requirements; and the engagement preconditions have been met.',
- note: 'For first year audit engagements, complete Form 408 in addition to this form. In the case of a group audit (as determined in Engagement risk assessment question #2), the term "management" includes both group management and component management as appropriate.<br/><br/><em>PSC = Procedure successfully completed. &nbsp;EQR = Engagement quality review. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
+ note: 'For first year audit engagements, complete in addition to this form. In the case of a group audit (as determined in Engagement risk assessment question #2), the term "management" includes both group management and component management as appropriate.<br/><br/><em>PSC = Procedure successfully completed. &nbsp;EQR = Engagement quality review. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
  sections,
  createdAt: new Date(),
  updatedAt: new Date(),
@@ -13492,7 +13492,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
  q('us-f408-pC-bi-3j', '<p>Material contracts and lease agreements.</p>', undefined, 'Yes'),
  q('us-f408-pC-bi-3k', '<p>Chart of accounts.</p>', undefined, 'Yes'),
  q('us-f408-pC-bi-3l', '<p>Organization charts and job descriptions.</p>', undefined, 'Yes'),
- q('us-f408-pC-bi-3m', '<p>Risk registers (similar to Form 520).</p>', undefined, 'Yes'),
+ q('us-f408-pC-bi-3m', '<p>Risk registers (similar).</p>', undefined, 'Yes'),
  q('us-f408-pC-bi-3n', '<p>Internal control documentation.</p>', undefined, 'Yes'),
  q('us-f408-pC-bi-3o', '<p>Policies and procedures.</p>', undefined, 'Yes'),
  q('us-f408-pC-bi-3p', '<p>Board governance documents.</p>', undefined, 'Yes'),
@@ -13537,7 +13537,7 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
  {
  id: 'us-f408-conc',
  title: 'Conclusion',
- note: 'We have obtained sufficient appropriate audit evidence regarding whether:\n1. To accept the new audit client or new engagement (see Form 410).\n2. Opening balances contain misstatements that materially affect the current period\'s F/S.\n3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.',
+ note: 'We have obtained sufficient appropriate audit evidence regarding whether:\n1. To accept the new audit client or new engagement.\n2. Opening balances contain misstatements that materially affect the current period\'s F/S.\n3. Appropriate accounting policies were reflected in the opening balances and consistently applied in the current period\'s F/S. Where accounting policy changes have occurred, they have been appropriately accounted for and adequately presented/disclosed in accordance with the applicable financial reporting framework.',
  questions: [
  { id: 'us-f408-conc-pb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'us-f408-conc-pb-c1', content: 'Prepared by', blockType: 'text' as const }, { id: 'us-f408-conc-pb-c2', content: '2025-01-14', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
  { id: 'us-f408-conc-rb', text: '', answerType: 'none' as const, options: [], required: false, answer: '', columnLayout: { columns: 2, cells: [{ id: 'us-f408-conc-rb-c1', content: 'Reviewed by', blockType: 'text' as const }, { id: 'us-f408-conc-rb-c2', content: '2025-01-16', blockType: 'date' as const }], columnWidths: [0.35, 0.65] } },
@@ -13549,9 +13549,9 @@ export const generateUSForm408InitialAuditEngagements = (): Checklist => {
  return {
  id: 'global-template-us-form-408-initial-audit',
  title: 'Form 408 — Initial Audit Engagements (US GAAS)',
- description: 'US GAAS Form 408 — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures, and opening balances procedures for Harbor Freight Logistics LLC year ended December 31, 2024.',
+ description: 'US GAAS — Initial Audit Engagements. Pre-acceptance considerations, predecessor auditor procedures, and opening balances procedures for Harbor Freight Logistics LLC year ended December 31, 2024.',
  objective: 'To gather information to assist with the decision of whether to accept a new audit client and to obtain sufficient appropriate audit evidence as to whether opening balances contain misstatements and that appropriate accounting policies have been consistently applied, appropriately accounted for and adequately presented/disclosed.',
- note: 'This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, Form 410 should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.<br/><br/><ul style="list-style:none;padding:0;margin:0 0 12px 0;"><li style="padding:2px 0;">Part A – Pre-acceptance considerations</li><li style="padding:2px 0;">Part B – Predecessor auditor/practitioner considerations</li><li style="padding:2px 0;">Part C – Procedures on opening balances</li></ul><em>PSC = Procedure successfully completed. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
+ note: 'This form should be completed at the commencement of the engagement to allow time for any issues identified to be resolved. Also note that after completing parts A and B, should be completed to reach a decision as to whether the client will be accepted. If so, complete Part C – Procedures on opening balances.<br/><br/><ul style="list-style:none;padding:0;margin:0 0 12px 0;"><li style="padding:2px 0;">Part A – Pre-acceptance considerations</li><li style="padding:2px 0;">Part B – Predecessor auditor/practitioner considerations</li><li style="padding:2px 0;">Part C – Procedures on opening balances</li></ul><em>PSC = Procedure successfully completed. &nbsp;TCWG = Those charged with governance. &nbsp;F/S = Financial statements.</em>',
  sections,
  createdAt: new Date(),
  updatedAt: new Date(),
@@ -13780,7 +13780,7 @@ export const generateUSForm410AcceptanceContinuance = (): Checklist => {
  return {
  id: 'global-template-us-form-410-acceptance-continuance',
  title: 'New or Existing Engagement — Acceptance/Continuance',
- description: 'US GAAS Form 410 — New or Existing Engagement Acceptance/Continuance for Harbor Freight Logistics LLC year ended December 31, 2024. Covers quality management (SQMS 1), engagement risk factors, management integrity, firm competencies, independence (AICPA Code / ET), and engagement preconditions.',
+ description: 'US GAAS — New or Existing Engagement Acceptance/Continuance for Harbor Freight Logistics LLC year ended December 31, 2024. Covers quality management (SQMS 1), engagement risk factors, management integrity, firm competencies, independence (AICPA Code / ET), and engagement preconditions.',
  objective: 'To assess whether the firm should accept or continue this audit engagement, having regard to quality management policies, engagement risk factors, management integrity, firm competencies, and independence requirements.',
  sections,
  createdAt: new Date(),
@@ -14076,7 +14076,7 @@ export const generate515RelatedPartiesChecklist = (): Checklist => {
  title: 'Understanding Related Parties',
  description: 'Identify and understand the entity\'s related party relationships and transactions.',
  objective: 'To understand the use and extent of related-party relationships and transactions, to recognize fraud risk factors and to assess possible risks of material misstatement (fraud or error) in the financial statements.',
- note: '<p><strong>Note:</strong> Information on related parties may already have been documented on Form 510, to which reference can be made.</p><p style="margin-top:6px;color:var(--muted-foreground);font-size:0.8125rem">PSC = Procedures successfully completed.&nbsp;&nbsp;F/S = Financial statements.</p>',
+ note: '<p><strong>Note:</strong> Information on related parties may already have been documented, to which reference can be made.</p><p style="margin-top:6px;color:var(--muted-foreground);font-size:0.8125rem">PSC = Procedures successfully completed.&nbsp;&nbsp;F/S = Financial statements.</p>',
  sections: [
  {
  id: 'ra515-s1', title: '1. Obtain Listing of Related Parties', isExpanded: true,
@@ -14096,7 +14096,7 @@ export const generate515RelatedPartiesChecklist = (): Checklist => {
  '<p><strong>Document any controls/procedures that exist to ensure related parties are identified and significant transactions are:</strong></p><ul><li>Authorized and approved (especially those outside the normal course of business).</li><li>Accounted for and disclosed in accordance with the applicable financial reporting framework.</li></ul>',
  'Authorization controls: All related-party transactions require board approval and are documented in board minutes. CFO reviews all related-party invoices prior to payment.\nDisclosure controls: Controller maintains a related-party register updated quarterly. External counsel reviews F/S disclosures annually.\nNo transactions outside the normal course of business identified this period.'),
  q('515-2a',
- '<p>Where controls that meet the requirements(a) are identified, assess the control design and implementation on Form 550.</p>',
+ '<p>Where controls that meet the requirements(a) are identified, assess the control design and implementation</p>',
  undefined, 'NA', 'No controls meeting the applicable thresholds identified at the related-party level. Reliance on substantive procedures only.'),
  ]
  },
@@ -14127,8 +14127,8 @@ export const generate515RelatedPartiesChecklist = (): Checklist => {
  id: 'ra515-s4', title: '4. Risk Assessment', isExpanded: true,
  questions: [
  q('515-4a',
- '<p>Document any risks of material misstatement on Form 520, and assess the risks of material misstatement arising from related-party relationships and transactions.</p>',
- undefined, 'Yes', 'Related-party risk assessed as low-to-moderate. No significant risks identified. Risk documented and cross-referenced to Form 520 (Risk Register).'),
+ '<p>Document any risks of material misstatement, and assess the risks of material misstatement arising from related-party relationships and transactions.</p>',
+ undefined, 'Yes', 'Related-party risk assessed as low-to-moderate. No significant risks identified. Risk documented and cross-referenced (Risk Register).'),
  q('515-4b',
  '<p>Identify significant risks that will require special attention, including:</p><ul><li>Fraud risk factors (involving related parties).</li><li>Significant related-party transactions outside the normal course of business.</li></ul>',
  undefined, 'No', 'No fraud risk factors related to related parties identified. No transactions outside the normal course of business. No significant risks requiring special audit attention at this time.'),
@@ -14168,7 +14168,7 @@ export const generate525GoingConcernChecklist = (): Checklist => {
  title: 'Going Concern — Identifying Events and Conditions',
  description: 'Identify events and conditions that may cast significant doubt on the entity\'s ability to continue as a going concern.',
  objective: 'To identify any events/conditions that may cast significant doubt on the entity\'s ability to continue as a going concern.',
- note: '<p><strong>Notes:</strong></p><ol style="margin: 4px 0 0 1.25rem;"><li>Where events and conditions are identified, Form 625 (or its equivalent) also needs to be completed.</li><li>Record risk factors identified on Form 520 for further assessment.</li></ol><p style="margin-top: 8px; color: var(--muted-foreground); font-size: 0.8125rem;">PSC = Procedure successfully completed. &nbsp; F/S = Financial statements.</p>',
+ note: '<p><strong>Notes:</strong></p><ol style="margin: 4px 0 0 1.25rem;"><li>Where events and conditions are identified, (or its equivalent) also needs to be completed.</li><li>Record risk factors identified for further assessment.</li></ol><p style="margin-top: 8px; color: var(--muted-foreground); font-size: 0.8125rem;">PSC = Procedure successfully completed. &nbsp; F/S = Financial statements.</p>',
  sections: [
  {
  id: 'ra525-s0', title: 'Inquiries', isExpanded: true,
@@ -14216,8 +14216,8 @@ export const generate525GoingConcernChecklist = (): Checklist => {
  ],
  'No', 'No adverse events or conditions identified from other risk assessment procedures.'
  ),
- yn('525-1e', '<p><strong>Adverse events and conditions — documentation:</strong> When adverse events or conditions are present: have resulting risks of material misstatement been documented on Form 520, and has Form 625 been completed?</p>',
- '', 'No adverse events or conditions identified — Form 625 not required.'
+ yn('525-1e', '<p><strong>Adverse events and conditions — documentation:</strong> When adverse events or conditions are present: have resulting risks of material misstatement been documented, and has been completed?</p>',
+ '', 'No adverse events or conditions identified — not required.'
  ),
  ]
  },
@@ -14273,12 +14273,12 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
  title: 'Entity Level — Risks and Controls',
  description: 'Understand and evaluate the pervasive components of the entity\'s system of internal control (control environment, risk assessment, monitoring) and identify any risks of material misstatement, primarily at the financial statement level.',
  objective: 'To understand and evaluate the pervasive components of the entity\'s system of internal control and identify any risks of material misstatement, primarily at the financial statement level.',
- note: '<p><strong>Note:</strong> Document unmitigated risks of material misstatement to the F/S on Form 520.</p><p style="margin-top: 8px; color: var(--muted-foreground); font-size: 0.8125rem;">F/S = Financial statements. &nbsp; TCWG = Those charged with governance. &nbsp; PSC = Procedure successfully completed. &nbsp; AFRF = Applicable financial reporting framework.</p>',
+ note: '<p><strong>Note:</strong> Document unmitigated risks of material misstatement to the F/S</p><p style="margin-top: 8px; color: var(--muted-foreground); font-size: 0.8125rem;">F/S = Financial statements. &nbsp; TCWG = Those charged with governance. &nbsp; PSC = Procedure successfully completed. &nbsp; AFRF = Applicable financial reporting framework.</p>',
  sections: [
  {
  id: 'ra530-sA', title: 'A. Control Environment', isExpanded: true,
  questions: [
- yn('530-A1', '<p><strong>Governance structure</strong> — Obtain an understanding of the entity\'s governance structure (review information obtained on Form 510).</p>', undefined, 'Yes', 'Governance structure documented on Form 510. Owner/CEO with informal advisory board. Reviewed and reconfirmed for FY2024.'),
+ yn('530-A1', '<p><strong>Governance structure</strong> — Obtain an understanding of the entity\'s governance structure (review information obtained).</p>', undefined, 'Yes', 'Governance structure documented Owner/CEO with informal advisory board. Reviewed and reconfirmed for FY2024.'),
  yn('530-A2', '<p><strong>Integrity and ethical values</strong> — Describe how management exhibits a commitment to integrity and ethical values. Consider whether:</p>', [
  yn('530-A2-1', '<p>Management continually demonstrates, through words and actions, a commitment to high ethical standards.</p>'),
  yn('530-A2-2', '<p>A code of conduct or its equivalent exists.</p>'),
@@ -14292,7 +14292,7 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
  yn('530-A3-4', '<p>Significant issues and financial results, etc. are communicated to the board in a timely manner.</p>'),
  yn('530-A3-5', '<p>The board receives and reviews financial reports on a timely basis (i.e., monthly).</p>'),
  yn('530-A3-6', '<p>Minutes of meetings are circulated on a timely basis.</p>'),
- ], 'No', 'Owner-managed entity — no independent board. Informal quarterly advisor meetings only. Mitigated by direct owner involvement in operations; pervasive risk recorded on Form 520.'),
+ ], 'No', 'Owner-managed entity — no independent board. Informal quarterly advisor meetings only. Mitigated by direct owner involvement in operations; pervasive risk recorded'),
  yn('530-A4', '<p><strong>Authority and reporting lines</strong> — Describe management\'s reporting lines, authorities and responsibilities designed to achieve financial reporting objectives. Consider whether:</p>', [
  yn('530-A4-1', '<p>An appropriate organizational structure exists (with job descriptions) to facilitate achievement of entity objectives.</p>'),
  yn('530-A4-2', '<p>Incompatible duties are segregated to the extent possible.</p>'),
@@ -14314,9 +14314,9 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
  yn('530-A7-2', '<p>Management, with the oversight of TCWG, has created and maintained a culture of honesty and ethical behaviour.</p>'),
  yn('530-A7-3', '<p>The control environment provides an appropriate foundation for the other components of the system of internal control considering the nature and complexity of the entity.</p>'),
  ], 'Yes', 'Control environment is appropriate for the nature and complexity of the entity. Absence of independent TCWG oversight is a recognized limitation typical of owner-managed entities; mitigated by direct owner involvement, CFO review controls, and external accountant year-end procedures. No deficiencies that undermine other components.'),
- yn('530-A8-impl', '<p><strong>Audit implications</strong> — Identify risks (control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', undefined, 'Yes', 'Pervasive risk: management override of controls (owner-managed) — recorded on Form 520 and addressed on Form 506 (fraud).'),
+ yn('530-A8-impl', '<p><strong>Audit implications</strong> — Identify risks (control deficiencies) that could result in the F/S being materially misstated. Record risks</p>', undefined, 'Yes', 'Pervasive risk: management override of controls (owner-managed) — recorded and addressed (fraud).'),
  yn('530-A9-impact', '<p>Consider the impact of identified risks on the other components of internal control.</p>', undefined, 'Yes', 'Management override risk affects the design and operating effectiveness of all control activities; addressed by mandatory JE testing and unpredictable substantive procedures.'),
- yn('530-A10-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', undefined, 'Yes', 'No significant deficiencies in the control environment identified for separate communication. Routine observations summarized in management letter.'),
+ yn('530-A10-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using.</p>', undefined, 'Yes', 'No significant deficiencies in the control environment identified for separate communication. Routine observations summarized in management letter.'),
  ]
  },
  {
@@ -14332,9 +14332,9 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
  yn('530-B3-2', '<p>Addresses the risks (i.e., internal controls).</p>'),
  ], '', 'No significant operational, personnel, system, or pronouncement changes in the period. Risk assessment process unchanged.'),
  yn('530-B4-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether the entity\'s risk assessment process is appropriate to the entity\'s circumstances considering the nature and complexity of the entity.</p>', undefined, 'Yes', 'Risk assessment process is informal but appropriate for the size and complexity of the entity. Quarterly cadence and owner involvement provide adequate coverage of business and fraud risks.'),
- yn('530-B5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', undefined, 'Yes', 'No additional pervasive risks identified beyond those already recorded on Form 520.'),
+ yn('530-B5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks</p>', undefined, 'Yes', 'No additional pervasive risks identified beyond those already recorded'),
  yn('530-B6-failed', '<p>If management failed to identify a risk of material misstatement, obtain an understanding of why the entity\'s risk assessment process failed to identify such risk and the implications for the audit.</p>', undefined, 'No', 'Not applicable — no instances identified where management failed to recognize a risk subsequently identified by the auditor.'),
- yn('530-B7-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', undefined, 'Yes', 'No significant deficiencies in the risk assessment process to communicate.'),
+ yn('530-B7-tcwg', '<p>Communicate significant control deficiencies in writing to TCWG on a timely basis. Consider using.</p>', undefined, 'Yes', 'No significant deficiencies in the risk assessment process to communicate.'),
  ]
  },
  {
@@ -14348,8 +14348,8 @@ export const generate530PervasiveRisksChecklist = (): Checklist => {
  ], 'Yes', 'Ongoing evaluation via monthly close checklist signed off by CFO. No internal audit function — not warranted given size of entity. Deficiencies tracked in CFO\'s remediation log and reviewed quarterly with owner.'),
  yn('530-C3', '<p><strong>Information sources</strong> — Describe how management ensures that the information sources used in the monitoring process are sufficiently reliable.</p>', undefined, 'Yes', 'Data sourced from QBO (system of record), reconciled monthly to bank and subledgers. Access controls in place; CFO independently verifies key reports.'),
  yn('530-C4-eval', '<p><strong>Evaluation</strong> — Based on the understanding obtained, evaluate and explain whether the entity\'s process for monitoring internal control is appropriate in the circumstances considering the nature and complexity of the entity.</p>', undefined, 'Yes', 'Monitoring process is appropriate for the entity\'s size and complexity. Owner-manager involvement combined with CFO month-end procedures provides adequate ongoing monitoring.'),
- yn('530-C5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks on Form 520.</p>', undefined, 'Yes', 'No additional pervasive risks identified from monitoring procedures.'),
- yn('530-C6-tcwg', '<p>Communicate significant deficiencies in writing to TCWG on a timely basis. Consider using Form 575.</p>', undefined, 'Yes', 'No significant monitoring deficiencies to communicate.'),
+ yn('530-C5-impl', '<p><strong>Audit implications</strong> — Identify any risks (resulting from control deficiencies) that could result in the F/S being materially misstated. Record risks</p>', undefined, 'Yes', 'No additional pervasive risks identified from monitoring procedures.'),
+ yn('530-C6-tcwg', '<p>Communicate significant deficiencies in writing to TCWG on a timely basis. Consider using.</p>', undefined, 'Yes', 'No significant monitoring deficiencies to communicate.'),
  ]
  },
  ],
@@ -14738,7 +14738,7 @@ export const generate500OIChecklist = (): Checklist => {
  q('oi-1c', '<p>Terms of new financing arrangements.</p>'),
  q('oi-1d', '<p>Significant contracts and agreements.</p>'),
  q('oi-1e', '<p>Financial and other reports prepared by management.</p>'),
- q('oi-1f', '<p>Minutes of directors\'/audit committee meetings (refer to Form 507).</p>'),
+ q('oi-1f', '<p>Minutes of directors\'/audit committee meetings.</p>'),
  q('oi-1g', '<p>Reports/letters, etc., from regulators or government agencies.</p>'),
  q('oi-1h', '<p>Tax assessments and correspondence.</p>'),
  q('oi-1i', '<p>Details of actual/threatened litigation, including correspondence with external legal counsel.</p>'),
@@ -14746,7 +14746,7 @@ export const generate500OIChecklist = (): Checklist => {
  q('oi-1k', '<p>Consultant reports on financial or organizational matters.</p>'),
  q('oi-1l', '<p>Communications with staff or TCWG that address organizational changes, views on business practices/ethical behaviour, processes for identifying and responding to the risks of fraud, or other relevant matters.</p>'),
  q('oi-1m', '<p>Media articles about the entity, its industry and direct competitors.</p>'),
- q('oi-1n', '<p>Other key documents (possibly identified as a result of inquiries of management and others) (See Form 505).</p>'),
+ q('oi-1n', '<p>Other key documents (possibly identified as a result of inquiries of management and others).</p>'),
  ],
  },
  {
@@ -14771,7 +14771,7 @@ export const generate500OIChecklist = (): Checklist => {
  id: 'global-template-500-oi',
  title: '500 — Observation & Inspection Procedures',
  description: 'Listing of typical observation and inspection risk assessment procedures performed to support, corroborate or contradict other inquiries of management and others, and to provide information about the entity and its environment.',
- objective: 'To provide a listing of typical observation and inspection risk assessment procedures that may support, corroborate or contradict other inquiries of management and others, and provide information about the entity and its environment. Use this form in conjunction with Form 510. PSC = Procedure successfully completed. TCWG = Those charged with governance.',
+ objective: 'To provide a listing of typical observation and inspection risk assessment procedures that may support, corroborate or contradict other inquiries of management and others, and provide information about the entity and its environment. Use this form in conjunction with PSC = Procedure successfully completed. TCWG = Those charged with governance.',
  sections,
  createdAt: new Date(),
  updatedAt: new Date(),
@@ -14827,8 +14827,8 @@ export const generate501APAPChecklist = (): Checklist => {
  return {
  id: 'global-template-501a-pap',
  title: '501-A — Preliminary Analytical Procedures',
- description: 'Preliminary analytical procedures — Part A. Identify relationships, risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use in conjunction with Form 510 and Form 501 — Parts B & C.',
- objective: 'To identify relationships (for possible use in substantive analytical procedures), risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use this form to perform the analytical procedures noted on Form 510. PSC = Procedure successfully completed.',
+ description: 'Preliminary analytical procedures — Part A. Identify relationships, risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use in conjunction with — Parts B & C.',
+ objective: 'To identify relationships (for possible use in substantive analytical procedures), risks, inconsistencies, unusual transactions and events, and other matters that may indicate risks of material misstatement. Use this form to perform the analytical procedures noted PSC = Procedure successfully completed.',
  sections,
  createdAt: new Date(),
  updatedAt: new Date(),
@@ -14862,7 +14862,7 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
  q('505-pl-1', '<p>Select members of management and TCWG who may help in identifying (or updating) the risks of material misstatements (error and fraud) in the F/S.</p>'),
  q('505-pl-2', '<p>Select others in the entity (at various levels of authority) that may provide a different perspective in identifying risks of material misstatement. Consider:</p><ul><li>Sales/marketing personnel.</li><li>Operational and purchasing managers.</li><li>IT support personnel.</li><li>Accounting employees.</li><li>Others, such as internal auditors or risk managers (specify).</li></ul>'),
  la('505-pl-3', '<p>Document the names of those selected for interview and schedule a convenient time to meet.</p>'),
- q('505-pl-4', '<p>Ask open-ended questions and document information obtained. Record risk factors identified on Form 520.</p>'),
+ q('505-pl-4', '<p>Ask open-ended questions and document information obtained. Record risk factors identified</p>'),
  ],
  },
  {
@@ -14973,10 +14973,10 @@ export const generate505MgmtInquiriesChecklist = (): Checklist => {
 
 const mkProc = () => {
  const q = (id: string, text: string, answer = '', explanation = '', reference = ''): Question => ({
-  id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference,
+ id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'], required: false, answer, explanation, reference,
  });
  const la = (id: string, text: string, answer = ''): Question => ({
-  id, text, answerType: 'long-answer' as const, options: [], required: false, answer,
+ id, text, answerType: 'long-answer' as const, options: [], required: false, answer,
  });
  return { q, la };
 };
@@ -14984,373 +14984,373 @@ const mkProc = () => {
 export const generateCashWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-cash', title: 'Cash and Cash Equivalents — Audit Work Program',
-  description: 'Audit procedures for cash and bank balances.',
-  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, accuracy and cutoff of cash and cash equivalents.',
-  sections: [
-   { id: 'wp-cash-1', title: '1. Bank Confirmations', isExpanded: true, questions: [
-    q('cash-1a', '<p>Have bank confirmation requests been sent to all banks where the entity maintains accounts?</p>', 'Yes', 'Confirmations sent to RBC, TD and HSBC on March 28, 2024. All confirmations received and agreed to GL.', 'W/P A-01'),
-    q('cash-1b', '<p>Have confirmation responses been agreed to the cash balances per the trial balance?</p>', 'Yes', 'Bank confirmations reconciled to GL — no unexplained differences.', 'W/P A-01'),
-    q('cash-1c', '<p>Have any outstanding items or differences noted in the confirmations been investigated and resolved?</p>', 'NA', 'No differences noted.'),
-   ]},
-   { id: 'wp-cash-2', title: '2. Bank Reconciliation Review', isExpanded: true, questions: [
-    q('cash-2a', '<p>Has the bank reconciliation for the year-end date been obtained and reviewed for reasonableness?</p>', 'Yes', 'Bank reconciliations reviewed for all accounts. Reconciling items traced to subsequent clearance.', 'W/P A-02'),
-    q('cash-2b', '<p>Have outstanding cheques been reviewed for old or unusual items?</p>', 'Yes', 'Outstanding cheques reviewed — no stale-dated items identified. All clear within 30 days post year-end.'),
-    q('cash-2c', '<p>Have deposits in transit been agreed to bank statement entries shortly after year-end?</p>', 'Yes', 'All deposits in transit confirmed cleared within 3 business days after March 31, 2024.', 'W/P A-02'),
-    q('cash-2d', '<p>Has any kiting or window dressing been considered and ruled out?</p>', 'Yes', 'Cash movements reviewed around year-end. No evidence of kiting or window dressing identified.'),
-   ]},
-   { id: 'wp-cash-3', title: '3. Restricted Cash and Presentation', isExpanded: true, questions: [
-    q('cash-3a', '<p>Has any restricted cash been identified and confirmed as appropriately classified and disclosed?</p>', 'NA', 'No restricted cash balances identified.'),
-    q('cash-3b', '<p>Has petty cash been counted or confirmed as immaterial?</p>', 'Yes', 'Petty cash balance of $500 — confirmed as immaterial and not tested.'),
-    la('cash-3c', '<p>Conclusion — cash and cash equivalents:</p>', 'Based on procedures performed, cash balances are fairly presented. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-cash', title: 'Cash and Cash Equivalents — Audit Work Program',
+ description: 'Audit procedures for cash and bank balances.',
+ objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, accuracy and cutoff of cash and cash equivalents.',
+ sections: [
+ { id: 'wp-cash-1', title: '1. Bank Confirmations', isExpanded: true, questions: [
+ q('cash-1a', '<p>Have bank confirmation requests been sent to all banks where the entity maintains accounts?</p>', 'Yes', 'Confirmations sent to RBC, TD and HSBC on March 28, 2024. All confirmations received and agreed to GL.', 'W/P A-01'),
+ q('cash-1b', '<p>Have confirmation responses been agreed to the cash balances per the trial balance?</p>', 'Yes', 'Bank confirmations reconciled to GL — no unexplained differences.', 'W/P A-01'),
+ q('cash-1c', '<p>Have any outstanding items or differences noted in the confirmations been investigated and resolved?</p>', 'NA', 'No differences noted.'),
+ ]},
+ { id: 'wp-cash-2', title: '2. Bank Reconciliation Review', isExpanded: true, questions: [
+ q('cash-2a', '<p>Has the bank reconciliation for the year-end date been obtained and reviewed for reasonableness?</p>', 'Yes', 'Bank reconciliations reviewed for all accounts. Reconciling items traced to subsequent clearance.', 'W/P A-02'),
+ q('cash-2b', '<p>Have outstanding cheques been reviewed for old or unusual items?</p>', 'Yes', 'Outstanding cheques reviewed — no stale-dated items identified. All clear within 30 days post year-end.'),
+ q('cash-2c', '<p>Have deposits in transit been agreed to bank statement entries shortly after year-end?</p>', 'Yes', 'All deposits in transit confirmed cleared within 3 business days after March 31, 2024.', 'W/P A-02'),
+ q('cash-2d', '<p>Has any kiting or window dressing been considered and ruled out?</p>', 'Yes', 'Cash movements reviewed around year-end. No evidence of kiting or window dressing identified.'),
+ ]},
+ { id: 'wp-cash-3', title: '3. Restricted Cash and Presentation', isExpanded: true, questions: [
+ q('cash-3a', '<p>Has any restricted cash been identified and confirmed as appropriately classified and disclosed?</p>', 'NA', 'No restricted cash balances identified.'),
+ q('cash-3b', '<p>Has petty cash been counted or confirmed as immaterial?</p>', 'Yes', 'Petty cash balance of $500 — confirmed as immaterial and not tested.'),
+ la('cash-3c', '<p>Conclusion — cash and cash equivalents:</p>', 'Based on procedures performed, cash balances are fairly presented. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateAccountsReceivableWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-ar', title: 'Accounts Receivable — Audit Work Program',
-  description: 'Audit procedures for accounts receivable.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation (net realizable value) and cutoff of accounts receivable.',
-  sections: [
-   { id: 'wp-ar-1', title: '1. AR Confirmations', isExpanded: true, questions: [
-    q('ar-1a', '<p>Have positive confirmations been sent to a sample of customers?</p>', 'Yes', '40 positive confirmations dispatched on day 1 of fieldwork. 35 received; 5 follow-up procedures performed.', 'W/P B-01'),
-    q('ar-1b', '<p>Have non-responses been subjected to alternative procedures (cash receipts after year-end, shipping documents)?</p>', 'Yes', 'Alternative procedures performed for 5 non-responses — all agreed to subsequent cash receipts.', 'W/P B-01'),
-    q('ar-1c', '<p>Have confirmation exceptions been investigated and resolved?</p>', 'Yes', 'Two timing differences identified — both resolved as in-transit payments at year-end. No errors.', 'W/P B-01'),
-   ]},
-   { id: 'wp-ar-2', title: '2. Valuation — Allowance for Doubtful Accounts', isExpanded: true, questions: [
-    q('ar-2a', '<p>Has the aged accounts receivable listing been obtained and agreed to the trial balance?</p>', 'Yes', 'Aged AR listing obtained and footed. Total agreed to GL balance.', 'W/P B-02'),
-    q('ar-2b', '<p>Has management\'s allowance for doubtful accounts been assessed for reasonableness?</p>', 'Yes', 'Allowance calculation reviewed. Management\'s 90+ day provision rate assessed as reasonable given collection history.', 'W/P B-02'),
-    q('ar-2c', '<p>Have large or old balances been specifically reviewed for collectability?</p>', 'Yes', 'All balances >$50K and all accounts >90 days reviewed. Specific allowances recorded for two doubtful accounts totaling $28K.', 'W/P B-03'),
-   ]},
-   { id: 'wp-ar-3', title: '3. Cutoff', isExpanded: true, questions: [
-    q('ar-3a', '<p>Have the last sales transactions before year-end been traced to shipping documentation and the sales journal?</p>', 'Yes', 'Last 15 invoices tested — all correctly recorded in the period earned.', 'W/P B-04'),
-    q('ar-3b', '<p>Have the first sales transactions after year-end been reviewed to confirm they are not included in the current period?</p>', 'Yes', 'First 15 April invoices reviewed — none improperly included in March AR.', 'W/P B-04'),
-    la('ar-3c', '<p>Conclusion — accounts receivable:</p>', 'AR balance is fairly stated at net realizable value. Allowance is adequate. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-ar', title: 'Accounts Receivable — Audit Work Program',
+ description: 'Audit procedures for accounts receivable.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation (net realizable value) and cutoff of accounts receivable.',
+ sections: [
+ { id: 'wp-ar-1', title: '1. AR Confirmations', isExpanded: true, questions: [
+ q('ar-1a', '<p>Have positive confirmations been sent to a sample of customers?</p>', 'Yes', '40 positive confirmations dispatched on day 1 of fieldwork. 35 received; 5 follow-up procedures performed.', 'W/P B-01'),
+ q('ar-1b', '<p>Have non-responses been subjected to alternative procedures (cash receipts after year-end, shipping documents)?</p>', 'Yes', 'Alternative procedures performed for 5 non-responses — all agreed to subsequent cash receipts.', 'W/P B-01'),
+ q('ar-1c', '<p>Have confirmation exceptions been investigated and resolved?</p>', 'Yes', 'Two timing differences identified — both resolved as in-transit payments at year-end. No errors.', 'W/P B-01'),
+ ]},
+ { id: 'wp-ar-2', title: '2. Valuation — Allowance for Doubtful Accounts', isExpanded: true, questions: [
+ q('ar-2a', '<p>Has the aged accounts receivable listing been obtained and agreed to the trial balance?</p>', 'Yes', 'Aged AR listing obtained and footed. Total agreed to GL balance.', 'W/P B-02'),
+ q('ar-2b', '<p>Has management\'s allowance for doubtful accounts been assessed for reasonableness?</p>', 'Yes', 'Allowance calculation reviewed. Management\'s 90+ day provision rate assessed as reasonable given collection history.', 'W/P B-02'),
+ q('ar-2c', '<p>Have large or old balances been specifically reviewed for collectability?</p>', 'Yes', 'All balances >$50K and all accounts >90 days reviewed. Specific allowances recorded for two doubtful accounts totaling $28K.', 'W/P B-03'),
+ ]},
+ { id: 'wp-ar-3', title: '3. Cutoff', isExpanded: true, questions: [
+ q('ar-3a', '<p>Have the last sales transactions before year-end been traced to shipping documentation and the sales journal?</p>', 'Yes', 'Last 15 invoices tested — all correctly recorded in the period earned.', 'W/P B-04'),
+ q('ar-3b', '<p>Have the first sales transactions after year-end been reviewed to confirm they are not included in the current period?</p>', 'Yes', 'First 15 April invoices reviewed — none improperly included in March AR.', 'W/P B-04'),
+ la('ar-3c', '<p>Conclusion — accounts receivable:</p>', 'AR balance is fairly stated at net realizable value. Allowance is adequate. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateInventoryWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-inv', title: 'Inventories — Audit Work Program',
-  description: 'Audit procedures for inventories.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and cutoff of inventory balances.',
-  sections: [
-   { id: 'wp-inv-1', title: '1. Physical Count Observation', isExpanded: true, questions: [
-    q('inv-1a', '<p>Was attendance at the physical inventory count performed?</p>', 'Yes', 'Physical count attended on March 31, 2024. Count sheets reviewed and test counts performed.', 'W/P C-01'),
-    q('inv-1b', '<p>Were test counts performed and agreed to management\'s count sheets?</p>', 'Yes', '50 test counts performed — all agreed within acceptable tolerance to management\'s count.', 'W/P C-01'),
-    q('inv-1c', '<p>Has the final inventory listing been agreed to the physical count results and the trial balance?</p>', 'Yes', 'Inventory listing footed and agreed to GL. Roll-back procedures from count date to year-end performed.', 'W/P C-02'),
-   ]},
-   { id: 'wp-inv-2', title: '2. Valuation — Lower of Cost and NRV', isExpanded: true, questions: [
-    q('inv-2a', '<p>Has the cost method (FIFO, weighted average, specific identification) been confirmed and applied consistently?</p>', 'Yes', 'Weighted average cost method confirmed — consistent with prior year.', 'W/P C-03'),
-    q('inv-2b', '<p>Has a sample of inventory items been tested to confirm that cost does not exceed NRV?</p>', 'Yes', 'Sample of 30 SKUs tested. NRV confirmed as exceeding cost for all items tested. No write-down required.', 'W/P C-03'),
-    q('inv-2c', '<p>Have slow-moving, obsolete or damaged inventory items been identified and assessed for write-down?</p>', 'Yes', 'Aged inventory report reviewed. $15K write-down recorded for slow-moving items — assessed as reasonable.'),
-   ]},
-   { id: 'wp-inv-3', title: '3. Cutoff', isExpanded: true, questions: [
-    q('inv-3a', '<p>Have receiving records for the last 10 days before year-end been reviewed to confirm goods are included in inventory?</p>', 'Yes', 'Last 10 receiving reports agreed to inventory listing. Appropriate cutoff confirmed.', 'W/P C-04'),
-    q('inv-3b', '<p>Have shipping records for the last 10 days before year-end been reviewed to confirm goods shipped are excluded from inventory?</p>', 'Yes', 'Last 10 shipping records confirmed as removed from inventory and recorded as cost of sales.'),
-    la('inv-3c', '<p>Conclusion — inventories:</p>', 'Inventory is fairly presented at the lower of cost and NRV. Physical count results support the recorded balance.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-inv', title: 'Inventories — Audit Work Program',
+ description: 'Audit procedures for inventories.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and cutoff of inventory balances.',
+ sections: [
+ { id: 'wp-inv-1', title: '1. Physical Count Observation', isExpanded: true, questions: [
+ q('inv-1a', '<p>Was attendance at the physical inventory count performed?</p>', 'Yes', 'Physical count attended on March 31, 2024. Count sheets reviewed and test counts performed.', 'W/P C-01'),
+ q('inv-1b', '<p>Were test counts performed and agreed to management\'s count sheets?</p>', 'Yes', '50 test counts performed — all agreed within acceptable tolerance to management\'s count.', 'W/P C-01'),
+ q('inv-1c', '<p>Has the final inventory listing been agreed to the physical count results and the trial balance?</p>', 'Yes', 'Inventory listing footed and agreed to GL. Roll-back procedures from count date to year-end performed.', 'W/P C-02'),
+ ]},
+ { id: 'wp-inv-2', title: '2. Valuation — Lower of Cost and NRV', isExpanded: true, questions: [
+ q('inv-2a', '<p>Has the cost method (FIFO, weighted average, specific identification) been confirmed and applied consistently?</p>', 'Yes', 'Weighted average cost method confirmed — consistent with prior year.', 'W/P C-03'),
+ q('inv-2b', '<p>Has a sample of inventory items been tested to confirm that cost does not exceed NRV?</p>', 'Yes', 'Sample of 30 SKUs tested. NRV confirmed as exceeding cost for all items tested. No write-down required.', 'W/P C-03'),
+ q('inv-2c', '<p>Have slow-moving, obsolete or damaged inventory items been identified and assessed for write-down?</p>', 'Yes', 'Aged inventory report reviewed. $15K write-down recorded for slow-moving items — assessed as reasonable.'),
+ ]},
+ { id: 'wp-inv-3', title: '3. Cutoff', isExpanded: true, questions: [
+ q('inv-3a', '<p>Have receiving records for the last 10 days before year-end been reviewed to confirm goods are included in inventory?</p>', 'Yes', 'Last 10 receiving reports agreed to inventory listing. Appropriate cutoff confirmed.', 'W/P C-04'),
+ q('inv-3b', '<p>Have shipping records for the last 10 days before year-end been reviewed to confirm goods shipped are excluded from inventory?</p>', 'Yes', 'Last 10 shipping records confirmed as removed from inventory and recorded as cost of sales.'),
+ la('inv-3c', '<p>Conclusion — inventories:</p>', 'Inventory is fairly presented at the lower of cost and NRV. Physical count results support the recorded balance.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateShortTermInvestmentsWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-invest', title: 'Short-Term Investments — Audit Work Program',
-  description: 'Audit procedures for short-term investments and marketable securities.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, valuation and disclosure of short-term investments.',
-  sections: [
-   { id: 'wp-inv-s1', title: '1. Existence and Completeness', isExpanded: true, questions: [
-    q('invest-1a', '<p>Have investment holdings been confirmed directly with custodians or brokers?</p>', 'Yes', 'Broker confirmation received and agreed to investment schedule and GL.', 'W/P D-01'),
-    q('invest-1b', '<p>Has the investment schedule been agreed to the trial balance?</p>', 'Yes', 'Investment schedule footed and agreed to GL balance.', 'W/P D-01'),
-    q('invest-1c', '<p>Have investment income (interest, dividends) been traced and agreed to the investment schedule?</p>', 'Yes', 'Investment income traced to broker statements and confirmed as properly accrued.'),
-   ]},
-   { id: 'wp-inv-s2', title: '2. Valuation', isExpanded: true, questions: [
-    q('invest-2a', '<p>Have investments been classified appropriately under the applicable financial reporting framework (held-for-trading, AFS, held-to-maturity)?</p>', 'Yes', 'Classification reviewed — investments appropriately designated as held-for-trading and measured at fair value.', 'W/P D-02'),
-    q('invest-2b', '<p>Have fair values been agreed to independent market data (exchange prices, broker quotes)?</p>', 'Yes', 'Market prices as at March 31, 2024 confirmed via Bloomberg/exchange data. No significant differences from management\'s values.', 'W/P D-02'),
-    q('invest-2c', '<p>Have unrealized gains and losses been appropriately recorded and classified?</p>', 'Yes', 'Unrealized gains/losses recalculated and agreed to OCI/P&L classification per the accounting policy.'),
-   ]},
-   { id: 'wp-inv-s3', title: '3. Disclosure', isExpanded: true, questions: [
-    q('invest-3a', '<p>Have investments been appropriately disclosed in the notes, including fair value hierarchy and concentrations?</p>', 'Yes', 'Note disclosure reviewed — fair value hierarchy and concentration disclosures confirmed as adequate.'),
-    la('invest-3b', '<p>Conclusion — short-term investments:</p>', 'Investments are fairly presented at fair value. Disclosures are adequate. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-invest', title: 'Short-Term Investments — Audit Work Program',
+ description: 'Audit procedures for short-term investments and marketable securities.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, valuation and disclosure of short-term investments.',
+ sections: [
+ { id: 'wp-inv-s1', title: '1. Existence and Completeness', isExpanded: true, questions: [
+ q('invest-1a', '<p>Have investment holdings been confirmed directly with custodians or brokers?</p>', 'Yes', 'Broker confirmation received and agreed to investment schedule and GL.', 'W/P D-01'),
+ q('invest-1b', '<p>Has the investment schedule been agreed to the trial balance?</p>', 'Yes', 'Investment schedule footed and agreed to GL balance.', 'W/P D-01'),
+ q('invest-1c', '<p>Have investment income (interest, dividends) been traced and agreed to the investment schedule?</p>', 'Yes', 'Investment income traced to broker statements and confirmed as properly accrued.'),
+ ]},
+ { id: 'wp-inv-s2', title: '2. Valuation', isExpanded: true, questions: [
+ q('invest-2a', '<p>Have investments been classified appropriately under the applicable financial reporting framework (held-for-trading, AFS, held-to-maturity)?</p>', 'Yes', 'Classification reviewed — investments appropriately designated as held-for-trading and measured at fair value.', 'W/P D-02'),
+ q('invest-2b', '<p>Have fair values been agreed to independent market data (exchange prices, broker quotes)?</p>', 'Yes', 'Market prices as at March 31, 2024 confirmed via Bloomberg/exchange data. No significant differences from management\'s values.', 'W/P D-02'),
+ q('invest-2c', '<p>Have unrealized gains and losses been appropriately recorded and classified?</p>', 'Yes', 'Unrealized gains/losses recalculated and agreed to OCI/P&L classification per the accounting policy.'),
+ ]},
+ { id: 'wp-inv-s3', title: '3. Disclosure', isExpanded: true, questions: [
+ q('invest-3a', '<p>Have investments been appropriately disclosed in the notes, including fair value hierarchy and concentrations?</p>', 'Yes', 'Note disclosure reviewed — fair value hierarchy and concentration disclosures confirmed as adequate.'),
+ la('invest-3b', '<p>Conclusion — short-term investments:</p>', 'Investments are fairly presented at fair value. Disclosures are adequate. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateLoansReceivableWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-lr', title: 'Loans and Advances Receivable — Audit Work Program',
-  description: 'Audit procedures for loans and advances receivable.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and disclosure of loans and advances receivable.',
-  sections: [
-   { id: 'wp-lr-1', title: '1. Existence and Terms', isExpanded: true, questions: [
-    q('lr-1a', '<p>Have loan agreements been obtained and reviewed for key terms (amount, interest rate, maturity, covenants)?</p>', 'Yes', 'Loan agreements reviewed for all material balances. Key terms agreed to the loan schedule.', 'W/P E-01'),
-    q('lr-1b', '<p>Have loan balances been confirmed directly with debtors for material amounts?</p>', 'Yes', 'Confirmations sent and received for all balances >$25K. All agreed to the loan schedule.', 'W/P E-01'),
-    q('lr-1c', '<p>Has accrued interest been recalculated and agreed to the general ledger?</p>', 'Yes', 'Interest accruals independently recalculated and agreed to GL within rounding tolerance.', 'W/P E-02'),
-   ]},
-   { id: 'wp-lr-2', title: '2. Collectability and Valuation', isExpanded: true, questions: [
-    q('lr-2a', '<p>Has the collectability of each loan been assessed, considering the debtor\'s financial position and payment history?</p>', 'Yes', 'Collectability assessed for each loan — no impairment indicators identified. All loans are current.', 'W/P E-03'),
-    q('lr-2b', '<p>Are any loans to related parties, and if so, have they been reviewed for arm\'s-length terms and appropriate disclosure?</p>', 'Yes', 'Two related party loans identified. Terms assessed as arm\'s length and disclosed in Note 12.'),
-    q('lr-2c', '<p>Has the classification of loans as current vs. long-term been reviewed for appropriateness?</p>', 'Yes', 'Classification reviewed based on contractual maturity dates. Presentation confirmed as appropriate.'),
-   ]},
-   { id: 'wp-lr-3', title: '3. Disclosure', isExpanded: true, questions: [
-    q('lr-3a', '<p>Are loans appropriately disclosed in the notes (terms, interest rates, maturity, security)?</p>', 'Yes', 'Note disclosures reviewed and confirmed as adequate per ASPE Section 3856.'),
-    la('lr-3b', '<p>Conclusion — loans and advances receivable:</p>', 'Loans receivable are fairly presented. All amounts are collectible. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-lr', title: 'Loans and Advances Receivable — Audit Work Program',
+ description: 'Audit procedures for loans and advances receivable.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and disclosure of loans and advances receivable.',
+ sections: [
+ { id: 'wp-lr-1', title: '1. Existence and Terms', isExpanded: true, questions: [
+ q('lr-1a', '<p>Have loan agreements been obtained and reviewed for key terms (amount, interest rate, maturity, covenants)?</p>', 'Yes', 'Loan agreements reviewed for all material balances. Key terms agreed to the loan schedule.', 'W/P E-01'),
+ q('lr-1b', '<p>Have loan balances been confirmed directly with debtors for material amounts?</p>', 'Yes', 'Confirmations sent and received for all balances >$25K. All agreed to the loan schedule.', 'W/P E-01'),
+ q('lr-1c', '<p>Has accrued interest been recalculated and agreed to the general ledger?</p>', 'Yes', 'Interest accruals independently recalculated and agreed to GL within rounding tolerance.', 'W/P E-02'),
+ ]},
+ { id: 'wp-lr-2', title: '2. Collectability and Valuation', isExpanded: true, questions: [
+ q('lr-2a', '<p>Has the collectability of each loan been assessed, considering the debtor\'s financial position and payment history?</p>', 'Yes', 'Collectability assessed for each loan — no impairment indicators identified. All loans are current.', 'W/P E-03'),
+ q('lr-2b', '<p>Are any loans to related parties, and if so, have they been reviewed for arm\'s-length terms and appropriate disclosure?</p>', 'Yes', 'Two related party loans identified. Terms assessed as arm\'s length and disclosed in Note 12.'),
+ q('lr-2c', '<p>Has the classification of loans as current vs. long-term been reviewed for appropriateness?</p>', 'Yes', 'Classification reviewed based on contractual maturity dates. Presentation confirmed as appropriate.'),
+ ]},
+ { id: 'wp-lr-3', title: '3. Disclosure', isExpanded: true, questions: [
+ q('lr-3a', '<p>Are loans appropriately disclosed in the notes (terms, interest rates, maturity, security)?</p>', 'Yes', 'Note disclosures reviewed and confirmed as adequate per ASPE Section 3856.'),
+ la('lr-3b', '<p>Conclusion — loans and advances receivable:</p>', 'Loans receivable are fairly presented. All amounts are collectible. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generatePPEWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-ppe', title: 'Property, Plant and Equipment — Audit Work Program',
-  description: 'Audit procedures for property, plant and equipment.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and accuracy of property, plant and equipment balances and related depreciation.',
-  sections: [
-   { id: 'wp-ppe-1', title: '1. Additions and Disposals', isExpanded: true, questions: [
-    q('ppe-1a', '<p>Has a schedule of PPE movements (opening balance, additions, disposals, closing balance) been obtained and agreed to the trial balance?</p>', 'Yes', 'PPE continuity schedule obtained, footed and agreed to GL. Opening balance agreed to prior year closing.', 'W/P H-01'),
-    q('ppe-1b', '<p>Have additions been tested by vouching to invoices, purchase agreements or other supporting documents?</p>', 'Yes', 'All additions >$10K tested (100% coverage). All agreed to supplier invoices and confirmed as capital expenditures.', 'W/P H-02'),
-    q('ppe-1c', '<p>Have disposals been tested to confirm that gains/losses are properly calculated and recorded?</p>', 'Yes', 'Two disposals identified and tested. Gain/loss calculations recalculated and agreed to the G/L.', 'W/P H-03'),
-   ]},
-   { id: 'wp-ppe-2', title: '2. Depreciation', isExpanded: true, questions: [
-    q('ppe-2a', '<p>Have depreciation methods and useful lives been confirmed as consistent with prior year (or changes explained)?</p>', 'Yes', 'Depreciation policies reviewed — methods and useful lives consistent with prior year.', 'W/P H-04'),
-    q('ppe-2b', '<p>Has depreciation expense been independently recalculated for a sample of assets?</p>', 'Yes', 'Depreciation recalculated for assets representing 70% of total NBV. Results agreed to recorded depreciation within rounding.', 'W/P H-04'),
-    q('ppe-2c', '<p>Has a half-year or proportionate convention for additions been applied consistently?</p>', 'Yes', 'Pro-rata depreciation confirmed for all additions in the year.'),
-   ]},
-   { id: 'wp-ppe-3', title: '3. Physical Existence and Impairment', isExpanded: true, questions: [
-    q('ppe-3a', '<p>Has a physical inspection of significant assets been performed?</p>', 'Yes', 'Physical inspection of major assets performed during fieldwork. All significant assets confirmed in use and in good condition.', 'W/P H-05'),
-    q('ppe-3b', '<p>Have impairment indicators been assessed, including changes in market conditions, asset underperformance or obsolescence?</p>', 'Yes', 'No impairment indicators identified. Assets are in productive use and generating expected cash flows.'),
-    q('ppe-3c', '<p>Is title to significant assets confirmed (deed, title documents, vehicle registration)?</p>', 'Yes', 'Title documents reviewed for major assets. Entity is confirmed as legal owner.'),
-    la('ppe-3d', '<p>Conclusion — property, plant and equipment:</p>', 'PPE is fairly presented. Depreciation is calculated consistently. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-ppe', title: 'Property, Plant and Equipment — Audit Work Program',
+ description: 'Audit procedures for property, plant and equipment.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and accuracy of property, plant and equipment balances and related depreciation.',
+ sections: [
+ { id: 'wp-ppe-1', title: '1. Additions and Disposals', isExpanded: true, questions: [
+ q('ppe-1a', '<p>Has a schedule of PPE movements (opening balance, additions, disposals, closing balance) been obtained and agreed to the trial balance?</p>', 'Yes', 'PPE continuity schedule obtained, footed and agreed to GL. Opening balance agreed to prior year closing.', 'W/P H-01'),
+ q('ppe-1b', '<p>Have additions been tested by vouching to invoices, purchase agreements or other supporting documents?</p>', 'Yes', 'All additions >$10K tested (100% coverage). All agreed to supplier invoices and confirmed as capital expenditures.', 'W/P H-02'),
+ q('ppe-1c', '<p>Have disposals been tested to confirm that gains/losses are properly calculated and recorded?</p>', 'Yes', 'Two disposals identified and tested. Gain/loss calculations recalculated and agreed to the G/L.', 'W/P H-03'),
+ ]},
+ { id: 'wp-ppe-2', title: '2. Depreciation', isExpanded: true, questions: [
+ q('ppe-2a', '<p>Have depreciation methods and useful lives been confirmed as consistent with prior year (or changes explained)?</p>', 'Yes', 'Depreciation policies reviewed — methods and useful lives consistent with prior year.', 'W/P H-04'),
+ q('ppe-2b', '<p>Has depreciation expense been independently recalculated for a sample of assets?</p>', 'Yes', 'Depreciation recalculated for assets representing 70% of total NBV. Results agreed to recorded depreciation within rounding.', 'W/P H-04'),
+ q('ppe-2c', '<p>Has a half-year or proportionate convention for additions been applied consistently?</p>', 'Yes', 'Pro-rata depreciation confirmed for all additions in the year.'),
+ ]},
+ { id: 'wp-ppe-3', title: '3. Physical Existence and Impairment', isExpanded: true, questions: [
+ q('ppe-3a', '<p>Has a physical inspection of significant assets been performed?</p>', 'Yes', 'Physical inspection of major assets performed during fieldwork. All significant assets confirmed in use and in good condition.', 'W/P H-05'),
+ q('ppe-3b', '<p>Have impairment indicators been assessed, including changes in market conditions, asset underperformance or obsolescence?</p>', 'Yes', 'No impairment indicators identified. Assets are in productive use and generating expected cash flows.'),
+ q('ppe-3c', '<p>Is title to significant assets confirmed (deed, title documents, vehicle registration)?</p>', 'Yes', 'Title documents reviewed for major assets. Entity is confirmed as legal owner.'),
+ la('ppe-3d', '<p>Conclusion — property, plant and equipment:</p>', 'PPE is fairly presented. Depreciation is calculated consistently. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateIntangiblesGoodwillWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-intang', title: 'Intangibles and Goodwill — Audit Work Program',
-  description: 'Audit procedures for intangible assets and goodwill.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, valuation and impairment assessment of intangible assets and goodwill.',
-  sections: [
-   { id: 'wp-intang-1', title: '1. Recognition and Measurement', isExpanded: true, questions: [
-    q('intang-1a', '<p>Have intangible assets been reviewed for compliance with recognition criteria (identifiable, controlled by entity, future economic benefits)?</p>', 'Yes', 'All intangible assets reviewed against ASPE Section 3064 recognition criteria. All amounts qualify.', 'W/P IA-01'),
-    q('intang-1b', '<p>Has the continuity schedule for intangibles been agreed to the trial balance?</p>', 'Yes', 'Intangibles continuity schedule obtained and agreed to GL. No unexplained differences.', 'W/P IA-01'),
-    q('intang-1c', '<p>Have capitalized development costs been assessed for appropriateness (technical feasibility, intent to complete, ability to sell/use)?</p>', 'NA', 'No development costs capitalized in the current year.'),
-   ]},
-   { id: 'wp-intang-2', title: '2. Amortization', isExpanded: true, questions: [
-    q('intang-2a', '<p>Have amortization methods and useful lives for finite-life intangibles been confirmed as consistent with prior year?</p>', 'Yes', 'Amortization methods confirmed — straight-line over useful life, consistent with prior year.', 'W/P IA-02'),
-    q('intang-2b', '<p>Has amortization been independently recalculated for significant intangible assets?</p>', 'Yes', 'Amortization recalculated for all finite-life intangibles. Results agreed within rounding.', 'W/P IA-02'),
-    q('intang-2c', '<p>For indefinite-life intangibles or goodwill, has a useful life assessment been reviewed?</p>', 'Yes', 'Goodwill confirmed as subject to annual impairment test — not amortized.'),
-   ]},
-   { id: 'wp-intang-3', title: '3. Impairment Assessment', isExpanded: true, questions: [
-    q('intang-3a', '<p>Have impairment indicators been reviewed (loss of key customers, technology obsolescence, adverse market conditions)?</p>', 'Yes', 'No impairment indicators identified. Business continues to generate positive cash flows.', 'W/P IA-03'),
-    q('intang-3b', '<p>Has management\'s impairment test (for goodwill or indefinite-life intangibles) been obtained and assessed for reasonableness?</p>', 'Yes', 'Impairment test reviewed — recoverable amount exceeds carrying value by a significant margin. No impairment required.', 'W/P IA-03'),
-    la('intang-3c', '<p>Conclusion — intangibles and goodwill:</p>', 'Intangible assets and goodwill are fairly presented. No impairment required. Amortization is calculated consistently.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-intang', title: 'Intangibles and Goodwill — Audit Work Program',
+ description: 'Audit procedures for intangible assets and goodwill.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, valuation and impairment assessment of intangible assets and goodwill.',
+ sections: [
+ { id: 'wp-intang-1', title: '1. Recognition and Measurement', isExpanded: true, questions: [
+ q('intang-1a', '<p>Have intangible assets been reviewed for compliance with recognition criteria (identifiable, controlled by entity, future economic benefits)?</p>', 'Yes', 'All intangible assets reviewed against ASPE Section 3064 recognition criteria. All amounts qualify.', 'W/P IA-01'),
+ q('intang-1b', '<p>Has the continuity schedule for intangibles been agreed to the trial balance?</p>', 'Yes', 'Intangibles continuity schedule obtained and agreed to GL. No unexplained differences.', 'W/P IA-01'),
+ q('intang-1c', '<p>Have capitalized development costs been assessed for appropriateness (technical feasibility, intent to complete, ability to sell/use)?</p>', 'NA', 'No development costs capitalized in the current year.'),
+ ]},
+ { id: 'wp-intang-2', title: '2. Amortization', isExpanded: true, questions: [
+ q('intang-2a', '<p>Have amortization methods and useful lives for finite-life intangibles been confirmed as consistent with prior year?</p>', 'Yes', 'Amortization methods confirmed — straight-line over useful life, consistent with prior year.', 'W/P IA-02'),
+ q('intang-2b', '<p>Has amortization been independently recalculated for significant intangible assets?</p>', 'Yes', 'Amortization recalculated for all finite-life intangibles. Results agreed within rounding.', 'W/P IA-02'),
+ q('intang-2c', '<p>For indefinite-life intangibles or goodwill, has a useful life assessment been reviewed?</p>', 'Yes', 'Goodwill confirmed as subject to annual impairment test — not amortized.'),
+ ]},
+ { id: 'wp-intang-3', title: '3. Impairment Assessment', isExpanded: true, questions: [
+ q('intang-3a', '<p>Have impairment indicators been reviewed (loss of key customers, technology obsolescence, adverse market conditions)?</p>', 'Yes', 'No impairment indicators identified. Business continues to generate positive cash flows.', 'W/P IA-03'),
+ q('intang-3b', '<p>Has management\'s impairment test (for goodwill or indefinite-life intangibles) been obtained and assessed for reasonableness?</p>', 'Yes', 'Impairment test reviewed — recoverable amount exceeds carrying value by a significant margin. No impairment required.', 'W/P IA-03'),
+ la('intang-3c', '<p>Conclusion — intangibles and goodwill:</p>', 'Intangible assets and goodwill are fairly presented. No impairment required. Amortization is calculated consistently.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateLongTermInvestmentsWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-ltinv', title: 'Long-Term Investments — Audit Work Program',
-  description: 'Audit procedures for long-term investments and equity-method investees.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, classification, valuation and disclosure of long-term investments.',
-  sections: [
-   { id: 'wp-ltinv-1', title: '1. Existence and Ownership', isExpanded: true, questions: [
-    q('ltinv-1a', '<p>Has evidence of ownership been obtained and reviewed (share certificates, broker statements, partnership agreements)?</p>', 'Yes', 'Share certificates and broker confirmations obtained for all long-term investment holdings.', 'W/P K-01'),
-    q('ltinv-1b', '<p>Has the investment schedule been footed and agreed to the trial balance?</p>', 'Yes', 'Investment continuity schedule agreed to GL. Opening balance agreed to prior year closing balance.', 'W/P K-01'),
-   ]},
-   { id: 'wp-ltinv-2', title: '2. Classification and Valuation', isExpanded: true, questions: [
-    q('ltinv-2a', '<p>Has the appropriate accounting method been confirmed (equity method for significant influence; cost method for others)?</p>', 'Yes', 'Equity method applied for 28% investee. Cost method for other holdings — classification confirmed as appropriate.', 'W/P K-02'),
-    q('ltinv-2b', '<p>For equity-method investees, has the entity\'s share of income/loss been agreed to the investee\'s financial statements?</p>', 'Yes', 'Equity pickup recalculated using investee draft financials. Agreed within rounding to GL.', 'W/P K-02'),
-    q('ltinv-2c', '<p>Has management assessed investments for impairment (permanent decline in value)?</p>', 'Yes', 'No indicators of other-than-temporary impairment identified. Investees are profitable and hold adequate assets.', 'W/P K-03'),
-   ]},
-   { id: 'wp-ltinv-3', title: '3. Disclosure', isExpanded: true, questions: [
-    q('ltinv-3a', '<p>Are long-term investments adequately disclosed (cost, carrying value, method, impairment)?</p>', 'Yes', 'Note disclosures reviewed — adequate disclosure of investee names, ownership percentages and carrying amounts.'),
-    la('ltinv-3b', '<p>Conclusion — long-term investments:</p>', 'Long-term investments are fairly presented under the applicable accounting method. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-ltinv', title: 'Long-Term Investments — Audit Work Program',
+ description: 'Audit procedures for long-term investments and equity-method investees.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, classification, valuation and disclosure of long-term investments.',
+ sections: [
+ { id: 'wp-ltinv-1', title: '1. Existence and Ownership', isExpanded: true, questions: [
+ q('ltinv-1a', '<p>Has evidence of ownership been obtained and reviewed (share certificates, broker statements, partnership agreements)?</p>', 'Yes', 'Share certificates and broker confirmations obtained for all long-term investment holdings.', 'W/P K-01'),
+ q('ltinv-1b', '<p>Has the investment schedule been footed and agreed to the trial balance?</p>', 'Yes', 'Investment continuity schedule agreed to GL. Opening balance agreed to prior year closing balance.', 'W/P K-01'),
+ ]},
+ { id: 'wp-ltinv-2', title: '2. Classification and Valuation', isExpanded: true, questions: [
+ q('ltinv-2a', '<p>Has the appropriate accounting method been confirmed (equity method for significant influence; cost method for others)?</p>', 'Yes', 'Equity method applied for 28% investee. Cost method for other holdings — classification confirmed as appropriate.', 'W/P K-02'),
+ q('ltinv-2b', '<p>For equity-method investees, has the entity\'s share of income/loss been agreed to the investee\'s financial statements?</p>', 'Yes', 'Equity pickup recalculated using investee draft financials. Agreed within rounding to GL.', 'W/P K-02'),
+ q('ltinv-2c', '<p>Has management assessed investments for impairment (permanent decline in value)?</p>', 'Yes', 'No indicators of other-than-temporary impairment identified. Investees are profitable and hold adequate assets.', 'W/P K-03'),
+ ]},
+ { id: 'wp-ltinv-3', title: '3. Disclosure', isExpanded: true, questions: [
+ q('ltinv-3a', '<p>Are long-term investments adequately disclosed (cost, carrying value, method, impairment)?</p>', 'Yes', 'Note disclosures reviewed — adequate disclosure of investee names, ownership percentages and carrying amounts.'),
+ la('ltinv-3b', '<p>Conclusion — long-term investments:</p>', 'Long-term investments are fairly presented under the applicable accounting method. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateBankDebtWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-bankdebt', title: 'Bank Indebtedness / Notes Payable — Audit Work Program',
-  description: 'Audit procedures for bank indebtedness, operating lines of credit and notes payable.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and disclosure of bank indebtedness and notes payable.',
-  sections: [
-   { id: 'wp-bankdebt-1', title: '1. Bank Confirmation', isExpanded: true, questions: [
-    q('bankdebt-1a', '<p>Have bank confirmations been sent to all lending institutions, requesting confirmation of all outstanding facilities, balances, and security?</p>', 'Yes', 'Bank confirmations sent to RBC and TD. All confirmations received, signed by bank officers.', 'W/P DD-01'),
-    q('bankdebt-1b', '<p>Have confirmed balances been agreed to the trial balance?</p>', 'Yes', 'Bank debt per confirmation agreed to GL. No unexplained differences.', 'W/P DD-01'),
-    q('bankdebt-1c', '<p>Has the interest rate confirmed by the bank been agreed to the interest expense calculation?</p>', 'Yes', 'Interest rate per confirmation agreed to loan agreement and interest expense recalculation.', 'W/P DD-02'),
-   ]},
-   { id: 'wp-bankdebt-2', title: '2. Terms and Covenants', isExpanded: true, questions: [
-    q('bankdebt-2a', '<p>Have loan/credit facility agreements been obtained and reviewed for key terms (limit, interest rate, maturity, security, covenants)?</p>', 'Yes', 'Credit agreement reviewed. Key terms noted — $2M operating line at prime + 1.5%, secured by AR and inventory.', 'W/P DD-03'),
-    q('bankdebt-2b', '<p>Has compliance with financial covenants at year-end been assessed?</p>', 'Yes', 'DSCR and current ratio covenants tested at March 31, 2024. Entity is compliant with all covenants.', 'W/P DD-03'),
-    q('bankdebt-2c', '<p>Has accrued interest been independently recalculated?</p>', 'Yes', 'Accrued interest recalculated for each facility. Agreed to GL within rounding.', 'W/P DD-04'),
-   ]},
-   { id: 'wp-bankdebt-3', title: '3. Classification and Disclosure', isExpanded: true, questions: [
-    q('bankdebt-3a', '<p>Is bank debt classified as current vs. long-term based on contractual maturity and covenant compliance?</p>', 'Yes', 'Classification confirmed as current — operating line matures within 12 months. No covenant breaches requiring reclassification.'),
-    q('bankdebt-3b', '<p>Is the nature and amount of security pledged disclosed appropriately?</p>', 'Yes', 'Security interests (AR, inventory, general security agreement) disclosed in the notes.'),
-    la('bankdebt-3c', '<p>Conclusion — bank indebtedness / notes payable:</p>', 'Bank debt is fairly presented. Covenants are complied with. Disclosures are adequate. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-bankdebt', title: 'Bank Indebtedness / Notes Payable — Audit Work Program',
+ description: 'Audit procedures for bank indebtedness, operating lines of credit and notes payable.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, valuation and disclosure of bank indebtedness and notes payable.',
+ sections: [
+ { id: 'wp-bankdebt-1', title: '1. Bank Confirmation', isExpanded: true, questions: [
+ q('bankdebt-1a', '<p>Have bank confirmations been sent to all lending institutions, requesting confirmation of all outstanding facilities, balances, and security?</p>', 'Yes', 'Bank confirmations sent to RBC and TD. All confirmations received, signed by bank officers.', 'W/P DD-01'),
+ q('bankdebt-1b', '<p>Have confirmed balances been agreed to the trial balance?</p>', 'Yes', 'Bank debt per confirmation agreed to GL. No unexplained differences.', 'W/P DD-01'),
+ q('bankdebt-1c', '<p>Has the interest rate confirmed by the bank been agreed to the interest expense calculation?</p>', 'Yes', 'Interest rate per confirmation agreed to loan agreement and interest expense recalculation.', 'W/P DD-02'),
+ ]},
+ { id: 'wp-bankdebt-2', title: '2. Terms and Covenants', isExpanded: true, questions: [
+ q('bankdebt-2a', '<p>Have loan/credit facility agreements been obtained and reviewed for key terms (limit, interest rate, maturity, security, covenants)?</p>', 'Yes', 'Credit agreement reviewed. Key terms noted — $2M operating line at prime + 1.5%, secured by AR and inventory.', 'W/P DD-03'),
+ q('bankdebt-2b', '<p>Has compliance with financial covenants at year-end been assessed?</p>', 'Yes', 'DSCR and current ratio covenants tested at March 31, 2024. Entity is compliant with all covenants.', 'W/P DD-03'),
+ q('bankdebt-2c', '<p>Has accrued interest been independently recalculated?</p>', 'Yes', 'Accrued interest recalculated for each facility. Agreed to GL within rounding.', 'W/P DD-04'),
+ ]},
+ { id: 'wp-bankdebt-3', title: '3. Classification and Disclosure', isExpanded: true, questions: [
+ q('bankdebt-3a', '<p>Is bank debt classified as current vs. long-term based on contractual maturity and covenant compliance?</p>', 'Yes', 'Classification confirmed as current — operating line matures within 12 months. No covenant breaches requiring reclassification.'),
+ q('bankdebt-3b', '<p>Is the nature and amount of security pledged disclosed appropriately?</p>', 'Yes', 'Security interests (AR, inventory, general security agreement) disclosed in the notes.'),
+ la('bankdebt-3c', '<p>Conclusion — bank indebtedness / notes payable:</p>', 'Bank debt is fairly presented. Covenants are complied with. Disclosures are adequate. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateAccountsPayableWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-ap', title: 'Accounts Payable and Accrued Liabilities — Audit Work Program',
-  description: 'Audit procedures for accounts payable and accrued liabilities.',
-  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, valuation and cutoff of accounts payable and accrued liabilities.',
-  sections: [
-   { id: 'wp-ap-1', title: '1. Vendor Reconciliations and Completeness', isExpanded: true, questions: [
-    q('ap-1a', '<p>Has the AP listing been footed and agreed to the trial balance?</p>', 'Yes', 'AP subledger footed and agreed to GL control account.', 'W/P BB-01'),
-    q('ap-1b', '<p>Have vendor statement reconciliations been performed for significant suppliers?</p>', 'Yes', 'Vendor statement reconciliations performed for top 10 vendors by volume. No unrecorded liabilities identified.', 'W/P BB-02'),
-    q('ap-1c', '<p>Has a search for unrecorded liabilities been performed (review of post-year-end disbursements)?</p>', 'Yes', 'Cash disbursements for 30 days after year-end reviewed. No invoices >$5K found relating to pre-year-end goods/services that were not recorded.', 'W/P BB-03'),
-   ]},
-   { id: 'wp-ap-2', title: '2. Cutoff', isExpanded: true, questions: [
-    q('ap-2a', '<p>Have the last 10 days of receiving reports before year-end been reviewed to confirm goods received are included in AP?</p>', 'Yes', 'Last 10 business days of receiving reports reviewed. All goods received before March 31 are recorded in AP.', 'W/P BB-04'),
-    q('ap-2b', '<p>Have any significant invoices received after year-end but relating to pre-year-end goods/services been accrued?</p>', 'Yes', 'Two invoices ($48K combined) received April 1–5 for goods received in March — confirmed as accrued at year-end.', 'W/P BB-04'),
-   ]},
-   { id: 'wp-ap-3', title: '3. Accrued Liabilities', isExpanded: true, questions: [
-    q('ap-3a', '<p>Have major accruals been reviewed and supported by underlying calculations or agreements (e.g., accrued wages, bonuses, professional fees)?</p>', 'Yes', 'All accruals >$10K reviewed and agreed to supporting calculations or external confirmations.', 'W/P BB-05'),
-    q('ap-3b', '<p>Have prior year accruals been reviewed for payment/reversal, and over/under-accruals from prior year assessed?</p>', 'Yes', 'Prior year accruals compared to actual payments — no systematic over/under-accrual pattern identified.'),
-    la('ap-3c', '<p>Conclusion — accounts payable and accrued liabilities:</p>', 'AP and accruals are complete and fairly presented. No material unrecorded liabilities identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-ap', title: 'Accounts Payable and Accrued Liabilities — Audit Work Program',
+ description: 'Audit procedures for accounts payable and accrued liabilities.',
+ objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, valuation and cutoff of accounts payable and accrued liabilities.',
+ sections: [
+ { id: 'wp-ap-1', title: '1. Vendor Reconciliations and Completeness', isExpanded: true, questions: [
+ q('ap-1a', '<p>Has the AP listing been footed and agreed to the trial balance?</p>', 'Yes', 'AP subledger footed and agreed to GL control account.', 'W/P BB-01'),
+ q('ap-1b', '<p>Have vendor statement reconciliations been performed for significant suppliers?</p>', 'Yes', 'Vendor statement reconciliations performed for top 10 vendors by volume. No unrecorded liabilities identified.', 'W/P BB-02'),
+ q('ap-1c', '<p>Has a search for unrecorded liabilities been performed (review of post-year-end disbursements)?</p>', 'Yes', 'Cash disbursements for 30 days after year-end reviewed. No invoices >$5K found relating to pre-year-end goods/services that were not recorded.', 'W/P BB-03'),
+ ]},
+ { id: 'wp-ap-2', title: '2. Cutoff', isExpanded: true, questions: [
+ q('ap-2a', '<p>Have the last 10 days of receiving reports before year-end been reviewed to confirm goods received are included in AP?</p>', 'Yes', 'Last 10 business days of receiving reports reviewed. All goods received before March 31 are recorded in AP.', 'W/P BB-04'),
+ q('ap-2b', '<p>Have any significant invoices received after year-end but relating to pre-year-end goods/services been accrued?</p>', 'Yes', 'Two invoices ($48K combined) received April 1–5 for goods received in March — confirmed as accrued at year-end.', 'W/P BB-04'),
+ ]},
+ { id: 'wp-ap-3', title: '3. Accrued Liabilities', isExpanded: true, questions: [
+ q('ap-3a', '<p>Have major accruals been reviewed and supported by underlying calculations or agreements (e.g., accrued wages, bonuses, professional fees)?</p>', 'Yes', 'All accruals >$10K reviewed and agreed to supporting calculations or external confirmations.', 'W/P BB-05'),
+ q('ap-3b', '<p>Have prior year accruals been reviewed for payment/reversal, and over/under-accruals from prior year assessed?</p>', 'Yes', 'Prior year accruals compared to actual payments — no systematic over/under-accrual pattern identified.'),
+ la('ap-3c', '<p>Conclusion — accounts payable and accrued liabilities:</p>', 'AP and accruals are complete and fairly presented. No material unrecorded liabilities identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateIncomeTaxesWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-tax', title: 'Income Taxes — Audit Work Program',
-  description: 'Audit procedures for current and deferred income taxes.',
-  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence and accuracy of current and deferred income tax balances.',
-  sections: [
-   { id: 'wp-tax-1', title: '1. Current Income Tax', isExpanded: true, questions: [
-    q('tax-1a', '<p>Has the current income tax provision been reviewed and agreed to the tax return or management\'s tax calculation?</p>', 'Yes', 'Tax provision reviewed and agreed to management\'s T2 corporate tax estimate. Effective rate assessed as reasonable.', 'W/P CC-01'),
-    q('tax-1b', '<p>Have current tax payments during the year been traced to bank statements?</p>', 'Yes', 'All quarterly installments traced to bank statements and agreed to the tax account.', 'W/P CC-02'),
-    q('tax-1c', '<p>Has the income tax payable (refundable) been independently assessed for reasonableness?</p>', 'Yes', 'Tax payable recalculated using taxable income and applicable rates. Agreed to management\'s calculation.', 'W/P CC-02'),
-   ]},
-   { id: 'wp-tax-2', title: '2. Deferred Income Tax', isExpanded: true, questions: [
-    q('tax-2a', '<p>Have temporary differences been identified and agreed to the deferred tax schedule?</p>', 'Yes', 'Deferred tax arising from CCA vs. accounting depreciation and other temporary differences reviewed.', 'W/P CC-03'),
-    q('tax-2b', '<p>Has the deferred tax balance been recalculated using the enacted tax rate?</p>', 'Yes', 'Deferred tax independently recalculated using applicable enacted rates. Agreed to management\'s calculation within rounding.', 'W/P CC-03'),
-    q('tax-2c', '<p>Have recoverability of deferred tax assets been assessed (probability of sufficient future taxable income)?</p>', 'NA', 'Net deferred tax liability position — no recoverability assessment required.'),
-   ]},
-   { id: 'wp-tax-3', title: '3. Disclosure and Compliance', isExpanded: true, questions: [
-    q('tax-3a', '<p>Are income tax disclosures complete and appropriate (current/deferred split, effective rate reconciliation)?</p>', 'Yes', 'Note disclosures reviewed — current/deferred split and major components of tax expense disclosed.'),
-    q('tax-3b', '<p>Are there any uncertain tax positions that should be disclosed or accrued?</p>', 'No', 'Management representations obtained that no material uncertain tax positions exist. No CRA audit or reassessment is in progress.'),
-    la('tax-3c', '<p>Conclusion — income taxes:</p>', 'Income taxes are fairly presented. Current and deferred tax balances are reasonable. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-tax', title: 'Income Taxes — Audit Work Program',
+ description: 'Audit procedures for current and deferred income taxes.',
+ objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence and accuracy of current and deferred income tax balances.',
+ sections: [
+ { id: 'wp-tax-1', title: '1. Current Income Tax', isExpanded: true, questions: [
+ q('tax-1a', '<p>Has the current income tax provision been reviewed and agreed to the tax return or management\'s tax calculation?</p>', 'Yes', 'Tax provision reviewed and agreed to management\'s T2 corporate tax estimate. Effective rate assessed as reasonable.', 'W/P CC-01'),
+ q('tax-1b', '<p>Have current tax payments during the year been traced to bank statements?</p>', 'Yes', 'All quarterly installments traced to bank statements and agreed to the tax account.', 'W/P CC-02'),
+ q('tax-1c', '<p>Has the income tax payable (refundable) been independently assessed for reasonableness?</p>', 'Yes', 'Tax payable recalculated using taxable income and applicable rates. Agreed to management\'s calculation.', 'W/P CC-02'),
+ ]},
+ { id: 'wp-tax-2', title: '2. Deferred Income Tax', isExpanded: true, questions: [
+ q('tax-2a', '<p>Have temporary differences been identified and agreed to the deferred tax schedule?</p>', 'Yes', 'Deferred tax arising from CCA vs. accounting depreciation and other temporary differences reviewed.', 'W/P CC-03'),
+ q('tax-2b', '<p>Has the deferred tax balance been recalculated using the enacted tax rate?</p>', 'Yes', 'Deferred tax independently recalculated using applicable enacted rates. Agreed to management\'s calculation within rounding.', 'W/P CC-03'),
+ q('tax-2c', '<p>Have recoverability of deferred tax assets been assessed (probability of sufficient future taxable income)?</p>', 'NA', 'Net deferred tax liability position — no recoverability assessment required.'),
+ ]},
+ { id: 'wp-tax-3', title: '3. Disclosure and Compliance', isExpanded: true, questions: [
+ q('tax-3a', '<p>Are income tax disclosures complete and appropriate (current/deferred split, effective rate reconciliation)?</p>', 'Yes', 'Note disclosures reviewed — current/deferred split and major components of tax expense disclosed.'),
+ q('tax-3b', '<p>Are there any uncertain tax positions that should be disclosed or accrued?</p>', 'No', 'Management representations obtained that no material uncertain tax positions exist. No CRA audit or reassessment is in progress.'),
+ la('tax-3c', '<p>Conclusion — income taxes:</p>', 'Income taxes are fairly presented. Current and deferred tax balances are reasonable. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateLoansPayableWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-lp', title: 'Loans and Advances Payable — Audit Work Program',
-  description: 'Audit procedures for loans and advances payable.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, accuracy and disclosure of loans and advances payable.',
-  sections: [
-   { id: 'wp-lp-1', title: '1. Existence and Confirmation', isExpanded: true, questions: [
-    q('lp-1a', '<p>Have loan agreements been obtained and reviewed for key terms (principal, rate, maturity, security, repayment schedule)?</p>', 'Yes', 'All loan agreements obtained and reviewed. Key terms noted and agreed to the loan continuity schedule.', 'W/P LP-01'),
-    q('lp-1b', '<p>Have loan balances been confirmed directly with lenders?</p>', 'Yes', 'Lender confirmations received and agreed to GL. No unexplained differences.', 'W/P LP-01'),
-    q('lp-1c', '<p>Has accrued interest been independently recalculated?</p>', 'Yes', 'Accrued interest recalculated and agreed to GL within rounding.', 'W/P LP-02'),
-   ]},
-   { id: 'wp-lp-2', title: '2. Classification and Presentation', isExpanded: true, questions: [
-    q('lp-2a', '<p>Have current portions of long-term debt been correctly identified and classified?</p>', 'Yes', 'Principal repayments due within 12 months confirmed and reclassified to current liabilities.', 'W/P LP-03'),
-    q('lp-2b', '<p>Are loans to/from related parties identified and reviewed for arm\'s-length terms?</p>', 'Yes', 'One related party loan identified. Terms reviewed and confirmed as arm\'s length. Disclosed in Note 12.'),
-   ]},
-   { id: 'wp-lp-3', title: '3. Disclosure', isExpanded: true, questions: [
-    q('lp-3a', '<p>Are all material loan balances disclosed with rates, maturity dates and security?</p>', 'Yes', 'Note disclosures reviewed — adequate disclosure of all material loans including terms and security.'),
-    la('lp-3b', '<p>Conclusion — loans and advances payable:</p>', 'Loans payable are fairly presented. Classification and disclosures are appropriate. No material misstatements identified.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-lp', title: 'Loans and Advances Payable — Audit Work Program',
+ description: 'Audit procedures for loans and advances payable.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, accuracy and disclosure of loans and advances payable.',
+ sections: [
+ { id: 'wp-lp-1', title: '1. Existence and Confirmation', isExpanded: true, questions: [
+ q('lp-1a', '<p>Have loan agreements been obtained and reviewed for key terms (principal, rate, maturity, security, repayment schedule)?</p>', 'Yes', 'All loan agreements obtained and reviewed. Key terms noted and agreed to the loan continuity schedule.', 'W/P LP-01'),
+ q('lp-1b', '<p>Have loan balances been confirmed directly with lenders?</p>', 'Yes', 'Lender confirmations received and agreed to GL. No unexplained differences.', 'W/P LP-01'),
+ q('lp-1c', '<p>Has accrued interest been independently recalculated?</p>', 'Yes', 'Accrued interest recalculated and agreed to GL within rounding.', 'W/P LP-02'),
+ ]},
+ { id: 'wp-lp-2', title: '2. Classification and Presentation', isExpanded: true, questions: [
+ q('lp-2a', '<p>Have current portions of long-term debt been correctly identified and classified?</p>', 'Yes', 'Principal repayments due within 12 months confirmed and reclassified to current liabilities.', 'W/P LP-03'),
+ q('lp-2b', '<p>Are loans to/from related parties identified and reviewed for arm\'s-length terms?</p>', 'Yes', 'One related party loan identified. Terms reviewed and confirmed as arm\'s length. Disclosed in Note 12.'),
+ ]},
+ { id: 'wp-lp-3', title: '3. Disclosure', isExpanded: true, questions: [
+ q('lp-3a', '<p>Are all material loan balances disclosed with rates, maturity dates and security?</p>', 'Yes', 'Note disclosures reviewed — adequate disclosure of all material loans including terms and security.'),
+ la('lp-3b', '<p>Conclusion — loans and advances payable:</p>', 'Loans payable are fairly presented. Classification and disclosures are appropriate. No material misstatements identified.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateLongTermDebtWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-ltd', title: 'Long-Term Debt — Audit Work Program',
-  description: 'Audit procedures for long-term debt.',
-  objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, accuracy, classification and disclosure of long-term debt.',
-  sections: [
-   { id: 'wp-ltd-1', title: '1. Existence and Confirmation', isExpanded: true, questions: [
-    q('ltd-1a', '<p>Have long-term debt agreements been obtained and reviewed?</p>', 'Yes', 'All term loan and debenture agreements obtained and reviewed. Key terms agreed to debt continuity schedule.', 'W/P KK-01'),
-    q('ltd-1b', '<p>Have lender confirmations been obtained for all material long-term debt?</p>', 'Yes', 'Confirmations received from all lenders and agreed to GL. No unexplained differences.', 'W/P KK-01'),
-    q('ltd-1c', '<p>Have principal payments made during the year been traced to bank statements?</p>', 'Yes', 'All principal repayments agreed to bank statements and traced to the debt schedule.', 'W/P KK-02'),
-   ]},
-   { id: 'wp-ltd-2', title: '2. Interest and Covenants', isExpanded: true, questions: [
-    q('ltd-2a', '<p>Has interest expense been independently recalculated and agreed to GL?</p>', 'Yes', 'Interest expense recalculated for each debt instrument. Agreed to GL within immaterial rounding differences.', 'W/P KK-03'),
-    q('ltd-2b', '<p>Has compliance with all financial covenants at year-end been assessed?</p>', 'Yes', 'All financial covenants tested at March 31, 2024. Entity is in compliance with all covenants.', 'W/P KK-04'),
-    q('ltd-2c', '<p>Have any waived covenant violations or amendments been obtained and reviewed?</p>', 'NA', 'No covenant violations or waivers during the year.'),
-   ]},
-   { id: 'wp-ltd-3', title: '3. Classification and Disclosure', isExpanded: true, questions: [
-    q('ltd-3a', '<p>Has the current vs. long-term classification been confirmed based on maturity and covenant compliance?</p>', 'Yes', 'Current and long-term portions confirmed. Scheduled repayments in next 12 months classified as current.'),
-    q('ltd-3b', '<p>Are note disclosures adequate (terms, rates, maturity, security, covenant summary, minimum repayments)?</p>', 'Yes', 'Disclosures reviewed — maturity schedule, interest rates and security are fully disclosed.'),
-    la('ltd-3c', '<p>Conclusion — long-term debt:</p>', 'Long-term debt is fairly presented. Entity is compliant with all covenants. Classification and disclosures are appropriate.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-ltd', title: 'Long-Term Debt — Audit Work Program',
+ description: 'Audit procedures for long-term debt.',
+ objective: 'To obtain sufficient appropriate audit evidence over the existence, completeness, accuracy, classification and disclosure of long-term debt.',
+ sections: [
+ { id: 'wp-ltd-1', title: '1. Existence and Confirmation', isExpanded: true, questions: [
+ q('ltd-1a', '<p>Have long-term debt agreements been obtained and reviewed?</p>', 'Yes', 'All term loan and debenture agreements obtained and reviewed. Key terms agreed to debt continuity schedule.', 'W/P KK-01'),
+ q('ltd-1b', '<p>Have lender confirmations been obtained for all material long-term debt?</p>', 'Yes', 'Confirmations received from all lenders and agreed to GL. No unexplained differences.', 'W/P KK-01'),
+ q('ltd-1c', '<p>Have principal payments made during the year been traced to bank statements?</p>', 'Yes', 'All principal repayments agreed to bank statements and traced to the debt schedule.', 'W/P KK-02'),
+ ]},
+ { id: 'wp-ltd-2', title: '2. Interest and Covenants', isExpanded: true, questions: [
+ q('ltd-2a', '<p>Has interest expense been independently recalculated and agreed to GL?</p>', 'Yes', 'Interest expense recalculated for each debt instrument. Agreed to GL within immaterial rounding differences.', 'W/P KK-03'),
+ q('ltd-2b', '<p>Has compliance with all financial covenants at year-end been assessed?</p>', 'Yes', 'All financial covenants tested at March 31, 2024. Entity is in compliance with all covenants.', 'W/P KK-04'),
+ q('ltd-2c', '<p>Have any waived covenant violations or amendments been obtained and reviewed?</p>', 'NA', 'No covenant violations or waivers during the year.'),
+ ]},
+ { id: 'wp-ltd-3', title: '3. Classification and Disclosure', isExpanded: true, questions: [
+ q('ltd-3a', '<p>Has the current vs. long-term classification been confirmed based on maturity and covenant compliance?</p>', 'Yes', 'Current and long-term portions confirmed. Scheduled repayments in next 12 months classified as current.'),
+ q('ltd-3b', '<p>Are note disclosures adequate (terms, rates, maturity, security, covenant summary, minimum repayments)?</p>', 'Yes', 'Disclosures reviewed — maturity schedule, interest rates and security are fully disclosed.'),
+ la('ltd-3c', '<p>Conclusion — long-term debt:</p>', 'Long-term debt is fairly presented. Entity is compliant with all covenants. Classification and disclosures are appropriate.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 
 export const generateEquityWorkprogram = (): Checklist => {
  const { q, la } = mkProc();
  return {
-  id: 'wp-equity', title: 'Equity — Audit Work Program',
-  description: 'Audit procedures for share capital, retained earnings and other equity components.',
-  objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, accuracy and disclosure of equity balances.',
-  sections: [
-   { id: 'wp-equity-1', title: '1. Share Capital', isExpanded: true, questions: [
-    q('equity-1a', '<p>Has the share capital continuity been agreed to the prior year and any issuances or repurchases during the year have been reviewed?</p>', 'Yes', 'Share capital continuity schedule reviewed. No share issuances or repurchases during the year.', 'W/P TT-01'),
-    q('equity-1b', '<p>Have share registers or corporate minute books been reviewed to confirm authorized and issued share capital?</p>', 'Yes', 'Corporate minute book reviewed — authorized and issued shares confirmed. Minute book is current.', 'W/P TT-01'),
-    q('equity-1c', '<p>Have any share-based compensation arrangements been identified and assessed for proper accounting?</p>', 'NA', 'No share-based compensation arrangements exist.'),
-   ]},
-   { id: 'wp-equity-2', title: '2. Retained Earnings and Dividends', isExpanded: true, questions: [
-    q('equity-2a', '<p>Has the opening retained earnings balance been agreed to the prior year closing balance?</p>', 'Yes', 'Opening retained earnings agreed to prior year audited financial statements without adjustment.', 'W/P TT-02'),
-    q('equity-2b', '<p>Have dividends declared during the year been traced to board resolutions and confirmed as appropriately recorded?</p>', 'Yes', 'One dividend of $150K declared in Q3 — traced to board minutes and confirmed as recorded.', 'W/P TT-03'),
-    q('equity-2c', '<p>Has any appropriation of retained earnings (reserves) been reviewed for appropriateness?</p>', 'NA', 'No reserves or appropriations of retained earnings during the year.'),
-   ]},
-   { id: 'wp-equity-3', title: '3. Disclosure', isExpanded: true, questions: [
-    q('equity-3a', '<p>Are equity components (share capital, contributed surplus, retained earnings, AOCI) appropriately disclosed?</p>', 'Yes', 'Statement of changes in equity and note disclosures reviewed and confirmed as adequate.'),
-    q('equity-3b', '<p>Have any related party transactions involving equity (loans converted to equity, distributions) been identified and disclosed?</p>', 'NA', 'No related party equity transactions identified.'),
-    la('equity-3c', '<p>Conclusion — equity:</p>', 'Equity is fairly presented. Share capital and retained earnings are supported by underlying documentation. Disclosures are adequate.'),
-   ]},
-  ],
-  createdAt: new Date(), updatedAt: new Date(),
+ id: 'wp-equity', title: 'Equity — Audit Work Program',
+ description: 'Audit procedures for share capital, retained earnings and other equity components.',
+ objective: 'To obtain sufficient appropriate audit evidence over the completeness, existence, accuracy and disclosure of equity balances.',
+ sections: [
+ { id: 'wp-equity-1', title: '1. Share Capital', isExpanded: true, questions: [
+ q('equity-1a', '<p>Has the share capital continuity been agreed to the prior year and any issuances or repurchases during the year have been reviewed?</p>', 'Yes', 'Share capital continuity schedule reviewed. No share issuances or repurchases during the year.', 'W/P TT-01'),
+ q('equity-1b', '<p>Have share registers or corporate minute books been reviewed to confirm authorized and issued share capital?</p>', 'Yes', 'Corporate minute book reviewed — authorized and issued shares confirmed. Minute book is current.', 'W/P TT-01'),
+ q('equity-1c', '<p>Have any share-based compensation arrangements been identified and assessed for proper accounting?</p>', 'NA', 'No share-based compensation arrangements exist.'),
+ ]},
+ { id: 'wp-equity-2', title: '2. Retained Earnings and Dividends', isExpanded: true, questions: [
+ q('equity-2a', '<p>Has the opening retained earnings balance been agreed to the prior year closing balance?</p>', 'Yes', 'Opening retained earnings agreed to prior year audited financial statements without adjustment.', 'W/P TT-02'),
+ q('equity-2b', '<p>Have dividends declared during the year been traced to board resolutions and confirmed as appropriately recorded?</p>', 'Yes', 'One dividend of $150K declared in Q3 — traced to board minutes and confirmed as recorded.', 'W/P TT-03'),
+ q('equity-2c', '<p>Has any appropriation of retained earnings (reserves) been reviewed for appropriateness?</p>', 'NA', 'No reserves or appropriations of retained earnings during the year.'),
+ ]},
+ { id: 'wp-equity-3', title: '3. Disclosure', isExpanded: true, questions: [
+ q('equity-3a', '<p>Are equity components (share capital, contributed surplus, retained earnings, AOCI) appropriately disclosed?</p>', 'Yes', 'Statement of changes in equity and note disclosures reviewed and confirmed as adequate.'),
+ q('equity-3b', '<p>Have any related party transactions involving equity (loans converted to equity, distributions) been identified and disclosed?</p>', 'NA', 'No related party equity transactions identified.'),
+ la('equity-3c', '<p>Conclusion — equity:</p>', 'Equity is fairly presented. Share capital and retained earnings are supported by underlying documentation. Disclosures are adequate.'),
+ ]},
+ ],
+ createdAt: new Date(), updatedAt: new Date(),
  };
 };
 

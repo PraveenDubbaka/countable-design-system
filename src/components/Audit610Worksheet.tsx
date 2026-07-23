@@ -10,49 +10,49 @@ import { useEngagementContext, } from "@/hooks/useEngagementContext";
 import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
 import { formatCurrency } from "@/lib/engagementContext";
 import {
-  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ConcludeBar, type SignOffData,
+ WorksheetLayout, WorksheetHeader, LinkedRisksCard, ConcludeBar, type SignOffData,
 } from "@/components/audit/WorksheetShell";
 
 // ─── Sample-plan calculator (mirrors the spreadsheet on pages 1-3 of the source workbook) ──
 type Method = "statistical" | "non-statistical";
 
 interface SamplePlan {
-  fsArea: string;
-  assertions: string;
-  purpose: string;
-  populationDesc: string;
-  controlsTested: string;
-  riskLevel: "Low" | "Moderate" | "High";
-  totalValue: string;         // A
-  numberOfItems: string;
-  keyItemsNature: string;
-  keyItemsValue: string;      // B
-  keyItemsCount: string;
-  performanceMateriality: string; // D
-  confidenceFactor: string;       // E (statistical only)
-  method: Method;
+ fsArea: string;
+ assertions: string;
+ purpose: string;
+ populationDesc: string;
+ controlsTested: string;
+ riskLevel: "Low" | "Moderate" | "High";
+ totalValue: string; // A
+ numberOfItems: string;
+ keyItemsNature: string;
+ keyItemsValue: string; // B
+ keyItemsCount: string;
+ performanceMateriality: string; // D
+ confidenceFactor: string; // E (statistical only)
+ method: Method;
 }
 
 interface TestResultItem {
-  id: string;
-  originalValue: string;
-  auditedValue: string;
-  reason: string;
+ id: string;
+ originalValue: string;
+ auditedValue: string;
+ reason: string;
 }
 
 interface Data610 {
-  plan: SamplePlan;
-  documentation: string;
-  replacements: string;
-  anomalies: string;
-  results: TestResultItem[];
-  testObjectivesMet: "Y" | "N" | "";
-  testObjectivesMetExplain: string;
-  deviationsOtherAreas: "Y" | "N" | "";
-  deviationsOtherAreasExplain: string;
-  conclusion: string;
-  signOff: SignOffData;
-  concluded: boolean; concludedOn: string;
+ plan: SamplePlan;
+ documentation: string;
+ replacements: string;
+ anomalies: string;
+ results: TestResultItem[];
+ testObjectivesMet: "Y" | "N" | "";
+ testObjectivesMetExplain: string;
+ deviationsOtherAreas: "Y" | "N" | "";
+ deviationsOtherAreasExplain: string;
+ conclusion: string;
+ signOff: SignOffData;
+ concluded: boolean; concludedOn: string;
 }
 
 function num(v: string): number { const n = parseFloat(String(v).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? 0 : n; }
@@ -60,250 +60,250 @@ function num(v: string): number { const n = parseFloat(String(v).replace(/[^0-9.
 function newRow(): TestResultItem { return { id: Math.random().toString(36).slice(2), originalValue: "", auditedValue: "", reason: "" }; }
 
 function buildDefault(initialPM: number): Data610 {
-  return {
-    plan: {
-      fsArea: "", assertions: "", purpose: "", populationDesc: "", controlsTested: "",
-      riskLevel: "Moderate",
-      totalValue: "", numberOfItems: "",
-      keyItemsNature: "", keyItemsValue: "0", keyItemsCount: "0",
-      performanceMateriality: initialPM ? String(Math.round(initialPM)) : "",
-      confidenceFactor: "1.6",
-      method: "statistical",
-    },
-    documentation: "",
-    replacements: "",
-    anomalies: "",
-    results: Array.from({ length: 5 }, newRow),
-    testObjectivesMet: "", testObjectivesMetExplain: "",
-    deviationsOtherAreas: "", deviationsOtherAreasExplain: "",
-    conclusion: "",
-    signOff: { preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "" },
-    concluded: false, concludedOn: "",
-  };
+ return {
+ plan: {
+ fsArea: "", assertions: "", purpose: "", populationDesc: "", controlsTested: "",
+ riskLevel: "Moderate",
+ totalValue: "", numberOfItems: "",
+ keyItemsNature: "", keyItemsValue: "0", keyItemsCount: "0",
+ performanceMateriality: initialPM ? String(Math.round(initialPM)) : "",
+ confidenceFactor: "1.6",
+ method: "statistical",
+ },
+ documentation: "",
+ replacements: "",
+ anomalies: "",
+ results: Array.from({ length: 5 }, newRow),
+ testObjectivesMet: "", testObjectivesMetExplain: "",
+ deviationsOtherAreas: "", deviationsOtherAreasExplain: "",
+ conclusion: "",
+ signOff: { preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "" },
+ concluded: false, concludedOn: "",
+ };
 }
 
 export function Audit610Worksheet() {
-  const { engagementId } = useParams<{ engagementId: string }>();
-  const ctx = useEngagementContext();
-  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
-  const overall = useMemo(() => overallRisk520(risks), [risks]);
+ const { engagementId } = useParams<{ engagementId: string }>();
+ const ctx = useEngagementContext();
+ const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
+ const overall = useMemo(() => overallRisk520(risks), [risks]);
 
-  const storageKey = `audit-610-data-${engagementId ?? "default"}`;
-  const [data, setData] = useState<Data610>(() => {
-    const def = buildDefault(ctx.performanceMateriality);
-    const stored = readJsonFromLocalStorage<Partial<Data610>>(storageKey, def) ?? def;
-    return {
-      ...def,
-      ...stored,
-      plan: { ...def.plan, ...(stored.plan ?? {}) },
-      results: stored.results?.length ? stored.results : def.results,
-      signOff: { ...def.signOff, ...(stored.signOff ?? {}) },
-    } as Data610;
-  });
+ const storageKey = `audit-610-data-${engagementId ?? "default"}`;
+ const [data, setData] = useState<Data610>(() => {
+ const def = buildDefault(ctx.performanceMateriality);
+ const stored = readJsonFromLocalStorage<Partial<Data610>>(storageKey, def) ?? def;
+ return {
+...def,
+...stored,
+ plan: {...def.plan,...(stored.plan ?? {}) },
+ results: stored.results?.length ? stored.results : def.results,
+ signOff: {...def.signOff,...(stored.signOff ?? {}) },
+ } as Data610;
+ });
 
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const first = useRef(true);
-  useEffect(() => {
-    if (first.current) { first.current = false; return; }
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
-  }, [data, storageKey]);
+ const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+ const first = useRef(true);
+ useEffect(() => {
+ if (first.current) { first.current = false; return; }
+ if (saveTimer.current) clearTimeout(saveTimer.current);
+ saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
+ }, [data, storageKey]);
 
-  const locked = data.concluded;
-  const p = data.plan;
+ const locked = data.concluded;
+ const p = data.plan;
 
-  // Derived calculations (matches the source spreadsheet)
-  const A = num(p.totalValue);
-  const B = num(p.keyItemsValue);
-  const C = Math.max(A - B, 0);                           // remaining population
-  const D = num(p.performanceMateriality);
-  const E = num(p.confidenceFactor) || 0;
-  const F = E > 0 ? D / E : 0;                            // sampling interval
-  const G = F > 0 ? Math.ceil(C / F) : 0;                 // sample size
+ // Derived calculations (matches the source spreadsheet)
+ const A = num(p.totalValue);
+ const B = num(p.keyItemsValue);
+ const C = Math.max(A - B, 0); // remaining population
+ const D = num(p.performanceMateriality);
+ const E = num(p.confidenceFactor) || 0;
+ const F = E > 0 ? D / E : 0; // sampling interval
+ const G = F > 0 ? Math.ceil(C / F) : 0; // sample size
 
-  // Projected misstatements
-  const projected = data.results.reduce((acc, r) => {
-    const ov = num(r.originalValue), av = num(r.auditedValue);
-    const m = ov - av;
-    const pctMis = ov !== 0 ? m / ov : 0;
-    const proj = data.plan.method === "statistical" ? pctMis * F : m;
-    return acc + proj;
-  }, 0);
+ // Projected misstatements
+ const projected = data.results.reduce((acc, r) => {
+ const ov = num(r.originalValue), av = num(r.auditedValue);
+ const m = ov - av;
+ const pctMis = ov !== 0 ? m / ov : 0;
+ const proj = data.plan.method === "statistical" ? pctMis * F : m;
+ return acc + proj;
+ }, 0);
 
-  const upd = <K extends keyof SamplePlan>(k: K, v: SamplePlan[K]) =>
-    setData(d => ({ ...d, plan: { ...d.plan, [k]: v } }));
+ const upd = <K extends keyof SamplePlan>(k: K, v: SamplePlan[K]) =>
+ setData(d => ({...d, plan: {...d.plan, [k]: v } }));
 
-  const updResult = (id: string, field: keyof TestResultItem, value: string) =>
-    setData(d => ({ ...d, results: d.results.map(r => r.id === id ? { ...r, [field]: value } : r) }));
+ const updResult = (id: string, field: keyof TestResultItem, value: string) =>
+ setData(d => ({...d, results: d.results.map(r => r.id === id ? {...r, [field]: value } : r) }));
 
-  const Label = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
-    <label className="text-xs font-medium text-foreground block mb-1.5">{children}{hint && <span className="text-muted-foreground font-normal"> · {hint}</span>}</label>
-  );
-  const Stat = ({ label, value, mono }: { label: string; value: string; mono?: boolean }) => (
-    <div className="rounded-md border border-border bg-muted/40 px-3 py-2.5">
-      <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">{label}</div>
-      <div className={`text-sm font-semibold text-foreground mt-0.5 ${mono ? "tabular-nums" : ""}`}>{value}</div>
-    </div>
-  );
+ const Label = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
+ <label className="text-xs font-medium text-foreground block mb-1.5">{children}{hint && <span className="text-muted-foreground font-normal"> · {hint}</span>}</label>
+ );
+ const Stat = ({ label, value, mono }: { label: string; value: string; mono?: boolean }) => (
+ <div className="rounded-md border border-border bg-muted/40 px-3 py-2.5">
+ <div className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">{label}</div>
+ <div className={`text-sm font-semibold text-foreground mt-0.5 ${mono ? "tabular-nums" : ""}`}>{value}</div>
+ </div>
+ );
 
-  const th = "px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap";
-  const td = "px-4 py-2.5 align-top text-sm";
+ const th = "px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap";
+ const td = "px-4 py-2.5 align-top text-sm";
 
-  return (
-    <WorksheetLayout
-      heading="Canada > Worksheets"
-      objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
-      standard={`${ctx.standardPrefix} 530`}
-    >
-      <WorksheetHeader
-        ctx={ctx}
-        formNo="610"
-        title="Sampling — Tests of Details"
-        standard={`${ctx.standardPrefix} 530`}
-        overallRisk={overall}
-      />
+ return (
+ <WorksheetLayout
+ heading="Canada > Worksheets"
+ objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
+ standard={`${ctx.standardPrefix} 530`}
+ >
+ <WorksheetHeader
+ ctx={ctx}
+ formNo="610"
+ title="Sampling — Tests of Details"
+ standard={`${ctx.standardPrefix} 530`}
+ overallRisk={overall}
+ />
 
 
-      <LinkedRisksCard overallRisk={overall} risks={risks.filter(r => r.source === "B")} storageKey={`audit-610-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="Add assertion-level risks in Form 520 to scope this sample." />
+ <LinkedRisksCard overallRisk={overall} risks={risks.filter(r => r.source === "B")} storageKey={`audit-610-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="Add assertion-level risks in to scope this sample." />
 
-      {/* ── Plan inputs ── */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">1 · Sample design</h3></div>
-        <div className="p-4 grid grid-cols-2 gap-4">
-          <div><Label>Financial-statement area</Label><Input disabled={locked} value={p.fsArea} onChange={e => upd("fsArea", e.target.value)} className="h-8 text-sm" placeholder="e.g. Accounts Receivable" /></div>
-          <div><Label>Assertion(s) addressed</Label><Input disabled={locked} value={p.assertions} onChange={e => upd("assertions", e.target.value)} className="h-8 text-sm" placeholder="e.g. C, AV, E" /></div>
-          <div className="col-span-2"><Label>Purpose of the audit procedure</Label><Textarea disabled={locked} value={p.purpose} onChange={e => upd("purpose", e.target.value)} className="text-sm min-h-[60px]" placeholder="Describe what the test is intended to detect or substantiate" /></div>
-          <div className="col-span-2"><Label>Population characteristics</Label><Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" /></div>
-          <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><Textarea disabled={locked} value={p.controlsTested} onChange={e => upd("controlsTested", e.target.value)} className="text-sm min-h-[48px]" placeholder="None / describe and reference WP" /></div>
-          <div>
-            <Label>Assessed RMM (Form 520)</Label>
-            <Select disabled={locked} value={p.riskLevel} onValueChange={(v: SamplePlan["riskLevel"]) => upd("riskLevel", v)}>
-              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value="Low">Low</SelectItem><SelectItem value="Moderate">Moderate</SelectItem><SelectItem value="High">High</SelectItem></SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Evaluation method</Label>
-            <Select disabled={locked} value={p.method} onValueChange={(v: Method) => upd("method", v)}>
-              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value="statistical">Statistical (MUS)</SelectItem><SelectItem value="non-statistical">Non-statistical</SelectItem></SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+ {/* ── Plan inputs ── */}
+ <div className="rounded-lg border border-border bg-card overflow-hidden">
+ <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">1 · Sample design</h3></div>
+ <div className="p-4 grid grid-cols-2 gap-4">
+ <div><Label>Financial-statement area</Label><Input disabled={locked} value={p.fsArea} onChange={e => upd("fsArea", e.target.value)} className="h-8 text-sm" placeholder="e.g. Accounts Receivable" /></div>
+ <div><Label>Assertion(s) addressed</Label><Input disabled={locked} value={p.assertions} onChange={e => upd("assertions", e.target.value)} className="h-8 text-sm" placeholder="e.g. C, AV, E" /></div>
+ <div className="col-span-2"><Label>Purpose of the audit procedure</Label><Textarea disabled={locked} value={p.purpose} onChange={e => upd("purpose", e.target.value)} className="text-sm min-h-[60px]" placeholder="Describe what the test is intended to detect or substantiate" /></div>
+ <div className="col-span-2"><Label>Population characteristics</Label><Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" /></div>
+ <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><Textarea disabled={locked} value={p.controlsTested} onChange={e => upd("controlsTested", e.target.value)} className="text-sm min-h-[48px]" placeholder="None / describe and reference WP" /></div>
+ <div>
+ <Label>Assessed RMM</Label>
+ <Select disabled={locked} value={p.riskLevel} onValueChange={(v: SamplePlan["riskLevel"]) => upd("riskLevel", v)}>
+ <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+ <SelectContent><SelectItem value="Low">Low</SelectItem><SelectItem value="Moderate">Moderate</SelectItem><SelectItem value="High">High</SelectItem></SelectContent>
+ </Select>
+ </div>
+ <div>
+ <Label>Evaluation method</Label>
+ <Select disabled={locked} value={p.method} onValueChange={(v: Method) => upd("method", v)}>
+ <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+ <SelectContent><SelectItem value="statistical">Statistical (MUS)</SelectItem><SelectItem value="non-statistical">Non-statistical</SelectItem></SelectContent>
+ </Select>
+ </div>
+ </div>
+ </div>
 
-      {/* ── Sizing ── */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">2 · Population, key items &amp; sample size</h3></div>
-        <div className="p-4 grid grid-cols-3 gap-4">
-          <div><Label hint="A">Total monetary value $</Label><Input disabled={locked} value={p.totalValue} onChange={e => upd("totalValue", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
-          <div><Label>Number of physical items</Label><Input disabled={locked} value={p.numberOfItems} onChange={e => upd("numberOfItems", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
-          <div><Label hint="from Form 420">Performance materiality $ (D)</Label><Input disabled={locked} value={p.performanceMateriality} onChange={e => upd("performanceMateriality", e.target.value)} className="h-8 text-sm" placeholder={String(Math.round(ctx.performanceMateriality))} /></div>
-          <div className="col-span-3"><Label>Nature of key items removed and tested separately</Label><Textarea disabled={locked} value={p.keyItemsNature} onChange={e => upd("keyItemsNature", e.target.value)} className="text-sm min-h-[48px]" placeholder="e.g. balances ≥ $100K, related-party items" /></div>
-          <div><Label hint="B">Value of key items $</Label><Input disabled={locked} value={p.keyItemsValue} onChange={e => upd("keyItemsValue", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
-          <div><Label>Number of key items</Label><Input disabled={locked} value={p.keyItemsCount} onChange={e => upd("keyItemsCount", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
-          {p.method === "statistical" && (
-            <div><Label hint="E · e.g. 1.6 (95 %)">Confidence factor</Label><Input disabled={locked} value={p.confidenceFactor} onChange={e => upd("confidenceFactor", e.target.value)} className="h-8 text-sm" /></div>
-          )}
-        </div>
-        <div className="px-4 pb-4 grid grid-cols-4 gap-3">
-          <Stat label="Remaining population (C = A−B)" value={formatCurrency(C)} mono />
-          {p.method === "statistical" ? <>
-            <Stat label="Sampling interval (F = D ÷ E)" value={F ? formatCurrency(F) : "—"} mono />
-            <Stat label="Suggested sample size (G = C ÷ F)" value={G > 0 ? String(G) : "—"} mono />
-            <Stat label="Confidence" value={`${E}x`} />
-          </> : <>
-            <Stat label="Performance materiality" value={D ? formatCurrency(D) : "—"} mono />
-            <Stat label="Risk-based sample size" value={p.riskLevel === "High" ? "60" : p.riskLevel === "Moderate" ? "35" : "20"} />
-            <Stat label="Coverage of population" value={A ? `${((B / A) * 100).toFixed(1)} % key + sample` : "—"} />
-          </>}
-        </div>
-      </div>
+ {/* ── Sizing ── */}
+ <div className="rounded-lg border border-border bg-card overflow-hidden">
+ <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">2 · Population, key items &amp; sample size</h3></div>
+ <div className="p-4 grid grid-cols-3 gap-4">
+ <div><Label hint="A">Total monetary value $</Label><Input disabled={locked} value={p.totalValue} onChange={e => upd("totalValue", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
+ <div><Label>Number of physical items</Label><Input disabled={locked} value={p.numberOfItems} onChange={e => upd("numberOfItems", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
+ <div><Label hint="">Performance materiality $ (D)</Label><Input disabled={locked} value={p.performanceMateriality} onChange={e => upd("performanceMateriality", e.target.value)} className="h-8 text-sm" placeholder={String(Math.round(ctx.performanceMateriality))} /></div>
+ <div className="col-span-3"><Label>Nature of key items removed and tested separately</Label><Textarea disabled={locked} value={p.keyItemsNature} onChange={e => upd("keyItemsNature", e.target.value)} className="text-sm min-h-[48px]" placeholder="e.g. balances ≥ $100K, related-party items" /></div>
+ <div><Label hint="B">Value of key items $</Label><Input disabled={locked} value={p.keyItemsValue} onChange={e => upd("keyItemsValue", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
+ <div><Label>Number of key items</Label><Input disabled={locked} value={p.keyItemsCount} onChange={e => upd("keyItemsCount", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
+ {p.method === "statistical" && (
+ <div><Label hint="E · e.g. 1.6 (95 %)">Confidence factor</Label><Input disabled={locked} value={p.confidenceFactor} onChange={e => upd("confidenceFactor", e.target.value)} className="h-8 text-sm" /></div>
+ )}
+ </div>
+ <div className="px-4 pb-4 grid grid-cols-4 gap-3">
+ <Stat label="Remaining population (C = A−B)" value={formatCurrency(C)} mono />
+ {p.method === "statistical" ? <>
+ <Stat label="Sampling interval (F = D ÷ E)" value={F ? formatCurrency(F) : "—"} mono />
+ <Stat label="Suggested sample size (G = C ÷ F)" value={G > 0 ? String(G) : "—"} mono />
+ <Stat label="Confidence" value={`${E}x`} />
+ </> : <>
+ <Stat label="Performance materiality" value={D ? formatCurrency(D) : "—"} mono />
+ <Stat label="Risk-based sample size" value={p.riskLevel === "High" ? "60" : p.riskLevel === "Moderate" ? "35" : "20"} />
+ <Stat label="Coverage of population" value={A ? `${((B / A) * 100).toFixed(1)} % key + sample` : "—"} />
+ </>}
+ </div>
+ </div>
 
-      {/* ── Test results ── */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-3 border-b border-border bg-muted/30 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">3 · Test results &amp; projected misstatement</h3>
-          {!locked && <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setData(d => ({ ...d, results: [...d.results, newRow()] }))}><Plus className="h-3.5 w-3.5" /> Add item</Button>}
-        </div>
-        <div className="p-4 grid grid-cols-1 gap-4">
-          <div><Label>Documentation of items selected (W/P cross-reference)</Label><Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({ ...d, documentation: e.target.value }))} className="text-sm min-h-[56px]" /></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><Label>Replacements (count and reason)</Label><Textarea disabled={locked} value={data.replacements} onChange={e => setData(d => ({ ...d, replacements: e.target.value }))} className="text-sm min-h-[48px]" /></div>
-            <div><Label>Anomalies identified</Label><Textarea disabled={locked} value={data.anomalies} onChange={e => setData(d => ({ ...d, anomalies: e.target.value }))} className="text-sm min-h-[48px]" /></div>
-          </div>
-        </div>
-        <div className="overflow-x-auto border-t border-border">
-          <table className="w-full">
-            <thead className="bg-muted/30">
-              <tr>
-                <th className={`${th} w-12 text-center`}>#</th>
-                <th className={`${th} text-right`}>Original value $</th>
-                <th className={`${th} text-right`}>Audited value $</th>
-                <th className={`${th} text-right`}>Misstatement $</th>
-                <th className={`${th} text-right`}>Projected $</th>
-                <th className={th}>Reason for misstatement</th>
-                {!locked && <th className="px-2 py-3 w-10" />}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {data.results.map((r, i) => {
-                const ov = num(r.originalValue), av = num(r.auditedValue), mis = ov - av;
-                const pct = ov !== 0 ? mis / ov : 0;
-                const proj = data.plan.method === "statistical" ? pct * F : mis;
-                return (
-                  <tr key={r.id} className="hover:bg-muted/20">
-                    <td className={`${td} text-center text-muted-foreground tabular-nums`}>{i + 1}</td>
-                    <td className={`${td} text-right`}><Input disabled={locked} value={r.originalValue} onChange={e => updResult(r.id, "originalValue", e.target.value)} className="h-8 text-sm text-right tabular-nums" placeholder="0" /></td>
-                    <td className={`${td} text-right`}><Input disabled={locked} value={r.auditedValue} onChange={e => updResult(r.id, "auditedValue", e.target.value)} className="h-8 text-sm text-right tabular-nums" placeholder="0" /></td>
-                    <td className={`${td} text-right tabular-nums text-foreground`}>{mis ? formatCurrency(mis) : "—"}</td>
-                    <td className={`${td} text-right tabular-nums text-foreground`}>{proj ? formatCurrency(proj) : "—"}</td>
-                    <td className={td}><Textarea disabled={locked} value={r.reason} onChange={e => updResult(r.id, "reason", e.target.value)} className="min-h-[40px] text-sm resize-none" /></td>
-                    {!locked && <td className={`${td} text-center w-10`}><button onClick={() => setData(d => ({ ...d, results: d.results.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="h-3.5 w-3.5" /></button></td>}
-                  </tr>
-                );
-              })}
-              <tr className="bg-muted/40">
-                <td colSpan={4} className={`${td} text-right font-semibold text-foreground`}>Projected misstatement (record on Form 335)</td>
-                <td className={`${td} text-right tabular-nums font-bold text-primary`}>{projected ? formatCurrency(projected) : "—"}</td>
-                <td colSpan={!locked ? 2 : 1}></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+ {/* ── Test results ── */}
+ <div className="rounded-lg border border-border bg-card overflow-hidden">
+ <div className="px-4 py-3 border-b border-border bg-muted/30 flex items-center justify-between">
+ <h3 className="text-sm font-semibold text-foreground">3 · Test results &amp; projected misstatement</h3>
+ {!locked && <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setData(d => ({...d, results: [...d.results, newRow()] }))}><Plus className="h-3.5 w-3.5" /> Add item</Button>}
+ </div>
+ <div className="p-4 grid grid-cols-1 gap-4">
+ <div><Label>Documentation of items selected (W/P cross-reference)</Label><Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({...d, documentation: e.target.value }))} className="text-sm min-h-[56px]" /></div>
+ <div className="grid grid-cols-2 gap-4">
+ <div><Label>Replacements (count and reason)</Label><Textarea disabled={locked} value={data.replacements} onChange={e => setData(d => ({...d, replacements: e.target.value }))} className="text-sm min-h-[48px]" /></div>
+ <div><Label>Anomalies identified</Label><Textarea disabled={locked} value={data.anomalies} onChange={e => setData(d => ({...d, anomalies: e.target.value }))} className="text-sm min-h-[48px]" /></div>
+ </div>
+ </div>
+ <div className="overflow-x-auto border-t border-border">
+ <table className="w-full">
+ <thead className="bg-muted/30">
+ <tr>
+ <th className={`${th} w-12 text-center`}>#</th>
+ <th className={`${th} text-right`}>Original value $</th>
+ <th className={`${th} text-right`}>Audited value $</th>
+ <th className={`${th} text-right`}>Misstatement $</th>
+ <th className={`${th} text-right`}>Projected $</th>
+ <th className={th}>Reason for misstatement</th>
+ {!locked && <th className="px-2 py-3 w-10" />}
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {data.results.map((r, i) => {
+ const ov = num(r.originalValue), av = num(r.auditedValue), mis = ov - av;
+ const pct = ov !== 0 ? mis / ov : 0;
+ const proj = data.plan.method === "statistical" ? pct * F : mis;
+ return (
+ <tr key={r.id} className="hover:bg-muted/20">
+ <td className={`${td} text-center text-muted-foreground tabular-nums`}>{i + 1}</td>
+ <td className={`${td} text-right`}><Input disabled={locked} value={r.originalValue} onChange={e => updResult(r.id, "originalValue", e.target.value)} className="h-8 text-sm text-right tabular-nums" placeholder="0" /></td>
+ <td className={`${td} text-right`}><Input disabled={locked} value={r.auditedValue} onChange={e => updResult(r.id, "auditedValue", e.target.value)} className="h-8 text-sm text-right tabular-nums" placeholder="0" /></td>
+ <td className={`${td} text-right tabular-nums text-foreground`}>{mis ? formatCurrency(mis) : "—"}</td>
+ <td className={`${td} text-right tabular-nums text-foreground`}>{proj ? formatCurrency(proj) : "—"}</td>
+ <td className={td}><Textarea disabled={locked} value={r.reason} onChange={e => updResult(r.id, "reason", e.target.value)} className="min-h-[40px] text-sm resize-none" /></td>
+ {!locked && <td className={`${td} text-center w-10`}><button onClick={() => setData(d => ({...d, results: d.results.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="h-3.5 w-3.5" /></button></td>}
+ </tr>
+ );
+ })}
+ <tr className="bg-muted/40">
+ <td colSpan={4} className={`${td} text-right font-semibold text-foreground`}>Projected misstatement (record)</td>
+ <td className={`${td} text-right tabular-nums font-bold text-primary`}>{projected ? formatCurrency(projected) : "—"}</td>
+ <td colSpan={!locked ? 2 : 1}></td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
 
-      {/* ── Conclusion ── */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">4 · Conclusion</h3></div>
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Were the test objectives achieved?</Label>
-              <Select disabled={locked} value={data.testObjectivesMet} onValueChange={(v: "Y" | "N" | "") => setData(d => ({ ...d, testObjectivesMet: v }))}>
-                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-                <SelectContent><SelectItem value="Y">Yes</SelectItem><SelectItem value="N">No</SelectItem></SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Deviations with possible effect on other audit areas?</Label>
-              <Select disabled={locked} value={data.deviationsOtherAreas} onValueChange={(v: "Y" | "N" | "") => setData(d => ({ ...d, deviationsOtherAreas: v }))}>
-                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-                <SelectContent><SelectItem value="Y">Yes</SelectItem><SelectItem value="N">No</SelectItem></SelectContent>
-              </Select>
-            </div>
-            {data.testObjectivesMet === "N" && <div className="col-span-2"><Label>Explanation</Label><Textarea disabled={locked} value={data.testObjectivesMetExplain} onChange={e => setData(d => ({ ...d, testObjectivesMetExplain: e.target.value }))} className="text-sm min-h-[56px]" placeholder="Explain and describe further procedures planned" /></div>}
-            {data.deviationsOtherAreas === "Y" && <div className="col-span-2"><Label>Impact on other audit areas</Label><Textarea disabled={locked} value={data.deviationsOtherAreasExplain} onChange={e => setData(d => ({ ...d, deviationsOtherAreasExplain: e.target.value }))} className="text-sm min-h-[56px]" placeholder="Describe the effect; update the audit strategy accordingly" /></div>}
-          </div>
-          <div>
-            <Label>Overall sampling conclusion</Label>
-            <Textarea disabled={locked} value={data.conclusion} onChange={e => setData(d => ({ ...d, conclusion: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Conclude on whether the population is fairly stated within performance materiality." />
-          </div>
-        </div>
-      </div>
+ {/* ── Conclusion ── */}
+ <div className="rounded-lg border border-border bg-card overflow-hidden">
+ <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">4 · Conclusion</h3></div>
+ <div className="p-4 space-y-4">
+ <div className="grid grid-cols-2 gap-4">
+ <div>
+ <Label>Were the test objectives achieved?</Label>
+ <Select disabled={locked} value={data.testObjectivesMet} onValueChange={(v: "Y" | "N" | "") => setData(d => ({...d, testObjectivesMet: v }))}>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+ <SelectContent><SelectItem value="Y">Yes</SelectItem><SelectItem value="N">No</SelectItem></SelectContent>
+ </Select>
+ </div>
+ <div>
+ <Label>Deviations with possible effect on other audit areas?</Label>
+ <Select disabled={locked} value={data.deviationsOtherAreas} onValueChange={(v: "Y" | "N" | "") => setData(d => ({...d, deviationsOtherAreas: v }))}>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+ <SelectContent><SelectItem value="Y">Yes</SelectItem><SelectItem value="N">No</SelectItem></SelectContent>
+ </Select>
+ </div>
+ {data.testObjectivesMet === "N" && <div className="col-span-2"><Label>Explanation</Label><Textarea disabled={locked} value={data.testObjectivesMetExplain} onChange={e => setData(d => ({...d, testObjectivesMetExplain: e.target.value }))} className="text-sm min-h-[56px]" placeholder="Explain and describe further procedures planned" /></div>}
+ {data.deviationsOtherAreas === "Y" && <div className="col-span-2"><Label>Impact on other audit areas</Label><Textarea disabled={locked} value={data.deviationsOtherAreasExplain} onChange={e => setData(d => ({...d, deviationsOtherAreasExplain: e.target.value }))} className="text-sm min-h-[56px]" placeholder="Describe the effect; update the audit strategy accordingly" /></div>}
+ </div>
+ <div>
+ <Label>Overall sampling conclusion</Label>
+ <Textarea disabled={locked} value={data.conclusion} onChange={e => setData(d => ({...d, conclusion: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Conclude on whether the population is fairly stated within performance materiality." />
+ </div>
+ </div>
+ </div>
 
-      <ConcludeBar worksheetKey="audit-610" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn}
-        onConclude={() => { const u = { ...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
-    </WorksheetLayout>
-  );
+ <ConcludeBar worksheetKey="audit-610" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn}
+ onConclude={() => { const u = {...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
+ </WorksheetLayout>
+ );
 }

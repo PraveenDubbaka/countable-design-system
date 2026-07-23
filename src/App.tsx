@@ -28,42 +28,42 @@ import { EngagementsProvider } from "./store/EngagementsContext";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
-          <EngagementsProvider>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/clients/new" element={<AddNewClient />} />
-            <Route path="/clients/:clientId" element={<ClientDetail />} />
-            <Route path="/teams" element={<Teams />} />
-            <Route path="/engagements" element={<Engagements />} />
-            <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
-            <Route path="/engagements/:engagementId/checklist/:checklistKey" element={<EngagementDetail />} />
-            <Route path="/engagements/create" element={<CreateEngagement />} />
-            <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
-            <Route path="/engagements/:engagementId/workbook" element={<Workbook />} />
-            <Route path="/engagements/:engagementId/procedure/:procedureId" element={<ProcedureDetail />} />
-            <Route path="/engagements/:engagementId/dependency-register" element={<AuditDependencyRegister />} />
-            <Route path="/create" element={<CreationDashboard />} />
-            <Route path="/builder" element={<Index />} />
-            <Route path="/generate" element={<Generate />} />
-            <Route path="/engagement-templates" element={<EngagementTemplates />} />
-            <Route path="/financial-statement-templates" element={<FinancialStatementTemplates />} />
-            <Route path="/design-system" element={<DesignSystem />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </EngagementsProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+ <QueryClientProvider client={queryClient}>
+ <ThemeProvider>
+ <TooltipProvider>
+ <Toaster />
+ <Sonner />
+ <BrowserRouter basename={import.meta.env.BASE_URL}>
+ <EngagementsProvider>
+ <Routes>
+ <Route path="/" element={<Navigate to="/dashboard" replace />} />
+ <Route path="/dashboard" element={<Dashboard />} />
+ <Route path="/clients" element={<Clients />} />
+ <Route path="/clients/new" element={<AddNewClient />} />
+ <Route path="/clients/:clientId" element={<ClientDetail />} />
+ <Route path="/teams" element={<Teams />} />
+ <Route path="/engagements" element={<Engagements />} />
+ <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
+ <Route path="/engagements/:engagementId/checklist/:checklistKey" element={<EngagementDetail />} />
+ <Route path="/engagements/create" element={<CreateEngagement />} />
+ <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
+ <Route path="/engagements/:engagementId/workbook" element={<Workbook />} />
+ <Route path="/engagements/:engagementId/procedure/:procedureId" element={<ProcedureDetail />} />
+ <Route path="/engagements/:engagementId/dependency-register" element={<AuditDependencyRegister />} />
+ <Route path="/create" element={<CreationDashboard />} />
+ <Route path="/builder" element={<Index />} />
+ <Route path="/generate" element={<Generate />} />
+ <Route path="/engagement-templates" element={<EngagementTemplates />} />
+ <Route path="/financial-statement-templates" element={<FinancialStatementTemplates />} />
+ <Route path="/design-system" element={<DesignSystem />} />
+ {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+ <Route path="*" element={<NotFound />} />
+ </Routes>
+ </EngagementsProvider>
+ </BrowserRouter>
+ </TooltipProvider>
+ </ThemeProvider>
+ </QueryClientProvider>
 );
 
 export default App;

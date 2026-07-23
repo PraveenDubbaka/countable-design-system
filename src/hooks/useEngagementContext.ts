@@ -11,6 +11,6 @@ import { getEngagementContext, type EngagementContext } from "@/lib/engagementCo
  * preparer). Always defaults gracefully when no engagementId is present.
  */
 export function useEngagementContext(): EngagementContext {
-  const { engagementId } = useParams<{ engagementId: string }>();
-  return useMemo(() => getEngagementContext(engagementId), [engagementId]);
+ const { engagementId } = useParams<{ engagementId: string }>();
+ return useMemo(() => getEngagementContext(engagementId), [engagementId]);
 }

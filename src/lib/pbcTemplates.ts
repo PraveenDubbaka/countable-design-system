@@ -1,25 +1,25 @@
 export interface PBCTemplate {
-  id: string;
-  label: string;
-  wpRef: string;
-  generate: (ctx: {
-    clientName: string;
-    engagementId: string;
-    yearEnd: string;
-    wpNumbers: string[];
-  }) => string;
+ id: string;
+ label: string;
+ wpRef: string;
+ generate: (ctx: {
+ clientName: string;
+ engagementId: string;
+ yearEnd: string;
+ wpNumbers: string[];
+ }) => string;
 }
 
 export const PBC_TEMPLATES: PBCTemplate[] = [
-  {
-    id: "memo-540",
-    label: "Control Assessment and Documentation",
-    wpRef: "540",
-    generate: ({ clientName, engagementId, yearEnd }) => `# Control Assessment and Documentation
+ {
+ id: "memo-540",
+ label: "Control Assessment and Documentation",
+ wpRef: "540",
+ generate: ({ clientName, engagementId, yearEnd }) => `# Control Assessment and Documentation
 
 **FOR CLIENT TO COMPLETE**
 
-**Client:** ${clientName}  |  **Engagement:** ${engagementId}  |  **Period:** ${yearEnd}
+**Client:** ${clientName} | **Engagement:** ${engagementId} | **Period:** ${yearEnd}
 
 ---
 
@@ -82,18 +82,18 @@ Two signatures are required on cheques. __________________, __________________ a
 ### Treasury Controls
 
 Equity transactions are initiated through a directors' resolution for approval. Subscription agreements are prepared by __________________ in consult with legal, which are submitted by the Company to the transfer agent to issue share certificates. The Company uses __________________ to maintain its capital records.`,
-  },
-  {
-    id: "it-questionnaire",
-    label: "IT Information Questionnaire",
-    wpRef: "IT",
-    generate: ({ clientName, engagementId, yearEnd }) => `# IT Controls Questionnaire
+ },
+ {
+ id: "it-questionnaire",
+ label: "IT Information Questionnaire",
+ wpRef: "IT",
+ generate: ({ clientName, engagementId, yearEnd }) => `# IT Controls Questionnaire
 
 **To:** ${clientName} (the "Company")
 
 **Subject:** IT Controls Questionnaire
 
-**Engagement:** ${engagementId}  |  **Period:** ${yearEnd}
+**Engagement:** ${engagementId} | **Period:** ${yearEnd}
 
 ---
 
@@ -208,12 +208,12 @@ ________________________________________________________________________________
 **16.** Is there anything else we should be aware of regarding the Company's IT systems?
 
 ________________________________________________________________________________`,
-  },
-  {
-    id: "memo-510",
-    label: "Prepared by Client Memo",
-    wpRef: "510",
-    generate: ({ clientName, engagementId, yearEnd }) => `# Prepared by Client Memo
+ },
+ {
+ id: "memo-510",
+ label: "Prepared by Client Memo",
+ wpRef: "510",
+ generate: ({ clientName, engagementId, yearEnd }) => `# Prepared by Client Memo
 
 **MEMO**
 
@@ -388,5 +388,5 @@ ________________________________________________________________________________
 **34.** Who has authority to enter into contracts on behalf of the Company?
 
 ________________________________________________________________________________`,
-  },
+ },
 ];
