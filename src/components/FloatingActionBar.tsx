@@ -609,7 +609,7 @@ export function FloatingActionBar({
  <span className="text-xs text-muted-foreground">Unanswered questions only</span>
  </label>
  </div>
- <div className="px-4 pb-4 flex flex-col gap-2">
+ <div className="px-4 pb-4 flex items-center gap-1.5">
  {(['Yes', 'No', 'NA'] as const).map((ans) => (
  <button
  key={ans}
@@ -617,13 +617,7 @@ export function FloatingActionBar({
  onBulkAnswer(ans, bulkUnansweredOnly);
  setShowBulkAnswerPopover(false);
  }}
- className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
- ans === 'Yes'
- ? 'bg-green-100 hover:bg-green-200 text-green-800 dark:bg-green-900/30 dark:hover:bg-green-900/50 dark:text-green-300'
- : ans === 'No'
- ? 'bg-red-100 hover:bg-red-200 text-red-800 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-300'
- : 'bg-muted hover:bg-muted/80 text-muted-foreground'
- }`}
+ className="px-3 py-1 text-xs rounded-full transition-all bg-muted hover:bg-muted/80 text-foreground"
  >
  {ans === 'NA' ? 'N/A' : ans}
  </button>
