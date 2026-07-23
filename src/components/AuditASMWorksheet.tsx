@@ -267,22 +267,6 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {extra && <div className="mt-1.5">{extra}</div>}
  </div>
  </td>
- <td className="px-3 py-2 align-top">
- <div className="flex flex-col gap-1">
- <Input
- className="h-6 text-xs"
- placeholder="Initials"
- value={row.initials}
- onChange={(e) => onChange("initials", e.target.value)}
- />
- <Input
- className="h-6 text-xs"
- type="date"
- value={row.date}
- onChange={(e) => onChange("date", e.target.value)}
- />
- </div>
- </td>
  </tr>
  );
  }
@@ -383,7 +367,6 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
  <th className="w-20 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
  <th className="w-80 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
- <th className="w-32 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">Initials / Date</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -473,22 +456,6 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  placeholder="Experience / notes"
  value={s4[i].response}
  onChange={(e) => updateTeamRow(i, "response", e.target.value)}
- />
- </div>
- </td>
- <td className="px-3 py-2 align-top">
- <div className="flex flex-col gap-1">
- <Input
- className="h-6 text-xs"
- placeholder="Initials"
- value={s4[i].initials}
- onChange={(e) => updateTeamRow(i, "initials", e.target.value)}
- />
- <Input
- className="h-6 text-xs"
- type="date"
- value={s4[i].date}
- onChange={(e) => updateTeamRow(i, "date", e.target.value)}
  />
  </div>
  </td>

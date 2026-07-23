@@ -234,7 +234,6 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <tr className="bg-muted border-b border-border">
  <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
  <th className="w-[42%] px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
- <th className="w-[130px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 130 }}>Done by</th>
  <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
  <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 100 }}>W/P ref.</th>
  </tr>
@@ -282,15 +281,6 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  </div>
  </div>
  )}
- </td>
- <td className="w-[130px] px-4 py-3 align-top" style={{ minWidth: 130 }}>
- <Input
- disabled={locked}
- value={row.doneBy}
- onChange={e => setRow(proc.id, { doneBy: e.target.value })}
- placeholder="Initials"
- className="h-8 text-sm bg-background"
- />
  </td>
  <td className="px-4 py-3 align-top">
  <Textarea
