@@ -1,5 +1,4 @@
 // — Subsequent Events (CAS 560 / AU-C 560)
-import { AttributedComment } from "@/components/ui/AttributedComment";
 // Aligned with WorksheetShell design standards (605/625/635/645).
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";

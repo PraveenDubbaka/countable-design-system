@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

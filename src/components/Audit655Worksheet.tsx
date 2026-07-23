@@ -1,5 +1,4 @@
 // — Final Analytical Procedures (CAS 520 / AU-C 520)
-import { AttributedComment } from "@/components/ui/AttributedComment";
 // Aligned with WorksheetShell design standards.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
