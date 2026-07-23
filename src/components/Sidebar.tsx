@@ -342,7 +342,11 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
           { id: "gca-ws-680",  name: "680 ASPE Supplementary Audit Procedures", type: "file" },
           {
             id: "gca-ws-proc", name: "Procedures", type: "folder", isExpanded: false, children: [
-              { id: "gca-ws-proc-cash",     name: "Cash", type: "file" },
+              { id: "gca-ws-proc-cash-grp", name: "Cash", type: "folder", isExpanded: false, children: [
+                { id: "gca-ws-proc-cash",       name: "Audit Procedures", type: "file" },
+                { id: "gca-ws-proc-cash-bank",  name: "Bank Reconciliation", type: "file" },
+                { id: "gca-ws-proc-cash-count", name: "Cash Count", type: "file" },
+              ]},
               { id: "gca-ws-proc-ar",       name: "Accounts Receivable", type: "file" },
               { id: "gca-ws-proc-inv",      name: "Inventory", type: "file" },
               { id: "gca-ws-proc-invest",   name: "Investments", type: "file" },

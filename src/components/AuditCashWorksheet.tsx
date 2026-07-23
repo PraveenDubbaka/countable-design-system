@@ -290,13 +290,13 @@ function ProcTable({ docKey, sections, locked, onRowField }: {
   );
 }
 
-export function AuditCashWorksheet() {
+function useCashStore() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const storageKey = `audit-cash-v2-${engagementId ?? "global"}`;
 
-  const [data, setData] = useState<DataCash>(() => {
-    return readJsonFromLocalStorage<DataCash>(storageKey, buildDefault()) ?? buildDefault();
-  });
+  const [data, setData] = useState<DataCash>(() =>
+    readJsonFromLocalStorage<DataCash>(storageKey, buildDefault()) ?? buildDefault()
+  );
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const first = useRef(true);
@@ -305,8 +305,6 @@ export function AuditCashWorksheet() {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
   }, [data, storageKey]);
-
-  const locked = data.concluded;
 
   function setHeader(field: "lsName" | "lsAccountBalance" | "materiality", value: string) {
     setData(d => ({ ...d, [field]: value }));
@@ -332,6 +330,11 @@ export function AuditCashWorksheet() {
     }));
   }
 
+  return { data, locked: data.concluded, setHeader, handleRowField, conclude };
+}
+
+export function AuditCashWorksheet() {
+  const { data, locked, setHeader, handleRowField, conclude } = useCashStore();
   return (
     <WorksheetLayout objective="Obtain sufficient appropriate audit evidence that cash and cash equivalents exist, are complete, are accurately valued, are properly classified, and are adequately disclosed in the financial statements.">
       <WorksheetSection title="A · Cash and Cash Equivalents — Work Program">
@@ -355,12 +358,30 @@ export function AuditCashWorksheet() {
         <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>
 
-      <WorksheetSection title="Cash Count Procedures" bodyClassName="p-0">
-        <ProcTable docKey="cashCountProcedures" sections={data.cashCountProcedures} locked={locked} onRowField={handleRowField} />
+      <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+    </WorksheetLayout>
+  );
+}
+
+export function AuditCashBankRecWorksheet() {
+  const { data, locked, handleRowField, conclude } = useCashStore();
+  return (
+    <WorksheetLayout objective="Perform bank reconciliation procedures to verify that the bank statement balances agree to the general ledger and that reconciling items are valid and properly recorded.">
+      <WorksheetSection title="A.110 · Bank Reconciliation Procedures" bodyClassName="p-0">
+        <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>
 
-      <WorksheetSection title="Bank Reconciliation Procedures" bodyClassName="p-0">
-        <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} />
+      <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+    </WorksheetLayout>
+  );
+}
+
+export function AuditCashCountWorksheet() {
+  const { data, locked, handleRowField, conclude } = useCashStore();
+  return (
+    <WorksheetLayout objective="Count cash on hand to verify existence and completeness of cash balances at the period end date.">
+      <WorksheetSection title="A.115 · Cash Count Procedures" bodyClassName="p-0">
+        <ProcTable docKey="cashCountProcedures" sections={data.cashCountProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>
 
       <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
