@@ -264,13 +264,7 @@ function ProcTable({ docKey, sections, locked, onRowField }: {
                     />
                   </td>
                   <td className={TD}>
-                    <Select disabled={locked} value={r.status} onValueChange={v => onRowField(docKey, si, r.id, "status", v)}>
-                      <SelectTrigger className="h-8 text-xs min-w-0"><SelectValue placeholder="—" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Complete" className="text-xs">Complete</SelectItem>
-                        <SelectItem value="N/A" className="text-xs">N/A</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <span className="text-sm text-muted-foreground px-1">—</span>
                   </td>
                 </tr>
               ))}
