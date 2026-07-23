@@ -1335,7 +1335,7 @@ function QuestionInlineColumns({
  <div className="w-full min-w-0">
  <ResponseField question={question} onUpdate={onUpdate} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
  {isEngagementMode && question.answeredBy && question.answer && !showExplanation && (
- <div className="mt-1 px-0.5">
+ <div className="mt-1 mb-1 px-0.5">
  <Tooltip>
  <TooltipTrigger asChild>
  <span className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
@@ -1395,7 +1395,7 @@ function QuestionInlineColumns({
  placeholder={question.explanationPlaceholder || "Explanation"}
  minHeight="40px" />
  {isEngagementMode && question.answeredBy && (question.answer || question.explanation) && (
- <div className="mt-1 px-1.5">
+ <div className="mt-1 mb-1 px-1.5">
  <Tooltip>
  <TooltipTrigger asChild>
  <span
