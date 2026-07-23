@@ -34,6 +34,7 @@ interface AITextareaProps {
  isCompactMode?: boolean;
  maxLength?: number;
  onPlaceholderChange?: (newPlaceholder: string) => void;
+ onAIGenerate?: () => void;
 }
 
 export function AITextarea({ 
@@ -46,7 +47,8 @@ export function AITextarea({
  defaultHeight = "120px",
  isCompactMode = false,
  maxLength = 500,
- onPlaceholderChange
+ onPlaceholderChange,
+ onAIGenerate
 }: AITextareaProps) {
  const [isAIOpen, setIsAIOpen] = useState(false);
  const [isProcessing, setIsProcessing] = useState(false);
@@ -139,6 +141,7 @@ export function AITextarea({
  if (data?.error) { console.error('AI service error:', data.error); toast.error(data.error); return; }
  if (data?.result) {
  onChange(data.result);
+ onAIGenerate?.();
  if (editorRef.current) { editorRef.current.innerHTML = data.result; }
  toast.success('Text updated successfully!');
  }

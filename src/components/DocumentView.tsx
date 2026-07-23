@@ -1395,13 +1395,8 @@ function QuestionInlineColumns({
  <div onBlur={() => { if (question.explanation) expAttr.stamp(); else expAttr.clear(); }}>
  <AITextarea
  value={question.explanation || ''}
- onChange={(val) => {
- const upd: Question = {...question, explanation: val };
- if (isEngagementMode) {
- upd.answeredBy = val ? stampedAssignee() : (question.answer ? question.answeredBy : undefined);
- }
- onUpdate(upd);
- }}
+ onChange={(val) => { onUpdate({...question, explanation: val }); }}
+ onAIGenerate={() => expAttr.stamp('LUKA')}
  placeholder={question.explanationPlaceholder || "Explanation"}
  minHeight="40px" />
  </div>
@@ -1410,26 +1405,7 @@ function QuestionInlineColumns({
  <AttributionBadge attr={expAttr.attr} />
  </div>
  )}
- {isEngagementMode && question.answeredBy && question.answer && (
- <div className="mt-1 mb-1 px-1.5">
- <Tooltip>
- <TooltipTrigger asChild>
- <span
- className={`inline-flex items-center rounded-full text-[10px] font-medium gap-1 px-2 py-0.5 cursor-default ${
- question.answeredBy.type === 'client'
- ? 'bg-primary/10 text-primary'
- : 'bg-[#e1eefa] text-[#074075] border border-[#1c63a6]'
- }`}
- >
- {question.answeredBy.initials}{question.answeredBy.at && ` · ${formatAssigneeAt(question.answeredBy.at)}`}
- </span>
- </TooltipTrigger>
- <TooltipContent side="top">
- <p className="text-xs">{question.answeredBy.name} · {question.answeredBy.role}</p>
- </TooltipContent>
- </Tooltip>
- </div>
- )}
+
  </div>
  {canEdit &&
  <button
