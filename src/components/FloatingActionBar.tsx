@@ -62,6 +62,8 @@ interface FloatingActionBarProps {
  onBulkDelete: () => void;
  onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form' | 'inquires-form') => void;
  onBulkAnswer?: (answer: string, unansweredOnly: boolean) => void;
+ onBulkClear?: () => void;
+ onBulkRestore?: () => void;
  isPreviewMode?: boolean;
  isChecklist?: boolean;
  totalQuestions?: number;
@@ -86,6 +88,8 @@ export function FloatingActionBar({
  onBulkDelete,
  onAddCategory,
  onBulkAnswer,
+ onBulkClear,
+ onBulkRestore,
  isPreviewMode = false,
  isChecklist = true,
  totalQuestions = 0,
@@ -96,7 +100,7 @@ export function FloatingActionBar({
  const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
  const [showSectionsPopover, setShowSectionsPopover] = useState(false);
  const [showBulkAnswerPopover, setShowBulkAnswerPopover] = useState(false);
- const [bulkUnansweredOnly, setBulkUnansweredOnly] = useState(true);
+ const [bulkUnansweredOnly, setBulkUnansweredOnly] = useState(false);
  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
  const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
  
@@ -598,7 +602,7 @@ export function FloatingActionBar({
  <p className="text-sm font-semibold text-foreground">Bulk Answer</p>
  <p className="text-xs text-muted-foreground mt-0.5">Fill all Yes / No questions at once</p>
  </div>
- <div className="px-4 py-3 flex flex-col gap-2">
+ <div className="px-4 py-3 flex flex-col gap-3">
  <label className="flex items-center gap-2 cursor-pointer select-none">
  <input
  type="checkbox"
@@ -608,20 +612,37 @@ export function FloatingActionBar({
  />
  <span className="text-xs text-muted-foreground">Unanswered questions only</span>
  </label>
- </div>
- <div className="px-4 pb-4 flex items-center gap-1.5">
+ <div className="flex items-center gap-1.5">
  {(['Yes', 'No', 'NA'] as const).map((ans) => (
  <button
  key={ans}
- onClick={() => {
- onBulkAnswer(ans, bulkUnansweredOnly);
- setShowBulkAnswerPopover(false);
- }}
+ onClick={() => onBulkAnswer(ans, bulkUnansweredOnly)}
  className="px-3 py-1 text-xs rounded-full transition-all bg-muted hover:bg-muted/80 text-foreground"
  >
  {ans === 'NA' ? 'N/A' : ans}
  </button>
  ))}
+ </div>
+ {(onBulkClear || onBulkRestore) && (
+ <div className="border-t border-border pt-2 flex flex-col gap-1">
+ {onBulkClear && (
+ <button
+ onClick={onBulkClear}
+ className="px-3 py-1.5 text-xs rounded-lg transition-all bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground text-left"
+ >
+ Clear all answers
+ </button>
+ )}
+ {onBulkRestore && (
+ <button
+ onClick={onBulkRestore}
+ className="px-3 py-1.5 text-xs rounded-lg transition-all bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground text-left"
+ >
+ Restore to initial state
+ </button>
+ )}
+ </div>
+ )}
  </div>
  </PopoverContent>
  </Popover>

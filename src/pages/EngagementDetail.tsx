@@ -898,6 +898,7 @@ export default function EngagementDetail() {
  const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
  const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
  const priorYearFileInputRef = useRef<HTMLInputElement>(null);
+ const initialChecklistRef = useRef<Checklist | null>(null);
  const [priorYearState, setPriorYearState] = useState<'idle' | 'processing' | 'summary' | 'populating' | 'done'>('idle');
  const [showShareDialog, setShowShareDialog] = useState(false);
  const [showResponseDialog, setShowResponseDialog] = useState(false);
@@ -1196,6 +1197,7 @@ export default function EngagementDetail() {
  // Set loading state when engagement changes
  setIsLoading(true);
  setChecklist(null);
+ initialChecklistRef.current = null;
 
  // One-time migration: clear stale sample checklists saved before the
  // global template library was pulled in, so the engagement reflects the
@@ -1255,6 +1257,7 @@ export default function EngagementDetail() {
  checklistData = adaptForm410ForEngagement(checklistData, meta.firstYearAudit ?? false);
  }
  setChecklist(checklistData);
+ if (!initialChecklistRef.current) initialChecklistRef.current = checklistData;
  setIsLoading(false);
  return;
  }
@@ -1262,6 +1265,7 @@ export default function EngagementDetail() {
 
  // Fallback to the new global-template-backed checklist
  setChecklist(fallbackChecklist);
+ if (!initialChecklistRef.current) initialChecklistRef.current = fallbackChecklist;
  setIsLoading(false);
  }, 500);
  return () => clearTimeout(loadTimer);
@@ -1710,6 +1714,23 @@ export default function EngagementDetail() {
  ...checklist,
  sections: checklist.sections.map(s => ({ ...s, questions: s.questions.map(applyToQuestion) })),
  });
+ };
+
+ const handleBulkClear = () => {
+ if (!checklist) return;
+ const clearQuestion = (q: Question): Question => {
+ const isYesNo = q.answerType === 'yes-no' || q.answerType === 'yes-no-na';
+ const cleared = isYesNo ? { ...q, answer: undefined } : q;
+ return cleared.subQuestions ? { ...cleared, subQuestions: cleared.subQuestions.map(clearQuestion) } : cleared;
+ };
+ handleChecklistUpdate({
+ ...checklist,
+ sections: checklist.sections.map(s => ({ ...s, questions: s.questions.map(clearQuestion) })),
+ });
+ };
+
+ const handleBulkRestore = () => {
+ if (initialChecklistRef.current) handleChecklistUpdate(initialChecklistRef.current);
  };
 
  const allTopLevelQuestionIds = checklist
@@ -2805,7 +2826,7 @@ export default function EngagementDetail() {
  </div>
 
  {/* Floating Action Bar for Preview Mode - Inside content area */}
- {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
+ {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} onBulkClear={handleBulkClear} onBulkRestore={handleBulkRestore} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
  </div>
 
  {/* Right Panel or Add Checklist Sheet */}
