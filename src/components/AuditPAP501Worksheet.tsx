@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info } from "lucide-react";
+import { Info, RefreshCw } from "lucide-react";
 import { LukaIcon } from "@/components/LukaIcon";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
@@ -63,6 +63,25 @@ const IS_IDS = ['s1','s2','s3','s4','s5','cos1','cos2','cos3','cos4','cos5','or1
 const BS_IDS = ['ca-cash','ca-inv','ca-ar','ca-inventory','ca-oth1','ca-oth2','lta-ppe','lta-oth1','lta-oth2','lta-oth3','cl-bank','cl-ap','cl-tax','cl-fut','cl-def','cl-dep','cl-std','cl-cpltd','cl-oth1','cl-oth2','ltl-loan','ltl-fut','ltl-ltd','ltl-oth1','ltl-oth2','eq-ret','eq-con','eq-shr','eq-oth'];
 const RAT_IDS = ['rat-wc','rat-drecv','rat-dinv','rat-iturn','rat-dpay','rat-dte'];
 const ALL_FIN_IDS = [...IS_IDS,...BS_IDS];
+const LS_MAP: Record<string, string> = {
+ // Balance Sheet
+ 'ca-cash': 'A', 'ca-inv': 'D', 'ca-ar': 'B', 'ca-inventory': 'C',
+ 'ca-oth1': 'I', 'ca-oth2': 'I',
+ 'lta-ppe': 'H', 'lta-oth1': 'K', 'lta-oth2': 'K', 'lta-oth3': 'K',
+ 'cl-bank': 'DD', 'cl-ap': 'BB', 'cl-tax': 'CC', 'cl-fut': 'CC',
+ 'cl-def': 'BB', 'cl-dep': 'BB', 'cl-std': 'DD', 'cl-cpltd': 'KK',
+ 'cl-oth1': 'BB', 'cl-oth2': 'BB',
+ 'ltl-loan': 'KK', 'ltl-fut': 'JJ', 'ltl-ltd': 'KK',
+ 'ltl-oth1': 'JJ', 'ltl-oth2': 'JJ',
+ 'eq-ret': 'TT', 'eq-con': 'TT', 'eq-shr': 'TT', 'eq-oth': 'TT',
+ // Income Statement
+ 's1': '20', 's2': '20', 's3': '20', 's4': '20', 's5': '20',
+ 'cos1': '30', 'cos2': '30', 'cos3': '30', 'cos4': '30', 'cos5': '30',
+ 'or1': '80', 'or2': '80',
+ 'exp-sal': '40', 'exp-occ': '40', 'exp-int': '40', 'exp-bon': '40',
+ 'exp-rep': '40', 'exp-bad': '40', 'exp-non': '40',
+ 'exp-oth1': '40', 'exp-oth2': '40', 'exp-oth3': '40',
+};
 
 function emptyPA(): PartARow { return { checked: false, psc: '', exceptions: '', wpRef: [] }; }
 function emptyFin(): FinRow { return { current: '', budget: '', prior: '', hasIssue: '', explanation: '', auditResponse: '' }; }
@@ -119,10 +138,11 @@ function PartAColHeaders() {
 }
 
 // Part B financial table column headers
-function FinColHeaders({ showPrior = true }: { showPrior?: boolean }) {
+function FinColHeaders({ showPrior = true, showLS = false }: { showPrior?: boolean; showLS?: boolean }) {
  return (
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
+ {showLS && <th className="px-3 py-3 text-center whitespace-nowrap" style={{width:52,minWidth:52}}>LS</th>}
  <th className="px-4 py-3 text-left" style={{minWidth:200}}>Description</th>
  <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:120,minWidth:120}}>Current period</th>
  {showPrior && <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:120,minWidth:120}}>Prior period</th>}
@@ -395,7 +415,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  }
 
  // Part B — editable financial row
- function FinEditRow({ id, label, indent = 0, bold = false, showPrior = true, source = 'fin' }: { id:string; label:string; indent?:number; bold?:boolean; showPrior?:boolean; source?: 'fin'|'ratio' }) {
+ function FinEditRow({ id, label, indent = 0, bold = false, showPrior = true, source = 'fin', showLS = false }: { id:string; label:string; indent?:number; bold?:boolean; showPrior?:boolean; source?: 'fin'|'ratio'; showLS?: boolean }) {
  const bucket = source === 'ratio' ? data.ratios : f;
  const setter = source === 'ratio' ? setRatio : setFin;
  const row = bucket[id] ?? emptyFin();
@@ -403,6 +423,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
  return (
  <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ {showLS && <td className="px-3 py-2 text-center align-middle" style={{width:52}}>{LS_MAP[id] ? <Badge variant="outline" className="font-mono text-[10px] px-1 py-0 h-5 rounded">{LS_MAP[id]}</Badge> : null}</td>}
  <td className={`px-4 py-2 text-xs ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
  <td className="px-2 py-2" style={{width:120}}>
  <TdInput value={row.current} onChange={v => setter(id,{current:v})} placeholder="0" className="text-right font-mono" />
@@ -431,10 +452,11 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  }
 
  // Part B — computed total row (read-only)
- function FinTotalRow({ label, c, pr, showPrior = true, indent = 0 }: { label:string; c:number; pr:number; showPrior?:boolean; indent?:number }) {
+ function FinTotalRow({ label, c, pr, showPrior = true, indent = 0, showLS = false }: { label:string; c:number; pr:number; showPrior?:boolean; indent?:number; showLS?: boolean }) {
  const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
  return (
  <tr className="border-b border-border bg-muted/40 align-top">
+ {showLS && <td style={{width:52}} />}
  <td className="px-4 py-2 text-xs font-semibold text-foreground" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
  <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{c!==0?Math.abs(c).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
  {showPrior && <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
@@ -448,11 +470,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  }
 
  // Per-stream computed (read-only) row
- function FinComputedRow({ label, c, pr, showPrior = true, indent = 0, isPercent = false }: { label:string; c:number; pr:number; showPrior?:boolean; indent?:number; isPercent?:boolean }) {
+ function FinComputedRow({ label, c, pr, showPrior = true, indent = 0, isPercent = false, showLS = false }: { label:string; c:number; pr:number; showPrior?:boolean; indent?:number; isPercent?:boolean; showLS?: boolean }) {
  const vpAmt = c - pr, vpPct = pr !== 0 ? vpAmt/pr : null;
  const fmt = (n:number) => isPercent ? (n*100).toFixed(1)+'%' : (n!==0 ? Math.abs(n).toLocaleString('en-CA',{maximumFractionDigits:0}) : '');
  return (
  <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ {showLS && <td style={{width:52}} />}
  <td className="px-4 py-2 text-xs text-foreground italic" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
  <td className="px-3 py-2 text-right text-xs font-mono">{fmt(c)}</td>
  {showPrior && <td className="px-3 py-2 text-right text-xs font-mono">{fmt(pr)}</td>}
@@ -555,6 +578,20 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  }));
  }
 
+ function handleRegenerate() {
+ window.dispatchEvent(new CustomEvent('pap501-generate', {
+ detail: {
+ engagementId,
+ isUS,
+ label: 'PAP 501 — Preliminary Analytical Procedures',
+ sources: connectedSource
+ ? [`${connectedSource.charAt(0).toUpperCase() + connectedSource.slice(1)} connection`, 'Predecessor file']
+ : ['Trial balance', 'Predecessor file'],
+ isRegenerate: true,
+ },
+ }));
+ }
+
  useEffect(() => {
  const handler = (e: Event) => {
  const ce = e as CustomEvent<{ engagementId?: string }>;
@@ -580,31 +617,8 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  return (
  <div className="flex flex-col h-full">
 
- {/* ── IDLE: Luka-thread landing ───────────────────────────────────────── */}
- {flowState === 'idle' && (
- <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 overflow-auto">
- <div className="w-full max-w-md flex flex-col items-center gap-7 text-center">
-
- <h3 className="text-xl font-semibold text-foreground whitespace-nowrap">Preliminary Analytical Procedures — Parts B &amp; C</h3>
-
- {/* Generate button */}
- <button
- onClick={handleGenerate}
- className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
- style={{ background: 'linear-gradient(135deg,#9747FF,#115697)', boxShadow: '0 2px 8px hsla(270,60%,50%,0.3)' }}
- >
- <LukaIcon size={20} bare animated />
- Generate with Luka
- </button>
- </div>
- </div>
- )}
-
-
- {/* ── WORKSHEET: Part B / Part C tabs ───────────────────────────────── */}
- {flowState === 'worksheet' && (<>
-
  {/* Objective bar — matches 420 Materiality standard */}
+ {flowState === 'worksheet' && (
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
@@ -613,13 +627,13 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  document matters requiring an audit response; conclude on fraud risk indicators.
  </p>
  </div>
-
+ )}
 
  {/* Body */}
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-4">
 
- {/* ── Comparatives Setup card (mirrors 420 Materiality standard header cards) ── */}
+ {/* ── Comparatives Setup card ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">Comparatives Setup</span>
@@ -629,6 +643,22 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </TooltipTrigger>
  <TooltipContent>Select which comparatives to include and the number of sales streams. Auto-populated data flows from engagement setup and the 420 Materiality worksheet.</TooltipContent>
  </Tooltip>
+ <div className="ml-auto">
+ {flowState === 'idle' ? (
+ <button
+ onClick={handleGenerate}
+ className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90"
+ style={{ background: 'linear-gradient(135deg,#9747FF,#115697)', boxShadow: '0 2px 6px hsla(270,60%,50%,0.3)' }}
+ >
+ <LukaIcon size={14} bare animated />
+ Generate with Luka
+ </button>
+ ) : (
+ <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5" onClick={handleRegenerate}>
+ <RefreshCw className="h-3 w-3" />Regenerate
+ </Button>
+ )}
+ </div>
  </div>
  <div className="px-6 py-4">
  <div className="space-y-1.5">
@@ -639,69 +669,64 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </div>
 
  {/* ── Part B — Financial Comparatives ── */}
+ {flowState === 'worksheet' && (<>
  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-2">Part B — Financial Comparatives</div>
  <>
  {/* ── Balance Sheet card ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">Balance Sheet</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Compare current period balances to budget/forecast and prior period. Flag material variances.</TooltipContent>
- </Tooltip>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full text-xs">
- <FinColHeaders showPrior={showPrior} />
+ <FinColHeaders showPrior={showPrior} showLS />
  <tbody>
  <FinSectionRow label="Current Assets" />
- <FinEditRow id="ca-cash" label="Cash" showPrior={showPrior} />
- <FinEditRow id="ca-inv" label="Short-term investments" showPrior={showPrior} />
- <FinEditRow id="ca-ar" label="Accounts receivable" showPrior={showPrior} />
- <FinEditRow id="ca-inventory" label="Inventory" showPrior={showPrior} />
- <FinEditRow id="ca-oth1" label="Other assets 1" showPrior={showPrior} />
- <FinEditRow id="ca-oth2" label="Other assets 2" showPrior={showPrior} />
- <FinTotalRow label="Total Current Assets" c={totalCA.c} pr={totalCA.pr} showPrior={showPrior} />
+ <FinEditRow id="ca-cash" label="Cash" showPrior={showPrior} showLS />
+ <FinEditRow id="ca-inv" label="Short-term investments" showPrior={showPrior} showLS />
+ <FinEditRow id="ca-ar" label="Accounts receivable" showPrior={showPrior} showLS />
+ <FinEditRow id="ca-inventory" label="Inventory" showPrior={showPrior} showLS />
+ <FinEditRow id="ca-oth1" label="Other assets 1" showPrior={showPrior} showLS />
+ <FinEditRow id="ca-oth2" label="Other assets 2" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Current Assets" c={totalCA.c} pr={totalCA.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Long-Term Assets" />
- <FinEditRow id="lta-ppe" label="Property, plant & equipment" showPrior={showPrior} />
- <FinEditRow id="lta-oth1" label="Other assets 1" showPrior={showPrior} />
- <FinEditRow id="lta-oth2" label="Other assets 2" showPrior={showPrior} />
- <FinEditRow id="lta-oth3" label="Other assets 3" showPrior={showPrior} />
- <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} pr={totalLTA.pr} showPrior={showPrior} />
- <FinTotalRow label="Total Assets" c={totalA.c} pr={totalA.pr} showPrior={showPrior} />
+ <FinEditRow id="lta-ppe" label="Property, plant & equipment" showPrior={showPrior} showLS />
+ <FinEditRow id="lta-oth1" label="Other assets 1" showPrior={showPrior} showLS />
+ <FinEditRow id="lta-oth2" label="Other assets 2" showPrior={showPrior} showLS />
+ <FinEditRow id="lta-oth3" label="Other assets 3" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Long-Term Assets" c={totalLTA.c} pr={totalLTA.pr} showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Assets" c={totalA.c} pr={totalA.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Current Liabilities" />
- <FinEditRow id="cl-bank" label="Bank indebtedness" showPrior={showPrior} />
- <FinEditRow id="cl-ap" label="Accounts payable & accrued liabilities" showPrior={showPrior} />
- <FinEditRow id="cl-tax" label="Income taxes payable" showPrior={showPrior} />
- <FinEditRow id="cl-fut" label="Future income taxes payable" showPrior={showPrior} />
- <FinEditRow id="cl-def" label="Deferred revenue" showPrior={showPrior} />
- <FinEditRow id="cl-dep" label="Customer deposits" showPrior={showPrior} />
- <FinEditRow id="cl-std" label="Short-term debt" showPrior={showPrior} />
- <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showPrior={showPrior} />
- <FinEditRow id="cl-oth1" label="Other current liabilities 1" showPrior={showPrior} />
- <FinEditRow id="cl-oth2" label="Other current liabilities 2" showPrior={showPrior} />
- <FinTotalRow label="Total Current Liabilities" c={totalCL.c} pr={totalCL.pr} showPrior={showPrior} />
+ <FinEditRow id="cl-bank" label="Bank indebtedness" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-ap" label="Accounts payable & accrued liabilities" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-tax" label="Income taxes payable" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-fut" label="Future income taxes payable" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-def" label="Deferred revenue" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-dep" label="Customer deposits" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-std" label="Short-term debt" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-cpltd" label="Current portion of long-term debt" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-oth1" label="Other current liabilities 1" showPrior={showPrior} showLS />
+ <FinEditRow id="cl-oth2" label="Other current liabilities 2" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Current Liabilities" c={totalCL.c} pr={totalCL.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Long-Term Liabilities" />
- <FinEditRow id="ltl-loan" label="Loans payable" showPrior={showPrior} />
- <FinEditRow id="ltl-fut" label="Future income taxes payable" showPrior={showPrior} />
- <FinEditRow id="ltl-ltd" label="Long-term debt" showPrior={showPrior} />
- <FinEditRow id="ltl-oth1" label="Other long-term liabilities 1" showPrior={showPrior} />
- <FinEditRow id="ltl-oth2" label="Other long-term liabilities 2" showPrior={showPrior} />
- <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} pr={totalLTL.pr} showPrior={showPrior} />
- <FinTotalRow label="Total Liabilities" c={totalL.c} pr={totalL.pr} showPrior={showPrior} />
+ <FinEditRow id="ltl-loan" label="Loans payable" showPrior={showPrior} showLS />
+ <FinEditRow id="ltl-fut" label="Future income taxes payable" showPrior={showPrior} showLS />
+ <FinEditRow id="ltl-ltd" label="Long-term debt" showPrior={showPrior} showLS />
+ <FinEditRow id="ltl-oth1" label="Other long-term liabilities 1" showPrior={showPrior} showLS />
+ <FinEditRow id="ltl-oth2" label="Other long-term liabilities 2" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Long-Term Liabilities" c={totalLTL.c} pr={totalLTL.pr} showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Liabilities" c={totalL.c} pr={totalL.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Equity" />
- <FinEditRow id="eq-ret" label="Retained earnings" showPrior={showPrior} />
- <FinEditRow id="eq-con" label="Contributed surplus" showPrior={showPrior} />
- <FinEditRow id="eq-shr" label="Share capital" showPrior={showPrior} />
- <FinEditRow id="eq-oth" label="Other equity" showPrior={showPrior} />
- <FinTotalRow label="Total Equity" c={totalEQ.c} pr={totalEQ.pr} showPrior={showPrior} />
- <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} pr={totalLE.pr} showPrior={showPrior} />
+ <FinEditRow id="eq-ret" label="Retained earnings" showPrior={showPrior} showLS />
+ <FinEditRow id="eq-con" label="Contributed surplus" showPrior={showPrior} showLS />
+ <FinEditRow id="eq-shr" label="Share capital" showPrior={showPrior} showLS />
+ <FinEditRow id="eq-oth" label="Other equity" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Equity" c={totalEQ.c} pr={totalEQ.pr} showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Liabilities & Equity" c={totalLE.c} pr={totalLE.pr} showPrior={showPrior} showLS />
  </tbody>
  </table>
  </div>
@@ -711,12 +736,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">Ratios</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Enter key liquidity, activity and leverage ratios for the current period, budget/forecast and prior period.</TooltipContent>
- </Tooltip>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full text-xs">
@@ -737,61 +756,55 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">Income Statement</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Compare current period to budget/forecast and prior period. Flag material or unexpected variances.</TooltipContent>
- </Tooltip>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full text-xs">
- <FinColHeaders showPrior={showPrior} />
+ <FinColHeaders showPrior={showPrior} showLS />
  <tbody>
  <FinSectionRow label="Sales / Revenue" />
  {salesIds.map((id, i) => (
- <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showPrior={showPrior} />
+ <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showPrior={showPrior} showLS />
  ))}
- <FinTotalRow label="Total Sales" c={totalSales.c} pr={totalSales.pr} showPrior={showPrior} />
+ <FinTotalRow label="Total Sales" c={totalSales.c} pr={totalSales.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Cost of Sales" />
  {cosIds.map((id, i) => (
- <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showPrior={showPrior} />
+ <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showPrior={showPrior} showLS />
  ))}
- <FinTotalRow label="Total Cost of Sales" c={totalCos.c} pr={totalCos.pr} showPrior={showPrior} />
+ <FinTotalRow label="Total Cost of Sales" c={totalCos.c} pr={totalCos.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Gross Margin ($) — computed" />
  {salesIds.map((sid, i) => (
- <FinComputedRow key={`gm-${sid}`} label={`GM $ — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPerStream[i].c} pr={gmPerStream[i].pr} showPrior={showPrior} />
+ <FinComputedRow key={`gm-${sid}`} label={`GM $ — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPerStream[i].c} pr={gmPerStream[i].pr} showPrior={showPrior} showLS />
  ))}
- <FinTotalRow label="Total Gross Margin ($)" c={totalGM.c} pr={totalGM.pr} showPrior={showPrior} />
+ <FinTotalRow label="Total Gross Margin ($)" c={totalGM.c} pr={totalGM.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Gross Margin (%) — computed" />
  {salesIds.map((sid, i) => (
- <FinComputedRow key={`gmp-${sid}`} label={`GM % — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPctPerStream[i].c} pr={gmPctPerStream[i].pr} showPrior={showPrior} isPercent />
+ <FinComputedRow key={`gmp-${sid}`} label={`GM % — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPctPerStream[i].c} pr={gmPctPerStream[i].pr} showPrior={showPrior} showLS isPercent />
  ))}
- <FinComputedRow label="Total Gross Margin (%)" c={totalGMPct.c} pr={totalGMPct.pr} showPrior={showPrior} isPercent />
+ <FinComputedRow label="Total Gross Margin (%)" c={totalGMPct.c} pr={totalGMPct.pr} showPrior={showPrior} showLS isPercent />
 
  <FinSectionRow label="Other Revenue" />
- <FinEditRow id="or1" label="Other revenue 1" showPrior={showPrior} />
- <FinEditRow id="or2" label="Other revenue 2" showPrior={showPrior} />
- <FinTotalRow label="Total Other Revenue" c={totalOR.c} pr={totalOR.pr} showPrior={showPrior} />
+ <FinEditRow id="or1" label="Other revenue 1" showPrior={showPrior} showLS />
+ <FinEditRow id="or2" label="Other revenue 2" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Other Revenue" c={totalOR.c} pr={totalOR.pr} showPrior={showPrior} showLS />
 
  <FinSectionRow label="Expenses" />
- <FinEditRow id="exp-sal" label="Salaries / payroll" showPrior={showPrior} />
- <FinEditRow id="exp-occ" label="Occupancy" showPrior={showPrior} />
- <FinEditRow id="exp-int" label="Interest / bank charges" showPrior={showPrior} />
- <FinEditRow id="exp-bon" label="Bonuses" showPrior={showPrior} />
- <FinEditRow id="exp-rep" label="Repairs & maintenance" showPrior={showPrior} />
- <FinEditRow id="exp-bad" label="Bad debts" showPrior={showPrior} />
- <FinEditRow id="exp-non" label="Non-recurring transactions" showPrior={showPrior} />
- <FinEditRow id="exp-oth1" label="Other expenses 1" showPrior={showPrior} />
- <FinEditRow id="exp-oth2" label="Other expenses 2" showPrior={showPrior} />
- <FinEditRow id="exp-oth3" label="Other expenses 3" showPrior={showPrior} />
- <FinTotalRow label="Total Expenses" c={totalExp.c} pr={totalExp.pr} showPrior={showPrior} />
+ <FinEditRow id="exp-sal" label="Salaries / payroll" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-occ" label="Occupancy" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-int" label="Interest / bank charges" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-bon" label="Bonuses" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-rep" label="Repairs & maintenance" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-bad" label="Bad debts" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-non" label="Non-recurring transactions" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-oth1" label="Other expenses 1" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-oth2" label="Other expenses 2" showPrior={showPrior} showLS />
+ <FinEditRow id="exp-oth3" label="Other expenses 3" showPrior={showPrior} showLS />
+ <FinTotalRow label="Total Expenses" c={totalExp.c} pr={totalExp.pr} showPrior={showPrior} showLS />
 
- <FinTotalRow label="Net income before tax" c={netIncome.c} pr={netIncome.pr} showPrior={showPrior} />
- <FinComputedRow label=" % of revenue" c={niPct.c} pr={niPct.pr} showPrior={showPrior} isPercent />
+ <FinTotalRow label="Net income before tax" c={netIncome.c} pr={netIncome.pr} showPrior={showPrior} showLS />
+ <FinComputedRow label=" % of revenue" c={niPct.c} pr={niPct.pr} showPrior={showPrior} showLS isPercent />
  </tbody>
  </table>
  </div>
@@ -886,11 +899,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  </>
  )}
-
- </div>
- </div>
-
  </>)}
+
+ </div>
+ </div>
 
 
  </div>

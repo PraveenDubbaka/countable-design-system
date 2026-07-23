@@ -2203,19 +2203,6 @@ export default function EngagementDetail() {
  {(checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') && pap501Accepted && (
  <>
  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
- onClick={() => {
- const client = engagementId ? engagementsData[engagementId]?.client : undefined;
- const engLabel = [client, engagementId].filter(Boolean).join(' · ');
- const connectedApp = engagementId ? (engagementsData[engagementId] as { connectedApp?: string } | undefined)?.connectedApp : undefined;
- const sources = connectedApp
- ? [`${connectedApp.charAt(0).toUpperCase() + connectedApp.slice(1)} connection`, 'Predecessor file']
- : ['Trial balance', 'Predecessor file'];
- setLukaPap501Config({ engLabel, sources, isRegenerate: true });
- setLukaOpen(true);
- }}>
- <RefreshCw className="h-3 w-3" />Regenerate
- </Button>
- <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
  onClick={() => toast('Export coming soon')}>
  <Download className="h-3 w-3" />Export
  </Button>
