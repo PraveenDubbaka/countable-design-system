@@ -566,7 +566,10 @@ export function AskLukaOverlay({
  const [recentThreads, setRecentThreads] = useState<ThreadItem[]>(initialRecentThreads);
  const [settingsOpen, setSettingsOpen] = useState(false);
  const [analysisPhase, setAnalysisPhase] = useState<"idle" | "analyzing" | "ready">("idle");
- const [pap501Phase, setPap501Phase] = useState<"analyzing" | "artifact">("analyzing");
+ const [pap501Phase, setPap501Phase] = useState<"source-select" | "upload" | "analyzing" | "artifact">("source-select");
+ const [pap501SourceType, setPap501SourceType] = useState<'connected' | 'upload' | null>(null);
+ const [pap501Files, setPap501Files] = useState<{ year1: File | null; year2: File | null; year3: File | null }>({ year1: null, year2: null, year3: null });
+ const pap501AnalyzingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
  useEffect(() => {
  if (open && initialQuery) setInputValue(initialQuery);
@@ -583,14 +586,23 @@ export function AskLukaOverlay({
  }, [open, autoFillMode]);
 
  useEffect(() => {
+ if (pap501AnalyzingTimerRef.current) clearTimeout(pap501AnalyzingTimerRef.current);
  if (open && pap501Mode) {
+ if (pap501IsRegenerate) {
  setPap501Phase("analyzing");
- const t = window.setTimeout(() => setPap501Phase("artifact"), 2500);
- return () => window.clearTimeout(t);
+ pap501AnalyzingTimerRef.current = window.setTimeout(() => setPap501Phase("artifact"), 2500);
  } else {
- setPap501Phase("analyzing");
+ setPap501Phase("source-select");
+ setPap501SourceType(null);
+ setPap501Files({ year1: null, year2: null, year3: null });
  }
- }, [open, pap501Mode]);
+ } else {
+ setPap501Phase("source-select");
+ setPap501SourceType(null);
+ setPap501Files({ year1: null, year2: null, year3: null });
+ }
+ return () => { if (pap501AnalyzingTimerRef.current) clearTimeout(pap501AnalyzingTimerRef.current); };
+ }, [open, pap501Mode, pap501IsRegenerate]);
 
  // Auto-select the current engagement when opening
  useEffect(() => {
@@ -1877,6 +1889,161 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  <div className="flex-1 flex flex-col overflow-y-auto">
  <div className="w-full max-w-[640px] mx-auto px-6 py-7">
 
+ {/* ── Source selection (new generation only) ── */}
+ {pap501Phase === 'source-select' && !pap501IsRegenerate && (
+ <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
+ <div className="flex items-start gap-3 mb-6">
+ <div className="shrink-0 w-8 h-8 flex items-center justify-center">
+ <LukaIcon size={32} animated />
+ </div>
+ <div className="flex-1 min-w-0 pt-0.5">
+ <span className="text-[15px] leading-relaxed" style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+ How would you like to generate the PAP 501 worksheet?
+ </span>
+ <p className="text-sm text-muted-foreground mt-0.5">Choose your data source to begin the preliminary analytical procedures.</p>
+ </div>
+ </div>
+ <div className="ml-11 grid grid-cols-2 gap-3 mb-6">
+ {/* Connected data option */}
+ <button
+ onClick={() => setPap501SourceType('connected')}
+ className="text-left rounded-xl border p-4 transition-all"
+ style={{
+ borderColor: pap501SourceType === 'connected' ? 'hsl(265 65% 58%)' : 'hsl(220 20% 88%)',
+ background: pap501SourceType === 'connected' ? 'hsl(265 65% 58% / 0.06)' : 'hsl(220 20% 98%)',
+ boxShadow: pap501SourceType === 'connected' ? '0 0 0 2px hsl(265 65% 58% / 0.18)' : 'none',
+ }}
+ >
+ <div className="flex items-center gap-2 mb-2">
+ {(pap501Sources ?? []).join(' ').toLowerCase().includes('xero')
+ ? <img src={xeroLogo} alt="Xero" className="h-5 w-auto object-contain" />
+ : (pap501Sources ?? []).join(' ').toLowerCase().includes('quickbooks')
+ ? <img src={quickbooksLogo} alt="QuickBooks" className="h-5 w-auto object-contain" />
+ : <FileSpreadsheet className="h-5 w-5 text-muted-foreground" />}
+ {pap501SourceType === 'connected' && <Check size={14} className="ml-auto" style={{ color: 'hsl(265 65% 58%)' }} />}
+ </div>
+ <p className="text-sm font-semibold text-foreground">Use connected data</p>
+ <p className="text-xs text-muted-foreground mt-0.5">{(pap501Sources ?? ['Accounting system', 'Predecessor file']).join(' · ')}</p>
+ </button>
+ {/* Upload option */}
+ <button
+ onClick={() => setPap501SourceType('upload')}
+ className="text-left rounded-xl border p-4 transition-all"
+ style={{
+ borderColor: pap501SourceType === 'upload' ? 'hsl(265 65% 58%)' : 'hsl(220 20% 88%)',
+ background: pap501SourceType === 'upload' ? 'hsl(265 65% 58% / 0.06)' : 'hsl(220 20% 98%)',
+ boxShadow: pap501SourceType === 'upload' ? '0 0 0 2px hsl(265 65% 58% / 0.18)' : 'none',
+ }}
+ >
+ <div className="flex items-center gap-2 mb-2">
+ <Upload className="h-5 w-5 text-muted-foreground" />
+ {pap501SourceType === 'upload' && <Check size={14} className="ml-auto" style={{ color: 'hsl(265 65% 58%)' }} />}
+ </div>
+ <p className="text-sm font-semibold text-foreground">Upload trial balance</p>
+ <p className="text-xs text-muted-foreground mt-0.5">Excel or CSV · 1–3 years</p>
+ </button>
+ </div>
+ <div className="ml-11">
+ <button
+ disabled={!pap501SourceType}
+ onClick={() => {
+ if (pap501SourceType === 'upload') {
+ setPap501Phase('upload');
+ } else {
+ setPap501Phase('analyzing');
+ pap501AnalyzingTimerRef.current = window.setTimeout(() => setPap501Phase('artifact'), 2500);
+ }
+ }}
+ className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-40"
+ style={{ background: 'linear-gradient(135deg, #8649F1, #2355A4)' }}
+ >
+ Continue <ArrowRight size={14} />
+ </button>
+ </div>
+ </motion.div>
+ )}
+
+ {/* ── Upload phase ── */}
+ {pap501Phase === 'upload' && (
+ <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
+ <div className="flex items-start gap-3 mb-6">
+ <div className="shrink-0 w-8 h-8 flex items-center justify-center">
+ <LukaIcon size={32} />
+ </div>
+ <div className="flex-1 min-w-0 pt-0.5">
+ <span className="text-[15px] leading-relaxed" style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+ Upload your trial balance files
+ </span>
+ <p className="text-sm text-muted-foreground mt-0.5">Minimum 2 years required. Upload one file per year (Excel or CSV).</p>
+ </div>
+ </div>
+ <div className="ml-11 space-y-3 mb-6">
+ {([
+ { key: 'year1' as const, label: 'Current year', required: true },
+ { key: 'year2' as const, label: 'Prior year (Year −1)', required: true },
+ { key: 'year3' as const, label: '2 years prior (Year −2)', required: false },
+ ] as const).map(({ key, label, required }) => {
+ const file = pap501Files[key];
+ return (
+ <div key={key}>
+ <div className="flex items-center gap-1.5 mb-1.5">
+ <span className="text-xs font-semibold text-foreground">{label}</span>
+ {required && <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ background: 'hsl(265 65% 58% / 0.1)', color: 'hsl(265 65% 48%)' }}>Required</span>}
+ {!required && <span className="text-[10px] text-muted-foreground">Optional</span>}
+ </div>
+ <label
+ className="flex items-center gap-3 w-full rounded-lg border px-4 py-3 cursor-pointer transition-all"
+ style={{
+ borderColor: file ? 'hsl(142 60% 45%)' : 'hsl(220 20% 88%)',
+ background: file ? 'hsl(142 60% 45% / 0.05)' : 'hsl(220 20% 98%)',
+ borderStyle: file ? 'solid' : 'dashed',
+ }}
+ >
+ <input
+ type="file"
+ accept=".xlsx,.xls,.csv"
+ className="sr-only"
+ onChange={(e) => {
+ const f = e.target.files?.[0] ?? null;
+ setPap501Files(prev => ({ ...prev, [key]: f }));
+ e.target.value = '';
+ }}
+ />
+ {file
+ ? <><CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: 'hsl(142 60% 45%)' }} /><span className="text-sm font-medium text-foreground truncate flex-1">{file.name}</span><span className="text-xs text-muted-foreground shrink-0">{(file.size / 1024).toFixed(0)} KB</span></>
+ : <><Upload className="h-4 w-4 text-muted-foreground shrink-0" /><span className="text-sm text-muted-foreground">Drop file here or click to upload</span></>
+ }
+ </label>
+ </div>
+ );
+ })}
+ </div>
+ <div className="ml-11 flex items-center gap-2">
+ <button
+ onClick={() => setPap501Phase('source-select')}
+ className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium border text-muted-foreground hover:bg-muted/50 transition-colors"
+ style={{ borderColor: 'hsl(220 20% 88%)' }}
+ >
+ ← Back
+ </button>
+ <button
+ disabled={!pap501Files.year1 || !pap501Files.year2}
+ onClick={() => {
+ setPap501Phase('analyzing');
+ pap501AnalyzingTimerRef.current = window.setTimeout(() => setPap501Phase('artifact'), 3000);
+ }}
+ className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-40"
+ style={{ background: 'linear-gradient(135deg, #8649F1, #2355A4)' }}
+ >
+ Generate <ArrowRight size={14} />
+ </button>
+ {(!pap501Files.year1 || !pap501Files.year2) && (
+ <span className="text-xs text-muted-foreground">Upload at least 2 years to continue</span>
+ )}
+ </div>
+ </motion.div>
+ )}
+
  {/* Regenerate: prior thread context */}
  {pap501IsRegenerate && (
  <motion.div
@@ -1918,6 +2085,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </motion.div>
  )}
 
+ {/* ── Analyzing + artifact (only shown in analyzing/artifact phases) ── */}
+ {(pap501Phase === 'analyzing' || pap501Phase === 'artifact') && (<>
+
  {/* Luka icon + status header */}
  <div className="flex items-start gap-3 mb-5">
  <div className="shrink-0 w-8 h-8 flex items-center justify-center">
@@ -1951,6 +2121,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  <p className="text-sm text-muted-foreground mt-0.5">
  {pap501IsRegenerate
  ? `Compared against ${(pap501Sources ?? ['Xero connection', 'Predecessor file']).join(' and ')} — figures updated.`
+ : pap501SourceType === 'upload'
+ ? `Analyzed ${[pap501Files.year1?.name, pap501Files.year2?.name, pap501Files.year3?.name].filter(Boolean).join(', ')}${engagementLabel ? ` for ${engagementLabel.split(' · ')[0]}` : ''}. 5 procedures · Income statement · Balance sheet · Ratios`
  : `Analyzed ${(pap501Sources ?? ['Xero connection', 'Predecessor file']).join(' and ')}${engagementLabel ? ` for ${engagementLabel.split(' · ')[0]}` : ''}. 5 procedures · Income statement · Balance sheet · Ratios`}
  </p>
  )}
@@ -1970,6 +2142,12 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  'Comparing figures against prior version',
  'Recalculating analytical procedures & ratios',
  'Rebuilding PAP 501 with updated numbers',
+ ] : pap501SourceType === 'upload' ? [
+ `Parsing trial balance — ${pap501Files.year1?.name ?? 'Year 1'}`,
+ `Parsing trial balance — ${pap501Files.year2?.name ?? 'Year 2'}${pap501Files.year3 ? `, ${pap501Files.year3.name}` : ''}`,
+ 'Extracting income statement & balance sheet',
+ 'Calculating analytical procedures & ratios',
+ 'Populating PAP 501 template',
  ] : [
  'Reading Xero general ledger data',
  'Extracting income statement & balance sheet',
@@ -2014,7 +2192,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  <div className="px-4 py-2.5 border-b" style={{ background: "hsl(220 20% 97%)", borderColor: "hsl(220 20% 88%)" }}>
  <p className="text-xs text-muted-foreground">
  <span className="font-medium text-foreground">Sources:</span>{' '}
- {(pap501Sources ?? ['Xero connection', 'Predecessor file']).join(', ')}
+ {pap501SourceType === 'upload'
+ ? [pap501Files.year1?.name, pap501Files.year2?.name, pap501Files.year3?.name].filter(Boolean).join(', ')
+ : (pap501Sources ?? ['Xero connection', 'Predecessor file']).join(', ')}
  </p>
  <p className="text-xs text-muted-foreground mt-0.5">5 analytical procedures · Income statement · Balance sheet · Ratios</p>
  </div>
@@ -2038,6 +2218,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </div>
  </motion.div>
  )}
+ </>)}
  </div>
  </div>
  ) : autoFillMode ? (
