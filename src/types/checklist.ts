@@ -25,6 +25,7 @@ export interface Assignee {
  initials: string;
  role: string;
  type: 'client' | 'staff';
+ at?: string;
 }
 
 export interface Question {

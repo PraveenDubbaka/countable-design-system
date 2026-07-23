@@ -40,6 +40,13 @@ const CURRENT_USER_ASSIGNEE: Assignee = {
  role: 'Audit Staff',
  type: 'staff',
 };
+const stampedAssignee = (): Assignee => ({ ...CURRENT_USER_ASSIGNEE, at: new Date().toISOString() });
+
+function formatAssigneeAt(iso: string): string {
+ return new Date(iso).toLocaleString("en-CA", {
+   month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true,
+ });
+}
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -129,7 +136,7 @@ function ResponseField({ question, onUpdate, isPreviewMode, isEngagementMode = f
  const handleAnswer = (answer: string) => {
  const updated: Question = {...question, answer };
  if (isEngagementMode) {
- updated.answeredBy = answer ? CURRENT_USER_ASSIGNEE : undefined;
+ updated.answeredBy = answer ? stampedAssignee() : undefined;
  }
  onUpdate(updated);
  };
@@ -1340,10 +1347,10 @@ function QuestionInlineColumns({
  <div className="mt-1 mb-1 px-0.5">
  <Tooltip>
  <TooltipTrigger asChild>
- <span className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
+ <span className={`inline-flex items-center rounded-full text-[10px] font-medium gap-1 px-2 py-0.5 cursor-default ${
  question.answeredBy.type === 'client' ? 'bg-primary/10 text-primary' : 'bg-[#e1eefa] text-[#074075] border border-[#1c63a6]'
  }`}>
- {question.answeredBy.initials}
+ {question.answeredBy.initials}{question.answeredBy.at && ` · ${formatAssigneeAt(question.answeredBy.at)}`}
  </span>
  </TooltipTrigger>
  <TooltipContent side="top">
@@ -1391,7 +1398,7 @@ function QuestionInlineColumns({
  onChange={(val) => {
  const upd: Question = {...question, explanation: val };
  if (isEngagementMode) {
- upd.answeredBy = val ? CURRENT_USER_ASSIGNEE : (question.answer ? question.answeredBy : undefined);
+ upd.answeredBy = val ? stampedAssignee() : (question.answer ? question.answeredBy : undefined);
  }
  onUpdate(upd);
  }}
@@ -1408,13 +1415,13 @@ function QuestionInlineColumns({
  <Tooltip>
  <TooltipTrigger asChild>
  <span
- className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
+ className={`inline-flex items-center rounded-full text-[10px] font-medium gap-1 px-2 py-0.5 cursor-default ${
  question.answeredBy.type === 'client'
  ? 'bg-primary/10 text-primary'
  : 'bg-[#e1eefa] text-[#074075] border border-[#1c63a6]'
  }`}
  >
- {question.answeredBy.initials}
+ {question.answeredBy.initials}{question.answeredBy.at && ` · ${formatAssigneeAt(question.answeredBy.at)}`}
  </span>
  </TooltipTrigger>
  <TooltipContent side="top">
