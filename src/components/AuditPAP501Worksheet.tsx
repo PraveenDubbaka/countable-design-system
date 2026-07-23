@@ -641,70 +641,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  {/* ── Part B — Financial Comparatives ── */}
  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 pt-2">Part B — Financial Comparatives</div>
  <>
- {/* ── Income Statement card ── */}
- <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
- <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">Income Statement</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Compare current period to budget/forecast and prior period. Flag material or unexpected variances.</TooltipContent>
- </Tooltip>
- </div>
- <div className="overflow-x-auto">
- <table className="w-full text-xs">
- <FinColHeaders showPrior={showPrior} />
- <tbody>
- <FinSectionRow label="Sales / Revenue" />
- {salesIds.map((id, i) => (
- <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showPrior={showPrior} />
- ))}
- <FinTotalRow label="Total Sales" c={totalSales.c} pr={totalSales.pr} showPrior={showPrior} />
-
- <FinSectionRow label="Cost of Sales" />
- {cosIds.map((id, i) => (
- <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showPrior={showPrior} />
- ))}
- <FinTotalRow label="Total Cost of Sales" c={totalCos.c} pr={totalCos.pr} showPrior={showPrior} />
-
- <FinSectionRow label="Gross Margin ($) — computed" />
- {salesIds.map((sid, i) => (
- <FinComputedRow key={`gm-${sid}`} label={`GM $ — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPerStream[i].c} pr={gmPerStream[i].pr} showPrior={showPrior} />
- ))}
- <FinTotalRow label="Total Gross Margin ($)" c={totalGM.c} pr={totalGM.pr} showPrior={showPrior} />
-
- <FinSectionRow label="Gross Margin (%) — computed" />
- {salesIds.map((sid, i) => (
- <FinComputedRow key={`gmp-${sid}`} label={`GM % — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPctPerStream[i].c} pr={gmPctPerStream[i].pr} showPrior={showPrior} isPercent />
- ))}
- <FinComputedRow label="Total Gross Margin (%)" c={totalGMPct.c} pr={totalGMPct.pr} showPrior={showPrior} isPercent />
-
- <FinSectionRow label="Other Revenue" />
- <FinEditRow id="or1" label="Other revenue 1" showPrior={showPrior} />
- <FinEditRow id="or2" label="Other revenue 2" showPrior={showPrior} />
- <FinTotalRow label="Total Other Revenue" c={totalOR.c} pr={totalOR.pr} showPrior={showPrior} />
-
- <FinSectionRow label="Expenses" />
- <FinEditRow id="exp-sal" label="Salaries / payroll" showPrior={showPrior} />
- <FinEditRow id="exp-occ" label="Occupancy" showPrior={showPrior} />
- <FinEditRow id="exp-int" label="Interest / bank charges" showPrior={showPrior} />
- <FinEditRow id="exp-bon" label="Bonuses" showPrior={showPrior} />
- <FinEditRow id="exp-rep" label="Repairs & maintenance" showPrior={showPrior} />
- <FinEditRow id="exp-bad" label="Bad debts" showPrior={showPrior} />
- <FinEditRow id="exp-non" label="Non-recurring transactions" showPrior={showPrior} />
- <FinEditRow id="exp-oth1" label="Other expenses 1" showPrior={showPrior} />
- <FinEditRow id="exp-oth2" label="Other expenses 2" showPrior={showPrior} />
- <FinEditRow id="exp-oth3" label="Other expenses 3" showPrior={showPrior} />
- <FinTotalRow label="Total Expenses" c={totalExp.c} pr={totalExp.pr} showPrior={showPrior} />
-
- <FinTotalRow label="Net income before tax" c={netIncome.c} pr={netIncome.pr} showPrior={showPrior} />
- <FinComputedRow label=" % of revenue" c={niPct.c} pr={niPct.pr} showPrior={showPrior} isPercent />
- </tbody>
- </table>
- </div>
- </div>
-
  {/* ── Balance Sheet card ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
@@ -792,6 +728,70 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <FinEditRow id="rat-iturn" label="Inventory turnover" showPrior={showPrior} source="ratio" />
  <FinEditRow id="rat-dpay" label="Number of days' purchases in trade payables" showPrior={showPrior} source="ratio" />
  <FinEditRow id="rat-dte" label="Debt-to-equity ratio" showPrior={showPrior} source="ratio" />
+ </tbody>
+ </table>
+ </div>
+ </div>
+
+ {/* ── Income Statement card ── */}
+ <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+ <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+ <span className="text-sm font-semibold text-foreground">Income Statement</span>
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+ </TooltipTrigger>
+ <TooltipContent>Compare current period to budget/forecast and prior period. Flag material or unexpected variances.</TooltipContent>
+ </Tooltip>
+ </div>
+ <div className="overflow-x-auto">
+ <table className="w-full text-xs">
+ <FinColHeaders showPrior={showPrior} />
+ <tbody>
+ <FinSectionRow label="Sales / Revenue" />
+ {salesIds.map((id, i) => (
+ <FinEditRow key={id} id={id} label={data.streamLabels[i] || `Stream ${i+1}`} showPrior={showPrior} />
+ ))}
+ <FinTotalRow label="Total Sales" c={totalSales.c} pr={totalSales.pr} showPrior={showPrior} />
+
+ <FinSectionRow label="Cost of Sales" />
+ {cosIds.map((id, i) => (
+ <FinEditRow key={id} id={id} label={`COS — ${data.streamLabels[i] || `Stream ${i+1}`}`} showPrior={showPrior} />
+ ))}
+ <FinTotalRow label="Total Cost of Sales" c={totalCos.c} pr={totalCos.pr} showPrior={showPrior} />
+
+ <FinSectionRow label="Gross Margin ($) — computed" />
+ {salesIds.map((sid, i) => (
+ <FinComputedRow key={`gm-${sid}`} label={`GM $ — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPerStream[i].c} pr={gmPerStream[i].pr} showPrior={showPrior} />
+ ))}
+ <FinTotalRow label="Total Gross Margin ($)" c={totalGM.c} pr={totalGM.pr} showPrior={showPrior} />
+
+ <FinSectionRow label="Gross Margin (%) — computed" />
+ {salesIds.map((sid, i) => (
+ <FinComputedRow key={`gmp-${sid}`} label={`GM % — ${data.streamLabels[i] || `Stream ${i+1}`}`} c={gmPctPerStream[i].c} pr={gmPctPerStream[i].pr} showPrior={showPrior} isPercent />
+ ))}
+ <FinComputedRow label="Total Gross Margin (%)" c={totalGMPct.c} pr={totalGMPct.pr} showPrior={showPrior} isPercent />
+
+ <FinSectionRow label="Other Revenue" />
+ <FinEditRow id="or1" label="Other revenue 1" showPrior={showPrior} />
+ <FinEditRow id="or2" label="Other revenue 2" showPrior={showPrior} />
+ <FinTotalRow label="Total Other Revenue" c={totalOR.c} pr={totalOR.pr} showPrior={showPrior} />
+
+ <FinSectionRow label="Expenses" />
+ <FinEditRow id="exp-sal" label="Salaries / payroll" showPrior={showPrior} />
+ <FinEditRow id="exp-occ" label="Occupancy" showPrior={showPrior} />
+ <FinEditRow id="exp-int" label="Interest / bank charges" showPrior={showPrior} />
+ <FinEditRow id="exp-bon" label="Bonuses" showPrior={showPrior} />
+ <FinEditRow id="exp-rep" label="Repairs & maintenance" showPrior={showPrior} />
+ <FinEditRow id="exp-bad" label="Bad debts" showPrior={showPrior} />
+ <FinEditRow id="exp-non" label="Non-recurring transactions" showPrior={showPrior} />
+ <FinEditRow id="exp-oth1" label="Other expenses 1" showPrior={showPrior} />
+ <FinEditRow id="exp-oth2" label="Other expenses 2" showPrior={showPrior} />
+ <FinEditRow id="exp-oth3" label="Other expenses 3" showPrior={showPrior} />
+ <FinTotalRow label="Total Expenses" c={totalExp.c} pr={totalExp.pr} showPrior={showPrior} />
+
+ <FinTotalRow label="Net income before tax" c={netIncome.c} pr={netIncome.pr} showPrior={showPrior} />
+ <FinComputedRow label=" % of revenue" c={niPct.c} pr={niPct.pr} showPrior={showPrior} isPercent />
  </tbody>
  </table>
  </div>
