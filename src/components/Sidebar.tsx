@@ -347,7 +347,10 @@ const initialGlobalWorksheets: GlobalTemplate[] = [
                 { id: "gca-ws-proc-cash-bank",  name: "Bank Reconciliation", type: "file" },
                 { id: "gca-ws-proc-cash-count", name: "Cash Count", type: "file" },
               ]},
-              { id: "gca-ws-proc-ar",       name: "Accounts Receivable", type: "file" },
+              { id: "gca-ws-proc-ar-grp", name: "Accounts Receivable", type: "folder", isExpanded: false, children: [
+                { id: "gca-ws-proc-ar",      name: "Audit Procedures", type: "file" },
+                { id: "gca-ws-proc-ar-conf", name: "Confirmation Procedures", type: "file" },
+              ]},
               { id: "gca-ws-proc-inv",      name: "Inventory", type: "file" },
               { id: "gca-ws-proc-invest",   name: "Investments", type: "file" },
               { id: "gca-ws-proc-lr",       name: "Loans & Advances Receivable", type: "file" },

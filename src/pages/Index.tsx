@@ -46,6 +46,7 @@ import { Audit666Worksheet } from '@/components/Audit666Worksheet';
 import { Audit670Worksheet } from '@/components/Audit670Worksheet';
 import { Audit680Worksheet } from '@/components/Audit680Worksheet';
 import { AuditCashWorksheet, AuditCashBankRecWorksheet, AuditCashCountWorksheet } from '@/components/AuditCashWorksheet';
+import { AuditARWorksheet, AuditARConfirmationWorksheet } from '@/components/AuditARWorksheet';
 
 const WORKSHEET_ID_PREFIXES = ['global-4-7', 'global-4-8', 'global-4-9', 'global-4-10', 'global-4-11', 'global-4-12', 'global-4-13', 'global-4-14', 'global-us-4-', 'worksheet-going-concern', 'worksheet-accounting-estimates', 'gca-ws-', 'gus-ws-'];
 const isWorksheetTemplateId = (id: string) => WORKSHEET_ID_PREFIXES.some(p => id.startsWith(p));
@@ -87,6 +88,8 @@ function getGlobalWorksheetComponent(id: string): React.ReactNode | null {
     case 'gca-ws-proc-cash': return <AuditCashWorksheet />;
     case 'gca-ws-proc-cash-bank': return <AuditCashBankRecWorksheet />;
     case 'gca-ws-proc-cash-count': return <AuditCashCountWorksheet />;
+    case 'gca-ws-proc-ar':      return <AuditARWorksheet />;
+    case 'gca-ws-proc-ar-conf': return <AuditARConfirmationWorksheet />;
     default: return null;
   }
 }
