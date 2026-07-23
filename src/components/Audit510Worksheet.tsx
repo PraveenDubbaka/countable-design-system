@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info, AlertTriangle, ChevronRight } from "lucide-react";
@@ -434,10 +436,11 @@ function buildDefault(isUS = false): Data510 {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function FieldRow({ label, sublabel, field, locked, onChange }: {
+function FieldRow({ label, sublabel, field, locked, onChange, storageKey }: {
  label: string; sublabel?: string;
  field: SimpleField; locked: boolean;
  onChange: (f: SimpleField) => void;
+ storageKey?: string;
 }) {
  return (
  <tr className="group hover:bg-muted/30 transition-colors align-top">
@@ -446,13 +449,11 @@ function FieldRow({ label, sublabel, field, locked, onChange }: {
  {sublabel && <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{sublabel}</p>}
  </td>
  <td className="px-4 py-3">
- <Textarea
- disabled={locked}
- value={field.response}
- onChange={e => onChange({...field, response: e.target.value })}
- placeholder="Enter response…"
- className="min-h-[56px] text-sm bg-background resize-none"
- />
+ {storageKey ? (
+ <AttributedComment value={field.response} onChange={v => onChange({...field, response: v})} storageKey={storageKey} placeholder="Enter response…" disabled={locked} className="min-h-[56px] text-sm bg-background resize-none" />
+ ) : (
+ <Textarea disabled={locked} value={field.response} onChange={e => onChange({...field, response: e.target.value })} placeholder="Enter response…" className="min-h-[56px] text-sm bg-background resize-none" />
+ )}
  </td>
  <td className="px-4 py-3 text-center w-[100px]">
  <RefButton
@@ -628,6 +629,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  field: data[key] as SimpleField,
  locked,
  onChange: (f: SimpleField) => setField(key, f as Data510[typeof key]),
+ storageKey: `510-${engagementId ?? "def"}-${String(key)}`,
  };
  }
 

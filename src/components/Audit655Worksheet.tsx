@@ -1,7 +1,9 @@
 // — Final Analytical Procedures (CAS 520 / AU-C 520)
+import { AttributedComment } from "@/components/ui/AttributedComment";
 // Aligned with WorksheetShell design standards.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -235,7 +237,7 @@ export function Audit655Worksheet() {
  <div><Label>RMM reassessment needed?</Label><YNSelect value={data.rmmReassessmentNeeded} onChange={v => setData(d => ({...d, rmmReassessmentNeeded: v as YN }))} locked={locked} /></div>
  {data.unexpectedRelationships === "Y" && (
  <div className="md:col-span-3"><Label>Unexpected relationships — nature & response</Label>
- <Textarea disabled={locked} value={data.unexpectedRelationshipsNotes} onChange={e => setData(d => ({...d, unexpectedRelationshipsNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Describe inconsistencies with our understanding of the entity and the additional procedures performed." />
+ <AttributedComment value={data.unexpectedRelationshipsNotes} onChange={v => setData(d => ({...d, unexpectedRelationshipsNotes: v }))} storageKey={`655-${engagementId ?? "def"}-unexpRel`} placeholder="Describe inconsistencies with our understanding of the entity and the additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" />
  </div>
  )}
  {data.newRisksIdentified === "Y" && (

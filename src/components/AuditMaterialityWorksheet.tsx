@@ -3,6 +3,7 @@ import { writeJsonToLocalStorage } from "@/lib/safeJson";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import {
  Select,
  SelectContent,
@@ -785,7 +786,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  </div>
  <div className="px-6 py-5">
  <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
- <Textarea value={qualDisclosures} onChange={(e) => setQualDisclosures(e.target.value)} className="min-h-[80px] text-sm resize-none" placeholder="Describe qualitative disclosures that could be material…" />
+ <AttributedComment value={qualDisclosures} onChange={v => setQualDisclosures(v)} storageKey={`materiality-qualDisc-${isUS ? "us" : "ca"}`} placeholder="Describe qualitative disclosures that could be material…" className="min-h-[80px] text-sm resize-none" />
  </div>
  </div>
 

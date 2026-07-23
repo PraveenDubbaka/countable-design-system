@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, ChevronDown, ChevronRight } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -162,7 +164,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
  <RefButton reference={row.wpRef} onAttach={doc => setProc(proc.id, {wpRef:[...row.wpRef,doc]})} onRemove={i => setProc(proc.id, {wpRef:row.wpRef.filter((_,idx)=>idx!==i)})} disabled={locked} />
  </td>
  <td className="px-4 py-3 align-top">
- <Textarea disabled={locked} value={row.response} onChange={e => setProc(proc.id, {response:e.target.value})} placeholder="Enter response…" className="min-h-[56px] text-sm bg-background resize-none" />
+ <AttributedComment value={row.response} onChange={v => setProc(proc.id, {response:v})} storageKey={`506-${isUS ? "us" : "ca"}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[56px] text-sm bg-background resize-none" />
  </td>
  </tr>
  );

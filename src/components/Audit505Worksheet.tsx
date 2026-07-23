@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -338,7 +340,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </td>
  <td className="px-6 py-3 align-top" style={{ minWidth: 380 }}>
- <Textarea disabled={locked} value={row.response} onChange={e => setPlan(proc.id, { response: e.target.value })} placeholder="Enter response…" className="min-h-[60px] text-sm resize-none bg-background" />
+ <AttributedComment value={row.response} onChange={v => setPlan(proc.id, { response: v })} storageKey={`505-${engagementId}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
  </td>
  <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
  <RefButton

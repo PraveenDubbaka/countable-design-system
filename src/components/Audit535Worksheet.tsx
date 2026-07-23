@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, Plus, Trash2 } from "lucide-react";
@@ -329,7 +331,7 @@ export function Audit535Worksheet() {
 
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Business process (flow of information)</label>
- <Textarea disabled={locked} value={s.processDescription} onChange={e => setScotabd(idx, { processDescription: e.target.value })} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." className="min-h-[110px] text-xs resize-none rounded-[10px]" />
+ <AttributedComment value={s.processDescription} onChange={v => setScotabd(idx, { processDescription: v })} storageKey={`535-${engagementId ?? "def"}-proc-${idx}`} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." disabled={locked} className="min-h-[110px] text-xs resize-none rounded-[10px]" minHeight="110px" />
  </div>
 
  <div className="space-y-1">
@@ -364,7 +366,7 @@ export function Audit535Worksheet() {
  <h3 className="text-sm font-semibold text-foreground">Evaluation of risks identified</h3>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">New risks identified ()</label>
- <Textarea disabled={locked} value={data.newRisksIdentified} onChange={e => setData(d => ({...d, newRisksIdentified: e.target.value }))} className="min-h-[70px] text-xs resize-none rounded-[10px]" placeholder="Describe any new RMMs identified during this understanding." />
+ <AttributedComment value={data.newRisksIdentified} onChange={v => setData(d => ({...d, newRisksIdentified: v }))} storageKey={`535-${engagementId ?? "def"}-newRisks`} placeholder="Describe any new RMMs identified during this understanding." disabled={locked} className="min-h-[70px] text-xs resize-none rounded-[10px]" minHeight="70px" />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Controls identified for D&amp;I testing</label>
@@ -401,7 +403,7 @@ export function Audit535Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <Textarea disabled={locked} value={data.notes} onChange={e => setData(d => ({...d, notes: e.target.value }))} placeholder="Additional observations, follow-ups, or cross-references…" className="min-h-[90px] text-sm resize-none rounded-[10px]" />
+ <AttributedComment value={data.notes} onChange={v => setData(d => ({...d, notes: v }))} storageKey={`535-${engagementId ?? "def"}-notes`} placeholder="Additional observations, follow-ups, or cross-references…" disabled={locked} className="min-h-[90px] text-sm resize-none rounded-[10px]" minHeight="90px" />
  </div>
 
  {locked ? (

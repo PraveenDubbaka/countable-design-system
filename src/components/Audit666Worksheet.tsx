@@ -1,7 +1,9 @@
 // — Related-Party Transactions (CAS 550 / AU-C 550)
+import { AttributedComment } from "@/components/ui/AttributedComment";
 // Aligned with WorksheetShell design standards.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -268,11 +270,11 @@ export function Audit666Worksheet() {
  <div><Label>Communicated to TCWG?</Label><YNSelect value={data.tcwgCommunicated} onChange={v => setData(d => ({...d, tcwgCommunicated: v as YN }))} locked={locked} /></div>
  {data.unidentifiedFound === "Y" && (
  <div className="md:col-span-2"><Label>Unidentified RP transactions — nature & response</Label>
- <Textarea disabled={locked} value={data.unidentifiedNotes} onChange={e => setData(d => ({...d, unidentifiedNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Describe the transactions, why not identified earlier, and updated RMM response." />
+ <AttributedComment value={data.unidentifiedNotes} onChange={v => setData(d => ({...d, unidentifiedNotes: v }))} storageKey={`666-${engagementId ?? "def"}-unidentNotes`} placeholder="Describe the transactions, why not identified earlier, and updated RMM response." disabled={locked} className="text-sm min-h-[72px]" />
  </div>
  )}
  <div className="md:col-span-2"><Label>TCWG communication log</Label>
- <Textarea disabled={locked} value={data.tcwgCommunicationLog} onChange={e => setData(d => ({...d, tcwgCommunicationLog: e.target.value }))} className="text-sm min-h-[64px]" placeholder="Summarise communication, date, attendees, matters discussed." />
+ <AttributedComment value={data.tcwgCommunicationLog} onChange={v => setData(d => ({...d, tcwgCommunicationLog: v }))} storageKey={`666-${engagementId ?? "def"}-tcwgLog`} placeholder="Summarise communication, date, attendees, matters discussed." disabled={locked} className="text-sm min-h-[64px]" />
  </div>
  </div>
  </WorksheetSection>
@@ -281,13 +283,13 @@ export function Audit666Worksheet() {
  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
  <div><Label>Disclosures adequate (AFRF)?</Label><YNSelect value={data.disclosuresAdequate} onChange={v => setData(d => ({...d, disclosuresAdequate: v as YNNA }))} withNA locked={locked} /></div>
  <div><Label>Disclosure notes</Label>
- <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Confirm notes meet AFRF related-party disclosure requirements." />
+ <AttributedComment value={data.disclosureNotes} onChange={v => setData(d => ({...d, disclosureNotes: v }))} storageKey={`666-${engagementId ?? "def"}-discNotes`} placeholder="Confirm notes meet AFRF related-party disclosure requirements." disabled={locked} className="text-sm min-h-[72px]" />
  </div>
  </div>
  </WorksheetSection>
 
  <WorksheetSection title="Other procedures (specify)">
- <Textarea disabled={locked} value={data.otherProcedures} onChange={e => setData(d => ({...d, otherProcedures: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Additional procedures performed in response to identified risks." />
+ <AttributedComment value={data.otherProcedures} onChange={v => setData(d => ({...d, otherProcedures: v }))} storageKey={`666-${engagementId ?? "def"}-otherProcs`} placeholder="Additional procedures performed in response to identified risks." disabled={locked} className="text-sm min-h-[72px]" />
  </WorksheetSection>
 
  <WorksheetSection title={`Audit conclusion (${ctx.standardPrefix} 550)`}

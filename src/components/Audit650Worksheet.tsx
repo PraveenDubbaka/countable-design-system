@@ -1,7 +1,9 @@
 // — Subsequent Events (CAS 560 / AU-C 560)
+import { AttributedComment } from "@/components/ui/AttributedComment";
 // Aligned with WorksheetShell design standards (605/625/635/645).
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -334,7 +336,7 @@ export function Audit650Worksheet() {
  </WorksheetSection>
 
  <WorksheetSection title="Other procedures (specify)">
- <Textarea disabled={locked} value={data.otherProcedures} onChange={e => setData(d => ({...d, otherProcedures: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Add any additional procedures performed." />
+ <AttributedComment value={data.otherProcedures} onChange={v => setData(d => ({...d, otherProcedures: v }))} storageKey={`650-${engagementId ?? "def"}-otherProcs`} placeholder="Add any additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" />
  </WorksheetSection>
 
  <WorksheetSection

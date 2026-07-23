@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, Plus, Trash2, Sparkles } from "lucide-react";
@@ -426,7 +428,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <tr key={step.id} className="hover:bg-muted/50 align-top">
  <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{idx + 1}</td>
  <td className="px-6 py-3">
- <Textarea value={step.action} onChange={e => setAction(idx, { action: e.target.value })} placeholder="Describe action step…" className="min-h-[44px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" />
+ <AttributedComment value={step.action} onChange={v => setAction(idx, { action: v })} storageKey={`436-${isUS?'us':'ca'}-action-${step.id}`} placeholder="Describe action step…" className="min-h-[44px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" minHeight="44px" />
  </td>
  <td className="px-4 py-3" style={{ width: 220 }}>
  <Select value={step.person} onValueChange={v => setAction(idx, { person: v })}>

@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -172,9 +174,9 @@ export function Audit610Worksheet() {
  <div className="p-4 grid grid-cols-2 gap-4">
  <div><Label>Financial-statement area</Label><Input disabled={locked} value={p.fsArea} onChange={e => upd("fsArea", e.target.value)} className="h-8 text-sm" placeholder="e.g. Accounts Receivable" /></div>
  <div><Label>Assertion(s) addressed</Label><Input disabled={locked} value={p.assertions} onChange={e => upd("assertions", e.target.value)} className="h-8 text-sm" placeholder="e.g. C, AV, E" /></div>
- <div className="col-span-2"><Label>Purpose of the audit procedure</Label><Textarea disabled={locked} value={p.purpose} onChange={e => upd("purpose", e.target.value)} className="text-sm min-h-[60px]" placeholder="Describe what the test is intended to detect or substantiate" /></div>
+ <div className="col-span-2"><Label>Purpose of the audit procedure</Label><AttributedComment value={p.purpose} onChange={v => upd("purpose", v)} storageKey={`610-${engagementId ?? "def"}-purpose`} placeholder="Describe what the test is intended to detect or substantiate" disabled={locked} className="text-sm min-h-[60px]" /></div>
  <div className="col-span-2"><Label>Population characteristics</Label><Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" /></div>
- <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><Textarea disabled={locked} value={p.controlsTested} onChange={e => upd("controlsTested", e.target.value)} className="text-sm min-h-[48px]" placeholder="None / describe and reference WP" /></div>
+ <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><AttributedComment value={p.controlsTested} onChange={v => upd("controlsTested", v)} storageKey={`610-${engagementId ?? "def"}-controlsTested`} placeholder="None / describe and reference WP" disabled={locked} className="text-sm min-h-[48px]" /></div>
  <div>
  <Label>Assessed RMM</Label>
  <Select disabled={locked} value={p.riskLevel} onValueChange={(v: SamplePlan["riskLevel"]) => upd("riskLevel", v)}>

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -247,7 +249,7 @@ export function Audit520Worksheet() {
  </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[240px]">
- <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartA(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the risk of material misstatement…" className="min-h-[72px] text-sm resize-none bg-background" />
+ <AttributedComment value={row.rmmIdentified} onChange={v => updatePartA(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pA-rmm-${row.id}`} placeholder="Describe the risk of material misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
  </td>
  <td className="px-4 py-2.5 align-top w-20">
  <Select disabled={locked} value={row.fraudRisk} onValueChange={v => updatePartA(row.id, "fraudRisk", v as YN)}>
@@ -262,7 +264,7 @@ export function Audit520Worksheet() {
  </Select>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[260px]">
- <Textarea disabled={locked} value={row.auditResponse} onChange={e => updatePartA(row.id, "auditResponse", e.target.value)} placeholder="Document overall audit response…" className="min-h-[72px] text-sm resize-none bg-background" />
+ <AttributedComment value={row.auditResponse} onChange={v => updatePartA(row.id, "auditResponse", v)} storageKey={`520-${engagementId ?? "def"}-pA-resp-${row.id}`} placeholder="Document overall audit response…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
  </td>
  <td className="px-4 py-2.5 align-top w-28">
  <RefButton
@@ -328,7 +330,7 @@ export function Audit520Worksheet() {
  </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[180px]">
- <Textarea disabled={locked} value={row.rmmIdentified} onChange={e => updatePartB(row.id, "rmmIdentified", e.target.value)} placeholder="Describe the RMM…" className="min-h-[72px] text-sm resize-none bg-background" />
+ <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
  </td>
  <td className="px-4 py-2.5 align-top min-w-[120px]">
  <Input disabled={locked} value={row.scotabd} onChange={e => updatePartB(row.id, "scotabd", e.target.value)} placeholder="e.g. Revenue" className="h-8 text-sm" />
@@ -337,7 +339,7 @@ export function Audit520Worksheet() {
  <Input disabled={locked} value={row.assertions} onChange={e => updatePartB(row.id, "assertions", e.target.value)} placeholder="AV…" className="h-8 text-sm text-center" />
  </td>
  <td className="px-4 py-2.5 align-top min-w-[200px]">
- <Textarea disabled={locked} value={row.irFactors} onChange={e => updatePartB(row.id, "irFactors", e.target.value)} placeholder="Document how IR factors affect susceptibility to misstatement…" className="min-h-[72px] text-sm resize-none bg-background" />
+ <AttributedComment value={row.irFactors} onChange={v => updatePartB(row.id, "irFactors", v)} storageKey={`520-${engagementId ?? "def"}-pB-ir-${row.id}`} placeholder="Document how IR factors affect susceptibility to misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
  </td>
  <td className="px-4 py-2.5 align-top w-16">
  <Select disabled={locked} value={row.fraudRisk} onValueChange={v => updatePartB(row.id, "fraudRisk", v as YN)}>

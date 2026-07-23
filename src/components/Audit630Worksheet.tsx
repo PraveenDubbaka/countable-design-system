@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -147,7 +149,7 @@ export function Audit630Worksheet() {
  <td className={td}><Input disabled={locked} value={r.itemsSent} onChange={e => upd(r.id, "itemsSent", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
  <td className={td}><Input disabled={locked} value={r.itemsReceived} onChange={e => upd(r.id, "itemsReceived", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
  <td className={td}><Input disabled={locked} value={r.amountConfirmed} onChange={e => upd(r.id, "amountConfirmed", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
- <td className={td}><Textarea disabled={locked} value={r.exceptions} onChange={e => upd(r.id, "exceptions", e.target.value)} className="min-h-[56px] text-sm resize-none" placeholder="None / describe" /></td>
+ <td className={td}><AttributedComment value={r.exceptions} onChange={v => upd(r.id, "exceptions", v)} storageKey={`630-${engagementId ?? "def"}-exc-${r.id}`} placeholder="None / describe" disabled={locked} className="min-h-[56px] text-sm resize-none" /></td>
  <td className={td}>
  <Select disabled={locked} value={r.psc} onValueChange={(v: "Y" | "N") => upd(r.id, "psc", v)}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>

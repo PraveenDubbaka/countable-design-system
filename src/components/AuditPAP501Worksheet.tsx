@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info, RefreshCw } from "lucide-react";
 import { LukaIcon } from "@/components/LukaIcon";
@@ -442,7 +444,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </td>
  <td className="px-2 py-2" style={{minWidth:180}}>
- {row.hasIssue === 'Yes' && <Textarea disabled={locked} value={row.explanation} onChange={e => setter(id,{explanation:e.target.value})} placeholder="Describe…" className="min-h-[44px] text-xs resize-none rounded-[10px]" />}
+ {row.hasIssue === 'Yes' && <AttributedComment value={row.explanation} onChange={v => setter(id,{explanation:v})} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-exp-${id}`} placeholder="Describe…" className="min-h-[44px] text-xs resize-none rounded-[10px]" minHeight="44px" />}
  </td>
  <td className="px-2 py-2" style={{width:140}}>
  {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setter(id,{auditResponse:v})} placeholder="Form/ref." className="text-xs" />}
@@ -845,10 +847,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <TdInput value={m.partBRef} onChange={v => setMatter(idx, { partBRef: v })} placeholder="—" />
  </td>
  <td className="px-4 py-2.5 align-top">
- <Textarea disabled={locked} value={m.summary} onChange={e => setMatter(idx, { summary: e.target.value })} placeholder="Describe the matter…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
+ <AttributedComment value={m.summary} onChange={v => setMatter(idx, { summary: v })} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-sum-${idx}`} placeholder="Describe the matter…" disabled={locked} className="min-h-[52px] text-sm resize-none bg-background border-border" />
  </td>
  <td className="px-4 py-2.5 align-top">
- <Textarea disabled={locked} value={m.mgmtResponse} onChange={e => setMatter(idx, { mgmtResponse: e.target.value })} placeholder="Management response…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
+ <AttributedComment value={m.mgmtResponse} onChange={v => setMatter(idx, { mgmtResponse: v })} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-mgmt-${idx}`} placeholder="Management response…" disabled={locked} className="min-h-[52px] text-sm resize-none bg-background border-border" />
  </td>
  <td className="px-4 py-2.5 align-top">
  <Textarea disabled={locked} value={m.auditImplications} onChange={e => setMatter(idx, { auditImplications: e.target.value })} placeholder="Audit implications…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
