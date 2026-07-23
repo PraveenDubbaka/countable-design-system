@@ -1441,6 +1441,68 @@ export default function EngagementDetail() {
  autoFillRef.current = setTimeout(fillNext, 600);
  };
 
+ const autofill501BChecklist = () => {
+ const PAP501B_ID = 'default-audit-ra-pap501a';
+ const saved = readJsonFromLocalStorage<any[]>('savedChecklists', []);
+ const entry = saved.find((c: any) => c?.id === PAP501B_ID);
+ if (!entry?.data) return;
+
+ const ANSWERS: Record<string, { answer: string; explanation: string }> = {
+ 'pap501a-1': {
+ answer: 'Yes',
+ explanation: 'Financial results and trial balance obtained via connected accounting system. Source data quality confirmed as part of engagement acceptance (CO → 410 New/Existing Engagement — Acceptance/Continuance).',
+ },
+ 'pap501a-2': {
+ answer: 'Yes',
+ explanation: 'Information confirmed as reliable and adequate for performing analytical procedures. Trial balance reconciles to source data reviewed during engagement setup (CO → 410).',
+ },
+ 'pap501a-3a': {
+ answer: 'No',
+ explanation: 'No significant inconsistencies identified with our understanding of the entity. Business operations align with findings documented in RA → 510 Entity Understanding and CO → 505 Mgmt Inquiries.',
+ },
+ 'pap501a-3b': {
+ answer: 'No',
+ explanation: 'Preliminary analytical review (501-A, Part B ratios) indicates no abnormal trends or unusual relationships. Revenue and cost relationships are consistent with prior period comparatives reviewed in 501-A Part C.',
+ },
+ 'pap501a-3c': {
+ answer: 'No',
+ explanation: 'No indicators of potential fraud identified during preliminary analytical procedures. Fraud risk considerations are addressed further in RA → 506 Fraud.',
+ },
+ 'pap501a-4a': {
+ answer: 'Yes',
+ explanation: 'Management inquired per RA → 505 Mgmt Inquiries. Explanations provided for minor fluctuations were reasonable and consistent with known business conditions and economic environment.',
+ },
+ 'pap501a-4b': {
+ answer: 'No',
+ explanation: 'No unusual transactions or events identified per management inquiries (RA → 505) and review of prior period comparatives in 501-A Part C.',
+ },
+ 'pap501a-5a': {
+ answer: 'No',
+ explanation: 'Management explanations were reasonable and corroborated by analytical results in 501-A. No unusual transactions or misstatements identified requiring a specific audit response beyond planned procedures (RP → 605 Risk Responses).',
+ },
+ 'pap501a-5b': {
+ answer: 'No',
+ explanation: 'No fraud indicators identified from management inquiries (RA → 505) or preliminary analytical procedures (501-A). Addressed further in RA → 506 Fraud and RA → 530 Pervasive Risks.',
+ },
+ };
+
+ const filled = {
+ ...entry.data,
+ sections: entry.data.sections.map((s: any) => ({
+ ...s,
+ questions: s.questions.map((q: any) => {
+ const mapped = ANSWERS[q.id];
+ return mapped ? { ...q, answer: mapped.answer, explanation: mapped.explanation } : q;
+ }),
+ })),
+ updatedAt: new Date(),
+ };
+
+ const updated = saved.map((c: any) => c?.id === PAP501B_ID ? { ...c, data: filled } : c);
+ writeJsonToLocalStorage('savedChecklists', updated);
+ window.dispatchEvent(new CustomEvent('checklistSaved', { detail: { id: PAP501B_ID, data: filled } }));
+ };
+
  const handleAutoFillConfirmed = () => {
  if (checklist) startAutoFill(checklist);
  };
@@ -2977,6 +3039,15 @@ export default function EngagementDetail() {
  setLukaOpen(false);
  if (checklistKey === 'aud-ra-pap501a') {
  navigate(`/engagements/${engagementId}/checklist/aud-ra-pap501bc`);
+ } else {
+ autofill501BChecklist();
+ toast.success('501-A complete · Luka auto-filled 501-B', {
+ duration: 8000,
+ action: {
+ label: 'View 501-B →',
+ onClick: () => navigate(`/engagements/${engagementId}/checklist/aud-ra-pap501a`),
+ },
+ });
  }
  }}
  onAutoFillConfirmed={handleAutoFillConfirmed}
