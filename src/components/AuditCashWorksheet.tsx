@@ -355,11 +355,11 @@ export function AuditCashWorksheet() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
-            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
-            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
           </div>
         </div>
       </div>
@@ -394,11 +394,11 @@ export function AuditCashBankRecWorksheet() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
-            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
-            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
           </div>
         </div>
       </div>
@@ -433,11 +433,11 @@ export function AuditCashCountWorksheet() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
-            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
-            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
           </div>
         </div>
       </div>
