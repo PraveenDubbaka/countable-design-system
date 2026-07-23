@@ -9,6 +9,14 @@ import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
 import { LukaIcon } from "@/components/LukaIcon";
 import { cn } from "@/lib/utils";
 
+const WP_FORM_SUGGESTIONS = [
+ "408", "410",
+ "420", "428", "430", "436", "450",
+ "500", "505", "506", "507", "510", "511", "513", "514", "515",
+ "520", "525", "530", "535", "540", "550", "551", "575", "580", "590",
+ "605", "610", "625", "630", "635", "645", "650", "655", "666", "670", "680",
+];
+
 type Phase =
  | "greeting"
  | "type-selected"
@@ -853,6 +861,34 @@ export function PBCRequestFlow({
  {/* WP number input */}
  {phase === "type-selected" && (
  <div className="px-4 pb-4 pt-2">
+ {/* Form number suggestion badges */}
+ <div className="flex flex-wrap gap-1.5 mb-2.5">
+ {WP_FORM_SUGGESTIONS.map(num => {
+ const selected = wpInput.split(/[,\s]+/).map(s => s.trim()).filter(Boolean).includes(num);
+ return (
+ <button
+ key={num}
+ type="button"
+ onClick={() => {
+ const parts = wpInput.split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
+ if (selected) {
+ setWpInput(parts.filter(p => p !== num).join(", "));
+ } else {
+ setWpInput(parts.length ? parts.join(", ") + ", " + num : num);
+ }
+ }}
+ className={cn(
+ "px-2 py-0.5 rounded-full text-[11px] font-medium border transition-all",
+ selected
+ ? "border-[#9747FF] bg-[#9747FF]/10 text-[#9747FF]"
+ : "border-[hsl(220_20%_80%)] bg-white text-[hsl(222_20%_45%)] hover:border-[#9747FF]/50 hover:text-[#9747FF]"
+ )}
+ >
+ {num}
+ </button>
+ );
+ })}
+ </div>
  <div className="luka-input-wrapper">
  <input
  autoFocus
