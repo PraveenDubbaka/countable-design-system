@@ -14762,7 +14762,6 @@ export const generate500OIChecklist = (): Checklist => {
  q('oi-2f', '<p>Idle or unused plant and equipment.</p>'),
  q('oi-2g', '<p>Deficiencies in financial control systems and IT support.</p>'),
  q('oi-2h', '<p>Possible non-compliance with laws or regulations with a financial impact (such as handling of waste and toxic materials).</p>'),
- la('oi-2i', '<p>Other (specify).</p>'),
  ],
  },
  ];

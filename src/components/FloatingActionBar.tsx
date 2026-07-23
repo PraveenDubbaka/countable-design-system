@@ -20,6 +20,7 @@ import {
  Type,
  ListTree,
  Check,
+ ListChecks,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SmartLayoutIcon } from './icons/SmartLayoutIcon';
@@ -60,6 +61,7 @@ interface FloatingActionBarProps {
  selectedQuestions: Set<string>;
  onBulkDelete: () => void;
  onAddCategory: (position: 'top' | 'bottom', type: 'empty' | 'template' | 'form' | 'inquires-form') => void;
+ onBulkAnswer?: (answer: string, unansweredOnly: boolean) => void;
  isPreviewMode?: boolean;
  isChecklist?: boolean;
  totalQuestions?: number;
@@ -83,6 +85,7 @@ export function FloatingActionBar({
  selectedQuestions,
  onBulkDelete,
  onAddCategory,
+ onBulkAnswer,
  isPreviewMode = false,
  isChecklist = true,
  totalQuestions = 0,
@@ -92,6 +95,8 @@ export function FloatingActionBar({
  const [showAddCategoryPopover, setShowAddCategoryPopover] = useState(false);
  const [showSmartLayoutPopover, setShowSmartLayoutPopover] = useState(false);
  const [showSectionsPopover, setShowSectionsPopover] = useState(false);
+ const [showBulkAnswerPopover, setShowBulkAnswerPopover] = useState(false);
+ const [bulkUnansweredOnly, setBulkUnansweredOnly] = useState(true);
  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
  const [pendingCategoryType, setPendingCategoryType] = useState<'empty' | 'template' | 'form' | 'inquires-form' | null>(null);
  
@@ -569,6 +574,64 @@ export function FloatingActionBar({
  )}
 
 
+
+ {/* Bulk Answer — checklists in preview mode with handler */}
+ {isChecklist && isPreviewMode && onBulkAnswer && (
+ <Popover open={showBulkAnswerPopover} onOpenChange={setShowBulkAnswerPopover}>
+ <PopoverTrigger asChild>
+ <button
+ onClick={(e) => e.stopPropagation()}
+ onMouseDown={(e) => e.stopPropagation()}
+ className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
+ title="Bulk answer — fill all Yes/No questions at once"
+ >
+ <ListChecks className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+ </button>
+ </PopoverTrigger>
+ <PopoverContent
+ side="left"
+ align="center"
+ className="w-64 p-0 bg-card border shadow-lg z-50 rounded-2xl overflow-hidden"
+ onMouseDown={(e) => e.stopPropagation()}
+ >
+ <div className="px-5 pt-4 pb-3 border-b border-border">
+ <p className="text-sm font-semibold text-foreground">Bulk Answer</p>
+ <p className="text-xs text-muted-foreground mt-0.5">Fill all Yes / No questions at once</p>
+ </div>
+ <div className="px-4 py-3 flex flex-col gap-2">
+ <label className="flex items-center gap-2 cursor-pointer select-none">
+ <input
+ type="checkbox"
+ checked={bulkUnansweredOnly}
+ onChange={(e) => setBulkUnansweredOnly(e.target.checked)}
+ className="rounded border-border accent-primary"
+ />
+ <span className="text-xs text-muted-foreground">Unanswered questions only</span>
+ </label>
+ </div>
+ <div className="px-4 pb-4 flex flex-col gap-2">
+ {(['Yes', 'No', 'NA'] as const).map((ans) => (
+ <button
+ key={ans}
+ onClick={() => {
+ onBulkAnswer(ans, bulkUnansweredOnly);
+ setShowBulkAnswerPopover(false);
+ }}
+ className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
+ ans === 'Yes'
+ ? 'bg-green-100 hover:bg-green-200 text-green-800 dark:bg-green-900/30 dark:hover:bg-green-900/50 dark:text-green-300'
+ : ans === 'No'
+ ? 'bg-red-100 hover:bg-red-200 text-red-800 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-300'
+ : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+ }`}
+ >
+ {ans === 'NA' ? 'N/A' : ans}
+ </button>
+ ))}
+ </div>
+ </PopoverContent>
+ </Popover>
+ )}
 
  {/* Collapse/Expand Row Text — checklists only */}
  {isChecklist && <button

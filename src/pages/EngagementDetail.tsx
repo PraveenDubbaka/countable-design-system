@@ -1697,6 +1697,21 @@ export default function EngagementDetail() {
  // No-op in preview mode
  };
 
+ const handleBulkAnswer = (answer: string, unansweredOnly: boolean) => {
+ if (!checklist) return;
+ const applyToQuestion = (q: Question): Question => {
+ const isYesNo = q.answerType === 'yes-no' || q.answerType === 'yes-no-na';
+ if (!isYesNo) return q.subQuestions ? { ...q, subQuestions: q.subQuestions.map(applyToQuestion) } : q;
+ if (answer === 'NA' && q.answerType === 'yes-no') return q.subQuestions ? { ...q, subQuestions: q.subQuestions.map(applyToQuestion) } : q;
+ if (unansweredOnly && q.answer && q.answer.trim()) return q.subQuestions ? { ...q, subQuestions: q.subQuestions.map(applyToQuestion) } : q;
+ return { ...q, answer, subQuestions: q.subQuestions ? q.subQuestions.map(applyToQuestion) : q.subQuestions };
+ };
+ handleChecklistUpdate({
+ ...checklist,
+ sections: checklist.sections.map(s => ({ ...s, questions: s.questions.map(applyToQuestion) })),
+ });
+ };
+
  const allTopLevelQuestionIds = checklist
  ? checklist.sections.flatMap(s => s.questions.map(q => q.id))
  : [];
@@ -2790,7 +2805,7 @@ export default function EngagementDetail() {
  </div>
 
  {/* Floating Action Bar for Preview Mode - Inside content area */}
- {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
+ {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
  </div>
 
  {/* Right Panel or Add Checklist Sheet */}
