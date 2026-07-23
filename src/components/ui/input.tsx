@@ -30,7 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
           "hover:border-[hsl(210_25%_75%)]",
           "dark:hover:border-[hsl(220_15%_40%)]",
           // Disabled state
-          "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-50",
+          "disabled:cursor-not-allowed disabled:bg-muted/50 disabled:border-muted disabled:text-muted-foreground disabled:opacity-70",
           // Error state
           error && "border-destructive hover:border-destructive",
           className,
@@ -69,7 +69,7 @@ const InputFilled = React.forwardRef<HTMLInputElement, React.ComponentProps<"inp
           "hover:bg-muted/80 hover:border-[hsl(210_25%_75%)]",
           "dark:hover:bg-muted/60 dark:hover:border-[hsl(220_15%_40%)]",
           // Disabled state
-          "disabled:cursor-not-allowed disabled:bg-muted/30 disabled:border-muted disabled:text-muted-foreground disabled:opacity-50",
+          "disabled:cursor-not-allowed disabled:bg-muted/30 disabled:border-muted disabled:text-muted-foreground disabled:opacity-70",
           // Error state
           error && "border-destructive hover:border-destructive",
           className,

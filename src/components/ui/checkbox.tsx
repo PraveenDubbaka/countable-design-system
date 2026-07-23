@@ -63,7 +63,7 @@ const Checkbox = React.forwardRef<
           "data-[state=checked]:bg-primary data-[state=checked]:text-on-primary",
           "data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-on-primary",
           "focus-visible:outline-none",
-          "disabled:cursor-not-allowed",
+          "disabled:cursor-not-allowed disabled:opacity-70",
           "data-[error=true]:data-[state=checked]:bg-destructive",
           "border border-border-checkbox",
           className
