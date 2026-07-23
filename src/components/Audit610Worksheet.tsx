@@ -151,6 +151,7 @@ export function Audit610Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
       standard={`${ctx.standardPrefix} 530`}
     >

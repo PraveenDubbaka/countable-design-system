@@ -200,6 +200,7 @@ export function Audit650Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Obtain evidence about events between the F/S date and the auditor's report date that require adjustment or disclosure, and respond to facts discovered after the auditor's report date."
       standard={`${ctx.standardPrefix} 560`}
     >

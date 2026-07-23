@@ -314,6 +314,15 @@ function useCashStore() {
     }));
   };
 
+  function addRow(docKey: DocKey, sectionIdx: number) {
+    setData(d => ({
+      ...d,
+      [docKey]: (d[docKey] as CashSection[]).map((s, si) =>
+        si !== sectionIdx ? s : { ...s, rows: [...s.rows, mkRow("Optional", "", "")] }
+      ),
+    }));
+  }
+
   function conclude() {
     setData(d => ({
       ...d,
@@ -322,13 +331,17 @@ function useCashStore() {
     }));
   }
 
-  return { data, locked: data.concluded, setHeader, handleRowField, conclude };
+  return { data, locked: data.concluded, setHeader, handleRowField, addRow, conclude };
 }
 
 export function AuditCashWorksheet() {
-  const { data, locked, setHeader, handleRowField, conclude } = useCashStore();
+  const { data, locked, setHeader, handleRowField, addRow, conclude } = useCashStore();
   return (
-    <WorksheetLayout objective="Obtain sufficient appropriate audit evidence that cash and cash equivalents exist, are complete, are accurately valued, are properly classified, and are adequately disclosed in the financial statements.">
+    <WorksheetLayout
+      heading="Cash > Worksheets"
+      onAdd={locked ? undefined : () => addRow("auditProcedures", 5)}
+      objective="Obtain sufficient appropriate audit evidence that cash and cash equivalents exist, are complete, are accurately valued, are properly classified, and are adequately disclosed in the financial statements."
+    >
       <WorksheetSection title="A · Cash and Cash Equivalents — Work Program">
         <div className="grid grid-cols-3 gap-4">
           <div>
@@ -356,9 +369,13 @@ export function AuditCashWorksheet() {
 }
 
 export function AuditCashBankRecWorksheet() {
-  const { data, locked, handleRowField, conclude } = useCashStore();
+  const { data, locked, handleRowField, addRow, conclude } = useCashStore();
   return (
-    <WorksheetLayout objective="Perform bank reconciliation procedures to verify that the bank statement balances agree to the general ledger and that reconciling items are valid and properly recorded.">
+    <WorksheetLayout
+      heading="Cash > Worksheets"
+      onAdd={locked ? undefined : () => addRow("bankRecProcedures", 0)}
+      objective="Perform bank reconciliation procedures to verify that the bank statement balances agree to the general ledger and that reconciling items are valid and properly recorded."
+    >
       <WorksheetSection title="A.110 · Bank Reconciliation Procedures" bodyClassName="p-0">
         <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>
@@ -369,9 +386,13 @@ export function AuditCashBankRecWorksheet() {
 }
 
 export function AuditCashCountWorksheet() {
-  const { data, locked, handleRowField, conclude } = useCashStore();
+  const { data, locked, handleRowField, addRow, conclude } = useCashStore();
   return (
-    <WorksheetLayout objective="Count cash on hand to verify existence and completeness of cash balances at the period end date.">
+    <WorksheetLayout
+      heading="Cash > Worksheets"
+      onAdd={locked ? undefined : () => addRow("cashCountProcedures", 2)}
+      objective="Count cash on hand to verify existence and completeness of cash balances at the period end date."
+    >
       <WorksheetSection title="A.115 · Cash Count Procedures" bodyClassName="p-0">
         <ProcTable docKey="cashCountProcedures" sections={data.cashCountProcedures} locked={locked} onRowField={handleRowField} />
       </WorksheetSection>

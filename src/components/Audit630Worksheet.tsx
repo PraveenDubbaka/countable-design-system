@@ -86,6 +86,7 @@ export function Audit630Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Summarise the use of external confirmation procedures, the nature and number of items confirmed, and any exceptions or difficulties encountered."
       standard={`${ctx.standardPrefix} 505`}
     >

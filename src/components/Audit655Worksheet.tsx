@@ -213,6 +213,7 @@ export function Audit655Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Assist in forming an overall conclusion on whether the F/S are consistent with our understanding of the entity, and corroborate the conclusions formed on individual components."
       standard={`${ctx.standardPrefix} 520.6`}
     >

@@ -294,6 +294,7 @@ export function Audit625Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective={`Evaluate management's plan of action to address identified events or conditions that cast doubt on the entity's ability to continue as a going concern (Part 2 — Part 1 is on Form 525).`}
       standard={`${ctx.standardPrefix} 570`}
     >

@@ -307,6 +307,7 @@ export function Audit635Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Document the further audit procedures to obtain evidence about the reasonableness of an accounting estimate (including fair value) and the adequacy of related disclosures. Use this form for ONE estimate at a time."
       standard={`${ctx.standardPrefix} 540`}
     >

@@ -278,6 +278,7 @@ export function Audit680Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Document supplementary audit procedures for ASPE areas: first-time adoption (Section 1500), financial instruments (Section 3856) and employee future benefits (Section 3462)."
       standard="CPA Canada Handbook — Part II"
     >

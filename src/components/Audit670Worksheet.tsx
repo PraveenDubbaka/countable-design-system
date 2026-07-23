@@ -167,6 +167,7 @@ export function Audit670Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Determine whether material misstatements (fraud or error) have occurred from inappropriate, fictitious, or unauthorized journal entries (responding to the presumed management-override risk)."
       standard={`${ctx.standardPrefix} 240.32`}
     >

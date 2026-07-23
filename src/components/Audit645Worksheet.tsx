@@ -244,6 +244,7 @@ export function Audit645Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Identify and respond appropriately to litigation, claims and instances of non-compliance with laws and regulations that may be material to the financial statements."
       standard={`${ctx.standardPrefix} 250 / ${ctx.standardPrefix} 501`}
     >

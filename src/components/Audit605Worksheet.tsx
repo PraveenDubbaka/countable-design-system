@@ -111,6 +111,7 @@ export function Audit605Worksheet() {
 
   return (
     <WorksheetLayout
+      heading="Canada > Worksheets"
       objective="Design overall responses to address risks of material misstatement at the financial-statement level. Responses are based on the assessment of risk recorded on Form 520."
       standard={`${ctx.standardPrefix} 330.5`}
     >
