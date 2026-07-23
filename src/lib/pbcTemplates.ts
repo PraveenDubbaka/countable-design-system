@@ -85,7 +85,7 @@ Equity transactions are initiated through a directors' resolution for approval. 
  },
  {
  id: "it-questionnaire",
- label: "IT Information Questionnaire",
+ label: "Questionnaire",
  wpRef: "IT",
  generate: ({ clientName, engagementId, yearEnd }) => `# IT Controls Questionnaire
 
@@ -211,7 +211,7 @@ ________________________________________________________________________________
  },
  {
  id: "memo-510",
- label: "Prepared by Client Memo",
+ label: "Memo",
  wpRef: "510",
  generate: ({ clientName, engagementId, yearEnd }) => `# Prepared by Client Memo
 
