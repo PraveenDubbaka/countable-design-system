@@ -55,6 +55,13 @@ const buttonVariants = cva(
  "hover:bg-secondary-container/65",
  "active:bg-secondary-container/50",
  ].join(" "),
+ luka: [
+ "bg-gradient-to-br from-[#9747FF] to-[#115697] text-white border-transparent",
+ "shadow-[0_2px_6px_hsla(270,60%,50%,0.3)]",
+ "hover:opacity-90",
+ "active:opacity-80",
+ "focus-visible:ring-[#9747FF]/30",
+ ].join(" "),
  },
  size: {
  default: "h-9 px-4",

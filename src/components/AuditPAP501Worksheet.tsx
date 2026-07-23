@@ -645,14 +645,15 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Tooltip>
  <div className="ml-auto">
  {flowState === 'idle' ? (
- <button
+ <Button
  onClick={handleGenerate}
- className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90"
- style={{ background: 'linear-gradient(135deg,#9747FF,#115697)', boxShadow: '0 2px 6px hsla(270,60%,50%,0.3)' }}
+ variant="luka"
+ size="sm"
+ className="gap-1.5 text-xs"
  >
  <LukaIcon size={14} bare animated />
  Generate with Luka
- </button>
+ </Button>
  ) : (
  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5" onClick={handleRegenerate}>
  <RefreshCw className="h-3 w-3" />Regenerate
