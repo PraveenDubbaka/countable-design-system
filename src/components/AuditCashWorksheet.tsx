@@ -342,22 +342,27 @@ export function AuditCashWorksheet() {
       onAdd={locked ? undefined : () => addRow("auditProcedures", 5)}
       objective="Obtain sufficient appropriate audit evidence that cash and cash equivalents exist, are complete, are accurately valued, are properly classified, and are adequately disclosed in the financial statements."
     >
-      <WorksheetSection title="A · Cash and Cash Equivalents — Work Program">
+      <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
-            <Input disabled={locked} value={data.lsName} onChange={e => setHeader("lsName", e.target.value)} className="h-8 text-xs" placeholder="Lead schedule name" />
+            <Select disabled value="Cash">
+              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cash" className="text-xs">Cash</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
-            <Input disabled={locked} value={data.lsAccountBalance} onChange={e => setHeader("lsAccountBalance", e.target.value)} className="h-8 text-xs" placeholder="Balance" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
-            <Input disabled={locked} value={data.materiality} onChange={e => setHeader("materiality", e.target.value)} className="h-8 text-xs" placeholder="Materiality amount" />
+            <Input disabled value="" className="h-8 text-xs" placeholder="Auto-populated from engagement" />
           </div>
         </div>
-      </WorksheetSection>
+      </div>
 
       <WorksheetSection title="Audit Procedures" bodyClassName="p-0">
         <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} />
