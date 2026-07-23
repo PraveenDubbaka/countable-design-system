@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -238,12 +239,14 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  row,
  onChange,
  extra,
+ storageKey,
  }: {
  num: string;
  description: React.ReactNode;
  row: RowState;
  onChange: (field: keyof RowState, value: string) => void;
  extra?: React.ReactNode;
+ storageKey?: string;
  }) {
  return (
  <tr className="hover:bg-muted/50 transition-colors">
@@ -259,11 +262,20 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  </td>
  <td className="px-3 py-2 align-top">
  <div className="relative">
+ {storageKey ? (
+ <AttributedComment
+ value={row.response}
+ onChange={(v) => onChange("response", v)}
+ storageKey={storageKey}
+ className="min-h-[56px] text-sm resize-none"
+ />
+ ) : (
  <Textarea
  className="min-h-[56px] text-sm resize-none"
  value={row.response}
  onChange={(e) => onChange("response", e.target.value)}
  />
+ )}
  {extra && <div className="mt-1.5">{extra}</div>}
  </div>
  </td>
@@ -378,12 +390,14 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  description="The applicable financial reporting framework (such as Canadian Accounting Standards for Private Enterprises (ASPE))."
  row={s1[0]}
  onChange={(f, v) => updateRow(setS1, 0, f, v)}
+ storageKey={`asm-${engagementId}-s1-0`}
  />
  <DataRow
  num="1.2"
  description="Industry-specific or specialized requirements."
  row={s1[1]}
  onChange={(f, v) => updateRow(setS1, 1, f, v)}
+ storageKey={`asm-${engagementId}-s1-1`}
  />
 
  {/* ── Section 2 ── */}
@@ -395,6 +409,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  description={label}
  row={s2[i]}
  onChange={(f, v) => updateRow(setS2, i, f, v)}
+ storageKey={`asm-${engagementId}-s2-${i}`}
  extra={
  i === 1 ? (
  imported ? (
@@ -425,6 +440,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  description={label}
  row={s3[i]}
  onChange={(f, v) => updateRow(setS3, i, f, v)}
+ storageKey={`asm-${engagementId}-s3-${i}`}
  />
  ))}
 
@@ -469,6 +485,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  description="Establish the budgeted audit fee and labour hours."
  row={s5}
  onChange={(f, v) => updateSingle(setS5, f, v)}
+ storageKey={`asm-${engagementId}-s5`}
  />
 
  {/* ── Section 6 ── */}
@@ -482,6 +499,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  }
  row={s6}
  onChange={(f, v) => updateSingle(setS6, f, v)}
+ storageKey={`asm-${engagementId}-s6`}
  />
 
  {/* ── Subsequent changes ── */}
@@ -495,6 +513,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  description="Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information."
  row={subseq}
  onChange={(f, v) => updateSingle(setSubseq, f, v)}
+ storageKey={`asm-${engagementId}-subseq`}
  />
 
  </tbody>

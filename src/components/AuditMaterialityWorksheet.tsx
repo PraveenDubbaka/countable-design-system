@@ -13,6 +13,7 @@ import {
 import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -913,9 +914,10 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <span className="text-sm font-semibold text-foreground">Additional Comments</span>
  </div>
  <div className="px-6 py-5">
- <Textarea
+ <AttributedComment
  value={additionalComments}
- onChange={(e) => setAdditionalComments(e.target.value)}
+ onChange={setAdditionalComments}
+ storageKey={`materiality-comments-${isUS ? 'us' : 'ca'}`}
  placeholder="Add Comments"
  className="min-h-[80px] text-sm resize-none bg-background"
  />

@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { AttributedComment } from '@/components/ui/AttributedComment';
 import { Info, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -285,7 +286,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  </div>
  <div className="px-6 py-4 border-t border-border">
  <label className="text-xs font-medium text-muted-foreground block mb-2">Comments and explanations for variances</label>
- <Textarea className="min-h-[72px] text-sm resize-none" placeholder="Enter comments…" value={staffComments} onChange={e => setStaffComments(e.target.value)} />
+ <AttributedComment value={staffComments} onChange={setStaffComments} storageKey={`budget-staff-${engagementId}`} placeholder="Enter comments…" className="min-h-[72px] text-sm resize-none" />
  </div>
  </div>
 
@@ -322,7 +323,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  </div>
  <div className="px-6 py-4 border-t border-border">
  <label className="text-xs font-medium text-muted-foreground block mb-2">Comments (over/under budget reasons)</label>
- <Textarea className="min-h-[72px] text-sm resize-none" placeholder="Enter comments…" value={timeComments} onChange={e => setTimeComments(e.target.value)} />
+ <AttributedComment value={timeComments} onChange={setTimeComments} storageKey={`budget-time-${engagementId}`} placeholder="Enter comments…" className="min-h-[72px] text-sm resize-none" />
  </div>
  </div>
 

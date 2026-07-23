@@ -8,6 +8,7 @@ import { Info, Plus, Sparkles } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
 import { toast } from "sonner";
 
@@ -283,11 +284,12 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
  </td>
  <td className="px-4 py-3 align-top">
- <Textarea
- disabled={locked}
+ <AttributedComment
  value={row.comments}
- onChange={e => setRow(proc.id, { comments: e.target.value })}
+ onChange={v => setRow(proc.id, { comments: v })}
+ storageKey={`507-${engagementId}-${proc.id}`}
  placeholder="Enter comments…"
+ disabled={locked}
  className="min-h-[56px] text-sm bg-background resize-none"
  />
  </td>

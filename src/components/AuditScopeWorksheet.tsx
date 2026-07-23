@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Info, RefreshCw, Trash2, Plus, FileText } from "lucide-react";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
+import { AttributedComment } from "@/components/ui/AttributedComment";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -667,9 +668,10 @@ export function AuditScopeWorksheet({
  <span className="text-sm font-semibold text-foreground">Additional Comments</span>
  </div>
  <div className="px-6 py-5">
- <Textarea
+ <AttributedComment
  value={additionalComments}
- onChange={(e) => setAdditionalComments(e.target.value)}
+ onChange={setAdditionalComments}
+ storageKey={`scope-comments-${isUS ? 'us' : 'ca'}`}
  placeholder="Comments"
  className="min-h-[80px] text-sm resize-none bg-background"
  />

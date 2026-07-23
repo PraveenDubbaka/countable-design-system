@@ -31,6 +31,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { CURRENT_USER, ROLE_LABELS } from '@/lib/useTimeEntries';
 import { ChecklistSignOff } from '@/components/ChecklistSignOff';
+import { useAttribution, AttributionBadge } from '@/components/ui/AttributedComment';
 
 const CURRENT_USER_ASSIGNEE: Assignee = {
  id: 'current-user',
@@ -1159,6 +1160,7 @@ function QuestionInlineColumns({
 }) {
  const containerRef = useRef<HTMLDivElement>(null);
  const resizingRef = useRef<{ colIdx: number; startX: number; startWidths: number[] } | null>(null);
+ const expAttr = useAttribution(`dv-exp-${question.id}`);
 
  const showResponse = (question as any).showResponse !== false;
  const showExplanation = (question as any).showExplanation !== false;
@@ -1383,6 +1385,7 @@ function QuestionInlineColumns({
  <div className="flex items-center min-w-0 overflow-visible px-2 relative group/exp"
  style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
  <div className="w-full">
+ <div onBlur={() => { if (question.explanation) expAttr.stamp(); else expAttr.clear(); }}>
  <AITextarea
  value={question.explanation || ''}
  onChange={(val) => {
@@ -1394,6 +1397,12 @@ function QuestionInlineColumns({
  }}
  placeholder={question.explanationPlaceholder || "Explanation"}
  minHeight="40px" />
+ </div>
+ {isEngagementMode && question.explanation && (
+ <div className="mt-0.5 mb-1 px-1.5">
+ <AttributionBadge attr={expAttr.attr} />
+ </div>
+ )}
  {isEngagementMode && question.answeredBy && (question.answer || question.explanation) && (
  <div className="mt-1 mb-1 px-1.5">
  <Tooltip>
