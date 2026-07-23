@@ -1339,7 +1339,7 @@ function QuestionInlineColumns({
  <Tooltip>
  <TooltipTrigger asChild>
  <span className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
- question.answeredBy.type === 'client' ? 'bg-primary/10 text-primary' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+ question.answeredBy.type === 'client' ? 'bg-primary/10 text-primary' : 'bg-[#e1eefa] text-[#074075] border border-[#1c63a6]'
  }`}>
  {question.answeredBy.initials}
  </span>
@@ -1402,7 +1402,7 @@ function QuestionInlineColumns({
  className={`inline-flex items-center rounded-full text-[10px] font-medium px-2 py-0.5 cursor-default ${
  question.answeredBy.type === 'client'
  ? 'bg-primary/10 text-primary'
- : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+ : 'bg-[#e1eefa] text-[#074075] border border-[#1c63a6]'
  }`}
  >
  {question.answeredBy.initials}
