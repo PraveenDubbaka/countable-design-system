@@ -87,11 +87,186 @@ Equity transactions are initiated through a directors' resolution for approval. 
  id: "it-questionnaire",
  label: "Questionnaire",
  wpRef: "IT",
- generate: ({ clientName, engagementId, yearEnd }) => `# IT Controls Questionnaire
+ generate: ({ clientName, engagementId, yearEnd, wpNumbers }) => {
+ const forms = wpNumbers && wpNumbers.length > 0 ? wpNumbers : ["511"];
+ const formLabel = forms.join(", ");
+ const blank = "\n\n________________________________________________________________________________\n";
+
+ const SECTIONS: Record<string, { title: string; questions: string[] }> = {
+ "505": {
+ title: "Management Inquiries (WP 505)",
+ questions: [
+ "Describe management's process for identifying and assessing risks that could affect the financial statements.",
+ "What are the significant changes to the Company's business, operations, or financial condition since the prior year?",
+ "How does management monitor compliance with laws, regulations, and contractual obligations?",
+ "Describe the process by which management reviews and approves journal entries, estimates, and judgments in the financial statements.",
+ "Are there any matters management wishes to bring to the auditor's attention that may affect the audit?",
+ ],
+ },
+ "506": {
+ title: "Fraud Risk (WP 506)",
+ questions: [
+ "What controls are in place to prevent or detect fraud or error within the Company?",
+ "Is management aware of any alleged, suspected, or actual fraud, misappropriation of assets, or irregularities involving any employee or management?",
+ "Has the Company, or any officer or director, been subject to an investigation or received any communications from a regulatory authority?",
+ "Describe the controls in place around the authorization of payments, expense claims, and journal entries to prevent unauthorized transactions.",
+ "What is management's assessment of the Company's susceptibility to fraud, including management override of controls?",
+ ],
+ },
+ "507": {
+ title: "Governance Minutes (WP 507)",
+ questions: [
+ "How often does the Board of Directors / Audit Committee meet, and who is responsible for preparing and maintaining meeting minutes?",
+ "What significant decisions or resolutions were approved by the Board during the year? Please provide a list.",
+ "Describe the role of the Audit Committee in overseeing the financial reporting process and the external audit.",
+ "Were there any changes to the composition of the Board or Audit Committee during the year? If so, please describe.",
+ "How are significant transactions (e.g., acquisitions, disposals, major contracts) approved by the Board?",
+ ],
+ },
+ "510": {
+ title: "Entity Understanding (WP 510)",
+ questions: [
+ "What does the Company do and in which geographic markets does it operate?",
+ "Please describe the Company's organizational structure, including subsidiaries and ownership percentages.",
+ "Who are the key management personnel and what are their roles and responsibilities in financial reporting?",
+ "What are the Company's primary revenue sources and describe the revenue recognition process?",
+ "What significant changes occurred in the Company's business, industry, or regulatory environment during the year?",
+ "Who are the Company's key customers, suppliers, and business partners, and does the Company rely on any single party for a significant portion of revenue or supply?",
+ ],
+ },
+ "511": {
+ title: "IT Environment (WP 511)",
+ questions: [
+ "Describe the software and key applications, including spreadsheets, that the Company uses to prepare financial information and reports (e.g., QuickBooks, Sage, Navision).",
+ "Is the software an \"off the shelf\" program or has it been customized? Describe any customization, change management procedures, or automated controls.",
+ "Did a system changeover occur during the year? If so, describe the transition including controls over the conversion and any post-implementation review.",
+ "Describe the controls related to password protection and prevention of unauthorized access, including how access levels are commensurate with roles.",
+ "Describe the controls to authorize new users, modify existing access, and remove access upon termination or transfer.",
+ "Describe controls over physical access to data and hardware, including data back-up location, frequency, and integrity oversight.",
+ "Indicate how transactions are initiated and recorded through the Company's information system and incorporated into the general ledger.",
+ "Describe the Company's cybersecurity policies, controls, and oversight. Has the Company experienced any cybersecurity incidents?",
+ "Describe policies and procedures relating to the selection and use of third-party IT service providers, including data security and monitoring of service levels.",
+ ],
+ },
+ "513": {
+ title: "Accounting Estimates (WP 513)",
+ questions: [
+ "What are the significant accounting estimates and judgments the Company made during the year (e.g., allowances, impairment, provisions, fair values)?",
+ "Describe the process used by management to develop each significant estimate, including the key assumptions and data sources relied upon.",
+ "How does management assess the sensitivity of significant estimates to changes in key assumptions?",
+ "Were there any changes in accounting estimates from the prior year? If so, describe the nature of the changes and the reason for them.",
+ "Who reviews and approves significant estimates, and how is the review documented?",
+ ],
+ },
+ "514": {
+ title: "Prior Period Estimates (WP 514)",
+ questions: [
+ "For each significant prior period estimate, please describe the actual outcome or revised estimate and any difference from the amount recorded in the prior year financial statements.",
+ "Were any prior period errors identified and corrected during the current year? If so, describe the nature of the errors and the impact on the financial statements.",
+ "Describe any changes in accounting policies or estimates applied during the current year relative to the prior year.",
+ "Have any prior period adjustments been reflected in the opening balances for the current year?",
+ ],
+ },
+ "515": {
+ title: "Related Parties (WP 515)",
+ questions: [
+ "Please list all persons and entities considered to be related parties of the Company, including directors, officers, significant shareholders, close family members, and companies under common control.",
+ "For each related party, describe the nature and terms of all transactions during the year, including amounts, balances, and whether the transactions were conducted at arm's length.",
+ "Describe the controls that exist around approval of significant related party transactions.",
+ "Are there any undisclosed related party relationships or transactions management is aware of?",
+ "What procedures are in place to ensure all related party transactions are identified, authorized, and appropriately disclosed in the financial statements?",
+ ],
+ },
+ "520": {
+ title: "Risk Register (WP 520)",
+ questions: [
+ "What does management consider to be the Company's most significant financial reporting risks, and how are these risks monitored?",
+ "Describe the process by which management identifies and updates the Company's risk register or risk assessment.",
+ "What mitigating controls are in place for each significant identified risk?",
+ "Have any new or emerging risks been identified during the year that could affect the financial statements?",
+ "How does management evaluate whether its risk mitigation strategies are effective?",
+ ],
+ },
+ "525": {
+ title: "Going Concern (WP 525)",
+ questions: [
+ "Describe any events or conditions that may cast significant doubt on the Company's ability to continue as a going concern.",
+ "What is management's assessment of the Company's ability to meet its financial obligations for at least the next 12 months?",
+ "If there are going concern concerns, what plans does management have to address them (e.g., refinancing, asset sales, capital raises)?",
+ "Describe the Company's current liquidity position, including available credit facilities, cash reserves, and upcoming debt maturities.",
+ ],
+ },
+ "530": {
+ title: "Pervasive Risks (WP 530)",
+ questions: [
+ "Describe any business, industry, or economic conditions that may give rise to significant risks of material misstatement in the financial statements.",
+ "Are there any significant pressures on management to achieve financial results that could create incentives for earnings manipulation?",
+ "Describe how management assesses and responds to risks arising from the complexity of the Company's transactions, estimates, or financial reporting requirements.",
+ "Are there any significant regulatory, legal, or compliance risks that could affect the financial statements?",
+ ],
+ },
+ "535": {
+ title: "Information System (WP 535)",
+ questions: [
+ "Describe how financial and operational information flows from initiation of a transaction through to recording in the general ledger and reporting in the financial statements.",
+ "What systems and processes are in place to capture, process, and disclose events and conditions other than routine transactions?",
+ "Describe the controls in place to ensure completeness and accuracy of data entered into financial reporting systems.",
+ "How are manual journal entries and adjustments controlled, reviewed, and authorized?",
+ "Describe the human resources responsible for financial reporting, including their competence, adequacy of resources, and any segregation of duties concerns.",
+ ],
+ },
+ "540": {
+ title: "Control Design (WP 540)",
+ questions: [
+ "Describe the design of key internal controls over financial reporting, including preventive and detective controls.",
+ "For each significant process area (revenue, purchasing, payroll, treasury), describe the key controls in place and who performs them.",
+ "How does management evaluate the design effectiveness of internal controls?",
+ "Were there any changes to the design of key internal controls during the year? If so, describe the nature of the changes.",
+ "Are there any identified control gaps or weaknesses management is aware of? If so, describe the compensating controls or remediation plans.",
+ ],
+ },
+ "550": {
+ title: "Control Activities (WP 550)",
+ questions: [
+ "Describe the control activities in place for each of the following areas: authorization of transactions, segregation of duties, reconciliations, physical safeguarding of assets, and management review.",
+ "How does management monitor the operating effectiveness of control activities on an ongoing basis?",
+ "Were any control deficiencies identified during the year, and if so, what remediation actions have been taken?",
+ "Describe the process for approving and reviewing account reconciliations, and who is responsible for each significant account.",
+ ],
+ },
+ "551": {
+ title: "General IT Controls (WP 551)",
+ questions: [
+ "Describe the controls over IT operations, including change management, incident management, and system availability.",
+ "What procedures are in place to manage and approve changes to production applications and systems?",
+ "Describe the controls over logical access to systems, including user provisioning, access reviews, and privileged access management.",
+ "How is data integrity ensured during processing and transmission between systems?",
+ "Describe the disaster recovery and business continuity plans for key IT systems.",
+ ],
+ },
+ };
+
+ const DEFAULT_SECTION: { title: string; questions: string[] } = {
+ title: "General Questionnaire",
+ questions: [
+ "Please describe the relevant processes, controls, and procedures for this area.",
+ "Are there any changes from the prior year that the audit team should be aware of?",
+ "Who is responsible for this area, and how are activities reviewed and approved?",
+ ],
+ };
+
+ let qNum = 1;
+ const body = forms.map(form => {
+ const section = SECTIONS[form] ?? { ...DEFAULT_SECTION, title: `Working Paper ${form}` };
+ const qs = section.questions.map(q => `**${qNum++}.** ${q}${blank}`).join("\n");
+ return `## ${section.title}\n\n${qs}\n---`;
+ }).join("\n\n");
+
+ return `# Consolidated Audit Questionnaire
 
 **To:** ${clientName} (the "Company")
 
-**Subject:** IT Controls Questionnaire
+**Subject:** Audit Questionnaire — Forms ${formLabel}
 
 **Engagement:** ${engagementId} | **Period:** ${yearEnd}
 
@@ -99,115 +274,16 @@ Equity transactions are initiated through a directors' resolution for approval. 
 
 **Name of person completing questionnaire:** ______________________________
 
-**Date:** ______________________________
+**Date completed:** ______________________________
 
 ---
 
-Please provide as much detail as possible in response to the following questions concerning IT controls and processes in place at the Company. Please include in your responses consideration of all IT controls and processes in place for the Company and all of its subsidiaries. Where appropriate, forward a copy of this questionnaire for completion to responsible persons with knowledge of the Company's subsidiaries IT systems.
-
-**Please provide answers in bold or in alternate colour.**
+Please provide complete and accurate responses to all questions below. These responses will assist in planning and executing the audit. Where a question is not applicable, please indicate "N/A" and briefly explain. **Please provide answers in bold or in alternate colour.**
 
 ---
 
-## Section 1 — Software and Key Applications
-
-**1.** Describe the software and key applications including spreadsheets (i.e., name) that the Company uses to prepare financial information and reports (e.g. QuickBooks, Sage, Navision etc.).
-
-________________________________________________________________________________
-
-**2.** Is the software considered to be an "off the shelf" program or more complex (if more complex, please describe customization, change management procedures, automated controls, third party access)?
-
-________________________________________________________________________________
-
-**3.** Do you utilize the online or desktop version of the software?
-
-________________________________________________________________________________
-
-**4.** Provide a description of spreadsheets used in the preparation of financial reporting.
-
-________________________________________________________________________________
-
-**5.** Did a system changeover occur during the year? Discuss if you have changed software or key applications during the year, including what you were using, what you changed to, who was responsible for overseeing the transition, the date of the transition, controls around the transition/conversion, whether systems were run in parallel or you used direct changeover, and the results of any post-implementation review conducted.
-
-________________________________________________________________________________
-
----
-
-## Section 2 — Third-Party Service Providers
-
-**6.** Describe policies and procedures relating to the selection and use of third-party service providers such as IT consultants or service providers (organizations that you rely on for accounting and administration, for instance payroll service providers like ADP). Identify the providers and the services. Consider the terms of contract, monitoring of service levels, performance indicators, data security, and controls over processing integrity.
-
-________________________________________________________________________________
-
----
-
-## Section 3 — Access Controls
-
-**7.** Describe the controls related to password protection and prevention of unauthorized access, and how this is monitored and enforced (consider operating environment, server access, accounting program and spreadsheet applications).
-
-________________________________________________________________________________
-
-**8.** Describe the oversight process that ensures that the access levels to key IT applications and spreadsheets are commensurate with the roles and responsibilities of the user.
-
-________________________________________________________________________________
-
-**9.** Describe the controls to authorize new users and modifications to existing user's access to servers, accounting program, spreadsheets.
-
-________________________________________________________________________________
-
-**10.** Describe the controls to remove user access upon termination or transfer. Are there any super users (users with privileged access and/or overall control)? If yes, please provide list of users and job title.
-
-________________________________________________________________________________
-
----
-
-## Section 4 — Physical Access and Data Backup
-
-**11.** Describe controls over physical access to data and hardware including data back-up location and frequency of back-up. Describe the controls applicable to the access and integrity of data as well as the oversight process to review and monitor these controls.
-
-________________________________________________________________________________
-
----
-
-## Section 5 — Information Flow
-
-**12.** Indicate how information flows through the entity's information system, including how:
-
-**a.** Transactions are initiated, and how information about them is recorded, processed, corrected as necessary, incorporated in the general ledger and reported in the financial statements.
-
-________________________________________________________________________________
-
-**b.** Information about how events and conditions, other than transactions, is captured, processed and disclosed in the financial statements.
-
-________________________________________________________________________________
-
-**c.** Information about the human resources involved that may be relevant to understanding risks to the integrity of the information system, including: the competence of the individuals undertaking the work; whether there are adequate resources; and whether there is appropriate segregation of duties.
-
-________________________________________________________________________________
-
----
-
-## Section 6 — Cybersecurity
-
-**13.** Describe the Company's policies, controls and oversight over cybersecurity. Has the Company experienced any cybersecurity incidents — if so please describe.
-
-________________________________________________________________________________
-
----
-
-## Section 7 — Communication
-
-**14.** Describe how the Company communicates significant matters in connection with preparation of financial statements and the related reporting responsibilities: (i) between people within the entity, including how financial reporting roles and responsibilities are communicated; (ii) between management and those charged with governance; and (iii) with external parties, such as those with regulatory authorities.
-
-________________________________________________________________________________
-
-**15.** How does the Company's information system and communication appropriately support the preparation of the entity's financial statements in accordance with the applicable financial reporting framework?
-
-________________________________________________________________________________
-
-**16.** Is there anything else we should be aware of regarding the Company's IT systems?
-
-________________________________________________________________________________`,
+${body}`;
+ },
  },
  {
  id: "memo-510",

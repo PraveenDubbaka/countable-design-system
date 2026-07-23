@@ -2,12 +2,39 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
  FileText, Send, Loader2, CheckCircle2, Globe, Eye,
- Circle, ChevronDown, Upload, Shield, Monitor, Sparkles, ArrowRight,
+ Circle, ChevronDown, Upload, Shield, Monitor, Sparkles, ArrowRight, Download,
 } from "lucide-react";
 import { PBC_TEMPLATES, type PBCTemplate } from "@/lib/pbcTemplates";
 import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
 import { LukaIcon } from "@/components/LukaIcon";
 import { cn } from "@/lib/utils";
+
+function downloadPBCAsPDF(content: string, title: string) {
+ const lines = content.split("\n");
+ const htmlBody = lines.map(line => {
+ if (line.startsWith("# ")) return `<h1>${line.slice(2).replace(/\*\*/g, "")}</h1>`;
+ if (line.startsWith("## ")) return `<h2>${line.slice(3).replace(/\*\*/g, "")}</h2>`;
+ if (line.startsWith("--- ") || line === "---") return `<hr/>`;
+ if (line.trim() === "________________________________________________________________________________") return `<div class="blank-line"></div>`;
+ if (line.trim() === "") return `<br/>`;
+ return `<p>${line.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")}</p>`;
+ }).join("\n");
+
+ const w = window.open("", "_blank");
+ if (!w) return;
+ w.document.write(`<!DOCTYPE html><html><head><title>${title}</title><style>
+ body{font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#1b2337;max-width:820px;margin:40px auto;padding:0 48px;line-height:1.7}
+ h1{font-size:20px;font-weight:700;color:#193565;margin:0 0 12px}
+ h2{font-size:14px;font-weight:700;color:#193565;margin:28px 0 10px;padding-bottom:5px;border-bottom:2px solid rgba(25,53,101,0.15)}
+ hr{border:none;border-top:1px solid #dde1ea;margin:18px 0}
+ p{margin:4px 0}
+ strong{font-weight:600}
+ .blank-line{border-bottom:1px solid #b0b8cc;margin:18px 0 4px;height:1px}
+ @media print{body{margin:20px auto}}
+ </style></head><body>${htmlBody}</body></html>`);
+ w.document.close();
+ setTimeout(() => { w.focus(); w.print(); }, 300);
+}
 
 const WP_FORM_SUGGESTIONS = [
  "408", "410",
@@ -474,12 +501,18 @@ function ArtifactCard({
  {preview}
  </p>
  </div>
- <div className="flex gap-2 px-4 py-3 border-t border-border bg-muted/20">
+ <div className="flex gap-2 px-4 py-3 border-t border-border bg-muted/20 flex-wrap">
  <button
  onClick={onView}
  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
  >
  <Eye className="h-3.5 w-3.5" /> View Document
+ </button>
+ <button
+ onClick={() => downloadPBCAsPDF(content, template.label)}
+ className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs font-semibold hover:bg-muted transition-colors"
+ >
+ <Download className="h-3.5 w-3.5" /> Download PDF
  </button>
  {sent ? (
  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-green-300 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800 text-xs font-semibold">

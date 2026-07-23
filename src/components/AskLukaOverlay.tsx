@@ -61,6 +61,7 @@ import {
  Pencil,
  FileText,
  PanelLeftClose,
+ Download,
 } from "lucide-react";
 import EditMenuDropdown from "@/components/luka/workspace/EditMenuDropdown";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -2916,6 +2917,33 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </button>
  </div>
  ) : (
+ <div className="flex items-center gap-2 shrink-0">
+ <button
+ onClick={() => {
+ const w = window.open("", "_blank");
+ if (!w) return;
+ const bodyHtml = pbcPreviewRef.current?.innerHTML ?? "";
+ w.document.write(`<!DOCTYPE html><html><head><title>${pbcViewingDoc?.templateLabel ?? "Document"}</title><style>
+ body{font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#1b2337;max-width:820px;margin:40px auto;padding:0 48px;line-height:1.7}
+ h1{font-size:20px;font-weight:700;color:#193565;margin:0 0 12px}
+ h2{font-size:15px;font-weight:700;color:#193565;margin:24px 0 8px;padding-bottom:5px;border-bottom:2px solid rgba(25,53,101,0.15)}
+ h3{font-size:12px;font-weight:700;color:#193565;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+ hr{border:none;border-top:1px solid #dde1ea;margin:18px 0}
+ p,li{margin:4px 0}
+ strong{font-weight:600}
+ table{width:100%;border-collapse:collapse;margin:12px 0}
+ th{padding:8px 12px;text-align:left;font-size:12px;font-weight:700;color:#193565;border-bottom:2px solid #e5e9f0;background:#f5f7fb}
+ td{padding:8px 12px;font-size:13px;vertical-align:top;border-bottom:1px solid #e5e9f0}
+ @media print{body{margin:20px auto}}
+ </style></head><body>${bodyHtml}</body></html>`);
+ w.document.close();
+ setTimeout(() => { w.focus(); w.print(); }, 300);
+ }}
+ className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-[13px] font-semibold transition-colors hover:bg-[hsl(220_20%_96%)]"
+ style={{ border: "1px solid hsl(220 20% 85%)", background: "white", color: PBC_BODY, fontFamily: PBC_FONT }}
+ >
+ <Download className="h-3.5 w-3.5" /> Download PDF
+ </button>
  <EditMenuDropdown
  onEditManually={() => {
  const html = pbcPreviewRef.current?.innerHTML ?? "";
@@ -2925,6 +2953,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  }}
  onTellLuka={() => {}}
  />
+ </div>
  )}
  </div>
  {/* Scrollable document body */}
