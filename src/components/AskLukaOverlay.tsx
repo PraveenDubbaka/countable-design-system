@@ -488,13 +488,49 @@ function PBCEditableContent({
  editRef: React.RefObject<HTMLDivElement>;
  onDirty: () => void;
 }) {
+ const [toolbarPos, setToolbarPos] = useState<{ x: number; y: number } | null>(null);
+ const toolbarRef = useRef<HTMLDivElement>(null);
+ const savedRangeRef = useRef<Range | null>(null);
+
  useEffect(() => {
  if (editRef.current) editRef.current.innerHTML = html;
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, []);
 
+ const updateToolbar = () => {
+ const sel = window.getSelection();
+ if (!sel || sel.isCollapsed || !sel.rangeCount) {
+ setToolbarPos(null);
+ return;
+ }
+ // Only show if selection is inside the editor
+ const range = sel.getRangeAt(0);
+ if (!editRef.current?.contains(range.commonAncestorContainer)) {
+ setToolbarPos(null);
+ return;
+ }
+ savedRangeRef.current = range.cloneRange();
+ const rect = range.getBoundingClientRect();
+ setToolbarPos({
+ x: rect.left + rect.width / 2,
+ y: rect.top - 8,
+ });
+ };
+
+ useEffect(() => {
+ document.addEventListener('selectionchange', updateToolbar);
+ return () => document.removeEventListener('selectionchange', updateToolbar);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
+
  const handleFormatAction = (action: string, formatValue?: string) => {
  if (!editRef.current) return;
+ // Restore selection before applying format (toolbar click deselects)
+ if (savedRangeRef.current) {
+ const sel = window.getSelection();
+ sel?.removeAllRanges();
+ sel?.addRange(savedRangeRef.current);
+ }
  editRef.current.focus();
  switch (action) {
  case 'bold': document.execCommand('bold', false); break;
@@ -515,8 +551,26 @@ function PBCEditableContent({
  };
 
  return (
- <div>
- <RichTextToolbar inline onFormatAction={handleFormatAction} />
+ <div style={{ position: "relative" }}>
+ {toolbarPos && (
+ <div
+ style={{
+ position: "fixed",
+ left: toolbarPos.x,
+ top: toolbarPos.y,
+ transform: "translate(-50%, -100%)",
+ zIndex: 9999,
+ pointerEvents: "auto",
+ }}
+ onMouseDown={e => e.preventDefault()}
+ >
+ <RichTextToolbar
+ inline
+ toolbarRef={toolbarRef}
+ onFormatAction={handleFormatAction}
+ />
+ </div>
+ )}
  <div
  ref={editRef}
  contentEditable
