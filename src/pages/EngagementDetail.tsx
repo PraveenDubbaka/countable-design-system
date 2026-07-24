@@ -1206,7 +1206,7 @@ export default function EngagementDetail() {
  // One-time migration: clear stale sample checklists saved before the
  // global template library was pulled in, so the engagement reflects the
  // new global checklist content.
- const TEMPLATE_LIBRARY_VERSION = 'v15-506-fraud-dv-checklist-2026-07';
+ const TEMPLATE_LIBRARY_VERSION = 'v16-506-remove-cas-refs-2026-07';
  const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
  if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
  try {
