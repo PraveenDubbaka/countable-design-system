@@ -111,7 +111,7 @@ const BrandHeader = () => (
  letterSpacing: "0.02em",
  }}
  >
- WILDCAT ACCOUNTING
+ MAPLE GROVE ACCOUNTING
  </div>
  <div
  style={{
@@ -160,7 +160,7 @@ const BrandFooter = () => (
  letterSpacing: "0.02em",
  }}
  >
- WILDCAT ACCOUNTING FOOTER
+ MAPLE GROVE ACCOUNTING
  </div>
  <div
  style={{

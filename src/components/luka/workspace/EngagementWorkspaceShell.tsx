@@ -90,8 +90,8 @@ const EngagementWorkspaceShell = ({
  };
 
  const wildcatEngagement: ShellEngagement = {
- name: "Wild Cat Accounting",
- code: "COM-WIL-Dec312024",
+ name: "Maple Grove Accounting",
+ code: "COM-MGA-Dec312024",
  };
  const activeEngagement: ShellEngagement =
  selectedEngagementId === "wildcat" ? wildcatEngagement : engagement;
