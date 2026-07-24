@@ -53,6 +53,29 @@ interface Data513 {
  concludedOn: string;
 }
 
+// ── F/S area options ───────────────────────────────────────────────────────────
+
+const FS_AREAS = [
+ "Cash and cash equivalents",
+ "Accounts receivable",
+ "Inventories",
+ "Short-term investments",
+ "Loans and notes receivable",
+ "Other current assets",
+ "Property, plant and equipment",
+ "Long-term investments",
+ "Accounts payable",
+ "Taxes payable",
+ "Short-term debt",
+ "Other long-term liabilities",
+ "Long-term debt",
+ "Equity",
+ "Revenue",
+ "Cost of sales",
+ "Expenses",
+ "Other expenses (income)",
+];
+
 // ── Pre-populated estimates ────────────────────────────────────────────────────
 
 const PRESET_ESTIMATES = [
@@ -454,14 +477,15 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  />
  )}
  </td>
- <td className="px-4 py-2.5 w-40">
- <Input
+ <td className="px-4 py-2.5 w-48">
+ <Select
+ value={est.fsArea || ""}
+ onValueChange={v => updateEstimate(est.id, { fsArea: v })}
  disabled={locked || !est.selected}
- value={est.fsArea}
- onChange={e => updateEstimate(est.id, { fsArea: e.target.value })}
- placeholder={est.selected ? "F/S line item…" : "—"}
- className="h-8 text-sm bg-background"
- />
+ >
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder={est.selected ? "F/S area…" : "—"} /></SelectTrigger>
+ <SelectContent>{FS_AREAS.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}</SelectContent>
+ </Select>
  </td>
  <td className="px-4 py-2.5 w-28">
  <Select
