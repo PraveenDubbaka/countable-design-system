@@ -57,6 +57,25 @@ interface Data580 {
 
 // ── Reference data ─────────────────────────────────────────────────────────────
 
+const REVENUE_STREAMS = [
+ "Product sales",
+ "Service revenue",
+ "Contract revenue",
+ "Subscription / recurring revenue",
+ "Vessel charter revenue",
+ "Freight & shipping revenue",
+ "Demurrage & ancillary revenue",
+ "Rental / lease income",
+ "Consulting fees",
+ "Licensing & royalties",
+ "Interest income",
+ "Dividend income",
+ "Grant income",
+ "Commission income",
+ "Construction contract revenue",
+ "Other revenue",
+];
+
 const RATINGS: Rating[] = ["Low", "Moderate", "High"];
 const ASSERTION_OPTIONS: { value: Assertion; label: string }[] = [
  { value: "C", label: "C — Completeness" },
@@ -328,10 +347,10 @@ export function Audit580Worksheet() {
  <tr key={s.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
- <Input disabled={locked} value={s.name}
- onChange={e => patchStream(s.id, { name: e.target.value })}
- placeholder="e.g. Freight services"
- className="h-8 text-xs" />
+ <Select value={s.name} onValueChange={v => patchStream(s.id, { name: v })} disabled={locked}>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select stream…" /></SelectTrigger>
+ <SelectContent>{REVENUE_STREAMS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+ </Select>
  </td>
  <td className="px-3 py-2">
  <Textarea disabled={locked} value={s.description}
