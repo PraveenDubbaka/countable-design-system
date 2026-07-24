@@ -291,8 +291,8 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
  {isA6 && (
  <div className="mt-2 space-y-1.5">
- <div className="flex items-center gap-2 text-sm">
- <span className="text-muted-foreground shrink-0">Approval of prior period's audited F/S. Date:</span>
+ <div className="flex flex-col gap-1 text-sm">
+ <span className="text-muted-foreground">Approval of prior period's audited F/S. Date:</span>
  <Input
  disabled={locked}
  type="date"
@@ -301,8 +301,8 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  className="h-7 text-sm bg-background w-36"
  />
  </div>
- <div className="flex items-center gap-2 text-sm">
- <span className="text-muted-foreground shrink-0">The firm's appointment as auditors. Date:</span>
+ <div className="flex flex-col gap-1 text-sm">
+ <span className="text-muted-foreground">The firm's appointment as auditors. Date:</span>
  <Input
  disabled={locked}
  type="date"
