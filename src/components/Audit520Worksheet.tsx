@@ -32,7 +32,7 @@ interface PartBRow {
  wpRefSource: RefDoc[];
  rmmIdentified: string;
  scotabd: string;
- assertions: string;
+ assertions: string[];
  irFactors: string;
  fraudRisk: YN;
  irLikelihood: HML;
@@ -55,6 +55,30 @@ interface Data520 {
 const uid = () => Math.random().toString(36).slice(2, 9);
 const HML_OPTIONS: HML[] = ["H", "M", "L"];
 const YN_OPTIONS: YN[] = ["Y", "N"];
+const ASSERTION_OPTIONS = ["C", "AV", "E", "P"] as const;
+
+const SCOTABD_OPTIONS = [
+ "Cash and cash equivalents",
+ "Accounts receivable",
+ "Inventories",
+ "Short-term investments",
+ "Loans and notes receivable",
+ "Other current assets",
+ "Property, plant and equipment",
+ "Long-term investments",
+ "Accounts payable",
+ "Taxes payable",
+ "Short-term debt",
+ "Other long-term liabilities",
+ "Long-term debt",
+ "Equity",
+ "Revenue",
+ "Cost of sales",
+ "Expenses",
+ "Other expenses (income)",
+ "Related-party transactions",
+ "Disclosures",
+];
 const formatRefList = (refs: RefDoc[]) => refs.map(r => r.name).join(", ") || "—";
 
 function newPartARow(): PartARow {
@@ -62,7 +86,7 @@ function newPartARow(): PartARow {
 }
 
 function newPartBRow(): PartBRow {
- return { id: uid(), wpRefSource: [], rmmIdentified: "", scotabd: "", assertions: "", irFactors: "", fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "" };
+ return { id: uid(), wpRefSource: [], rmmIdentified: "", scotabd: "", assertions: [], irFactors: "", fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "" };
 }
 
 function buildDefault(): Data520 {
@@ -84,7 +108,7 @@ function buildDefault(): Data520 {
  wpRefSource: [{ name: "510-5" }],
  rmmIdentified: "Inventory value could be overstated due to inadequate obsolescence provision",
  scotabd: "Inventory",
- assertions: "AV",
+ assertions: ["AV"],
  irFactors: "Inventory provision for obsolescence is subject to moderate estimate uncertainty and complexity. Management judgment is required in assessing slow-moving and obsolete stock. No automated controls over provision calculation.",
  fraudRisk: "N",
  irLikelihood: "M",
@@ -98,7 +122,7 @@ function buildDefault(): Data520 {
  wpRefSource: [{ name: "510-3" }],
  rmmIdentified: "Revenue recognition may be misstated due to incorrect cut-off of vessel charter agreements at year-end",
  scotabd: "Revenue",
- assertions: "C, AV",
+ assertions: ["C", "AV"],
  irFactors: "Charter revenue is recognised over the contract period; cut-off risk exists at year-end for contracts spanning the period boundary. Low complexity but requires consistent application of revenue recognition policy.",
  fraudRisk: "N",
  irLikelihood: "M",
@@ -112,7 +136,7 @@ function buildDefault(): Data520 {
  wpRefSource: [{ name: "515-5" }],
  rmmIdentified: "Related-party transactions may be incomplete or not disclosed on arm's length terms",
  scotabd: "Related party disclosures",
- assertions: "C, AV",
+ assertions: ["C", "AV"],
  irFactors: "Owner-managed entity — risk of undisclosed related-party transactions or non-arm's-length pricing. Moderate subjectivity in management's determination of market rates. Significant management involvement increases susceptibility to management bias.",
  fraudRisk: "Y",
  irLikelihood: "M",
@@ -192,6 +216,13 @@ export function Audit520Worksheet() {
  function updatePartB(id: string, field: keyof PartBRow, val: string) {
  setData(d => ({...d, partBRows: d.partBRows.map(r => r.id === id ? {...r, [field]: val } : r) }));
  }
+ function toggleAssertionB(id: string, a: string) {
+ setData(d => ({...d, partBRows: d.partBRows.map(r => {
+ if (r.id !== id) return r;
+ const has = r.assertions.includes(a);
+ return {...r, assertions: has ? r.assertions.filter(x => x !== a) : [...r.assertions, a] };
+ }) }));
+ }
 
  return (
  <div className="flex flex-col h-full">
@@ -231,12 +262,12 @@ export function Audit520Worksheet() {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-24">Risk Source<br /><span className="font-normal normal-case text-muted-foreground">(W/P Ref.)</span></th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">RMM Identified</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-20">Fraud Risk<br /><span className="font-normal normal-case text-muted-foreground">(Y/N)</span></th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">Assess RMM<br /><span className="font-normal normal-case text-muted-foreground">(H/M/L)</span></th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Overall Audit Response</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">W/P Ref.</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-24">Risk Source<br /><span className="font-normal normal-case text-muted-foreground">(W/P Ref.)</span></th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">RMM Identified</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-20">Fraud Risk<br /><span className="font-normal normal-case text-muted-foreground">(Y/N)</span></th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">Assess RMM<br /><span className="font-normal normal-case text-muted-foreground">(H/M/L)</span></th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Overall Audit Response</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-20">W/P Ref.</th>
  <th className="w-8" />
  </tr>
  </thead>
@@ -307,17 +338,17 @@ export function Audit520Worksheet() {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">Risk Source<br /><span className="font-normal normal-case text-muted-foreground">(W/P Ref.)</span></th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[180px]">RMM Identified</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[120px]">SCOTABD<br /><span className="font-normal normal-case text-muted-foreground">Impacted</span></th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-20">F/S<br />Assertions</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider min-w-[200px]">IR Factors &amp; Susceptibility</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-16">Fraud<br />Risk</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-16">IR<br />Likelihood</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-16">IR<br />Magnitude</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-16">Assess<br />IR</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-20">Significant<br />Risk</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">Substantive<br />Sufficient</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-20">Risk Source<br /><span className="font-normal normal-case text-muted-foreground">(W/P Ref.)</span></th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[180px]">RMM Identified</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[120px]">SCOTABD<br /><span className="font-normal normal-case text-muted-foreground">Impacted</span></th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-20">F/S<br />Assertions</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[200px]">IR Factors &amp; Susceptibility</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-16">Fraud<br />Risk</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-16">IR<br />Likelihood</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-16">IR<br />Magnitude</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-16">Assess<br />IR</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-20">Significant<br />Risk</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">Substantive<br />Sufficient</th>
  <th className="w-8" />
  </tr>
  </thead>
@@ -332,11 +363,24 @@ export function Audit520Worksheet() {
  <td className="px-4 py-2.5 align-top min-w-[180px]">
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
  </td>
- <td className="px-4 py-2.5 align-top min-w-[120px]">
- <Input disabled={locked} value={row.scotabd} onChange={e => updatePartB(row.id, "scotabd", e.target.value)} placeholder="e.g. Revenue" className="h-8 text-sm" />
+ <td className="px-4 py-2.5 align-top min-w-[160px]">
+ <Select value={row.scotabd} onValueChange={v => updatePartB(row.id, "scotabd", v)} disabled={locked}>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectContent>{SCOTABD_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+ </Select>
  </td>
  <td className="px-4 py-2.5 align-top text-center w-20">
- <Input disabled={locked} value={row.assertions} onChange={e => updatePartB(row.id, "assertions", e.target.value)} placeholder="AV…" className="h-8 text-sm text-center" />
+ <div className="flex flex-wrap gap-1 justify-center">
+ {ASSERTION_OPTIONS.map(a => {
+ const active = (Array.isArray(row.assertions) ? row.assertions : []).includes(a);
+ return (
+ <button key={a} type="button" disabled={locked} onClick={() => toggleAssertionB(row.id, a)}
+ className={`px-2 py-0.5 rounded-md border text-[11px] font-mono transition-colors ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted"}`}>
+ {a}
+ </button>
+ );
+ })}
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[200px]">
  <AttributedComment value={row.irFactors} onChange={v => updatePartB(row.id, "irFactors", v)} storageKey={`520-${engagementId ?? "def"}-pB-ir-${row.id}`} placeholder="Document how IR factors affect susceptibility to misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
