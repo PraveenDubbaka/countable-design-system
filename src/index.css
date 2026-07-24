@@ -1986,7 +1986,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media print {
-  body > *:not(#fs-print-target) { display: none !important; }
+  body > *:not(#fs-print-target):not(#worksheet-print-area) { display: none !important; }
   #fs-print-target { display: block !important; }
   #fs-print-target * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #worksheet-print-area {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 9999;
+    overflow: visible;
+  }
+  #worksheet-print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #worksheet-print-area button,
+  #worksheet-print-area [role="button"],
+  #worksheet-print-area .no-print { display: none !important; }
+  #worksheet-print-area table { border-collapse: collapse; width: 100%; }
+  #worksheet-print-area th,
+  #worksheet-print-area td { border: 1px solid #d1d5db; padding: 5px 8px; }
+  #worksheet-print-area select { border: none; appearance: none; -webkit-appearance: none; }
+  #worksheet-print-area textarea,
+  #worksheet-print-area input { border: none; background: none; }
 }

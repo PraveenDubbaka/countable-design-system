@@ -69,6 +69,7 @@ import { Assignee, Checklist, Question } from "@/types/checklist";
 import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
 import { AssignmentDialog } from "@/components/AssignmentDialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { exportWorksheetAsPDF, exportWorksheetAsWord } from "@/lib/worksheetExport";
 import { openLukaWithConfig } from "@/lib/lukaOpenStore";
 import { clearPBCNotifications, getPBCNotificationCount } from "@/lib/pbcRequestStore";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
@@ -705,6 +706,25 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
  'aud-rp-670': 'Use of Journal Entries',
  'aud-rp-680': 'ASPE Supplementary Audit Procedures',
 };
+
+// All custom-component worksheet pages (not checklist-based) that support PDF/Word export
+const WORKSHEET_KEYS = new Set([
+ 'aud-asm', 'aud-us-asm',
+ 'aud-plan', 'aud-us-plan',
+ 'aud-scope', 'aud-us-scope',
+ 'aud-pap', 'aud-us-pap',
+ 'aud-sae', 'aud-us-sae',
+ 'aud-mat', 'aud-us-mat',
+ 'aud-tt', 'aud-us-tt',
+ 'aud-iar', 'aud-us-iar',
+ 'aud-form-440', 'aud-us-form-440',
+ 'aud-ra-pap501bc', 'aud-ra-pap501',
+ 'aud-ra-507', 'aud-ra-510', 'aud-ra-511', 'aud-ra-513', 'aud-ra-514', 'aud-ra-515',
+ 'aud-ra-520', 'aud-ra-535', 'aud-ra-540', 'aud-ra-550', 'aud-ra-551',
+ 'aud-ra-575', 'aud-ra-580', 'aud-ra-590',
+ 'aud-rp-605', 'aud-rp-610', 'aud-rp-625', 'aud-rp-630', 'aud-rp-635',
+ 'aud-rp-645', 'aud-rp-650', 'aud-rp-655', 'aud-rp-666', 'aud-rp-670', 'aud-rp-680',
+]);
 
 const FS_PAGE_KEYS = new Set([
  'aud-fs-cover', 'aud-fs-toc', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
@@ -2290,6 +2310,25 @@ export default function EngagementDetail() {
  </Button>
  </>
  )}
+ {checklistKey && WORKSHEET_KEYS.has(checklistKey) && (
+ <DropdownMenu>
+   <DropdownMenuTrigger asChild>
+     <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
+   </DropdownMenuTrigger>
+   <DropdownMenuContent align="end" className="min-w-max">
+     <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group"
+       onClick={() => exportWorksheetAsPDF(CUSTOM_WORKSHEET_TITLES[checklistKey] ?? 'Worksheet')}>
+       <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+       <span>Export as PDF</span>
+     </DropdownMenuItem>
+     <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group"
+       onClick={() => exportWorksheetAsWord(CUSTOM_WORKSHEET_TITLES[checklistKey] ?? 'Worksheet')}>
+       <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+       <span>Export as Word</span>
+     </DropdownMenuItem>
+   </DropdownMenuContent>
+ </DropdownMenu>
+ )}
  {checklistKey && FS_PAGE_KEYS.has(checklistKey) ? (
  <>
  {isFSEditing ? (
@@ -2463,7 +2502,7 @@ export default function EngagementDetail() {
  </div>
 
  {/* Content Area */}
- <div className="flex-1 overflow-auto bg-card">
+ <div className="flex-1 overflow-auto bg-card" id={checklistKey && WORKSHEET_KEYS.has(checklistKey) ? 'worksheet-export-content' : undefined}>
  {/* Auto-fill progress indicator */}
  {isAutoFilling && (
  <div className="mx-4 mt-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 flex items-center gap-3">
