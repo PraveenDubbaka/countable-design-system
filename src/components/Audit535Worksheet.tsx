@@ -295,7 +295,7 @@ export function Audit535Worksheet() {
  <p className="text-[11px] text-muted-foreground mt-0.5">Document and evaluate each significant business process. Add a row per cycle.</p>
  </div>
  {!locked && (
- <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={addScotabd}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addScotabd}>
  <Plus className="h-3.5 w-3.5" /> Add cycle
  </Button>
  )}

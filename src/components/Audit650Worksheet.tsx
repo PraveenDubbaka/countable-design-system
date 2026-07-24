@@ -247,7 +247,7 @@ export function Audit650Worksheet() {
  {/* Identified events register */}
  <WorksheetSection
  title="Identified subsequent events register"
- right={<Button size="sm" variant="outline" className="h-7 text-xs" disabled={locked} onClick={() => setData(d => ({...d, events: [...d.events, newEvent()] }))}><Plus className="h-3 w-3 mr-1" /> Add event</Button>}
+ right={<Button size="sm" variant="secondary" className="h-7 text-xs gap-1" disabled={locked} onClick={() => setData(d => ({...d, events: [...d.events, newEvent()] }))}><Plus className="h-3 w-3 mr-1" /> Add event</Button>}
  bodyClassName="p-0"
  >
  {data.events.length === 0 ? (

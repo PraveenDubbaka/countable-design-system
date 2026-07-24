@@ -164,7 +164,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  {showAdd && setter && (
  <tr className="border-b border-border/30">
  <td colSpan={6} className="px-4 py-2">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => addStaff(setter)}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => addStaff(setter)}>
  <Plus className="h-3.5 w-3.5" />Add Row
  </Button>
  </td>
@@ -204,7 +204,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  {showAdd && (
  <tr className="border-b border-border/30">
  <td colSpan={2} className="px-4 py-2">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setter(prev => [...prev, makeTime(`t-${Date.now()}`, '')])}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setter(prev => [...prev, makeTime(`t-${Date.now()}`, '')])}>
  <Plus className="h-3.5 w-3.5" />Add Row
  </Button>
  </td>

@@ -746,7 +746,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  </table>
  {!locked && (
  <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addApp}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addApp}>
  <Plus className="h-3.5 w-3.5" /> Add application
  </Button>
  </div>

@@ -110,7 +110,7 @@ export function Audit630Worksheet() {
  <div className="px-6 py-3.5 border-b border-border flex items-center justify-between">
  <h3 className="text-sm font-semibold">Confirmation register</h3>
  {!locked && (
- <Button size="sm" variant="outline" className="h-8 text-sm gap-1.5" onClick={() => setData(d => ({...d, rows: [...d.rows, blankRow()] }))}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1.5" onClick={() => setData(d => ({...d, rows: [...d.rows, blankRow()] }))}>
  <Plus className="h-3.5 w-3.5" /> Add area
  </Button>
  )}

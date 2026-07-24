@@ -200,7 +200,7 @@ export function Audit670Worksheet() {
 
  <WorksheetSection
  title="Selected journal entries — testing register"
- right={<Button size="sm" variant="outline" className="h-7 text-xs" disabled={locked} onClick={() => setData(d => ({...d, entries: [...d.entries, newEntry()] }))}><Plus className="h-3 w-3 mr-1" />Add JE</Button>}
+ right={<Button size="sm" variant="secondary" className="h-7 text-xs gap-1" disabled={locked} onClick={() => setData(d => ({...d, entries: [...d.entries, newEntry()] }))}><Plus className="h-3 w-3 mr-1" />Add JE</Button>}
  bodyClassName="p-0"
  >
  {data.entries.length === 0 ? (

@@ -825,7 +825,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  </table>
  </div>
  <div className="px-6 py-3 border-t border-border space-y-2">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>
  <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
  If there are more than two F/S areas or disclosures that require an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
@@ -871,7 +871,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  </table>
  </div>
  <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setSpecMatRows(p => [...p, {id: uid(), description:"", amount:"", reasoning:"", wpRef:[], pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setSpecMatRows(p => [...p, {id: uid(), description:"", amount:"", reasoning:"", wpRef:[], pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>
  </div>
  </div>
 

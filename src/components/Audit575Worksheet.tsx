@@ -202,7 +202,7 @@ export function Audit575Worksheet() {
  </p>
  </div>
  {!locked && (
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addRow}>
  <Plus className="h-3.5 w-3.5" /> Add deficiency
  </Button>
  )}

@@ -196,7 +196,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Interviewees</p>
           {!locked && (
-            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onAdd}>
+            <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={onAdd}>
               <Plus className="h-3.5 w-3.5" />Add row
             </Button>
           )}

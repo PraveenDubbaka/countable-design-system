@@ -613,7 +613,7 @@ export function Audit520Worksheet() {
  </div>
  {!locked && (
  <div className="border-t border-border px-4 py-3">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setData(d => ({...d, partARows: [...d.partARows, newPartARow()] }))}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setData(d => ({...d, partARows: [...d.partARows, newPartARow()] }))}>
  <Plus className="h-3 w-3" /> Add Risk
  </Button>
  </div>
@@ -855,7 +855,7 @@ export function Audit520Worksheet() {
  {!locked && (
  <div className="border-t border-border px-4 py-3 flex items-center gap-2">
  <div className="relative">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setShowLibraryPicker(v => !v)}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setShowLibraryPicker(v => !v)}>
  <BookOpen className="h-3 w-3" /> From Library
  </Button>
  {showLibraryPicker && (
@@ -875,7 +875,7 @@ export function Audit520Worksheet() {
  </div>
  )}
  </div>
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setData(d => ({...d, partBRows: [...d.partBRows, newPartBRow()] }))}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setData(d => ({...d, partBRows: [...d.partBRows, newPartBRow()] }))}>
  <Plus className="h-3 w-3" /> Add manually
  </Button>
  </div>

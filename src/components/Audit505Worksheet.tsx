@@ -384,7 +384,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  {!locked && (
  <Button
  size="sm"
- variant="outline"
+ variant="secondary"
  className="h-7 text-xs gap-1"
  onClick={() => addIv(sec.id)}
  >

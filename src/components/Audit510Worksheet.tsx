@@ -477,7 +477,7 @@ function TableCard({ title, onAdd, children }: {
  </div>
  <div className="overflow-x-auto">{children}</div>
  <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onAdd}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={onAdd}>
  <Plus className="h-3.5 w-3.5" />
  Add Row
  </Button>

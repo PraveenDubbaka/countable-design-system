@@ -240,7 +240,7 @@ export function Audit550Worksheet() {
  <p className="text-[11px] text-muted-foreground mt-0.5">{cat.hint}</p>
  </div>
  {!locked && (
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1 shrink-0" onClick={() => addRisk(cat.key)}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1 shrink-0" onClick={() => addRisk(cat.key)}>
  <Plus className="h-3.5 w-3.5" /> Add risk
  </Button>
  )}
@@ -448,7 +448,7 @@ export function Audit550Worksheet() {
 
  {!locked && (
  <div>
- <Button size="sm" variant="ghost" className="h-7 text-xs gap-1"
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1"
  onClick={() => addControl(cat.key, risk.id)}>
  <Plus className="h-3.5 w-3.5" /> Add control
  </Button>

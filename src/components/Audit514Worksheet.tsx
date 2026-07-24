@@ -318,7 +318,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  </div>
  {!locked && (
  <div className="border-t border-border px-4 py-3">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addRow}>
  <Plus className="h-3 w-3" /> Add Estimate
  </Button>
  </div>

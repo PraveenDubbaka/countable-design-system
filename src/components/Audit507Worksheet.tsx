@@ -482,7 +482,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-4 py-2.5 border-t border-border">
  <Button
  size="sm"
- variant="outline"
+ variant="secondary"
  onClick={addPartCRow}
  className="h-7 text-xs gap-1"
  >

@@ -225,7 +225,7 @@ export function Audit610Worksheet() {
  <div className="rounded-lg border border-border bg-card overflow-hidden">
  <div className="px-4 py-3 border-b border-border bg-muted/30 flex items-center justify-between">
  <h3 className="text-sm font-semibold text-foreground">3 · Test results &amp; projected misstatement</h3>
- {!locked && <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setData(d => ({...d, results: [...d.results, newRow()] }))}><Plus className="h-3.5 w-3.5" /> Add item</Button>}
+ {!locked && <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setData(d => ({...d, results: [...d.results, newRow()] }))}><Plus className="h-3.5 w-3.5" /> Add item</Button>}
  </div>
  <div className="p-4 grid grid-cols-1 gap-4">
  <div><Label>Documentation of items selected (W/P cross-reference)</Label><Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({...d, documentation: e.target.value }))} className="text-sm min-h-[56px]" /></div>

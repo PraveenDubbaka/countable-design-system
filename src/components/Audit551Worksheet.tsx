@@ -276,7 +276,7 @@ export function Audit551Worksheet() {
  </p>
  </div>
  {!locked && (
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1"
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1"
  onClick={() => addGitcRow(target, sec.key)}>
  <Plus className="h-3.5 w-3.5" /> Add GITC
  </Button>
@@ -453,7 +453,7 @@ export function Audit551Worksheet() {
  ))}
  </SelectContent>
  </Select>
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => addRafuit()}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => addRafuit()}>
  <Plus className="h-3.5 w-3.5" /> Add RAFUIT
  </Button>
  </div>
@@ -561,7 +561,7 @@ export function Audit551Worksheet() {
 
  {!locked && (
  <div>
- <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={addAppSheet}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addAppSheet}>
  <Plus className="h-3.5 w-3.5" /> Add application-specific GITC sheet
  </Button>
  </div>

@@ -194,7 +194,7 @@ export function Audit666Worksheet() {
 
  <WorksheetSection
  title="Related parties & transactions register"
- right={<Button size="sm" variant="outline" className="h-7 text-xs" disabled={locked} onClick={addParty}><Plus className="h-3 w-3 mr-1" /> Add party / transaction</Button>}
+ right={<Button size="sm" variant="secondary" className="h-7 text-xs gap-1" disabled={locked} onClick={addParty}><Plus className="h-3 w-3 mr-1" /> Add party / transaction</Button>}
  bodyClassName="p-0"
  >
  {data.parties.length === 0 ? (

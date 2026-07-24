@@ -172,7 +172,7 @@ export function Audit655Worksheet() {
  return (
  <WorksheetSection
  title={title}
- right={<Button size="sm" variant="outline" className="h-7 text-xs" disabled={locked} onClick={() => addRow(which)}><Plus className="h-3 w-3 mr-1" />Add line</Button>}
+ right={<Button size="sm" variant="secondary" className="h-7 text-xs gap-1" disabled={locked} onClick={() => addRow(which)}><Plus className="h-3 w-3 mr-1" />Add line</Button>}
  bodyClassName="p-0"
  >
  <div className="overflow-x-auto">

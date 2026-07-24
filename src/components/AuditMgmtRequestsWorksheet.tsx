@@ -162,7 +162,7 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
  </table>
  </div>
  <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={addRow}>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addRow}>
  <Plus className="h-3.5 w-3.5" />Add Request
  </Button>
  </div>
