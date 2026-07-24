@@ -2336,8 +2336,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-rp-650", code: "650", label: "Subsequent Events", icon: "worksheet", route: "checklist/aud-rp-650" },
  { id: "aud-rp-655", code: "655", label: "Final Analytics", icon: "worksheet", route: "checklist/aud-rp-655" },
  { id: "aud-so-aim", code: "AIM", label: "Misstatements", icon: "checklist", route: "checklist/aud-so-aim" },
- { id: "aud-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-so-far" },
- { id: "aud-subseq", code: "SE", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-subseq" },
  { id: "aud-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-wgc-final" },
  { id: "aud-mr", code: "MR", label: "Management Representation Letter", icon: "checklist", route: "checklist/aud-mr" },
  { id: "aud-tcwg-fin", code: "TCWG", label: "Governance Comms", icon: "letter", route: "checklist/aud-tcwg-fin" },
