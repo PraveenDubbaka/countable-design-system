@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -507,6 +508,8 @@ export function Audit550Worksheet() {
  placeholder="Additional observations, follow-ups, communication to TCWG, or cross-references…"
  className="min-h-[90px] text-sm resize-none rounded-[10px]" />
  </div>
+
+ <WorksheetSignOff worksheetKey="audit-550" engagementId={engagementId} />
 
  {locked ? (
  <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">

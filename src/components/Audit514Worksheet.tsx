@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -149,6 +151,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  return () => clearTimeout(t);
  }, [data, storageKey]);
 
+ const { engagementId = "default" } = useParams<{ engagementId: string }>();
  const locked = data.concluded;
 
  function updateRow(id: string, field: keyof EstimateRow, val: string) {
@@ -337,6 +340,8 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  />
  </div>
  </SectionCard>
+
+ <WorksheetSignOff worksheetKey="audit-514" engagementId={engagementId} />
 
  {/* ── Conclude button ───────────────────────────────────────────── */}
  <div className="flex items-center justify-end gap-3">

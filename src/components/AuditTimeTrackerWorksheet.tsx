@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRad
 import { useParams } from "react-router-dom";
 import { useTimeEntries, RoleKey, ROLE_LABELS, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -116,6 +117,11 @@ export function AuditTimeTrackerWorksheet() {
  const budgetKey = `audit-time-budget-${engagementId}`;
 
  const { entries, addEntry, removeEntry, updateEntry, hrsForRole, hrsForSection } = useTimeEntries(engagementId);
+
+ const concludeKey = `audit-450-concluded-${engagementId}`;
+ const [concluded, setConcluded] = useState(() => readJsonFromLocalStorage<boolean>(concludeKey, false));
+ const [concludedOn, setConcludedOn] = useState(() => readJsonFromLocalStorage<string>(`${concludeKey}-on`, ""));
+ const locked = concluded;
 
  // ── Inline edit state for Time Log rows ───────────────────────────────────
  const [edits, setEdits] = useState<Record<string, Partial<TimeEntry>>>({});
@@ -857,6 +863,26 @@ export function AuditTimeTrackerWorksheet() {
  </table>
  </div>
  </div>
+
+ <WorksheetSignOff worksheetKey="audit-450" engagementId={engagementId} />
+
+ {locked ? (
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
+ Concluded on {concludedOn}
+ </div>
+ ) : (
+ <div className="flex justify-end">
+ <Button size="sm" onClick={() => {
+ const today = new Date().toISOString().slice(0, 10);
+ setConcluded(true);
+ setConcludedOn(today);
+ writeJsonToLocalStorage(concludeKey, true);
+ writeJsonToLocalStorage(`${concludeKey}-on`, today);
+ }}>
+ Conclude Worksheet
+ </Button>
+ </div>
+ )}
 
  </div>
  </div>

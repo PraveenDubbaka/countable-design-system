@@ -9,6 +9,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -564,6 +565,8 @@ export function Audit580Worksheet() {
  placeholder="Additional observations, cross-references to Forms 520 / 705, follow-ups…"
  className="min-h-[90px] text-sm resize-none rounded-[10px]" />
  </div>
+
+ <WorksheetSignOff worksheetKey="audit-580" engagementId={engagementId} />
 
  {locked ? (
  <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">

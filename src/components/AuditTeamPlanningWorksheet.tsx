@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AttributedComment } from "@/components/ui/AttributedComment";
@@ -8,6 +9,7 @@ import { Info, Plus, Trash2, Sparkles } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { toast } from "sonner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -162,6 +164,7 @@ function buildDefault(): Data436 {
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean }) {
+ const { engagementId = "default" } = useParams<{ engagementId: string }>();
  const storageKey = `audit-436-data-${isUS ? 'us' : 'ca'}`;
 
  const [data, setData] = useState<Data436>(() => {
@@ -182,6 +185,11 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  const t = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 600);
  return () => clearTimeout(t);
  }, [data, storageKey]);
+
+ const concludeKey = `audit-436-concluded-${engagementId}-${isUS ? 'us' : 'ca'}`;
+ const [concluded, setConcluded] = useState(() => readJsonFromLocalStorage<boolean>(concludeKey, false));
+ const [concludedOn, setConcludedOn] = useState(() => readJsonFromLocalStorage<string>(`${concludeKey}-on`, ""));
+ const locked = concluded;
 
  const [importOpen, setImportOpen] = useState(false);
 
@@ -454,6 +462,26 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  </table>
  </div>
  </div>
+
+ <WorksheetSignOff worksheetKey="audit-436" engagementId={engagementId} />
+
+ {locked ? (
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
+ Concluded on {concludedOn}
+ </div>
+ ) : (
+ <div className="flex justify-end">
+ <Button size="sm" onClick={() => {
+ const today = new Date().toISOString().slice(0, 10);
+ setConcluded(true);
+ setConcludedOn(today);
+ writeJsonToLocalStorage(concludeKey, true);
+ writeJsonToLocalStorage(`${concludeKey}-on`, today);
+ }}>
+ Conclude Worksheet
+ </Button>
+ </div>
+ )}
 
  </div>
  </div>

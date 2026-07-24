@@ -10,6 +10,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
 import { buildAutoFillRows, mergeAutoFill } from "@/lib/audit520AutoFill";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -412,6 +413,8 @@ export function Audit520Worksheet() {
  />
  </div>
  </SectionCard>
+
+ <WorksheetSignOff worksheetKey="audit-520" engagementId={engagementId} />
 
  {/* ── Conclude button ─────────────────────────────────────────── */}
  <div className="flex items-center justify-end gap-3">
