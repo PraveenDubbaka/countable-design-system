@@ -429,6 +429,25 @@ export function Audit520Worksheet() {
  }
 
  const [showLibraryPicker, setShowLibraryPicker] = useState(false);
+ const [editingProcsRowId, setEditingProcsRowId] = useState<string | null>(null);
+ const [pickerForRowId, setPickerForRowId] = useState<string | null>(null);
+
+ function loadLibraryForRow(rowId: string, entry: RiskLibraryEntry) {
+ setData(d => ({...d, partBRows: d.partBRows.map(r =>
+ r.id !== rowId ? r : {...r, procedures: [...entry.procedures], scotabd: r.scotabd || entry.scotabd, assertions: r.assertions.length ? r.assertions : entry.assertions }
+ ) }));
+ setPickerForRowId(null);
+ setEditingProcsRowId(null);
+ }
+
+ function bestLibraryMatch(scotabd: string): RiskLibraryEntry | null {
+ if (!scotabd) return null;
+ const norm = scotabd.toLowerCase().trim();
+ return RISK_LIBRARY.find(e => {
+ const en = e.scotabd.toLowerCase();
+ return en === norm || en.split(" ")[0] === norm.split(" ")[0];
+ }) ?? null;
+ }
 
  function addFromLibrary(entry: RiskLibraryEntry) {
  const newRow: PartBRow = { id: uid(), wpRefSource: [], rmmIdentified: entry.name, scotabd: entry.scotabd, balanceValue: "", assertions: entry.assertions, irFactors: entry.irFactors, fraudRisk: "", irLikelihood: "", irMagnitude: "", inherentRisk: "", significantRisk: "", substantiveSufficient: "", procedures: [...entry.procedures] };
@@ -591,33 +610,120 @@ export function Audit520Worksheet() {
  {data.partBRows.map(row => (
  <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50")}>
  <td className="px-4 py-2.5 align-top min-w-[260px]">
+ {(() => {
+ const procs = row.procedures ?? [];
+ const isEditing = editingProcsRowId === row.id;
+ const isPicking = pickerForRowId === row.id;
+ const suggestion = bestLibraryMatch(row.scotabd);
+
+ if (procs.length === 0 && !isEditing) {
+ return (
  <div className="space-y-1.5">
- {(row.procedures ?? []).map((proc, i) => (
+ <span className="text-xs text-muted-foreground italic">No procedures documented</span>
+ {!locked && (
+ <div className="flex flex-wrap items-center gap-2">
+ <button onClick={() => setPickerForRowId(isPicking ? null : row.id)} className="text-xs text-primary hover:underline flex items-center gap-0.5">
+ <BookOpen className="h-3 w-3" /> Load from library
+ </button>
+ <span className="text-muted-foreground text-xs">·</span>
+ <button onClick={() => { addProcedure(row.id); setEditingProcsRowId(row.id); }} className="text-xs text-primary hover:underline flex items-center gap-0.5">
+ <Plus className="h-3 w-3" /> Add manually
+ </button>
+ </div>
+ )}
+ {suggestion && !locked && !isPicking && (
+ <div className="flex items-center gap-1.5 mt-0.5 px-2 py-1.5 rounded-md bg-primary/[0.06] border border-primary/20">
+ <span className="text-xs text-muted-foreground">Suggested:</span>
+ <button onClick={() => loadLibraryForRow(row.id, suggestion)} className="text-xs text-primary hover:underline text-left leading-snug">
+ {suggestion.name}
+ </button>
+ </div>
+ )}
+ {isPicking && (
+ <div className="mt-0.5 border border-border rounded-md overflow-hidden bg-popover shadow-lg">
+ <div className="px-2 py-1.5 border-b border-border bg-muted/30 flex items-center justify-between">
+ <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Risk Library</span>
+ <button onClick={() => setPickerForRowId(null)} className="text-muted-foreground hover:text-foreground"><X className="h-3 w-3" /></button>
+ </div>
+ <div className="max-h-48 overflow-y-auto divide-y divide-border/50">
+ {RISK_LIBRARY.map(entry => (
+ <button key={entry.id} onClick={() => loadLibraryForRow(row.id, entry)} className="w-full text-left px-2 py-1.5 hover:bg-muted transition-colors">
+ <div className="text-xs font-medium text-foreground leading-snug">{entry.name}</div>
+ <div className="text-[11px] text-muted-foreground">{entry.scotabd} · {entry.assertions.join(", ")}</div>
+ </button>
+ ))}
+ </div>
+ </div>
+ )}
+ </div>
+ );
+ }
+
+ if (isEditing) {
+ return (
+ <div className="space-y-1">
+ {procs.map((proc, i) => (
  <div key={i} className="flex items-start gap-1 group">
- <span className="text-muted-foreground text-sm w-5 shrink-0 pt-1">{i + 1}.</span>
- <Textarea
+ <span className="text-muted-foreground text-xs w-5 shrink-0 pt-2 select-none">{i + 1}.</span>
+ <textarea
  value={proc}
  onChange={e => updateProcedure(row.id, i, e.target.value)}
- disabled={locked}
- rows={2}
- className="flex-1 text-sm min-h-[40px] resize-none bg-background"
+ rows={1}
+ className="flex-1 text-sm py-1.5 px-0 bg-transparent border-0 border-b border-border focus:outline-none focus:border-primary resize-none leading-snug"
  />
- {!locked && (
- <button onClick={() => removeProcedure(row.id, i)} className="text-muted-foreground hover:text-destructive shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
- <X className="h-3.5 w-3.5" />
+ <button onClick={() => removeProcedure(row.id, i)} className="text-muted-foreground hover:text-destructive shrink-0 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+ <X className="h-3 w-3" />
  </button>
- )}
  </div>
  ))}
- {!locked && (
- <button onClick={() => addProcedure(row.id)} className="text-xs text-primary hover:text-primary/80 flex items-center gap-0.5 mt-0.5">
- <Plus className="h-3 w-3" /> Add procedure
+ <div className="flex items-center gap-3 pt-1 border-t border-border/40 mt-1">
+ <button onClick={() => addProcedure(row.id)} className="text-xs text-primary hover:underline flex items-center gap-0.5">
+ <Plus className="h-3 w-3" /> Add
  </button>
- )}
- {(row.procedures ?? []).length === 0 && locked && (
- <span className="text-xs text-muted-foreground italic">No procedures documented</span>
+ <button onClick={() => setPickerForRowId(isPicking ? null : row.id)} className="text-xs text-primary hover:underline flex items-center gap-0.5">
+ <BookOpen className="h-3 w-3" /> From library
+ </button>
+ <button onClick={() => { setEditingProcsRowId(null); setPickerForRowId(null); }} className="text-xs text-muted-foreground hover:text-foreground ml-auto border border-border rounded px-2 py-0.5">
+ Done
+ </button>
+ </div>
+ {isPicking && (
+ <div className="mt-1 border border-border rounded-md overflow-hidden bg-popover shadow-lg">
+ <div className="max-h-40 overflow-y-auto divide-y divide-border/50">
+ {RISK_LIBRARY.map(entry => (
+ <button key={entry.id} onClick={() => loadLibraryForRow(row.id, entry)} className="w-full text-left px-2 py-1.5 hover:bg-muted transition-colors">
+ <div className="text-xs font-medium text-foreground">{entry.name}</div>
+ <div className="text-[11px] text-muted-foreground">{entry.scotabd}</div>
+ </button>
+ ))}
+ </div>
+ </div>
  )}
  </div>
+ );
+ }
+
+ return (
+ <div>
+ <ol className="space-y-1.5">
+ {procs.slice(0, 4).map((proc, i) => (
+ <li key={i} className="flex items-start gap-1.5 text-sm">
+ <span className="text-muted-foreground text-xs shrink-0 w-5 pt-0.5 select-none">{i + 1}.</span>
+ <span className="text-foreground leading-snug line-clamp-2">{proc}</span>
+ </li>
+ ))}
+ </ol>
+ {procs.length > 4 && (
+ <p className="text-xs text-muted-foreground mt-1 pl-5">…and {procs.length - 4} more</p>
+ )}
+ {!locked && (
+ <button onClick={() => setEditingProcsRowId(row.id)} className="mt-2 text-xs text-primary hover:underline flex items-center gap-0.5 pl-5">
+ ✏ Edit procedures
+ </button>
+ )}
+ </div>
+ );
+ })()}
  </td>
  <td className="px-4 py-2.5 align-top w-28">
  <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
