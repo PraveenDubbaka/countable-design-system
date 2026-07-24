@@ -10,11 +10,11 @@ function fmtTs(iso: string) {
 
 export function ConcludedRow({ concludedOn, onReopen }: { concludedOn: string; onReopen?: () => void }) {
  return (
- <div className="flex items-center gap-3 py-1">
+ <div className="flex items-center justify-end gap-3 py-1">
  <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
  {CURRENT_USER.initials}
  </div>
- <div className="flex-1 min-w-0">
+ <div className="min-w-0 text-right">
  <p className="text-[11px] text-muted-foreground leading-tight">Concluded by</p>
  <p className="text-sm font-medium leading-tight">{CURRENT_USER.name}</p>
  <p className="text-[11px] text-muted-foreground leading-tight">{fmtTs(concludedOn)}</p>
