@@ -10,6 +10,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { cn } from "@/lib/utils";
+import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -593,36 +594,36 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  {/* Applications table */}
  <SectionCard title="B1. IT Applications — Infrastructure Overview">
  <div className="overflow-x-auto">
- <table className="w-full min-w-[860px] border-collapse">
+ <table className="w-full min-w-[1280px] border-collapse">
  <thead>
  <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
- <th className="px-4 py-2.5 text-center w-10">#</th>
- <th className="px-4 py-2.5 text-left">Application Name & Type</th>
- <th className="px-4 py-2.5 text-left">Network</th>
- <th className="px-4 py-2.5 text-left">Database</th>
- <th className="px-4 py-2.5 text-left">Operating System</th>
- <th className="px-4 py-2.5 text-left">Nature & Purpose</th>
- <th className="px-4 py-2.5 text-center w-32">Relevant to Audit?</th>
- <th className="w-8" />
+ <th className="px-4 py-2.5 text-center" style={{ width: 40 }}>#</th>
+ <th className="px-4 py-2.5 text-left" style={{ width: 280 }}>Application Name & Type</th>
+ <th className="px-4 py-2.5 text-left" style={{ width: 170 }}>Network</th>
+ <th className="px-4 py-2.5 text-left" style={{ width: 170 }}>Database</th>
+ <th className="px-4 py-2.5 text-left" style={{ width: 175 }}>Operating System</th>
+ <th className="px-4 py-2.5 text-left" style={{ width: 200 }}>Nature & Purpose</th>
+ <th className="px-4 py-2.5 text-center" style={{ width: 130 }}>Relevant to Audit?</th>
+ <th style={{ width: 32 }} />
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  {data.apps.map((app, i) => (
  <tr key={app.id} className="group hover:bg-muted/30 transition-colors align-top">
  <td className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">{app.num}</td>
- <td className="px-4 py-2">
- <Input disabled={locked} value={app.name} onChange={e => updateApp(i, { name: e.target.value })}
- placeholder="E.g., QuickBooks, SAP…" className="h-8 text-sm bg-background" />
+ <td className="px-4 py-2.5 space-y-1">
+ <Textarea disabled={locked} value={app.name} onChange={e => updateApp(i, { name: e.target.value })}
+ placeholder="E.g., QuickBooks, SAP…" className="min-h-[56px] text-sm bg-background resize-none" />
  <Input disabled={locked} value={app.appType} onChange={e => updateApp(i, { appType: e.target.value })}
- placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs bg-background text-muted-foreground mt-1" />
+ placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs bg-background text-muted-foreground" />
  </td>
  {(["network", "database", "os", "purpose"] as const).map(col => (
  <td key={col} className="px-4 py-2.5">
- <Input disabled={locked} value={app[col]} onChange={e => updateApp(i, { [col]: e.target.value })}
- placeholder="—" className="h-8 text-sm bg-background" />
+ <Textarea disabled={locked} value={app[col]} onChange={e => updateApp(i, { [col]: e.target.value })}
+ placeholder="—" className="min-h-[56px] text-sm bg-background resize-none" />
  </td>
  ))}
- <td className="px-4 py-2.5 w-32">
+ <td className="px-4 py-2.5">
  <Select value={app.relevant} onValueChange={v => updateApp(i, { relevant: v as YN })} disabled={locked}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
@@ -631,7 +632,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  </SelectContent>
  </Select>
  </td>
- <td className="px-2 py-2 text-center w-8">
+ <td className="px-2 py-2 text-center">
  {!locked && (
  <button onClick={() => deleteApp(i)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 transition-all">
  <Trash2 className="h-3 w-3 text-destructive" />
@@ -851,11 +852,6 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <p className="text-sm text-muted-foreground">
  Sufficient information has been obtained to understand the IT environment relevant to the preparation of the F/S.
  </p>
- {data.concluded && (
- <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
- Concluded on {data.concludedOn}
- </div>
- )}
  <Textarea
  disabled={locked}
  value={data.conclusion}
@@ -863,6 +859,16 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  placeholder="Document your overall conclusion on the IT environment and its impact on the audit approach…"
  className="min-h-[100px] text-sm resize-none bg-background"
  />
+ </div>
+ </SectionCard>
+
+ <WorksheetSignOff worksheetKey="audit-511" engagementId={engagementId ?? "default"} />
+
+ {locked ? (
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
+ Concluded on {data.concludedOn}
+ </div>
+ ) : (
  <div className="flex justify-end">
  <Button
  disabled={locked}
@@ -875,11 +881,10 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  });
  }}
  >
- Conclude worksheet
+ Conclude Worksheet
  </Button>
  </div>
- </div>
- </SectionCard>
+ )}
 
  </div>
  </div>
