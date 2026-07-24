@@ -362,7 +362,7 @@ export function AuditCashWorksheet() {
  <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
  </WorksheetLayout>
  );
 }
@@ -401,7 +401,7 @@ export function AuditCashBankRecWorksheet() {
  <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
  </WorksheetLayout>
  );
 }
@@ -440,7 +440,7 @@ export function AuditCashCountWorksheet() {
  <ProcTable docKey="cashCountProcedures" sections={data.cashCountProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
  </WorksheetLayout>
  );
 }

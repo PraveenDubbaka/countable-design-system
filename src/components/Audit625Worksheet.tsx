@@ -599,6 +599,8 @@ export function Audit625Worksheet() {
  </WorksheetSection>
 
  <ConcludeBar
+ worksheetKey="audit-625"
+ engagementId={engagementId}
  concluded={data.concluded}
  concludedOn={data.concludedOn}
  onConclude={() => {

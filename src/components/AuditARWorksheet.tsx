@@ -318,7 +318,7 @@ export function AuditARWorksheet() {
  <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
  </WorksheetLayout>
  );
 }
@@ -337,7 +337,7 @@ export function AuditARConfirmationWorksheet() {
  <ProcTable docKey="confirmationProcedures" sections={data.confirmationProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
  </WorksheetLayout>
  );
 }
