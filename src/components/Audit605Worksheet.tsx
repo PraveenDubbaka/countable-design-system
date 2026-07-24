@@ -150,7 +150,7 @@ export function Audit605Worksheet() {
  onConclude={() => {
  const u = {...data, concluded: true, concludedOn: new Date().toISOString() };
  setData(u); writeJsonToLocalStorage(storageKey, u);
- }
+ }}
  onReopen={() => { const u = {...data, concluded: false, concludedOn: "" }; setData(u); writeJsonToLocalStorage(storageKey, u); }}
  />
  </WorksheetLayout>

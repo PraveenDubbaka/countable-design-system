@@ -304,7 +304,7 @@ export function Audit610Worksheet() {
  </div>
 
  <ConcludeBar worksheetKey="audit-610" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn}
- onConclude={() => { const u = {...data, concluded: true, concludedOn: new Date().toISOString() }; setData(u); writeJsonToLocalStorage(storageKey, u); }
+ onConclude={() => { const u = {...data, concluded: true, concludedOn: new Date().toISOString() }; setData(u); writeJsonToLocalStorage(storageKey, u); }}
  onReopen={() => { const u = {...data, concluded: false, concludedOn: "" }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
  </WorksheetLayout>
  );
