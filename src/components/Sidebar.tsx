@@ -2189,8 +2189,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-rp-630", code: "630", label: "Confirmations", icon: "worksheet", route: "checklist/aud-rp-630" },
  { id: "aud-rp-635", code: "635", label: "Accounting Estimates", icon: "worksheet", route: "checklist/aud-rp-635" },
  { id: "aud-rp-645", code: "645", label: "Litigation, Claims and Non-Compliance", icon: "worksheet", route: "checklist/aud-rp-645" },
- { id: "aud-rp-650", code: "650", label: "Subsequent Events", icon: "worksheet", route: "checklist/aud-rp-650" },
- { id: "aud-rp-655", code: "655", label: "Final Analytics", icon: "worksheet", route: "checklist/aud-rp-655" },
  { id: "aud-rp-666", code: "666", label: "Related Parties", icon: "worksheet", route: "checklist/aud-rp-666" },
  { id: "aud-rp-670", code: "670", label: "Use of Journal Entries", icon: "worksheet", route: "checklist/aud-rp-670" },
  { id: "aud-rp-680", code: "680", label: "ASPE Supplementary Audit Procedures", icon: "worksheet", route: "checklist/aud-rp-680" },
@@ -2335,6 +2333,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {
  id: "aud-so", code: "SO", label: "Completion & Signoffs", icon: "folder",
  children: [
+ { id: "aud-rp-650", code: "650", label: "Subsequent Events", icon: "worksheet", route: "checklist/aud-rp-650" },
+ { id: "aud-rp-655", code: "655", label: "Final Analytics", icon: "worksheet", route: "checklist/aud-rp-655" },
  { id: "aud-so-aim", code: "AIM", label: "Misstatements", icon: "checklist", route: "checklist/aud-so-aim" },
  { id: "aud-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-so-far" },
  { id: "aud-subseq", code: "SE", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-subseq" },
