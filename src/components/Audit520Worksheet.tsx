@@ -262,6 +262,35 @@ const RISK_LIBRARY: RiskLibraryEntry[] = [
 
 const formatRefList = (refs: RefDoc[]) => refs.map(r => r.name).join(", ") || "—";
 
+function bestLibraryMatch(scotabd: string, rmmText?: string): RiskLibraryEntry | null {
+  // 1. SCOTABD exact / first-word match
+  if (scotabd) {
+    const norm = scotabd.toLowerCase().trim();
+    const hit = RISK_LIBRARY.find(e => {
+      const en = e.scotabd.toLowerCase();
+      return en === norm || en.split(" ")[0] === norm.split(" ")[0];
+    });
+    if (hit) return hit;
+  }
+  // 2. RMM text keyword fallback
+  if (rmmText) {
+    const r = rmmText.toLowerCase();
+    if (r.includes("inventory") || r.includes("obsolesc")) return RISK_LIBRARY.find(e => e.id === "inv-overstatement") ?? null;
+    if (r.includes("revenue") && (r.includes("cut-off") || r.includes("cutoff") || r.includes("recognition"))) return RISK_LIBRARY.find(e => e.id === "rev-cutoff") ?? null;
+    if (r.includes("revenue")) return RISK_LIBRARY.find(e => e.id === "rev-existence") ?? null;
+    if (r.includes("related-party") || r.includes("related party")) return RISK_LIBRARY.find(e => e.id === "related-party") ?? null;
+    if (r.includes("accounting estimate") || r.includes("estimates")) return RISK_LIBRARY.find(e => e.id === "acctg-estimates") ?? null;
+    if (r.includes("going concern")) return RISK_LIBRARY.find(e => e.id === "going-concern") ?? null;
+    if (r.includes("long-term debt") || r.includes("long term debt")) return RISK_LIBRARY.find(e => e.id === "ltd-completeness") ?? null;
+    if (r.includes("payable") || r.includes("unrecorded liabilit")) return RISK_LIBRARY.find(e => e.id === "ap-completeness") ?? null;
+    if (r.includes("receivable") || r.includes("collectib")) return RISK_LIBRARY.find(e => e.id === "ar-collectibility") ?? null;
+    if (r.includes("property") || r.includes("plant") || r.includes("equipment")) return RISK_LIBRARY.find(e => e.id === "ppe-valuation") ?? null;
+    if (r.includes("management override") || r.includes("journal entr")) return RISK_LIBRARY.find(e => e.id === "mgmt-override") ?? null;
+    if (r.includes("equity") || r.includes("share capital")) return RISK_LIBRARY.find(e => e.id === "equity-completeness") ?? null;
+  }
+  return null;
+}
+
 function newPartARow(): PartARow {
  return { id: uid(), wpRefSource: [{ name: "510" }], rmmIdentified: "", fraudRisk: "", rmmAssessment: "", auditResponse: "", wpRef: [] };
 }
@@ -409,6 +438,21 @@ export function Audit520Worksheet() {
  return () => clearTimeout(t);
  }, [data, storageKey]);
 
+ // Auto-populate procedures for any row that has none but matches a library entry
+ useEffect(() => {
+ setData(d => {
+ let changed = false;
+ const partBRows = d.partBRows.map(row => {
+ if ((row.procedures ?? []).length > 0) return row;
+ const match = bestLibraryMatch(row.scotabd, row.rmmIdentified);
+ if (!match) return row;
+ changed = true;
+ return { ...row, procedures: [...match.procedures] };
+ });
+ return changed ? { ...d, partBRows } : d;
+ });
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
  const locked = data.concluded;
 
  function updatePartA(id: string, field: keyof PartARow, val: string) {
@@ -438,15 +482,6 @@ export function Audit520Worksheet() {
  ) }));
  setPickerForRowId(null);
  setEditingProcsRowId(null);
- }
-
- function bestLibraryMatch(scotabd: string): RiskLibraryEntry | null {
- if (!scotabd) return null;
- const norm = scotabd.toLowerCase().trim();
- return RISK_LIBRARY.find(e => {
- const en = e.scotabd.toLowerCase();
- return en === norm || en.split(" ")[0] === norm.split(" ")[0];
- }) ?? null;
  }
 
  function addFromLibrary(entry: RiskLibraryEntry) {
@@ -614,7 +649,7 @@ export function Audit520Worksheet() {
  const procs = row.procedures ?? [];
  const isEditing = editingProcsRowId === row.id;
  const isPicking = pickerForRowId === row.id;
- const suggestion = bestLibraryMatch(row.scotabd);
+ const suggestion = bestLibraryMatch(row.scotabd, row.rmmIdentified);
 
  if (procs.length === 0 && !isEditing) {
  return (
