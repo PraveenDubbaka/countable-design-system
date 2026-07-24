@@ -9,7 +9,7 @@ import { Info, Plus, Trash2, Sparkles } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
-import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { toast } from "sonner";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -466,13 +466,11 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <WorksheetSignOff worksheetKey="audit-436" engagementId={engagementId} />
 
  {locked ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
- Concluded on {concludedOn}
- </div>
+ <ConcludedRow concludedOn={concludedOn} onReopen={() => { setConcluded(false); setConcludedOn(''); writeJsonToLocalStorage(concludeKey, false); writeJsonToLocalStorage(`${concludeKey}-on`, ''); }} />
  ) : (
  <div className="flex justify-end">
  <Button size="sm" onClick={() => {
- const today = new Date().toISOString().slice(0, 10);
+ const today = new Date().toISOString();
  setConcluded(true);
  setConcludedOn(today);
  writeJsonToLocalStorage(concludeKey, true);

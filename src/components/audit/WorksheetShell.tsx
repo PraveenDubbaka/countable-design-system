@@ -2,6 +2,7 @@
 // Design standards aligned with AuditMaterialityWorksheet (cards, objective bar, scroll body).
 import { useState, useEffect, useRef } from "react";
 import { Info, Plus, Trash2 } from "lucide-react";
+import { CURRENT_USER } from "@/lib/useTimeEntries";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -498,25 +499,43 @@ export function SignOffCard(_props: { data: SignOffData; locked: boolean; onChan
 }
 
 // ─── Conclude bar ──────────────────────────────────────────────────────────────
-export function ConcludeBar({ concluded, concludedOn, onConclude, worksheetKey, engagementId }: {
- concluded: boolean; concludedOn: string; onConclude: () => void;
+function formatConcludeTs(iso: string) {
+ try {
+   return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true });
+ } catch { return iso; }
+}
+
+export function ConcludedRow({ concludedOn, onReopen }: { concludedOn: string; onReopen?: () => void }) {
+ return (
+ <div className="flex items-center gap-3 py-1">
+ <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+ {CURRENT_USER.initials}
+ </div>
+ <div className="flex-1 min-w-0">
+ <p className="text-[11px] text-muted-foreground leading-tight">Concluded by</p>
+ <p className="text-sm font-medium leading-tight">{CURRENT_USER.name}</p>
+ <p className="text-[11px] text-muted-foreground leading-tight">{formatConcludeTs(concludedOn)}</p>
+ </div>
+ {onReopen && <Button size="sm" onClick={onReopen}>Reopen worksheet</Button>}
+ </div>
+ );
+}
+
+export function ConcludeBar({ concluded, concludedOn, onConclude, onReopen, worksheetKey, engagementId }: {
+ concluded: boolean; concludedOn: string; onConclude: () => void; onReopen?: () => void;
  worksheetKey?: string; engagementId?: string;
 }) {
  const signOff = worksheetKey ? (
  <>
  <WorksheetSignOff worksheetKey={worksheetKey} engagementId={engagementId} />
  <div className="flex justify-end pt-1">
- {concluded ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
- Concluded on {concludedOn}
- </div>
- ) : (
- <Button size="sm" onClick={onConclude}>Conclude worksheet</Button>
- )}
+ {concluded
+ ? <ConcludedRow concludedOn={concludedOn} onReopen={onReopen} />
+ : <Button size="sm" onClick={onConclude}>Conclude worksheet</Button>}
  </div>
  </>
  ) : concluded ? (
- <div className="rounded-md border border-emerald-200 bg-emerald-50 px-6 py-3 text-xs text-emerald-800 font-medium">Worksheet concluded on {concludedOn}.</div>
+ <ConcludedRow concludedOn={concludedOn} onReopen={onReopen} />
  ) : (
  <div className="flex justify-end">
  <Button size="sm" onClick={onConclude}>Conclude worksheet</Button>

@@ -10,7 +10,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { cn } from "@/lib/utils";
-import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -131,7 +131,7 @@ const emptyFinancingRow = (): FinancingRow => ({ id: uid(), creditor: "", amount
 const sf = (response: string): SimpleField => ({ response, wpRef: [] });
 
 function buildDefault(isUS = false): Data510 {
- const today = new Date().toISOString().slice(0, 10);
+ const today = new Date().toISOString();
 
  // Entity-specific seeded content (auto-populated from Trial Balance + Planning 400/410/420)
  const seedCA = {
@@ -1220,11 +1220,6 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  <p className="text-sm text-muted-foreground">
  We have performed risk assessment procedures to identify events, conditions and circumstances that may result in a material misstatement in the F/S and have documented the risk factors identified
  </p>
- {data.concluded && (
- <div className="rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-800 dark:text-green-300">
- Concluded on {data.concludedOn}
- </div>
- )}
  <Textarea
  disabled={locked}
  value={data.overallConclusion}
@@ -1263,15 +1258,13 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  <WorksheetSignOff worksheetKey="audit-510" engagementId={engagementId ?? "default"} />
 
  {locked ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
- Concluded on {data.concludedOn}
- </div>
+ <ConcludedRow concludedOn={data.concludedOn} onReopen={() => { setData(d => { const next = {...d, concluded: false, concludedOn: '' }; writeJsonToLocalStorage(storageKey, next); return next; }); }} />
  ) : (
  <div className="flex justify-end">
  <Button
  disabled={locked}
  onClick={() => {
- const now = new Date().toISOString().slice(0, 10);
+ const now = new Date().toISOString();
  setData(d => {
  const next = {...d, concluded: true, concludedOn: now };
  writeJsonToLocalStorage(storageKey, next);

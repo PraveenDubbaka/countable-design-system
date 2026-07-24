@@ -5,12 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Info, AlertTriangle, X } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { cn } from "@/lib/utils";
-import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -322,6 +322,97 @@ function ProcessTable({ rows, locked, onChange }: {
  );
 }
 
+// ── B1 Dropdown Options ────────────────────────────────────────────────────────
+
+const APP_TYPE_OPTIONS = [
+  "Commercial cloud (SaaS)",
+  "Commercial on-premise",
+  "ERP / integrated suite",
+  "Custom / in-house developed",
+  "Third-party managed service",
+  "Open-source software",
+];
+
+const NETWORK_OPTIONS = [
+  "Cloud-based (SaaS / PaaS)",
+  "Cloud-based — VPN access",
+  "On-premise LAN",
+  "Web-based — public internet",
+  "Hybrid (on-premise + cloud)",
+  "Cellular / satellite + cloud",
+  "Client-server (internal only)",
+];
+
+const DATABASE_OPTIONS = [
+  "Vendor-managed (cloud)",
+  "Microsoft SQL Server",
+  "Oracle Database",
+  "MySQL / MariaDB",
+  "PostgreSQL",
+  "Azure SQL",
+  "Amazon RDS",
+  "Google Cloud SQL",
+  "SAP HANA",
+];
+
+const OS_OPTIONS = [
+  "Windows 11 (clients)",
+  "Windows Server 2022",
+  "macOS (clients)",
+  "Linux / Ubuntu Server",
+  "Web-based (no local OS)",
+  "iOS / Android (mobile)",
+  "Embedded / vendor-hosted",
+];
+
+const PURPOSE_OPTIONS = [
+  "General ledger / Financial reporting",
+  "Accounts payable / Receivable",
+  "Payroll & HCM",
+  "Inventory management",
+  "Revenue recognition",
+  "Fixed assets",
+  "Banking & treasury",
+  "Tax compliance",
+  "CRM / Sales",
+  "Operational / logistics management",
+  "Document / records management",
+  "IT infrastructure / monitoring",
+];
+
+function DropOrText({ value, onChange, disabled, options, placeholder = "Select…", multiline = false }: {
+  value: string; onChange: (v: string) => void; disabled: boolean;
+  options: string[]; placeholder?: string; multiline?: boolean;
+}) {
+  const [customMode, setCustomMode] = useState(() => value !== "" && !options.includes(value));
+  if (customMode) {
+    return (
+      <div className="flex gap-1 items-start">
+        {multiline
+          ? <Textarea disabled={disabled} value={value} onChange={e => onChange(e.target.value)}
+              className="min-h-[56px] text-sm bg-background resize-none flex-1" />
+          : <Input disabled={disabled} value={value} onChange={e => onChange(e.target.value)}
+              className="h-7 text-xs bg-background flex-1" />}
+        {!disabled && (
+          <button onClick={() => { onChange(""); setCustomMode(false); }}
+            className="mt-1 p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground" title="Clear">
+            <X className="h-3 w-3" />
+          </button>
+        )}
+      </div>
+    );
+  }
+  return (
+    <Select value={value} onValueChange={v => { if (v === "__other__") { setCustomMode(true); } else onChange(v); }} disabled={disabled}>
+      <SelectTrigger className="h-8 text-sm w-full"><SelectValue placeholder={placeholder} /></SelectTrigger>
+      <SelectContent>
+        {options.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+        <SelectItem value="__other__">Other…</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
@@ -614,15 +705,25 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <td className="px-4 py-2.5 space-y-1">
  <Textarea disabled={locked} value={app.name} onChange={e => updateApp(i, { name: e.target.value })}
  placeholder="E.g., QuickBooks, SAP…" className="min-h-[56px] text-sm bg-background resize-none" />
- <Input disabled={locked} value={app.appType} onChange={e => updateApp(i, { appType: e.target.value })}
- placeholder="Type (COTS, cloud-based, in-house…)" className="h-7 text-xs bg-background text-muted-foreground" />
+ <DropOrText value={app.appType} onChange={v => updateApp(i, { appType: v })} disabled={locked}
+   options={APP_TYPE_OPTIONS} placeholder="Application type…" />
  </td>
- {(["network", "database", "os", "purpose"] as const).map(col => (
- <td key={col} className="px-4 py-2.5">
- <Textarea disabled={locked} value={app[col]} onChange={e => updateApp(i, { [col]: e.target.value })}
- placeholder="—" className="min-h-[56px] text-sm bg-background resize-none" />
+ <td className="px-4 py-2.5">
+   <DropOrText value={app.network} onChange={v => updateApp(i, { network: v })} disabled={locked}
+     options={NETWORK_OPTIONS} placeholder="Network type…" />
  </td>
- ))}
+ <td className="px-4 py-2.5">
+   <DropOrText value={app.database} onChange={v => updateApp(i, { database: v })} disabled={locked}
+     options={DATABASE_OPTIONS} placeholder="Database…" />
+ </td>
+ <td className="px-4 py-2.5">
+   <DropOrText value={app.os} onChange={v => updateApp(i, { os: v })} disabled={locked}
+     options={OS_OPTIONS} placeholder="Operating system…" />
+ </td>
+ <td className="px-4 py-2.5">
+   <DropOrText value={app.purpose} onChange={v => updateApp(i, { purpose: v })} disabled={locked}
+     options={PURPOSE_OPTIONS} placeholder="Nature & purpose…" multiline />
+ </td>
  <td className="px-4 py-2.5">
  <Select value={app.relevant} onValueChange={v => updateApp(i, { relevant: v as YN })} disabled={locked}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -865,15 +966,13 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <WorksheetSignOff worksheetKey="audit-511" engagementId={engagementId ?? "default"} />
 
  {locked ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
- Concluded on {data.concludedOn}
- </div>
+ <ConcludedRow concludedOn={data.concludedOn} onReopen={() => { setData(d => { const next = {...d, concluded: false, concludedOn: '' }; writeJsonToLocalStorage(storageKey, next); return next; }); }} />
  ) : (
  <div className="flex justify-end">
  <Button
  disabled={locked}
  onClick={() => {
- const now = new Date().toISOString().slice(0, 10);
+ const now = new Date().toISOString();
  setData(d => {
  const next = {...d, concluded: true, concludedOn: now };
  writeJsonToLocalStorage(storageKey, next);

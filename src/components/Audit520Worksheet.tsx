@@ -10,7 +10,7 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
 import { buildAutoFillRows, mergeAutoFill } from "@/lib/audit520AutoFill";
-import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -416,25 +416,10 @@ export function Audit520Worksheet() {
 
  <WorksheetSignOff worksheetKey="audit-520" engagementId={engagementId} />
 
- {/* ── Conclude button ─────────────────────────────────────────── */}
- <div className="flex items-center justify-end gap-3">
- {data.concluded && (
- <span className="text-sm text-green-700 dark:text-green-400">Concluded on {data.concludedOn}</span>
- )}
- <Button
- disabled={locked}
- onClick={() => {
- const now = new Date().toISOString().slice(0, 10);
- setData(d => {
- const next = {...d, concluded: true, concludedOn: now };
- writeJsonToLocalStorage(storageKey, next);
- return next;
- });
- }}
- >
- Conclude Worksheet
- </Button>
- </div>
+ {locked
+ ? <ConcludedRow concludedOn={data.concludedOn} onReopen={() => { setData(d => { const next = {...d, concluded: false, concludedOn: '' }; writeJsonToLocalStorage(storageKey, next); return next; }); }} />
+ : <div className="flex justify-end"><Button onClick={() => { const now = new Date().toISOString(); setData(d => { const next = {...d, concluded: true, concludedOn: now }; writeJsonToLocalStorage(storageKey, next); return next; }); }}>Conclude Worksheet</Button></div>
+ }
 
  </div>
  </div>

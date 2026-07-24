@@ -272,8 +272,11 @@ function useARStore() {
  function conclude() {
  setData(d => ({...d, concluded: true, concludedOn: new Date().toISOString() }));
  }
+ function reopen() {
+ setData(d => ({...d, concluded: false, concludedOn: "" }));
+ }
 
- return { data, locked: data.concluded, handleRowField, addRow, conclude };
+ return { data, locked: data.concluded, handleRowField, addRow, conclude, reopen };
 }
 
 const INFO_CARD = "bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6";
@@ -305,7 +308,7 @@ function ARInfoBlock() {
 }
 
 export function AuditARWorksheet() {
- const { data, locked, handleRowField, addRow, conclude } = useARStore();
+ const { data, locked, handleRowField, addRow, conclude, reopen } = useARStore();
  return (
  <WorksheetLayout
  heading="B Accounts Receivable > Audit Procedures"
@@ -318,13 +321,13 @@ export function AuditARWorksheet() {
  <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
  </WorksheetLayout>
  );
 }
 
 export function AuditARConfirmationWorksheet() {
- const { data, locked, handleRowField, addRow, conclude } = useARStore();
+ const { data, locked, handleRowField, addRow, conclude, reopen } = useARStore();
  return (
  <WorksheetLayout
  heading="B Accounts Receivable > Confirmation Procedures"
@@ -337,7 +340,7 @@ export function AuditARConfirmationWorksheet() {
  <ProcTable docKey="confirmationProcedures" sections={data.confirmationProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
  </WorksheetLayout>
  );
 }

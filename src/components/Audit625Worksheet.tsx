@@ -604,10 +604,11 @@ export function Audit625Worksheet() {
  concluded={data.concluded}
  concludedOn={data.concludedOn}
  onConclude={() => {
- const u = {...data, concluded: true, concludedOn: new Date().toISOString().slice(0, 10) };
+ const u = {...data, concluded: true, concludedOn: new Date().toISOString() };
  setData(u);
  writeJsonToLocalStorage(storageKey, u);
- }}
+ }
+ onReopen={() => { const u = {...data, concluded: false, concludedOn: "" }; setData(u); writeJsonToLocalStorage(storageKey, u); }}
  />
  </WorksheetLayout>
  );

@@ -318,18 +318,17 @@ function useCashStore() {
  }
 
  function conclude() {
- setData(d => ({
-...d,
- concluded: true,
- concludedOn: new Date().toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" }),
- }));
+ setData(d => ({...d, concluded: true, concludedOn: new Date().toISOString() }));
+ }
+ function reopen() {
+ setData(d => ({...d, concluded: false, concludedOn: "" }));
  }
 
- return { data, locked: data.concluded, setHeader, handleRowField, addRow, conclude };
+ return { data, locked: data.concluded, setHeader, handleRowField, addRow, conclude, reopen };
 }
 
 export function AuditCashWorksheet() {
- const { data, locked, setHeader, handleRowField, addRow, conclude } = useCashStore();
+ const { data, locked, setHeader, handleRowField, addRow, conclude, reopen } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Audit Procedures"
@@ -362,13 +361,13 @@ export function AuditCashWorksheet() {
  <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
  </WorksheetLayout>
  );
 }
 
 export function AuditCashBankRecWorksheet() {
- const { data, locked, handleRowField, addRow, conclude } = useCashStore();
+ const { data, locked, handleRowField, addRow, conclude, reopen } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Bank Reconciliation"
@@ -401,13 +400,13 @@ export function AuditCashBankRecWorksheet() {
  <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
  </WorksheetLayout>
  );
 }
 
 export function AuditCashCountWorksheet() {
- const { data, locked, handleRowField, addRow, conclude } = useCashStore();
+ const { data, locked, handleRowField, addRow, conclude, reopen } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Cash Count"
@@ -440,7 +439,7 @@ export function AuditCashCountWorksheet() {
  <ProcTable docKey="cashCountProcedures" sections={data.cashCountProcedures} locked={locked} onRowField={handleRowField} />
  </WorksheetSection>
 
- <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} />
+ <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
  </WorksheetLayout>
  );
 }

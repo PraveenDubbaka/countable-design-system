@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
-import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -381,13 +381,11 @@ export function Audit575Worksheet() {
  <WorksheetSignOff worksheetKey="audit-575" engagementId={engagementId} />
 
  {locked ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
- Concluded on {data.concludedOn}
- </div>
+ <ConcludedRow concludedOn={data.concludedOn} onReopen={() => { const u = {...data, concluded: false, concludedOn: '' }; setData(u); writeJsonToLocalStorage(storageKey, u); }} />
  ) : (
  <div className="flex justify-end">
  <Button size="sm" onClick={() => {
- const today = new Date().toISOString().slice(0, 10);
+ const today = new Date().toISOString();
  const updated = {...data, concluded: true, concludedOn: today };
  setData(updated);
  writeJsonToLocalStorage(storageKey, updated);

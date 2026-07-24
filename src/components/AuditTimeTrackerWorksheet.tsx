@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRad
 import { useParams } from "react-router-dom";
 import { useTimeEntries, RoleKey, ROLE_LABELS, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
-import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -182,7 +182,7 @@ export function AuditTimeTrackerWorksheet() {
  const hasFilters = filterDate || filterRole !== 'all' || filterSection !== 'all' || filterDesc;
 
  // ── Log form ──────────────────────────────────────────────────────────────
- const today = new Date().toISOString().slice(0, 10);
+ const today = new Date().toISOString();
  const [logDate, setLogDate] = useState(today);
  const [logRole, setLogRole] = useState<RoleKey>(CURRENT_USER.roleKey);
  const [logUserName, setLogUserName] = useState(CURRENT_USER.name);
@@ -867,13 +867,11 @@ export function AuditTimeTrackerWorksheet() {
  <WorksheetSignOff worksheetKey="audit-450" engagementId={engagementId} />
 
  {locked ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2.5 text-xs text-green-800 font-medium">
- Concluded on {concludedOn}
- </div>
+ <ConcludedRow concludedOn={concludedOn} onReopen={() => { setConcluded(false); setConcludedOn(''); writeJsonToLocalStorage(concludeKey, false); writeJsonToLocalStorage(`${concludeKey}-on`, ''); }} />
  ) : (
  <div className="flex justify-end">
  <Button size="sm" onClick={() => {
- const today = new Date().toISOString().slice(0, 10);
+ const today = new Date().toISOString();
  setConcluded(true);
  setConcludedOn(today);
  writeJsonToLocalStorage(concludeKey, true);
