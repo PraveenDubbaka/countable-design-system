@@ -9259,6 +9259,79 @@ export const generateFraudRiskAssessmentChecklist = (): Checklist => {
  };
 };
 
+export const generate506FraudIdentificationChecklist = (): Checklist => {
+ const q = (id: string, text: string): Question => ({
+ id, text, answerType: 'yes-no' as const, options: ['Yes', 'No'],
+ required: false, answer: '', explanation: '', reference: '',
+ });
+ const laDate = (id: string, labelPlaceholder?: string, explanationPlaceholder?: string): Question => ({
+ id, text: '', answerType: 'date' as const, options: [],
+ required: false, answer: '', explanation: '', reference: '',
+ ...(labelPlaceholder ? { labelPlaceholder } : {}),
+ ...(explanationPlaceholder ? { explanationPlaceholder } : {}),
+ });
+
+ const sections: Section[] = [
+ {
+ id: '506-s0',
+ title: 'Part A — Management and Others',
+ isExpanded: true,
+ questions: [
+ laDate('506-mgmt-iv', 'Who interviewed', 'By whom (auditor)'),
+ q('506-mgmt-1', '<p>Has management identified any risks of material misstatement in the financial statements due to fraud?</p>'),
+ q('506-mgmt-2', '<p>Does management have knowledge of any actual, suspected or alleged fraud affecting the entity, including fraud involving employees, management, TCWG or third parties?</p>'),
+ q('506-mgmt-3', '<p>Does management have an understanding of the entity\'s fraud risk management process and the controls in place to prevent and detect fraud?</p>'),
+ q('506-mgmt-4', '<p>Is management aware of any allegations or suspicions of fraud affecting the entity communicated by former employees, analysts, regulators, short sellers or others?</p>'),
+ q('506-mgmt-5', '<p>Has management considered how the risk of material misstatement due to fraud could affect specific assertions for account balances, classes of transactions and disclosures?</p>'),
+ ],
+ },
+ {
+ id: '506-s1',
+ title: 'Part A — Those Charged with Governance (TCWG)',
+ isExpanded: true,
+ questions: [
+ laDate('506-tcwg-iv', 'Who interviewed', 'By whom (auditor)'),
+ q('506-tcwg-1', '<p>Are TCWG aware of any actual, suspected or alleged fraud affecting the entity?</p>'),
+ q('506-tcwg-2', '<p>Has TCWG oversight of management\'s assessment of the risk of material misstatement due to fraud been documented?</p>'),
+ ],
+ },
+ {
+ id: '506-s2',
+ title: 'Part B — Other Fraud Risk Assessment Procedures',
+ isExpanded: true,
+ questions: [
+ q('506-b1', '<p>Has the engagement team brainstorming discussion specifically addressed fraud risks and have the results been documented? <em>(CAS 315)</em></p>'),
+ q('506-b2', '<p>Has the presumed risk related to revenue recognition been considered and, if rebutted, has the rationale been documented with sufficient specificity? <em>(CAS 240.26)</em></p>'),
+ q('506-b3', '<p>Has the risk of management override of controls been identified as a significant risk? <em>Note: This risk cannot be rebutted. (CAS 240.31)</em></p>'),
+ q('506-b4', '<p>Have journal entries and other adjustments been identified as requiring specific audit testing procedures in response to the management override risk? <em>(CAS 240.32)</em></p>'),
+ q('506-b5', '<p>Have accounting estimates been reviewed for possible management bias that could result in a material misstatement? <em>(CAS 240.32)</em></p>'),
+ q('506-b6', '<p>Have significant or unusual transactions (including related party transactions) been evaluated for their business rationale and legitimacy? <em>(CAS 240.32)</em></p>'),
+ q('506-b7', '<p>Have the results of the fraud risk assessment been communicated to engagement management and incorporated into the planning of audit procedures?</p>'),
+ ],
+ },
+ {
+ id: '506-s3',
+ title: 'Appendix A — Characteristics of Fraud (Fraud Triangle Assessment)',
+ isExpanded: false,
+ questions: [
+ q('506-ap1', '<p><strong>Incentive / Pressure</strong> — Have you identified any incentive or pressure conditions that may provide a reason for management or employees to commit fraud (e.g., financial pressure, performance-based compensation, personal integrity issues)? <em>Note: Management or employees are under pressure that provides a reason to commit fraud. This may include financial pressure (personal financial difficulties, significant bonuses tied to results), employment pressure (fear of losing a job, pressure to meet analyst expectations), or other pressures such as personal integrity issues.</em></p>'),
+ q('506-ap2', '<p><strong>Opportunity</strong> — Have you identified any opportunity conditions that may allow fraud to occur (e.g., absence of controls, ineffective controls, ability to override controls, assets susceptible to misappropriation, complex transactions)? <em>Note: Circumstances exist that provide an opportunity to commit fraud. This may include weak internal controls, management override potential, complex transactions or estimates, or large volumes of cash transactions.</em></p>'),
+ q('506-ap3', '<p><strong>Rationalization / Attitude</strong> — Have you identified any rationalization or attitude factors that may indicate a predisposition to commit fraud (e.g., known integrity issues, poor ethical culture, history of misrepresentations, aggressive financial reporting)? <em>Note: Individuals are able to justify committing fraud. This may include disregard for internal controls, poor tone at the top, prior history of misrepresentations or restatements, or an aggressive attitude toward financial reporting.</em></p>'),
+ ],
+ },
+ ];
+
+ return {
+ id: 'global-template-506-fraud-identification',
+ title: '506 — Identifying Fraud Risks',
+ description: 'Documents the fraud risk identification process, including required inquiries of management and TCWG, other fraud risk procedures, and fraud triangle assessment.',
+ objective: 'To document inquiries about fraud risks performed as part of the risk assessment. Part A covers required inquiries of management, others in the entity, and TCWG. Part B covers other fraud risk assessment procedures. PSC = Procedure successfully completed. TCWG = Those charged with governance.',
+ sections,
+ createdAt: new Date(),
+ updatedAt: new Date(),
+ };
+};
+
 export const generateSignificantRisksRegisterChecklist = (): Checklist => {
  const q = (id: string, text: string, subQuestions?: Question[], answer = '', explanation = '', reference = ''): Question => ({
  id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],

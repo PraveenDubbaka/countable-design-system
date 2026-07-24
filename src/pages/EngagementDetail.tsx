@@ -214,6 +214,7 @@ import {
  generate500OIChecklist,
  generate501APAPChecklist,
  generate505MgmtInquiriesChecklist,
+ generate506FraudIdentificationChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -344,6 +345,7 @@ const buildDefaultAuditChecklists = () => {
  { generator: generate500OIChecklist, id: "default-audit-ra-oi" },
  { generator: generate501APAPChecklist, id: "default-audit-ra-pap501a" },
  { generator: generate505MgmtInquiriesChecklist, id: "default-audit-ra-505" },
+ { generator: generate506FraudIdentificationChecklist, id: "default-audit-ra-506" },
  { generator: generateRiskAssessmentProceduresChecklist, id: "default-audit-ra-rap" },
  { generator: generateUnderstandingInternalControlsChecklist, id: "default-audit-ra-ic" },
  { generator: generateITGeneralControlsChecklist, id: "default-audit-ra-itgc" },
@@ -565,6 +567,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-us-ra-oi": "default-audit-ra-oi",
  "aud-ra-pap501a": "default-audit-ra-pap501a",
  "aud-ra-505": "default-audit-ra-505",
+ "aud-ra-506": "default-audit-ra-506",
  "aud-ra-rap": "default-audit-ra-rap",
  "aud-ra-ic": "default-audit-ra-ic",
  "aud-ra-itgc": "default-audit-ra-itgc",
@@ -677,7 +680,6 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
  'aud-ra-pap501a': '501-B — Preliminary Analytical Procedures',
  'aud-ra-pap501bc': '501-A — Preliminary Analytical Procedures',
  'aud-ra-507': 'Minutes of Governance Meetings',
- 'aud-ra-506': 'Identifying Fraud Risks',
  'aud-ra-510': 'Identifying Risks through Understanding the Entity',
  'aud-ra-511': 'Understanding the IT Environment',
  'aud-ra-513': 'Understanding Accounting Estimates and Related Disclosures',
@@ -1204,7 +1206,7 @@ export default function EngagementDetail() {
  // One-time migration: clear stale sample checklists saved before the
  // global template library was pulled in, so the engagement reflects the
  // new global checklist content.
- const TEMPLATE_LIBRARY_VERSION = 'v14-501a-pap-checklist-2026-07';
+ const TEMPLATE_LIBRARY_VERSION = 'v15-506-fraud-dv-checklist-2026-07';
  const seenVersion = localStorage.getItem('savedChecklistsLibraryVersion');
  if (seenVersion !== TEMPLATE_LIBRARY_VERSION) {
  try {
@@ -2697,8 +2699,6 @@ export default function EngagementDetail() {
 
  ) : (checklistKey === 'aud-ra-507') ? (
  <Audit507Worksheet />
- ) : (checklistKey === 'aud-ra-506') ? (
- <Audit506Worksheet />
  ) : (checklistKey === 'aud-ra-510') ? (
  <Audit510Worksheet />
  ) : (checklistKey === 'aud-ra-511') ? (
