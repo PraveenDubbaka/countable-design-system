@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Plus, Trash2 } from "lucide-react";
+import { Info, Plus, Trash2, BookOpen, X } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
@@ -39,6 +39,7 @@ interface CotabdRow {
  controlRisk: HML; // From (H if not tested)
  assertions: Record<Assertion, AssertionCell>;
  auditResponse: string;
+ procedures: string[];
  wpRef: RefDoc[];
 }
 
@@ -140,7 +141,7 @@ function emptyRow(fsa = ""): CotabdRow {
  id: uid(), fsa, amount: "", material: "", materialBasis: "",
  risk520Ref: "", inherentRisk: "", significantRisk: "", controlRisk: "",
  assertions: emptyAssertions(),
- auditResponse: "", wpRef: [],
+ auditResponse: "", procedures: [], wpRef: [],
  };
 }
 
@@ -192,6 +193,7 @@ function normalize(saved: any): Data590 {
  if (!Array.isArray(merged.rows) || merged.rows.length === 0) merged.rows = def.rows;
  merged.rows = merged.rows.map((r: any) => ({
 ...emptyRow(),
+ procedures: [] as string[],
 ...r,
  assertions: {...emptyAssertions(),...(r?.assertions ?? {}) },
  wpRef: Array.isArray(r?.wpRef) ? r.wpRef : [],
@@ -204,6 +206,96 @@ function normalize(saved: any): Data590 {
  pscInitials: saved?.standback?.pscInitials ?? "",
  };
  return merged;
+}
+
+// ── Procedure library for 590 ──────────────────────────────────────────────────
+
+interface ProcEntry590 { fsa: string; procedures: string[] }
+
+const PROC_LIBRARY_590: ProcEntry590[] = [
+ { fsa: "Revenue", procedures: [
+   "Perform analytical procedures on revenue by product/service line and period; investigate variances.",
+   "Test a sample of revenue transactions to contracts, invoices, and delivery/service completion evidence.",
+   "Test revenue cut-off: review transactions in the final and first 10 business days around period-end.",
+   "Test journal entries posted to revenue accounts for unusual or manual entries.",
+   "Confirm significant revenue balances with customers where applicable.",
+ ]},
+ { fsa: "Cost of Sales", procedures: [
+   "Reconcile cost of sales to inventory movements and trace to underlying purchase records.",
+   "Test a sample of cost transactions to vendor invoices, purchase orders, and receiving records.",
+   "Perform gross margin analysis and investigate significant variances from prior period.",
+   "Verify overhead allocation methods are consistent and appropriate.",
+ ]},
+ { fsa: "Operating Expenses", procedures: [
+   "Perform analytical review of expenses by category against prior period and budget.",
+   "Test a sample of expense transactions to supporting invoices and authorization evidence.",
+   "Review prepaid expenses and accruals for completeness and proper cut-off.",
+   "Identify and assess significant or unusual expense items.",
+ ]},
+ { fsa: "Payroll", procedures: [
+   "Analytically review payroll by period, department, and employee category.",
+   "Test a sample of payroll disbursements to timesheets, contracts, and authorized rates.",
+   "Verify payroll source deductions (CPP, EI, income tax) are properly recorded and remitted.",
+   "Review management compensation against board resolutions.",
+   "Perform a headcount reconciliation for the period.",
+ ]},
+ { fsa: "Cash", procedures: [
+   "Obtain bank confirmations for all significant accounts.",
+   "Test bank reconciliations: trace reconciling items and investigate stale items.",
+   "Review period-end bank statements for unusual transactions.",
+   "Test petty cash and other cash funds by count or confirmation.",
+ ]},
+ { fsa: "Accounts Receivable", procedures: [
+   "Obtain the aged AR listing and agree total to the general ledger.",
+   "Confirm a sample of significant and/or unusual receivable balances.",
+   "Review subsequent cash receipts to assess collectibility at period-end.",
+   "Evaluate the reasonableness of the allowance for doubtful accounts.",
+   "Investigate long-outstanding or unusual receivable balances.",
+ ]},
+ { fsa: "Inventory", procedures: [
+   "Attend the physical inventory count; observe procedures, perform test counts, and trace to the final listing.",
+   "Test the mathematical accuracy of the inventory listing and agree total to the general ledger.",
+   "Test inventory unit costs to recent supplier invoices and compare to standard costs.",
+   "Obtain and test management's obsolescence provision and NRV calculations.",
+   "Identify slow-moving or zero-movement items and assess adequacy of any provision.",
+ ]},
+ { fsa: "Property", procedures: [
+   "Agree the PPE continuity schedule to prior period and trace additions, disposals, and ending balances to the GL.",
+   "Test a sample of additions to supporting documentation and verify capitalization criteria.",
+   "Test repairs and maintenance expense items to confirm they are not capital in nature.",
+   "Review disposals for completeness; trace proceeds and removal of net book value.",
+   "Assess depreciation rates; recalculate depreciation for a sample of assets.",
+   "Evaluate impairment indicators and review management's impairment assessment.",
+ ]},
+ { fsa: "Accounts Payable", procedures: [
+   "Obtain the aged AP listing and agree total to the general ledger.",
+   "Search for unrecorded liabilities: review subsequent disbursements and vendor invoices.",
+   "Confirm significant vendor balances and reconcile to supplier statements.",
+   "Test cut-off by reviewing purchases in the final and first days around period-end.",
+ ]},
+ { fsa: "Debt", procedures: [
+   "Obtain a debt continuity schedule and agree opening balances to prior period working papers.",
+   "Confirm outstanding debt balances, terms, interest rates, and covenants directly with lenders.",
+   "Review loan agreements for restrictive covenants and confirm compliance at period-end.",
+   "Recalculate interest expense for a sample of debt instruments and agree to the general ledger.",
+   "Assess current vs. non-current classification based on maturity dates and covenant compliance.",
+ ]},
+ { fsa: "Equity", procedures: [
+   "Obtain the equity continuity schedule and agree opening balances to prior period audited statements.",
+   "Review articles of incorporation and minute book for authorized share capital changes.",
+   "Verify share issuances or repurchases to supporting documentation and board authorization.",
+   "Agree dividends declared to board approval and trace payment to bank statements.",
+   "Recalculate retained earnings rollforward (opening + net income ± OCI − dividends).",
+ ]},
+];
+
+function bestProcMatch590(fsa: string): ProcEntry590 | null {
+ if (!fsa) return null;
+ const n = fsa.toLowerCase();
+ return PROC_LIBRARY_590.find(e => {
+   const en = e.fsa.toLowerCase();
+   return n.includes(en) || en.includes(n.split(/[\s,&]+/)[0]);
+ }) ?? null;
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -253,7 +345,34 @@ export function Audit590Worksheet() {
  saveTimerRef.current = setTimeout(() => writeJsonToLocalStorage(storageKey, data), 450);
  }, [data, storageKey]);
 
+ // Auto-populate procedures for any row with none that matches the library
+ useEffect(() => {
+ setData(d => {
+ let changed = false;
+ const rows = d.rows.map(row => {
+ if ((row.procedures ?? []).length > 0) return row;
+ const match = bestProcMatch590(row.fsa);
+ if (!match) return row;
+ changed = true;
+ return { ...row, procedures: [...match.procedures] };
+ });
+ return changed ? { ...d, rows } : d;
+ });
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
  const locked = data.concluded;
+ const [editingProcsId, setEditingProcsId] = useState<string | null>(null);
+
+ function updateProcedure590(id: string, i: number, val: string) {
+  setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, procedures: r.procedures.map((p, j) => j === i ? val : p) } : r) }));
+ }
+ function addProcedure590(id: string) {
+  setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, procedures: [...r.procedures, ""] } : r) }));
+ }
+ function removeProcedure590(id: string, i: number) {
+  setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, procedures: r.procedures.filter((_, j) => j !== i) } : r) }));
+ }
+
 
  // ── Row mutators ────────────────────────────────────────────────────────────
  function patchRow(id: string, patch: Partial<CotabdRow>) {
@@ -409,6 +528,7 @@ export function Audit590Worksheet() {
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>Sig. risk</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>CR</th>
  <th colSpan={4} className="px-3 py-2 text-center text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border border-b border-border">Assertions / RMM</th>
+ <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 260 }}>Procedures</th>
  <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 220 }}>Audit response</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Classification</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 80 }}>W/P</th>
@@ -535,12 +655,54 @@ export function Audit590Worksheet() {
  );
  })}
 
- <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.auditResponse}
- onChange={e => patchRow(r.id, { auditResponse: e.target.value })}
- placeholder="Summarise the audit response or cross-reference the detailed plan…"
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
- </td>
+ <td className="px-3 py-2 align-top" onClick={() => !locked && setEditingProcsId(r.id)}>
+      {editingProcsId === r.id && !locked ? (
+       <div className="space-y-1.5" onClick={e => e.stopPropagation()}>
+        {r.procedures.map((p, i) => (
+         <div key={i} className="flex items-start gap-1">
+          <span className="mt-1.5 text-[10px] text-muted-foreground shrink-0 w-4 text-right">{i + 1}.</span>
+          <textarea
+           value={p}
+           onChange={e => updateProcedure590(r.id, i, e.target.value)}
+           className="flex-1 text-xs resize-none bg-transparent border-0 border-b border-border focus:outline-none focus:border-primary py-0.5 min-h-[40px]"
+           rows={2}
+          />
+          <button onClick={() => removeProcedure590(r.id, i)} className="mt-1.5 text-muted-foreground hover:text-destructive shrink-0">
+           <X className="h-3 w-3" />
+          </button>
+         </div>
+        ))}
+        <div className="flex gap-2 pt-1">
+         <button onClick={() => addProcedure590(r.id)} className="flex items-center gap-1 text-xs text-primary hover:underline">
+          <Plus className="h-3 w-3" />Add
+         </button>
+         <button onClick={() => setEditingProcsId(null)} className="text-xs text-muted-foreground hover:underline">Done</button>
+        </div>
+       </div>
+      ) : (
+       <div className="space-y-1 cursor-pointer min-h-[40px]">
+        {r.procedures.length === 0 ? (
+         <span className="text-xs text-muted-foreground italic flex items-center gap-1">
+          <BookOpen className="h-3 w-3" />No procedures
+         </span>
+        ) : (
+         r.procedures.map((p, i) => (
+          <div key={i} className="flex items-start gap-1.5 text-xs text-foreground">
+           <span className="text-muted-foreground shrink-0 mt-0.5">{i + 1}.</span>
+           <span className="leading-snug">{p}</span>
+          </div>
+         ))
+        )}
+        {!locked && <span className="text-[10px] text-muted-foreground/60 block mt-1">Click to edit</span>}
+       </div>
+      )}
+     </td>
+     <td className="px-3 py-2">
+      <Textarea disabled={locked} value={r.auditResponse}
+      onChange={e => patchRow(r.id, { auditResponse: e.target.value })}
+      placeholder="Summarise the audit response or cross-reference the detailed plan…"
+      className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+     </td>
  <td className="px-3 py-2 text-center">
  <span className={`inline-block px-2 py-0.5 rounded-md border text-[11px] font-medium ${cls.tone}`}>
  {cls.label}
