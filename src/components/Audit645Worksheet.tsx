@@ -278,7 +278,7 @@ export function Audit645Worksheet() {
  </p>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead>
  <tr className="bg-muted/40">
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[120px]">Type</th>
@@ -298,7 +298,7 @@ export function Audit645Worksheet() {
  <tr key={m.id} className="hover:bg-muted/20 align-top">
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={m.type} onValueChange={v => updateMatter(m.id, { type: v as MatterType })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Litigation">Litigation</SelectItem>
  <SelectItem value="Claim">Claim</SelectItem>
@@ -308,15 +308,15 @@ export function Audit645Worksheet() {
  </td>
  <td className="border-b border-border p-2">
  <Textarea disabled={locked} value={m.description} onChange={e => updateMatter(m.id, { description: e.target.value })}
- className="min-h-[44px] text-xs resize-none" placeholder="Nature of matter" />
+ className="min-h-[44px] text-sm resize-none" placeholder="Nature of matter" />
  </td>
  <td className="border-b border-border p-2">
  <Input disabled={locked} value={m.counterparty} onChange={e => updateMatter(m.id, { counterparty: e.target.value })}
- className="h-8 text-xs" placeholder="—" />
+ className="h-8 text-sm" placeholder="—" />
  </td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={m.status} onValueChange={v => updateMatter(m.id, { status: v as MatterStatus })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Open">Open</SelectItem>
  <SelectItem value="Threatened">Threatened</SelectItem>
@@ -328,11 +328,11 @@ export function Audit645Worksheet() {
  </td>
  <td className="border-b border-border p-2">
  <Input disabled={locked} value={m.amount} onChange={e => updateMatter(m.id, { amount: e.target.value })}
- className="h-8 text-xs font-mono" placeholder="0" inputMode="decimal" />
+ className="h-8 text-sm font-mono" placeholder="0" inputMode="decimal" />
  </td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={m.counselStatus} onValueChange={v => updateMatter(m.id, { counselStatus: v as CounselStatus })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Not required">Not required</SelectItem>
  <SelectItem value="Letter sent">Letter sent</SelectItem>
@@ -344,11 +344,11 @@ export function Audit645Worksheet() {
  </td>
  <td className="border-b border-border p-2">
  <Input disabled={locked} value={m.fsImpact} onChange={e => updateMatter(m.id, { fsImpact: e.target.value })}
- className="h-8 text-xs" placeholder="Recognised / disclosed / none" />
+ className="h-8 text-sm" placeholder="Recognised / disclosed / none" />
  </td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={m.disclosureAdequate} onValueChange={v => updateMatter(m.id, { disclosureAdequate: v as YNNA })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Y">Yes</SelectItem>
  <SelectItem value="N">No</SelectItem>
@@ -358,7 +358,7 @@ export function Audit645Worksheet() {
  </td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={m.affectsEstimate} onValueChange={v => updateMatter(m.id, { affectsEstimate: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Y">Yes</SelectItem>
  <SelectItem value="N">No</SelectItem>

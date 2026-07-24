@@ -371,7 +371,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Establish overall materiality, performance materiality, and the clearly trivial threshold for the audit
  and document the rationale for each determination.
@@ -433,14 +433,14 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">{periodLabel}</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Extrapolated ($)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-28">Benchmark (%)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Materiality CY ($)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Materiality PY ($)</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">{periodLabel}</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Extrapolated ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-28">Benchmark (%)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Materiality CY ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Materiality PY ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Comments</th>
  <th className="px-2 py-3 w-8" />
  </tr>
  </thead>
@@ -527,7 +527,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  {/* Overall Materiality summary row */}
  <tr className="bg-primary/[0.06] border-t-2 border-primary/20">
  <td className="px-3 py-2" />
- <td className="px-4 py-2 text-xs font-semibold text-primary">
+ <td className="px-4 py-2 text-sm font-semibold text-primary">
  Overall Materiality — {BASIS_OPTIONS.find(o => o.value === selectedRow?.basis)?.label ?? "Select a primary benchmark ↑"}
  </td>
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
@@ -639,9 +639,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Factors affecting users decision making</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Factors affecting users decision making</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -713,9 +713,9 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/2">Nature</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Impact</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/2">Nature</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Impact</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -804,10 +804,10 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">F/S Area or Disclosure</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">F/S Area or Disclosure</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
  <th className="px-4 py-3 w-10" />
  </tr>
  </thead>
@@ -848,11 +848,11 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description / User Expectation</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-24">PY ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Description / User Expectation</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-24">PY ($)</th>
  <th className="px-4 py-3 w-10" />
  </tr>
  </thead>
@@ -890,10 +890,10 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">

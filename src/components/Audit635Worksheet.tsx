@@ -448,7 +448,7 @@ export function Audit635Worksheet() {
  <WorksheetSection
  title="Performing tests of controls"
  right={
- <label className="flex items-center gap-2 text-xs cursor-pointer">
+ <label className="flex items-center gap-2 text-sm cursor-pointer">
  <Checkbox
  disabled={locked}
  checked={data.testsOfControlsApplicable}

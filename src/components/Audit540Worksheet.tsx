@@ -231,7 +231,7 @@ export function Audit540Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To identify controls that address the risk of material misstatement at the assertion level and evaluate whether
  the controls have been designed effectively and have been implemented.
@@ -255,7 +255,7 @@ export function Audit540Worksheet() {
  <Input disabled={locked} value={cycle.cycle}
  onChange={e => patchCycle(cycle.id, { cycle: e.target.value })}
  placeholder="Business cycle (e.g., Revenue, receivables and receipts)"
- className="h-8 text-xs max-w-xl" />
+ className="h-8 text-sm max-w-xl" />
  </div>
  {!locked && data.cycles.length > 1 && (
  <button onClick={() => removeCycle(cycle.id)} className="text-muted-foreground hover:text-destructive">
@@ -267,7 +267,7 @@ export function Audit540Worksheet() {
  {/* Risk Factors */}
  <div className="border-b border-border">
  <div className="px-6 py-2.5 bg-muted/40 flex items-center justify-between">
- <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+ <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
  Risk factors — what can go wrong
  </span>
  {!locked && (
@@ -276,10 +276,10 @@ export function Audit540Worksheet() {
  const preset = SUGGESTED_RISK_FACTORS.find(p => p.text === v);
  if (preset) addRiskFactor(cycle.id, preset);
  }}>
- <SelectTrigger className="h-7 text-xs w-44"><SelectValue placeholder="Insert from library…" /></SelectTrigger>
+ <SelectTrigger className="h-7 text-sm w-44"><SelectValue placeholder="Insert from library…" /></SelectTrigger>
  <SelectContent className="max-h-80">
  {SUGGESTED_RISK_FACTORS.map(p => (
- <SelectItem key={p.text} value={p.text} className="text-xs">{p.text}</SelectItem>
+ <SelectItem key={p.text} value={p.text} className="text-sm">{p.text}</SelectItem>
  ))}
  </SelectContent>
  </Select>
@@ -290,7 +290,7 @@ export function Audit540Worksheet() {
  )}
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted/20 border-b border-border">
  <th className="px-4 py-2 text-center font-semibold uppercase tracking-wider w-10">#</th>
@@ -308,7 +308,7 @@ export function Audit540Worksheet() {
  <Textarea disabled={locked} value={r.description}
  onChange={e => setRiskFactor(cycle.id, r.id, { description: e.target.value })}
  placeholder="Describe what can go wrong…"
- className="min-h-[52px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[52px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-4 py-2">
  <div className="flex flex-wrap gap-1 justify-center">
@@ -330,11 +330,11 @@ export function Audit540Worksheet() {
  <td className="px-4 py-2 text-center">
  <Select disabled={locked} value={r.isSignificantRisk}
  onValueChange={v => setRiskFactor(cycle.id, r.id, { isSignificantRisk: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -356,7 +356,7 @@ export function Audit540Worksheet() {
  <div>
  <div className="px-6 py-2.5 bg-muted/40 flex items-center justify-between">
  <div>
- <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+ <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
  Control activities — design &amp; implementation
  </span>
  <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -370,7 +370,7 @@ export function Audit540Worksheet() {
  )}
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted/20 border-b border-border">
  <th className="px-3 py-2 text-center font-semibold uppercase tracking-wider w-10">#</th>
@@ -393,11 +393,11 @@ export function Audit540Worksheet() {
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.riskFactorId || "all"}
  onValueChange={v => setControl(cycle.id, ct.id, { riskFactorId: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="all" className="text-xs">All / cycle-wide</SelectItem>
+ <SelectItem value="all" className="text-sm">All / cycle-wide</SelectItem>
  {cycle.riskFactors.map((r, idx) => (
- <SelectItem key={r.id} value={r.id} className="text-xs">
+ <SelectItem key={r.id} value={r.id} className="text-sm">
  R{idx + 1} — {r.description ? r.description.slice(0, 60) : "(unnamed)"}
  </SelectItem>
  ))}
@@ -408,56 +408,56 @@ export function Audit540Worksheet() {
  <Textarea disabled={locked} value={ct.description}
  onChange={e => setControl(cycle.id, ct.id, { description: e.target.value })}
  placeholder="Describe the control activity and who performs it…"
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.controlType}
  onValueChange={v => setControl(cycle.id, ct.id, { controlType: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {CONTROL_TYPES.map(t => <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>)}
+ {CONTROL_TYPES.map(t => <SelectItem key={t} value={t} className="text-sm">{t}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.frequency}
  onValueChange={v => setControl(cycle.id, ct.id, { frequency: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {FREQUENCIES.map(t => <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>)}
+ {FREQUENCIES.map(t => <SelectItem key={t} value={t} className="text-sm">{t}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.designEffective}
  onValueChange={v => setControl(cycle.id, ct.id, { designEffective: v as YSN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Mitigated</SelectItem>
- <SelectItem value="S" className="text-xs">S — Some treatment</SelectItem>
- <SelectItem value="N" className="text-xs">N — Deficiency</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Mitigated</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Some treatment</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Deficiency</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.implemented}
  onValueChange={v => setControl(cycle.id, ct.id, { implemented: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.relyOnControl}
  onValueChange={v => setControl(cycle.id, ct.id, { relyOnControl: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -465,7 +465,7 @@ export function Audit540Worksheet() {
  <Textarea disabled={locked} value={ct.comments}
  onChange={e => setControl(cycle.id, ct.id, { comments: e.target.value })}
  placeholder="Walkthrough / inspection results, deficiencies, planned response…"
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2 text-center">
  <RefButton
@@ -494,11 +494,11 @@ export function Audit540Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Cycle conclusion — design</label>
  <Select disabled={locked} value={cycle.designConclusion}
  onValueChange={v => patchCycle(cycle.id, { designConclusion: v as YSN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Controls mitigate risks</SelectItem>
- <SelectItem value="S" className="text-xs">S — Some treatment, residual risk</SelectItem>
- <SelectItem value="N" className="text-xs">N — Significant deficiency</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Controls mitigate risks</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Some treatment, residual risk</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Significant deficiency</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -507,7 +507,7 @@ export function Audit540Worksheet() {
  <Input disabled={locked} value={cycle.conclusionRationale}
  onChange={e => patchCycle(cycle.id, { conclusionRationale: e.target.value })}
  placeholder="Briefly support the conclusion and link"
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>
@@ -522,7 +522,7 @@ export function Audit540Worksheet() {
  )}
 
  {/* Required-controls reminder (Note 1) */}
- <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
+ <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-sm text-foreground/85 space-y-1.5">
  <p className="font-semibold text-foreground">Required controls to identify and test:</p>
  <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
  <li>Controls that address a risk determined to be a significant risk.</li>
@@ -544,11 +544,11 @@ export function Audit540Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Controls suitably designed &amp; implemented</SelectItem>
- <SelectItem value="S" className="text-xs">S — Partial reliance / residual risk</SelectItem>
- <SelectItem value="N" className="text-xs">N — Significant deficiencies identified</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Controls suitably designed &amp; implemented</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Partial reliance / residual risk</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Significant deficiencies identified</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -557,7 +557,7 @@ export function Audit540Worksheet() {
  <Input disabled={locked} value={data.overallNotes}
  onChange={e => setData(d => ({...d, overallNotes: e.target.value }))}
  placeholder="Briefly support the overall conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>

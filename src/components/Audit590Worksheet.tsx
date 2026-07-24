@@ -311,7 +311,7 @@ export function Audit590Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Perform engagement scoping for all classes of transactions, account balances and disclosures (COTABDs).
  Identify SCOTABDs and material-only COTABDs, assess RMM at the assertion level, summarise the audit
@@ -327,18 +327,18 @@ export function Audit590Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Overall materiality ($)</label>
  <Input disabled={locked} value={data.overallMateriality}
  onChange={e => setData(d => ({...d, overallMateriality: e.target.value }))}
- placeholder="From" className="h-8 text-xs" />
+ placeholder="From" className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Performance materiality ($)</label>
  <Input disabled={locked} value={data.performanceMateriality}
  onChange={e => setData(d => ({...d, performanceMateriality: e.target.value }))}
- placeholder="From" className="h-8 text-xs" />
+ placeholder="From" className="h-8 text-sm" />
  </div>
  </div>
 
  {/* Legend */}
- <div className="bg-card border border-border rounded-md p-4 grid grid-cols-2 gap-4 text-xs">
+ <div className="bg-card border border-border rounded-md p-4 grid grid-cols-2 gap-4 text-sm">
  <div>
  <p className="font-semibold text-foreground uppercase tracking-wider mb-2 text-[11px]">Assertions</p>
  <div className="grid grid-cols-2 gap-1.5">
@@ -361,7 +361,7 @@ export function Audit590Worksheet() {
  </div>
 
  {/* Summary chips */}
- <div className="flex flex-wrap gap-2 text-xs">
+ <div className="flex flex-wrap gap-2 text-sm">
  <span className="px-3 py-1 rounded-md border border-red-200 bg-red-50 text-red-700 font-medium">
  SCOTABD: <b>{counts.scotabd}</b>
  </span>
@@ -396,22 +396,22 @@ export function Audit590Worksheet() {
  </div>
 
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10 border-r border-border">#</th>
- <th rowSpan={2} className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 200 }}>FSA / COTABD</th>
- <th rowSpan={2} className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 130 }}>Current yr ($)</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 90 }}>Material?</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Basis</th>
- <th rowSpan={2} className="px-3 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>F520 ref.</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>IR</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>Sig. risk</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>CR</th>
- <th colSpan={4} className="px-3 py-2 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-r border-border border-b border-border">Assertions / RMM</th>
- <th rowSpan={2} className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 220 }}>Audit response</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Classification</th>
- <th rowSpan={2} className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 80 }}>W/P</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10 border-r border-border">#</th>
+ <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 200 }}>FSA / COTABD</th>
+ <th rowSpan={2} className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 130 }}>Current yr ($)</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 90 }}>Material?</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Basis</th>
+ <th rowSpan={2} className="px-3 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>F520 ref.</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>IR</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>Sig. risk</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>CR</th>
+ <th colSpan={4} className="px-3 py-2 text-center text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border border-b border-border">Assertions / RMM</th>
+ <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 220 }}>Audit response</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Classification</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 80 }}>W/P</th>
  {!locked && <th rowSpan={2} className="px-2 py-3 w-8" />}
  </tr>
  <tr className="bg-muted border-b border-border">
@@ -434,33 +434,33 @@ export function Audit590Worksheet() {
  <Input disabled={locked} value={r.fsa}
  onChange={e => patchRow(r.id, { fsa: e.target.value })}
  placeholder="FSA / COTABD"
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </td>
  <td className="px-3 py-2">
  <Input disabled={locked} value={r.amount}
  onChange={e => patchRow(r.id, { amount: e.target.value })}
  placeholder="$"
- className="h-8 text-xs text-right font-mono" />
+ className="h-8 text-sm text-right font-mono" />
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.material}
  onValueChange={v => patchRow(r.id, { material: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y</SelectItem>
- <SelectItem value="N" className="text-xs">N</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y</SelectItem>
+ <SelectItem value="N" className="text-sm">N</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.materialBasis}
  onValueChange={v => patchRow(r.id, { materialBasis: v as CotabdRow["materialBasis"] })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Quantitative" className="text-xs">Quantitative</SelectItem>
- <SelectItem value="Qualitative" className="text-xs">Qualitative</SelectItem>
- <SelectItem value="Both" className="text-xs">Both</SelectItem>
+ <SelectItem value="Quantitative" className="text-sm">Quantitative</SelectItem>
+ <SelectItem value="Qualitative" className="text-sm">Qualitative</SelectItem>
+ <SelectItem value="Both" className="text-sm">Both</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -468,37 +468,37 @@ export function Audit590Worksheet() {
  <Input disabled={locked} value={r.risk520Ref}
  onChange={e => patchRow(r.id, { risk520Ref: e.target.value })}
  placeholder="e.g. R-12"
- className="h-8 text-xs font-mono" />
+ className="h-8 text-sm font-mono" />
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.inherentRisk}
  onValueChange={v => patchRow(r.id, { inherentRisk: v as HML })}>
- <SelectTrigger className={`h-8 text-xs ${hmlBadge(r.inherentRisk)}`}>
+ <SelectTrigger className={`h-8 text-sm ${hmlBadge(r.inherentRisk)}`}>
  <SelectValue placeholder="—" />
  </SelectTrigger>
  <SelectContent>
- {HML_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+ {HML_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.significantRisk}
  onValueChange={v => patchRow(r.id, { significantRisk: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y</SelectItem>
- <SelectItem value="N" className="text-xs">N</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y</SelectItem>
+ <SelectItem value="N" className="text-sm">N</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.controlRisk}
  onValueChange={v => patchRow(r.id, { controlRisk: v as HML })}>
- <SelectTrigger className={`h-8 text-xs ${hmlBadge(r.controlRisk)}`}>
+ <SelectTrigger className={`h-8 text-sm ${hmlBadge(r.controlRisk)}`}>
  <SelectValue placeholder="—" />
  </SelectTrigger>
  <SelectContent>
- {HML_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+ {HML_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
@@ -526,7 +526,7 @@ export function Audit590Worksheet() {
  <SelectValue placeholder="—" />
  </SelectTrigger>
  <SelectContent>
- {HML_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+ {HML_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>)}
  </SelectContent>
  </Select>
  )}
@@ -539,7 +539,7 @@ export function Audit590Worksheet() {
  <Textarea disabled={locked} value={r.auditResponse}
  onChange={e => patchRow(r.id, { auditResponse: e.target.value })}
  placeholder="Summarise the audit response or cross-reference the detailed plan…"
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2 text-center">
  <span className={`inline-block px-2 py-0.5 rounded-md border text-[11px] font-medium ${cls.tone}`}>
@@ -585,7 +585,7 @@ export function Audit590Worksheet() {
  const value = data.standback[item.key];
  return (
  <div key={item.key} className="grid grid-cols-[1fr_280px] gap-3 items-start border-t border-border pt-3 first:border-t-0 first:pt-0">
- <label className="flex items-start gap-2 text-xs text-foreground">
+ <label className="flex items-start gap-2 text-sm text-foreground">
  <input type="checkbox" disabled={locked} checked={value.done}
  onChange={e => setData(d => ({
 ...d, standback: {...d.standback, [item.key]: {...value, done: e.target.checked } },
@@ -598,7 +598,7 @@ export function Audit590Worksheet() {
 ...d, standback: {...d.standback, [item.key]: {...value, notes: e.target.value } },
  }))}
  placeholder="Notes / cross-reference"
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  );
  })}
@@ -608,11 +608,11 @@ export function Audit590Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">PSC performed? (Y/N)</label>
  <Select disabled={locked} value={data.standback.pscDone}
  onValueChange={v => setData(d => ({...d, standback: {...d.standback, pscDone: v as YN } }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y</SelectItem>
- <SelectItem value="N" className="text-xs">N</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y</SelectItem>
+ <SelectItem value="N" className="text-sm">N</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -621,7 +621,7 @@ export function Audit590Worksheet() {
  <Input disabled={locked} value={data.standback.pscInitials}
  onChange={e => setData(d => ({...d, standback: {...d.standback, pscInitials: e.target.value } }))}
  placeholder="e.g. JD"
- className="h-8 text-xs uppercase" />
+ className="h-8 text-sm uppercase" />
  </div>
  </div>
  </div>
@@ -637,11 +637,11 @@ export function Audit590Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Scoping is complete &amp; appropriate</SelectItem>
- <SelectItem value="S" className="text-xs">S — Some matters require follow-up</SelectItem>
- <SelectItem value="N" className="text-xs">N — Scoping requires revision</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Scoping is complete &amp; appropriate</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Some matters require follow-up</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Scoping requires revision</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -650,7 +650,7 @@ export function Audit590Worksheet() {
  <Input disabled={locked} value={data.conclusionRationale}
  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
  placeholder="Briefly support the conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>

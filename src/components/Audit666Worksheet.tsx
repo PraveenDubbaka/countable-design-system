@@ -203,7 +203,7 @@ export function Audit666Worksheet() {
  </p>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead><tr className="bg-muted/40">
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[150px]">Name</th>
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[150px]">Relationship</th>
@@ -218,10 +218,10 @@ export function Audit666Worksheet() {
  <tbody>
  {data.parties.map(p => (
  <tr key={p.id} className="hover:bg-muted/20 align-top">
- <td className="border-b border-border p-2"><Input disabled={locked} value={p.name} onChange={e => updParty(p.id, { name: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={p.name} onChange={e => updParty(p.id, { name: e.target.value })} className="h-8 text-sm" placeholder="—" /></td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={p.relationship} onValueChange={v => updParty(p.id, { relationship: v as RpRelationship })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Parent">Parent</SelectItem>
  <SelectItem value="Subsidiary">Subsidiary</SelectItem>
@@ -232,12 +232,12 @@ export function Audit666Worksheet() {
  </SelectContent>
  </Select>
  </td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={p.natureOfTxn} onChange={e => updParty(p.id, { natureOfTxn: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Loans, mgmt fees, leases, sales…" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={p.amount} onChange={e => updParty(p.id, { amount: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" placeholder="0" /></td>
+ <td className="border-b border-border p-2"><Textarea disabled={locked} value={p.natureOfTxn} onChange={e => updParty(p.id, { natureOfTxn: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Loans, mgmt fees, leases, sales…" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={p.amount} onChange={e => updParty(p.id, { amount: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" placeholder="0" /></td>
  <td className="border-b border-border p-2"><YNSelect value={p.armsLength} onChange={v => updParty(p.id, { armsLength: v as YNNA })} withNA locked={locked} /></td>
  <td className="border-b border-border p-2"><YNSelect value={p.outsideNormal} onChange={v => updParty(p.id, { outsideNormal: v as YN })} locked={locked} /></td>
  <td className="border-b border-border p-2"><YNSelect value={p.disclosureAdequate} onChange={v => updParty(p.id, { disclosureAdequate: v as YNNA })} withNA locked={locked} /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={p.wpRef} onChange={e => updParty(p.id, { wpRef: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={p.wpRef} onChange={e => updParty(p.id, { wpRef: e.target.value })} className="h-8 text-sm" placeholder="—" /></td>
  <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => removeParty(p.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
  </tr>
  ))}

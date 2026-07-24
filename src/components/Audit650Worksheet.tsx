@@ -254,7 +254,7 @@ export function Audit650Worksheet() {
  <p className="px-6 py-4 text-xs text-muted-foreground">No subsequent events recorded. Each identified event flows in (representations), (TCWG) and (auditor's report).</p>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead><tr className="bg-muted/40">
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[120px]">Date identified</th>
  <th className="text-left px-3 py-2.5 font-medium border-b border-border">Event / matter</th>
@@ -268,12 +268,12 @@ export function Audit650Worksheet() {
  <tbody>
  {data.events.map(ev => (
  <tr key={ev.id} className="align-top hover:bg-muted/20">
- <td className="border-b border-border p-2"><Input disabled={locked} type="date" value={ev.dateIdentified} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, dateIdentified: e.target.value } : x) }))} className="h-8 text-xs" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ev.description} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, description: e.target.value } : x) }))} className="min-h-[44px] text-xs resize-none" placeholder="Nature of event" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ev.source} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, source: e.target.value } : x) }))} className="h-8 text-xs" placeholder="Minutes / inquiry / bank" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} type="date" value={ev.dateIdentified} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, dateIdentified: e.target.value } : x) }))} className="h-8 text-sm" /></td>
+ <td className="border-b border-border p-2"><Textarea disabled={locked} value={ev.description} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, description: e.target.value } : x) }))} className="min-h-[44px] text-sm resize-none" placeholder="Nature of event" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ev.source} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, source: e.target.value } : x) }))} className="h-8 text-sm" placeholder="Minutes / inquiry / bank" /></td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={ev.category} onValueChange={v => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, category: v as EventCategory } : x) }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Adjusting">Adjusting</SelectItem>
  <SelectItem value="Non-adjusting (disclose)">Non-adjusting (disclose)</SelectItem>
@@ -281,9 +281,9 @@ export function Audit650Worksheet() {
  </SelectContent>
  </Select>
  </td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ev.fsImpact} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, fsImpact: e.target.value } : x) }))} className="h-8 text-xs" placeholder="$ / qualitative" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ev.treatment} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, treatment: e.target.value } : x) }))} className="h-8 text-xs" placeholder="JE booked / Note added" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ev.wpRef} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, wpRef: e.target.value } : x) }))} className="h-8 text-xs" placeholder="—" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ev.fsImpact} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, fsImpact: e.target.value } : x) }))} className="h-8 text-sm" placeholder="$ / qualitative" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ev.treatment} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, treatment: e.target.value } : x) }))} className="h-8 text-sm" placeholder="JE booked / Note added" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ev.wpRef} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, wpRef: e.target.value } : x) }))} className="h-8 text-sm" placeholder="—" /></td>
  <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => setData(d => ({...d, events: d.events.filter(x => x.id !== ev.id) }))}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
  </tr>
  ))}

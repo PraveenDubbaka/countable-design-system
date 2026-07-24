@@ -249,7 +249,7 @@ export function Audit580Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Identify, assess and respond to the presumed risk of material misstatement due to fraud in revenue
  recognition. Document each revenue stream, the related fraud risk and inherent risk
@@ -266,21 +266,21 @@ export function Audit580Worksheet() {
  <Input disabled={locked} value={data.accountBalance}
  onChange={e => setData(d => ({...d, accountBalance: e.target.value }))}
  placeholder="e.g. Revenue — Freight services"
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Performance materiality ($)</label>
  <Input disabled={locked} value={data.performanceMateriality}
  onChange={e => setData(d => ({...d, performanceMateriality: e.target.value }))}
  placeholder="From"
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
 
  {/* Assertions legend */}
  <div className="bg-card border border-border rounded-md p-4">
- <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Assertions</p>
- <div className="grid grid-cols-4 gap-3 text-xs">
+ <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-2">Assertions</p>
+ <div className="grid grid-cols-4 gap-3 text-sm">
  {ASSERTION_OPTIONS.map(a => (
  <div key={a.value} className="rounded-md border border-border bg-muted/30 p-2.5">
  <span className="font-mono font-semibold text-primary mr-1.5">{a.value}</span>
@@ -291,7 +291,7 @@ export function Audit580Worksheet() {
  </div>
 
  {/* Summary chips */}
- <div className="flex flex-wrap gap-2 text-xs">
+ <div className="flex flex-wrap gap-2 text-sm">
  <span className="px-3 py-1 rounded-md border border-red-200 bg-red-50 text-red-700 font-medium">
  High IR streams: <b>{counts.high}</b>
  </span>
@@ -326,19 +326,19 @@ export function Audit580Worksheet() {
  </div>
 
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 180 }}>Revenue stream</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Description / nature of transaction</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Assertions</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Likelihood</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Magnitude</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Inherent risk</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Significant risk?</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 200 }}>Rationale</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 180 }}>Revenue stream</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Description / nature of transaction</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Assertions</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Likelihood</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Magnitude</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Inherent risk</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Significant risk?</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 200 }}>Rationale</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
  {!locked && <th className="px-2 py-3 w-8" />}
  </tr>
  </thead>
@@ -356,7 +356,7 @@ export function Audit580Worksheet() {
  <Textarea disabled={locked} value={s.description}
  onChange={e => patchStream(s.id, { description: e.target.value })}
  placeholder="Nature, timing, recognition policy…"
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <div className="flex flex-wrap gap-1 justify-center">
@@ -379,40 +379,40 @@ export function Audit580Worksheet() {
  <td className="px-3 py-2">
  <Select disabled={locked} value={s.likelihood}
  onValueChange={v => patchStream(s.id, { likelihood: v as Rating })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- {RATINGS.map(r => <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>)}
+ {RATINGS.map(r => <SelectItem key={r} value={r} className="text-sm">{r}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={s.magnitude}
  onValueChange={v => patchStream(s.id, { magnitude: v as Rating })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- {RATINGS.map(r => <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>)}
+ {RATINGS.map(r => <SelectItem key={r} value={r} className="text-sm">{r}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={s.inherentRisk}
  onValueChange={v => patchStream(s.id, { inherentRisk: v as Rating })}>
- <SelectTrigger className={`h-8 text-xs ${ratingBadge(s.inherentRisk)}`}>
+ <SelectTrigger className={`h-8 text-sm ${ratingBadge(s.inherentRisk)}`}>
  <SelectValue placeholder="—" />
  </SelectTrigger>
  <SelectContent>
- {RATINGS.map(r => <SelectItem key={r} value={r} className="text-xs">{r}</SelectItem>)}
+ {RATINGS.map(r => <SelectItem key={r} value={r} className="text-sm">{r}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={s.significantRisk}
  onValueChange={v => patchStream(s.id, { significantRisk: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -420,7 +420,7 @@ export function Audit580Worksheet() {
  <Textarea disabled={locked} value={s.rationale}
  onChange={e => patchStream(s.id, { rationale: e.target.value })}
  placeholder="Support the assessment…"
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2 text-center">
  <RefButton
@@ -453,27 +453,27 @@ export function Audit580Worksheet() {
  </div>
 
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Procedure</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>P&amp;SA</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>PSC (Y/N)</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 360 }}>Exceptions / difficulties</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Procedure</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>P&amp;SA</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>PSC (Y/N)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 360 }}>Exceptions / difficulties</th>
  </tr>
  </thead>
  <tbody>
  {data.procedures.map((p) => (
  <tr key={p.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
  <td className="px-4 py-3">
- <p className="text-xs font-semibold text-foreground mb-0.5">{p.title}</p>
+ <p className="text-sm font-semibold text-foreground mb-0.5">{p.title}</p>
  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.guidance}</p>
  </td>
  <td className="px-3 py-3">
  <Input disabled={locked} value={p.psa}
  onChange={e => patchProcedure(p.id, { psa: e.target.value })}
- className="h-8 text-xs font-mono" />
+ className="h-8 text-sm font-mono" />
  </td>
  <td className="px-3 py-3 text-center">
  <RefButton
@@ -485,11 +485,11 @@ export function Audit580Worksheet() {
  <td className="px-3 py-3">
  <Select disabled={locked} value={p.psc}
  onValueChange={v => patchProcedure(p.id, { psc: v as YN })}>
- <SelectTrigger className="h-8 text-xs w-20"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm w-20"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y</SelectItem>
- <SelectItem value="N" className="text-xs">N</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y</SelectItem>
+ <SelectItem value="N" className="text-sm">N</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -497,7 +497,7 @@ export function Audit580Worksheet() {
  <Textarea disabled={locked} value={p.exceptions}
  onChange={e => patchProcedure(p.id, { exceptions: e.target.value })}
  placeholder="Summarize exceptions or difficulties encountered…"
- className="min-h-[56px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </td>
  </tr>
  ))}
@@ -507,7 +507,7 @@ export function Audit580Worksheet() {
  </div>
 
  {/* CAS 240 reminder */}
- <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
+ <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-sm text-foreground/85 space-y-1.5">
  <div className="flex items-center gap-2">
  <AlertTriangle className="h-3.5 w-3.5 text-primary" />
  <p className="font-semibold text-foreground">Rebuttable presumption</p>
@@ -527,11 +527,11 @@ export function Audit580Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Is a fraud risk in revenue recognition identified?</label>
  <Select disabled={locked} value={data.fraudRiskIdentified}
  onValueChange={v => setData(d => ({...d, fraudRiskIdentified: v as YN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes — significant risk recorded</SelectItem>
- <SelectItem value="N" className="text-xs">No — presumption rebutted</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes — significant risk recorded</SelectItem>
+ <SelectItem value="N" className="text-sm">No — presumption rebutted</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -542,7 +542,7 @@ export function Audit580Worksheet() {
  <Textarea disabled={locked} value={data.rebuttalRationale}
  onChange={e => setData(d => ({...d, rebuttalRationale: e.target.value }))}
  placeholder="Document the reasons supporting the conclusion above."
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </div>
  </div>
  </div>
@@ -558,11 +558,11 @@ export function Audit580Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Sufficient appropriate evidence</SelectItem>
- <SelectItem value="S" className="text-xs">S — Some matters; addressed by response</SelectItem>
- <SelectItem value="N" className="text-xs">N — Insufficient — escalation required</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Sufficient appropriate evidence</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Some matters; addressed by response</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Insufficient — escalation required</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -571,7 +571,7 @@ export function Audit580Worksheet() {
  <Input disabled={locked} value={data.conclusionRationale}
  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
  placeholder="Briefly support the overall conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>

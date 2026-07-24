@@ -299,7 +299,7 @@ export function AuditTimeTrackerWorksheet() {
  {/* Objective */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Track actual time against budgeted hours by role and section. Budget is based on
  CAS industry standards and fully editable. Blended rate, cost variance, and fee
@@ -368,7 +368,7 @@ export function AuditTimeTrackerWorksheet() {
  <p className="text-[11px] text-muted-foreground">Total Budget Cost</p>
  <p className="text-lg font-bold">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</p>
  {num(budget.proposedFee) > 0 && totalBudgetCost > 0 && (
- <p className="text-xs font-medium text-foreground">
+ <p className="text-sm font-medium text-foreground">
  vs. fee: {(num(budget.proposedFee) >= totalBudgetCost ? "+" : "") + fmt$(num(budget.proposedFee) - totalBudgetCost)}
  </p>
  )}
@@ -379,7 +379,7 @@ export function AuditTimeTrackerWorksheet() {
  <div className="overflow-x-auto">
  <table className="w-full text-base">
  <thead>
- <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
+ <tr className="bg-muted text-sm font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
  <th className="px-5 py-2 text-left">Role</th>
  <th className="px-3 py-2 text-left w-36">Team Member</th>
  <th className="px-3 py-2 text-center w-14">Std %</th>
@@ -477,7 +477,7 @@ export function AuditTimeTrackerWorksheet() {
  <div className="overflow-x-auto">
  <table className="w-full text-base">
  <thead>
- <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
+ <tr className="bg-muted text-sm font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
  <th className="px-5 py-2 text-left">Section</th>
  <th className="px-3 py-2 text-center w-14">Std %</th>
  <th className="px-3 py-2 text-right w-28">Budget Hrs</th>
@@ -629,7 +629,7 @@ export function AuditTimeTrackerWorksheet() {
  <div className="overflow-x-auto">
  <table className="w-full text-base">
  <thead>
- <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
+ <tr className="bg-muted text-sm font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
  {/* Date */}
  <th className="px-4 py-2 text-left">
  <div className="flex items-center gap-1">
@@ -642,7 +642,7 @@ export function AuditTimeTrackerWorksheet() {
  </DropdownMenuTrigger>
  <DropdownMenuContent align="start" className="w-52">
  <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Filter by date</p>
- <Input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="h-7 text-xs" />
+ <Input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="h-7 text-sm" />
  {filterDate && (
  <button onClick={() => setFilterDate('')} className="mt-1.5 w-full text-left text-xs text-muted-foreground hover:text-foreground px-1">Clear</button>
  )}
@@ -709,7 +709,7 @@ export function AuditTimeTrackerWorksheet() {
  <DropdownMenuContent align="start" className="w-56">
  <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Search description</p>
  <Input value={filterDesc} onChange={e => setFilterDesc(e.target.value)}
- placeholder="Search…" className="h-7 text-xs" autoFocus />
+ placeholder="Search…" className="h-7 text-sm" autoFocus />
  {filterDesc && (
  <button onClick={() => setFilterDesc('')} className="mt-1.5 w-full text-left text-xs text-muted-foreground hover:text-foreground px-1">Clear</button>
  )}
@@ -767,7 +767,7 @@ export function AuditTimeTrackerWorksheet() {
  value={curUserName}
  onValueChange={v => commitSelect(e, 'userName', v)}
  >
- <SelectTrigger className="h-7 text-xs mt-1.5">
+ <SelectTrigger className="h-7 text-sm mt-1.5">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>

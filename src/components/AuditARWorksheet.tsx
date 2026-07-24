@@ -148,7 +148,7 @@ type DocKey = "auditProcedures" | "confirmationProcedures";
 
 type RowSetter = (docKey: DocKey, sectionIdx: number, rowId: string, field: keyof ARRow, value: string | RefDoc[]) => void;
 
-const TD = "border-b border-border px-3 py-2.5 text-xs align-top";
+const TD = "border-b border-border px-3 py-2.5 text-sm align-top";
 
 function ProcTable({ docKey, sections, locked, onRowField }: {
  docKey: DocKey;
@@ -158,7 +158,7 @@ function ProcTable({ docKey, sections, locked, onRowField }: {
 }) {
  return (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead>
  <tr className="bg-muted/40">
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[140px]">Nature</th>
@@ -179,24 +179,24 @@ function ProcTable({ docKey, sections, locked, onRowField }: {
  <tr key={r.id} className="hover:bg-muted/20">
  <td className={TD}>
  <Select disabled={locked} value={r.nature} onValueChange={v => onRowField(docKey, si, r.id, "nature", v)}>
- <SelectTrigger className="h-8 text-xs min-w-0"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm min-w-0"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Required" className="text-xs">Required</SelectItem>
- <SelectItem value="Optional" className="text-xs">Optional</SelectItem>
- <SelectItem value="Additional Procedure" className="text-xs">Additional Procedure</SelectItem>
+ <SelectItem value="Required" className="text-sm">Required</SelectItem>
+ <SelectItem value="Optional" className="text-sm">Optional</SelectItem>
+ <SelectItem value="Additional Procedure" className="text-sm">Additional Procedure</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className={TD}>
  <Select disabled={locked} value={r.type} onValueChange={v => onRowField(docKey, si, r.id, "type", v)}>
- <SelectTrigger className="h-8 text-xs min-w-0"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm min-w-0"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Inquiries" className="text-xs">Inquiries</SelectItem>
- <SelectItem value="Analytics" className="text-xs">Analytics</SelectItem>
- <SelectItem value="Observation" className="text-xs">Observation</SelectItem>
- <SelectItem value="Inspection" className="text-xs">Inspection</SelectItem>
- <SelectItem value="Recalculation" className="text-xs">Recalculation</SelectItem>
- <SelectItem value="Other" className="text-xs">Other</SelectItem>
+ <SelectItem value="Inquiries" className="text-sm">Inquiries</SelectItem>
+ <SelectItem value="Analytics" className="text-sm">Analytics</SelectItem>
+ <SelectItem value="Observation" className="text-sm">Observation</SelectItem>
+ <SelectItem value="Inspection" className="text-sm">Inspection</SelectItem>
+ <SelectItem value="Recalculation" className="text-sm">Recalculation</SelectItem>
+ <SelectItem value="Other" className="text-sm">Other</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -206,7 +206,7 @@ function ProcTable({ docKey, sections, locked, onRowField }: {
  disabled={locked}
  value={r.comments}
  onChange={e => onRowField(docKey, si, r.id, "comments", e.target.value)}
- className="min-h-[56px] text-xs resize-none"
+ className="min-h-[56px] text-sm resize-none"
  placeholder="—"
  />
  </td>
@@ -288,19 +288,19 @@ function ARInfoBlock() {
  <div>
  <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
  <Select disabled value="Accounts Receivable">
- <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Accounts Receivable" className="text-xs">Accounts Receivable</SelectItem>
+ <SelectItem value="Accounts Receivable" className="text-sm">Accounts Receivable</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div>
  <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
- <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
+ <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
  <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
- <Input disabled value="" className="h-8 text-xs" placeholder="Automated" />
+ <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
  </div>

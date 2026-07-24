@@ -254,11 +254,11 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '28%', minWidth: 240 }}>Agenda item</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 220, minWidth: 220 }}>Discussion leader</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '40%', minWidth: 360 }}>Matters arising &amp; decisions reached</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>W/P ref.</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: '28%', minWidth: 240 }}>Agenda item</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 220, minWidth: 220 }}>Discussion leader</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: '40%', minWidth: 360 }}>Matters arising &amp; decisions reached</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>W/P ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -266,7 +266,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  const row = data.rows[item.id];
  return (
  <tr key={item.id} className="hover:bg-muted/50 transition-colors align-top">
- <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{item.num}</td>
+ <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{item.num}</td>
  <td className="px-6 py-3 text-sm text-foreground" style={{ width: '28%', minWidth: 240 }}>
  <div className="font-semibold">{item.title}</div>
  {item.intro && <div className="mt-1 text-xs text-muted-foreground">{item.intro}</div>}
@@ -312,7 +312,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <div className="flex flex-col h-full">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To ensure appropriate communication among the engagement team resulting in a well-planned audit.{" "}
  <span className="font-medium text-foreground">Notes:</span> Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable). This form is divided into two parts — Part A would typically take place at the commencement of the audit; Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.{" "}
@@ -356,7 +356,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <div className="rounded-md border border-border overflow-hidden">
  <table className="w-full">
  <thead>
- <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
+ <tr className="bg-muted text-sm font-semibold text-foreground uppercase tracking-wider border-b border-border">
  <th className="w-10 px-4 py-2 text-center">#</th>
  <th className="px-4 py-2 text-left">Attendee</th>
  <th className="px-4 py-2 text-left border-l border-border" style={{ width: 260 }}>Role / Entity</th>
@@ -366,7 +366,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <tbody className="divide-y divide-border">
  {data.attendeesList.map((att, idx) => (
  <tr key={att.id} className="hover:bg-muted/30 align-middle">
- <td className="px-4 py-2 text-center text-xs font-semibold font-mono text-foreground">{idx + 1}</td>
+ <td className="px-4 py-2 text-center text-sm font-semibold font-mono text-foreground">{idx + 1}</td>
  <td className="px-2 py-1">
  <Select value={att.name} onValueChange={v => selectAttendeeByName(idx, v)}>
  <SelectTrigger className="h-8 text-sm border-0 shadow-none bg-transparent focus:ring-0 focus:ring-offset-0 px-2">
@@ -422,18 +422,18 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <table className="w-full">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Action step required</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 220 }}>Person responsible</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Deadline</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Actual completion</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Action step required</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 220 }}>Person responsible</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Deadline</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Actual completion</th>
  <th className="w-12 px-2 py-3" />
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  {data.actionSteps.map((step, idx) => (
  <tr key={step.id} className="hover:bg-muted/50 align-top">
- <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{idx + 1}</td>
+ <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{idx + 1}</td>
  <td className="px-6 py-3">
  <AttributedComment value={step.action} onChange={v => setAction(idx, { action: v })} storageKey={`436-${isUS?'us':'ca'}-action-${step.id}`} placeholder="Describe action step…" className="min-h-[44px] text-sm resize-none border-0 shadow-none p-0 focus-visible:ring-0 bg-transparent" minHeight="44px" />
  </td>

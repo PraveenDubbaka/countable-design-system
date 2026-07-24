@@ -230,7 +230,7 @@ export function Audit520Worksheet() {
  {/* ── Objective bar ─────────────────────────────────────────────── */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
- <p className="text-xs text-foreground leading-relaxed">
+ <p className="text-sm text-foreground leading-relaxed">
  <span className="font-semibold text-primary">Objective: </span>
  To document and assess identified risks of material misstatement at the financial statement level and assess inherent risk(s) at the assertion level, including significant risks, to be used as a basis for designing and implementing the appropriate audit response.
  </p>

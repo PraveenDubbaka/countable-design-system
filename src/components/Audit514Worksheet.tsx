@@ -175,7 +175,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  {/* ── Objective bar ─────────────────────────────────────────────────── */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
- <p className="text-xs text-foreground leading-relaxed">
+ <p className="text-sm text-foreground leading-relaxed">
  <span className="font-semibold text-primary">Objective: </span>
  To facilitate and document the results of reviewing the outcome of previous years&apos; accounting estimates, and assess whether differences indicate possible management bias or require audit response.
  </p>
@@ -189,7 +189,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  {biasYesCount > 0 && (
  <div className="flex items-start gap-2.5 rounded-md border border-amber-300 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700 px-4 py-2.5">
  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
- <p className="text-xs text-amber-800 dark:text-amber-300">
+ <p className="text-sm text-amber-800 dark:text-amber-300">
  <span className="font-semibold">{biasYesCount} estimate{biasYesCount > 1 ? "s" : ""} indicate possible management bias.</span> Document implications and consider impact on the current period audit response.
  </p>
  </div>
@@ -201,14 +201,14 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Type of Estimate</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Prior Period $</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actual Outcome $</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Difference $</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">% Variance</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Explanation of Variance</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Management Bias?</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Implications for Current Period</th>
  <th className="w-8" />
  </tr>
  </thead>

@@ -189,12 +189,12 @@ function PlanColHeaders() {
  return (
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 140, minWidth: 140 }}>PSC (Y/N)</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 380 }}>Responses / comments</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100, minWidth: 100 }}>W/P ref.</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" />
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="w-[38%] px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Procedure</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 140, minWidth: 140 }}>PSC (Y/N)</th>
+ <th className="w-[38%] px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Responses / comments</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 100, minWidth: 100 }}>W/P ref.</th>
  </tr>
  </thead>
  );
@@ -204,12 +204,12 @@ function InqColHeaders() {
  return (
  <thead>
  <tr className="bg-muted/60 border-b border-border">
- <th className="w-10 px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
+ <th className="w-10 px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider" />
  <th className="w-10 px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">#</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Inquiry topic</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130, minWidth: 130 }}>PSC (Y/N)</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 340 }}>Findings / response</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100, minWidth: 100 }}>W/P ref.</th>
+ <th className="w-[38%] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Inquiry topic</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130, minWidth: 130 }}>PSC (Y/N)</th>
+ <th className="w-[38%] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Findings / response</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 100, minWidth: 100 }}>W/P ref.</th>
  </tr>
  </thead>
  );
@@ -288,7 +288,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To provide an additional listing of potential inquiries of management, those responsible for financial
  reporting and other appropriate individuals within the entity.{" "}
@@ -319,7 +319,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <td className="px-4 py-3 text-center align-top">
  <Checkbox checked={row.checked} onCheckedChange={v => setPlan(proc.id, { checked: !!v })} disabled={locked} />
  </td>
- <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
+ <td className="px-4 py-3 text-center align-top text-sm font-semibold font-mono text-foreground">{proc.num}</td>
  <td className="px-6 py-3 align-top text-sm text-foreground">
  {proc.description}
  {proc.items.length > 0 && (
@@ -338,7 +338,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  </SelectContent>
  </Select>
  </td>
- <td className="px-6 py-3 align-top" style={{ minWidth: 380 }}>
+ <td className="px-6 py-3 align-top">
  <AttributedComment value={row.response} onChange={v => setPlan(proc.id, { response: v })} storageKey={`505-${engagementId}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
  </td>
  <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
@@ -396,7 +396,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="rounded border border-border overflow-hidden">
  <table className="w-full">
  <thead>
- <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
+ <tr className="bg-muted text-sm font-semibold text-foreground uppercase tracking-wider border-b border-border">
  <th className="px-3 py-2 text-left">Who interviewed</th>
  <th className="px-3 py-2 text-left border-l border-border">By whom (auditor)</th>
  <th className="px-3 py-2 text-left border-l border-border" style={{ width: 160 }}>Date</th>
@@ -477,7 +477,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  </td>
  <td className="px-4 py-2.5 align-top" style={{ width: 130 }}>
  <Select value={row.psc} onValueChange={v => setInq(key, { psc: v })} disabled={locked}>
- <SelectTrigger className="h-8 text-xs bg-background w-full">
+ <SelectTrigger className="h-8 text-sm bg-background w-full">
  <SelectValue placeholder="Select" />
  </SelectTrigger>
  <SelectContent>
@@ -487,7 +487,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  </SelectContent>
  </Select>
  </td>
- <td className="px-4 py-2.5 align-top" style={{ minWidth: 340 }}>
+ <td className="px-4 py-2.5 align-top">
  <Textarea
  disabled={locked}
  value={row.response}

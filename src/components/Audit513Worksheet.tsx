@@ -330,7 +330,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Obtain an understanding of accounting estimates and related disclosures to provide an appropriate basis for the assessment of the risk of material misstatement at the financial statement and assertion levels.
  </p>
@@ -380,10 +380,10 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Procedure</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+ <th className="px-5 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Procedure</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Response / Comments</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -397,15 +397,6 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <li className="text-xs text-muted-foreground">Recording all estimates identified in the table below.</li>
  </ul>
  </td>
- <td className="px-4 py-3">
- <Textarea
- disabled={locked}
- value={data.partAResponse}
- onChange={e => patch("partAResponse", e.target.value)}
- placeholder="Document how estimates were identified…"
- className="min-h-[72px] text-sm bg-background resize-none"
- />
- </td>
  <td className="px-4 py-3 w-28">
  <Select value={data.partAPsc} onValueChange={v => patch("partAPsc", v)} disabled={locked}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -415,6 +406,15 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <SelectItem value="N/A">N/A</SelectItem>
  </SelectContent>
  </Select>
+ </td>
+ <td className="px-4 py-3">
+ <Textarea
+ disabled={locked}
+ value={data.partAResponse}
+ onChange={e => patch("partAResponse", e.target.value)}
+ placeholder="Document how estimates were identified…"
+ className="min-h-[72px] text-sm bg-background resize-none"
+ />
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -438,7 +438,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <div className="overflow-x-auto">
  <table className="w-full min-w-[700px] text-sm">
  <thead>
- <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
+ <tr className="bg-muted border-b border-border text-sm font-semibold text-foreground uppercase tracking-wider">
  <th className="px-4 py-2.5 text-center w-10">In scope</th>
  <th className="px-4 py-2.5 text-left">Nature of Estimate</th>
  <th className="px-4 py-2.5 text-left w-40">F/S Area</th>
@@ -543,7 +543,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <div className="rounded-md border border-border bg-card px-4 py-3 flex items-start gap-3">
  <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
  <div>
- <p className="text-xs font-semibold text-foreground mb-1">
+ <p className="text-sm font-semibold text-foreground mb-1">
  {selectedEstimates.length} estimate{selectedEstimates.length > 1 ? "s" : ""} in scope
  {selectedEstimates.filter(e => e.complex === "Y").length > 0 && (
  <span className="ml-2 text-amber-700 dark:text-amber-400">
@@ -574,10 +574,10 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[40%]">Control Component</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Control Deficiencies Identified & Audit Implications</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+ <th className="px-5 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Control Component</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Control Deficiencies Identified & Audit Implications</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -585,15 +585,6 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <td className="px-5 py-3 text-sm text-foreground">
  <p className="font-medium mb-1">Understand estimate preparation</p>
  <p className="text-xs text-muted-foreground">Understand management's process for preparing estimates and making F/S disclosures. Consider responses to entity-level risks and controls</p>
- </td>
- <td className="px-4 py-3">
- <Textarea
- disabled={locked}
- value={data.partBDeficiencies}
- onChange={e => patch("partBDeficiencies", e.target.value)}
- placeholder="Describe any control deficiencies and audit implications…"
- className="min-h-[72px] text-sm bg-background resize-none"
- />
  </td>
  <td className="px-4 py-3 w-28">
  <Select value={data.partBPsc} onValueChange={v => patch("partBPsc", v)} disabled={locked}>
@@ -604,6 +595,15 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <SelectItem value="N/A">N/A</SelectItem>
  </SelectContent>
  </Select>
+ </td>
+ <td className="px-4 py-3">
+ <Textarea
+ disabled={locked}
+ value={data.partBDeficiencies}
+ onChange={e => patch("partBDeficiencies", e.target.value)}
+ placeholder="Describe any control deficiencies and audit implications…"
+ className="min-h-[72px] text-sm bg-background resize-none"
+ />
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -675,7 +675,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  />
  <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 px-4 py-2.5 flex items-start gap-2">
  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
- <p className="text-xs text-amber-800 dark:text-amber-300">
+ <p className="text-sm text-amber-800 dark:text-amber-300">
  Communicate significant control deficiencies in writing to TCWG on a timely basis.
  </p>
  </div>

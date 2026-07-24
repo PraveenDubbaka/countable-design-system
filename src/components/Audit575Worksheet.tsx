@@ -134,7 +134,7 @@ export function Audit575Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Document internal control deficiencies identified during the audit (from Forms 520, 522, 530, 540, 550 and
  audit procedures), classify them by severity, assess potential impact on the financial statements, and
@@ -147,8 +147,8 @@ export function Audit575Worksheet() {
 
  {/* Classification reference */}
  <div className="bg-card border border-border rounded-md p-4">
- <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Classification reference</p>
- <div className="grid grid-cols-3 gap-3 text-xs leading-relaxed">
+ <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-2">Classification reference</p>
+ <div className="grid grid-cols-3 gap-3 text-sm leading-relaxed">
  <div className="rounded-md border border-red-200 bg-red-50/40 p-3">
  <span className="font-semibold text-red-700">Material weakness</span>
  <p className="text-muted-foreground mt-1">
@@ -174,7 +174,7 @@ export function Audit575Worksheet() {
  </div>
 
  {/* Summary chips */}
- <div className="flex flex-wrap gap-2 text-xs">
+ <div className="flex flex-wrap gap-2 text-sm">
  <span className="px-3 py-1 rounded-md border border-red-200 bg-red-50 text-red-700 font-medium">
  Material weakness: <b>{counts.mw}</b>
  </span>
@@ -209,21 +209,21 @@ export function Audit575Worksheet() {
  </div>
 
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Deficiency description</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Source</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 140 }}>Area / Process</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 170 }}>Classification</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 200 }}>Potential impact</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 180 }}>Root cause</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 200 }}>Management response</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Target remediation</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Ref.</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Reported in writing?</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Deficiency description</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Source</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 140 }}>Area / Process</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 170 }}>Classification</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 200 }}>Potential impact</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 180 }}>Root cause</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 200 }}>Management response</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Target remediation</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Ref.</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>Reported in writing?</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
  {!locked && <th className="px-2 py-3 w-8" />}
  </tr>
  </thead>
@@ -235,30 +235,30 @@ export function Audit575Worksheet() {
  <Textarea disabled={locked} value={r.description}
  onChange={e => patchRow(r.id, { description: e.target.value })}
  placeholder="Describe the deficiency…"
- className="min-h-[72px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[72px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.source} onValueChange={v => patchRow(r.id, { source: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {SOURCES.map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
+ {SOURCES.map(s => <SelectItem key={s} value={s} className="text-sm">{s}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2">
  <Input disabled={locked} value={r.area} onChange={e => patchRow(r.id, { area: e.target.value })}
  placeholder="e.g., Payroll"
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.classification}
  onValueChange={v => patchRow(r.id, { classification: v as Classification })}>
- <SelectTrigger className={`h-8 text-xs ${r.classification ? `${classificationBadge(r.classification)} font-medium` : ""}`}>
+ <SelectTrigger className={`h-8 text-sm ${r.classification ? `${classificationBadge(r.classification)} font-medium` : ""}`}>
  <SelectValue placeholder="Select…" />
  </SelectTrigger>
  <SelectContent>
  {CLASSIFICATION_OPTIONS.map(o => (
- <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>
+ <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>
  ))}
  </SelectContent>
  </Select>
@@ -267,44 +267,44 @@ export function Audit575Worksheet() {
  <Textarea disabled={locked} value={r.potentialImpact}
  onChange={e => patchRow(r.id, { potentialImpact: e.target.value })}
  placeholder="Assertions / accounts affected, magnitude…"
- className="min-h-[72px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[72px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Textarea disabled={locked} value={r.rootCause}
  onChange={e => patchRow(r.id, { rootCause: e.target.value })}
  placeholder="Underlying cause…"
- className="min-h-[72px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[72px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Textarea disabled={locked} value={r.mgmtResponse}
  onChange={e => patchRow(r.id, { mgmtResponse: e.target.value })}
  placeholder="Management's planned response…"
- className="min-h-[72px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[72px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2 text-center">
  <Input disabled={locked} type="date" value={r.remediationDate}
  onChange={e => patchRow(r.id, { remediationDate: e.target.value })}
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </td>
  <td className="px-3 py-2">
  <Input disabled={locked} value={r.responseRef}
  onChange={e => patchRow(r.id, { responseRef: e.target.value })}
  placeholder="e.g., 590-Rev-3"
- className="h-8 text-xs font-mono" />
+ className="h-8 text-sm font-mono" />
  </td>
  <td className="px-3 py-2 space-y-1.5">
  <Select disabled={locked} value={r.reportedInWriting}
  onValueChange={v => patchRow(r.id, { reportedInWriting: v as YN })}>
- <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  <Input disabled={locked} type="date" value={r.dateReported}
  onChange={e => patchRow(r.id, { dateReported: e.target.value })}
- className="h-7 text-xs" />
+ className="h-7 text-sm" />
  </td>
  <td className="px-3 py-2 text-center">
  <RefButton
@@ -328,7 +328,7 @@ export function Audit575Worksheet() {
  </div>
 
  {/* CAS 265 reminder */}
- <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
+ <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-sm text-foreground/85 space-y-1.5">
  <p className="font-semibold text-foreground">Reminders:</p>
  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
  <li>Communicate significant deficiencies in writing to management and TCWG on a timely basis.</li>
@@ -345,17 +345,17 @@ export function Audit575Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Date communicated to management / TCWG</label>
  <Input disabled={locked} type="date" value={data.communicationDate}
  onChange={e => setData(d => ({...d, communicationDate: e.target.value }))}
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — No matters affecting opinion</SelectItem>
- <SelectItem value="S" className="text-xs">S — Deficiencies noted; addressed by response</SelectItem>
- <SelectItem value="N" className="text-xs">N — Material weakness — escalation required</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — No matters affecting opinion</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Deficiencies noted; addressed by response</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Material weakness — escalation required</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -364,7 +364,7 @@ export function Audit575Worksheet() {
  <Input disabled={locked} value={data.conclusionRationale}
  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
  placeholder="Briefly support the conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>

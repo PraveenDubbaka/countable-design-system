@@ -270,10 +270,10 @@ function ProcessTable({ rows, locked, onChange }: {
  <table className="w-full border-collapse">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[36%]">Procedure</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+ <th className="px-5 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Procedure</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-28">PSC? (Y/N)</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Response / Comments</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -287,15 +287,6 @@ function ProcessTable({ rows, locked, onChange }: {
  </ul>
  )}
  </td>
- <td className="px-4 py-3">
- <Textarea
- disabled={locked}
- value={row.response}
- onChange={e => onChange(id, { response: e.target.value })}
- placeholder="Enter response…"
- className="min-h-[64px] text-sm bg-background resize-none"
- />
- </td>
  <td className="px-4 py-3 w-28">
  <Select value={row.psc} onValueChange={v => onChange(id, { psc: v })} disabled={locked}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -305,6 +296,15 @@ function ProcessTable({ rows, locked, onChange }: {
  <SelectItem value="N/A">N/A</SelectItem>
  </SelectContent>
  </Select>
+ </td>
+ <td className="px-4 py-3">
+ <Textarea
+ disabled={locked}
+ value={row.response}
+ onChange={e => onChange(id, { response: e.target.value })}
+ placeholder="Enter response…"
+ className="min-h-[64px] text-sm bg-background resize-none"
+ />
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -392,7 +392,7 @@ function DropOrText({ value, onChange, disabled, options, placeholder = "Select�
           ? <Textarea disabled={disabled} value={value} onChange={e => onChange(e.target.value)}
               className="min-h-[56px] text-sm bg-background resize-none flex-1" />
           : <Input disabled={disabled} value={value} onChange={e => onChange(e.target.value)}
-              className="h-7 text-xs bg-background flex-1" />}
+              className="h-7 text-sm bg-background flex-1" />}
         {!disabled && (
           <button onClick={() => { onChange(""); setCustomMode(false); }}
             className="mt-1 p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground" title="Clear">
@@ -589,7 +589,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Gain an understanding of the entity's IT environment and assess the overall criticality of IT to the entity and impact on the audit approach. Complete Parts A–C, then to document information flows. Identified RAFUIT and GITCs are documented
  </p>
@@ -625,9 +625,9 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <table className="w-full border-collapse">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[38%]">Document</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[100px]">W/P Ref.</th>
+ <th className="px-5 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Document</th>
+ <th className="w-[38%] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-[100px]">W/P Ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -687,7 +687,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="overflow-x-auto">
  <table className="w-full min-w-[1280px] border-collapse">
  <thead>
- <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
+ <tr className="bg-muted border-b border-border text-sm font-semibold text-foreground uppercase tracking-wider">
  <th className="px-4 py-2.5 text-center" style={{ width: 40 }}>#</th>
  <th className="px-4 py-2.5 text-left" style={{ width: 280 }}>Application Name & Type</th>
  <th className="px-4 py-2.5 text-left" style={{ width: 170 }}>Network</th>
@@ -773,8 +773,8 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <table className="w-full border-collapse">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[32%]">Topic</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
+ <th className="px-5 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[32%]">Topic</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -894,7 +894,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  data.dTestingChecks.gitcRelevant) && (
  <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 px-4 py-2.5 flex items-start gap-2">
  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
- <p className="text-xs text-amber-800 dark:text-amber-300">
+ <p className="text-sm text-amber-800 dark:text-amber-300">
  Identify RAFUIT and the general IT controls that mitigate such risks.
  </p>
  </div>

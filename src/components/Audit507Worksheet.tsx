@@ -264,10 +264,10 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="w-[42%] px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Comments</th>
- <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 100 }}>W/P ref.</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="w-[38%] px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Procedure</th>
+ <th className="w-[38%] px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Comments</th>
+ <th className="w-[100px] px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 100 }}>W/P ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -276,8 +276,8 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  const isA6 = proc.id === 'a6';
  return (
  <tr key={proc.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
- <td className="w-[42%] px-6 py-3 align-top text-sm text-foreground">
+ <td className="px-4 py-3 text-center align-top text-sm font-semibold font-mono text-foreground">{proc.num}</td>
+ <td className="w-[38%] px-6 py-3 align-top text-sm text-foreground">
  {'showSection' in proc && proc.showSection && (
  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">{proc.section}</p>
  )}
@@ -291,24 +291,24 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
  {isA6 && (
  <div className="mt-2 space-y-1.5">
- <div className="flex items-center gap-2 text-xs">
+ <div className="flex items-center gap-2 text-sm">
  <span className="text-muted-foreground shrink-0">Approval of prior period's audited F/S. Date:</span>
  <Input
  disabled={locked}
  type="date"
  value={data.dateAuditedFS}
  onChange={e => setData(d => ({...d, dateAuditedFS: e.target.value }))}
- className="h-7 text-xs bg-background w-36"
+ className="h-7 text-sm bg-background w-36"
  />
  </div>
- <div className="flex items-center gap-2 text-xs">
+ <div className="flex items-center gap-2 text-sm">
  <span className="text-muted-foreground shrink-0">The firm's appointment as auditors. Date:</span>
  <Input
  disabled={locked}
  type="date"
  value={data.dateAuditorAppt}
  onChange={e => setData(d => ({...d, dateAuditorAppt: e.target.value }))}
- className="h-7 text-xs bg-background w-36"
+ className="h-7 text-sm bg-background w-36"
  />
  </div>
  </div>
@@ -347,7 +347,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  {/* Objective */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To identify possible risk factors based on a review of minutes from meetings of those charged with governance or, if no minutes were prepared, the results of inquiries to determine matters that would normally have been included.{" "}
  <span className="font-medium text-foreground">Note:</span>{" "}
@@ -403,11 +403,11 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-[140px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 140 }}>MT</th>
- <th className="w-[130px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{ minWidth: 130 }}>Date</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border">Relevant extracts from minutes and matters noted that require an audit response</th>
- <th className="w-[110px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{ minWidth: 110 }}>Record</th>
- <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{ minWidth: 100 }}>W/P ref.</th>
+ <th className="w-[140px] px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 140 }}>MT</th>
+ <th className="w-[130px] px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{ minWidth: 130 }}>Date</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-l border-border">Relevant extracts from minutes and matters noted that require an audit response</th>
+ <th className="w-[110px] px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{ minWidth: 110 }}>Record</th>
+ <th className="w-[100px] px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider border-l border-border" style={{ minWidth: 100 }}>W/P ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">

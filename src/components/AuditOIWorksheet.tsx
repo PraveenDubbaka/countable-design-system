@@ -97,12 +97,12 @@ function ColHeaders() {
  return (
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="w-[200px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 200, minWidth: 200 }}>Procedure successfully completed</th>
- <th className="w-[350px] px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" />
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="w-[200px] px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Description</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 200, minWidth: 200 }}>Procedure successfully completed</th>
+ <th className="w-[350px] px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Responses and any difficulties encountered</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 110, minWidth: 110 }}>w/p reference</th>
  </tr>
  </thead>
  );
@@ -155,14 +155,14 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
  <td className="px-4 py-3 text-center align-top">
  <Checkbox checked={row.checked} onCheckedChange={(v) => setRow(proc.id, { checked: !!v })} disabled={locked} />
  </td>
- <td className="px-4 py-3 text-center align-top text-xs font-semibold text-foreground font-mono">{proc.num}</td>
+ <td className="px-4 py-3 text-center align-top text-sm font-semibold text-foreground font-mono">{proc.num}</td>
  <td className="w-[200px] px-4 py-3 align-top">
  <p className="text-sm font-semibold text-foreground mb-1">{proc.description}</p>
  <p className="text-sm text-muted-foreground leading-relaxed">{proc.detail}</p>
  </td>
  <td className="px-4 py-3 align-top" style={{ width: 200 }}>
  <Select value={row.psc} onValueChange={(v) => setRow(proc.id, { psc: v })} disabled={locked}>
- <SelectTrigger className="h-8 text-xs bg-background w-full">
+ <SelectTrigger className="h-8 text-sm bg-background w-full">
  <SelectValue placeholder="Select" />
  </SelectTrigger>
  <SelectContent>
@@ -208,7 +208,7 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
  </td>
  <td className="px-4 py-2.5 align-top" style={{ width: 200 }}>
  <Select value={row.psc} onValueChange={(v) => setRow(item.id, { psc: v })} disabled={locked}>
- <SelectTrigger className="h-8 text-xs bg-background w-full">
+ <SelectTrigger className="h-8 text-sm bg-background w-full">
  <SelectValue placeholder="Select" />
  </SelectTrigger>
  <SelectContent>
@@ -247,7 +247,7 @@ export function AuditOIWorksheet({ isUS = false }: { isUS?: boolean }) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To provide a listing of typical observation and inspection risk assessment procedures that may support,
  corroborate or contradict other inquiries of management and others, and provide information about the entity

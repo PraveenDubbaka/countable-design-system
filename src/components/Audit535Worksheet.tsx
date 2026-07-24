@@ -209,11 +209,11 @@ export function Audit535Worksheet() {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '38%', minWidth: 320 }}>Procedure</th>
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 90 }}>PSC?</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: '44%', minWidth: 320 }}>Comments</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100 }}>W/P ref.</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: '38%', minWidth: 320 }}>Procedure</th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 90 }}>PSC?</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: '38%', minWidth: 320 }}>Comments</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 100 }}>W/P ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -221,7 +221,7 @@ export function Audit535Worksheet() {
  const row = data.rows[item.id] ?? emptyRow();
  return (
  <tr key={item.id} className="hover:bg-muted/50 transition-colors align-top">
- <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{item.num}</td>
+ <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{item.num}</td>
  <td className="px-6 py-3 text-sm text-foreground">
  <div className="font-semibold">{item.title}</div>
  {item.intro && <div className="mt-1 text-xs text-muted-foreground">{item.intro}</div>}
@@ -238,11 +238,11 @@ export function Audit535Worksheet() {
  </td>
  <td className="px-3 py-3 text-center">
  <Select disabled={locked} value={row.psc} onValueChange={v => setRow(item.id, { psc: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y</SelectItem>
- <SelectItem value="N" className="text-xs">N</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y</SelectItem>
+ <SelectItem value="N" className="text-sm">N</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -270,7 +270,7 @@ export function Audit535Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures.
  <span className="block mt-1.5 text-[11px]">
@@ -305,7 +305,7 @@ export function Audit535Worksheet() {
  {data.scotabds.map((s, idx) => (
  <div key={s.id} className="p-5 space-y-3">
  <div className="flex items-center justify-between">
- <span className="text-xs font-semibold text-foreground">Cycle #{idx + 1}</span>
+ <span className="text-sm font-semibold text-foreground">Cycle #{idx + 1}</span>
  {!locked && data.scotabds.length > 1 && (
  <button onClick={() => removeScotabd(idx)} className="text-muted-foreground hover:text-destructive">
  <Trash2 className="h-3.5 w-3.5" />
@@ -316,44 +316,44 @@ export function Audit535Worksheet() {
  <div className="grid grid-cols-2 gap-3">
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Business cycle / SCOTABD</label>
- <Input disabled={locked} value={s.cycle} onChange={e => setScotabd(idx, { cycle: e.target.value })} placeholder="e.g., Revenue, receivables and receipts" className="h-8 text-xs" />
+ <Input disabled={locked} value={s.cycle} onChange={e => setScotabd(idx, { cycle: e.target.value })} placeholder="e.g., Revenue, receivables and receipts" className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">IT applications used</label>
- <Input disabled={locked} value={s.itApps} onChange={e => setScotabd(idx, { itApps: e.target.value })} placeholder="e.g., QuickBooks, TruckMate" className="h-8 text-xs" />
+ <Input disabled={locked} value={s.itApps} onChange={e => setScotabd(idx, { itApps: e.target.value })} placeholder="e.g., QuickBooks, TruckMate" className="h-8 text-sm" />
  </div>
  </div>
 
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">How was understanding obtained (inquiry, observation, inspection, walkthrough)</label>
- <Textarea disabled={locked} value={s.understandingObtained} onChange={e => setScotabd(idx, { understandingObtained: e.target.value })} placeholder="Inspection of documents: …&#10;Inquiries of: …&#10;Observation of: …&#10;Walkthrough performed: …" className="min-h-[80px] text-xs resize-none rounded-[10px]" />
+ <Textarea disabled={locked} value={s.understandingObtained} onChange={e => setScotabd(idx, { understandingObtained: e.target.value })} placeholder="Inspection of documents: …&#10;Inquiries of: …&#10;Observation of: …&#10;Walkthrough performed: …" className="min-h-[80px] text-sm resize-none rounded-[10px]" />
  </div>
 
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Business process (flow of information)</label>
- <AttributedComment value={s.processDescription} onChange={v => setScotabd(idx, { processDescription: v })} storageKey={`535-${engagementId ?? "def"}-proc-${idx}`} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." disabled={locked} className="min-h-[110px] text-xs resize-none rounded-[10px]" minHeight="110px" />
+ <AttributedComment value={s.processDescription} onChange={v => setScotabd(idx, { processDescription: v })} storageKey={`535-${engagementId ?? "def"}-proc-${idx}`} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." disabled={locked} className="min-h-[110px] text-sm resize-none rounded-[10px]" minHeight="110px" />
  </div>
 
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Events and conditions other than transactions</label>
- <Textarea disabled={locked} value={s.nonTransactionEvents} onChange={e => setScotabd(idx, { nonTransactionEvents: e.target.value })} placeholder="How the entity captures, processes and discloses these events." className="min-h-[70px] text-xs resize-none rounded-[10px]" />
+ <Textarea disabled={locked} value={s.nonTransactionEvents} onChange={e => setScotabd(idx, { nonTransactionEvents: e.target.value })} placeholder="How the entity captures, processes and discloses these events." className="min-h-[70px] text-sm resize-none rounded-[10px]" />
  </div>
 
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Process supports F/S preparation?</label>
  <Select disabled={locked} value={s.supportsFs} onValueChange={v => setScotabd(idx, { supportsFs: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
  <label className="text-xs font-medium text-muted-foreground">If No — significant deficiencies &amp; audit response</label>
- <Input disabled={locked} value={s.deficiencyNote} onChange={e => setScotabd(idx, { deficiencyNote: e.target.value })} placeholder="Describe deficiency and planned response…" className="h-8 text-xs" />
+ <Input disabled={locked} value={s.deficiencyNote} onChange={e => setScotabd(idx, { deficiencyNote: e.target.value })} placeholder="Describe deficiency and planned response…" className="h-8 text-sm" />
  </div>
  </div>
  </div>
@@ -366,15 +366,15 @@ export function Audit535Worksheet() {
  <h3 className="text-sm font-semibold text-foreground">Evaluation of risks identified</h3>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">New risks identified ()</label>
- <AttributedComment value={data.newRisksIdentified} onChange={v => setData(d => ({...d, newRisksIdentified: v }))} storageKey={`535-${engagementId ?? "def"}-newRisks`} placeholder="Describe any new RMMs identified during this understanding." disabled={locked} className="min-h-[70px] text-xs resize-none rounded-[10px]" minHeight="70px" />
+ <AttributedComment value={data.newRisksIdentified} onChange={v => setData(d => ({...d, newRisksIdentified: v }))} storageKey={`535-${engagementId ?? "def"}-newRisks`} placeholder="Describe any new RMMs identified during this understanding." disabled={locked} className="min-h-[70px] text-sm resize-none rounded-[10px]" minHeight="70px" />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Controls identified for D&amp;I testing</label>
- <Textarea disabled={locked} value={data.controlsIdentified} onChange={e => setData(d => ({...d, controlsIdentified: e.target.value }))} className="min-h-[70px] text-xs resize-none rounded-[10px]" placeholder="List controls over significant risks, journal entries, and assertion-level risks." />
+ <Textarea disabled={locked} value={data.controlsIdentified} onChange={e => setData(d => ({...d, controlsIdentified: e.target.value }))} className="min-h-[70px] text-sm resize-none rounded-[10px]" placeholder="List controls over significant risks, journal entries, and assertion-level risks." />
  </div>
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Significant deficiencies communicated to TCWG</label>
- <Textarea disabled={locked} value={data.deficienciesComm} onChange={e => setData(d => ({...d, deficienciesComm: e.target.value }))} className="min-h-[60px] text-xs resize-none rounded-[10px]" placeholder="Summarize deficiencies and date communicated." />
+ <Textarea disabled={locked} value={data.deficienciesComm} onChange={e => setData(d => ({...d, deficienciesComm: e.target.value }))} className="min-h-[60px] text-sm resize-none rounded-[10px]" placeholder="Summarize deficiencies and date communicated." />
  </div>
  </div>
 
@@ -386,16 +386,16 @@ export function Audit535Worksheet() {
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
  <Select disabled={locked} value={data.conclusion} onValueChange={v => setData(d => ({...d, conclusion: v as YN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes — sufficient</SelectItem>
- <SelectItem value="N" className="text-xs">No — further work required</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes — sufficient</SelectItem>
+ <SelectItem value="N" className="text-sm">No — further work required</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
  <label className="text-xs font-medium text-muted-foreground">Supporting rationale</label>
- <Input disabled={locked} value={data.conclusionNotes} onChange={e => setData(d => ({...d, conclusionNotes: e.target.value }))} placeholder="Briefly support the conclusion." className="h-8 text-xs" />
+ <Input disabled={locked} value={data.conclusionNotes} onChange={e => setData(d => ({...d, conclusionNotes: e.target.value }))} placeholder="Briefly support the conclusion." className="h-8 text-sm" />
  </div>
  </div>
  </div>

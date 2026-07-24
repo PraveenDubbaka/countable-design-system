@@ -176,7 +176,7 @@ export function Audit655Worksheet() {
  bodyClassName="p-0"
  >
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead><tr className="bg-muted/40">
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[180px]">Caption</th>
  <th className="text-right px-3 py-2.5 font-medium border-b border-border w-[110px]">Preliminary (501)</th>
@@ -193,12 +193,12 @@ export function Audit655Worksheet() {
  const v = variance(r);
  return (
  <tr key={r.id} className="hover:bg-muted/20 align-top">
- <td className="border-b border-border p-2"><Input disabled={locked} value={r.caption} onChange={e => updRow(which, r.id, { caption: e.target.value })} className="h-8 text-xs" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={r.preliminary} onChange={e => updRow(which, r.id, { preliminary: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={r.finalAmount} onChange={e => updRow(which, r.id, { finalAmount: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={r.priorYear} onChange={e => updRow(which, r.id, { priorYear: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
- <td className={`border-b border-border p-2 text-right font-mono text-xs ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Explain variance / unexpected relationship" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={r.caption} onChange={e => updRow(which, r.id, { caption: e.target.value })} className="h-8 text-sm" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={r.preliminary} onChange={e => updRow(which, r.id, { preliminary: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={r.finalAmount} onChange={e => updRow(which, r.id, { finalAmount: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={r.priorYear} onChange={e => updRow(which, r.id, { priorYear: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
+ <td className={`border-b border-border p-2 text-right font-mono text-sm ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
+ <td className="border-b border-border p-2"><Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Explain variance / unexpected relationship" /></td>
  <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
  <td className="border-b border-border p-2"><RefButton reference={r.wpRef} disabled={locked} onAttach={(doc) => updRow(which, r.id, { wpRef: [...r.wpRef, doc] })} onRemove={(idx) => updRow(which, r.id, { wpRef: typeof idx === "number" ? r.wpRef.filter((_, i) => i !== idx) : [] })} /></td>
  <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => delRow(which, r.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>

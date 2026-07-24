@@ -147,7 +147,7 @@ export function Audit610Worksheet() {
  </div>
  );
 
- const th = "px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap";
+ const th = "px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap";
  const td = "px-4 py-2.5 align-top text-sm";
 
  return (

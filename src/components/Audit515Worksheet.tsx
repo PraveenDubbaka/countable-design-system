@@ -216,11 +216,11 @@ function ProcedureTable({
  <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
- <th className="px-5 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[42%]">Procedure</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Response / Comments</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">PSC?</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+ <th className="px-5 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Procedure</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">PSC?</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[38%]">Response / Comments</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -232,15 +232,6 @@ function ProcedureTable({
  </span>
  </td>
  <td className="px-5 py-3 text-sm text-foreground leading-relaxed">{procedure}</td>
- <td className="px-4 py-3">
- <Textarea
- disabled={locked}
- value={row.response}
- onChange={e => onPatch({ response: e.target.value })}
- placeholder="Document procedure results…"
- className="min-h-[72px] text-sm bg-background resize-none"
- />
- </td>
  <td className="px-4 py-3 w-24">
  <Select value={row.psc} onValueChange={v => onPatch({ psc: v as YNNA })} disabled={locked}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -250,6 +241,15 @@ function ProcedureTable({
  <SelectItem value="N/A">N/A</SelectItem>
  </SelectContent>
  </Select>
+ </td>
+ <td className="px-4 py-3">
+ <Textarea
+ disabled={locked}
+ value={row.response}
+ onChange={e => onPatch({ response: e.target.value })}
+ placeholder="Document procedure results…"
+ className="min-h-[72px] text-sm bg-background resize-none"
+ />
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -315,7 +315,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Understand the use and extent of related-party relationships and transactions, recognise fraud risk factors, and assess possible risks of material misstatement (fraud or error) in the F/S.
  </p>
@@ -465,7 +465,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <div className="overflow-x-auto">
  <table className="w-full min-w-[900px] text-sm">
  <thead>
- <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
+ <tr className="bg-muted border-b border-border text-sm font-semibold text-foreground uppercase tracking-wider">
  <th className="px-4 py-2.5 text-center w-10">#</th>
  <th className="px-4 py-2.5 text-left w-[22%]">Name</th>
  <th className="px-4 py-2.5 text-left w-[18%]">Relationship</th>

@@ -384,14 +384,14 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  </div>
  <div className="px-6 py-5 max-h-72 overflow-y-auto space-y-3">
  <div className="rounded-md border border-border overflow-hidden">
- <div className="px-3 py-2 bg-muted border-b border-border"><p className="text-xs font-semibold text-foreground uppercase tracking-wider">Team Planning Discussion (§2.2)</p></div>
+ <div className="px-3 py-2 bg-muted border-b border-border"><p className="text-sm font-semibold text-foreground uppercase tracking-wider">Team Planning Discussion (§2.2)</p></div>
  <div className="px-3 py-2 space-y-1">
  <div className="flex gap-2 text-sm"><span className="text-muted-foreground w-28 shrink-0">Date:</span><span className="text-foreground">{isUS ? "January 20, 2025" : "April 8, 2024"}</span></div>
  <div className="flex gap-2 text-sm"><span className="text-muted-foreground w-28 shrink-0">Attendees:</span><span className="text-foreground">{isUS ? "M. Thompson, L. Garcia, K. Patel, J. Chen, R. Morrison, S. Williams" : "J. Patel, A. Nguyen, T. Brown, D. Kim, P. Singh, C. Okafor"}</span></div>
  </div>
  </div>
  <div className="rounded-md border border-border overflow-hidden">
- <div className="px-3 py-2 bg-muted border-b border-border"><p className="text-xs font-semibold text-foreground uppercase tracking-wider">Audit Team (§4)</p></div>
+ <div className="px-3 py-2 bg-muted border-b border-border"><p className="text-sm font-semibold text-foreground uppercase tracking-wider">Audit Team (§4)</p></div>
  <div className="px-3 py-2 space-y-1">
  {seed.teamRows.map(m => (
  <div key={m.id} className="flex gap-2 text-sm"><span className="text-muted-foreground w-28 shrink-0">{m.role.split(" (")[0]}:</span><span className="text-foreground">{m.name} — {m.experience}</span></div>
@@ -412,7 +412,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To document the scope, timing and direction of the audit as a guide for the development of the audit plan.{" "}
  <span className="font-medium text-foreground">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
@@ -440,10 +440,10 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">#</th>
- <th className="w-[200px] px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
- <th className="px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
- <th className="w-[150px] px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
+ <th className="w-10 px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">#</th>
+ <th className="w-[200px] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Description</th>
+ <th className="px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Responses and Comments</th>
+ <th className="w-[150px] px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">W/P Ref.</th>
  </tr>
  </thead>
  <tbody>
@@ -495,14 +495,14 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap">{`4.${i+1}`}</td>
  <td className="px-4 py-2 align-top w-[200px]">
  <Select value={row.role} onValueChange={v => updTeam(row.id,"role",v)} disabled={locked}>
- <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>{TEAM_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 align-top">
  <div className="flex items-center gap-1">
  <Select value={row.name} onValueChange={v => updTeam(row.id,"name",v)} disabled={locked}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select member" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select member" /></SelectTrigger>
  <SelectContent>{(isUS ? TEAM_MEMBERS_US : TEAM_MEMBERS_CA).map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent>
  </Select>
  {!locked && <button onClick={() => removeTeamRow(row.id)} className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors rounded shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>}

@@ -258,7 +258,7 @@ export function Audit551Worksheet() {
  <div className="flex items-center gap-2">
  <Input value={sheet.appName} onChange={e => renameAppSheet(idx, e.target.value)}
  placeholder="Application name (e.g., QuickBooks, TruckMate)…"
- className="h-8 text-xs w-64" />
+ className="h-8 text-sm w-64" />
  <button onClick={() => removeAppSheet(idx)} className="text-muted-foreground hover:text-destructive" title="Remove application">
  <Trash2 className="h-4 w-4" />
  </button>
@@ -270,7 +270,7 @@ export function Audit551Worksheet() {
  <div key={sec.key} className="border-b border-border last:border-b-0">
  <div className="px-6 py-2.5 bg-muted/40 flex items-center justify-between">
  <div>
- <span className="text-xs font-semibold text-foreground uppercase tracking-wider">{sec.title}</span>
+ <span className="text-sm font-semibold text-foreground uppercase tracking-wider">{sec.title}</span>
  <p className="text-[11px] text-muted-foreground mt-0.5">
  {GITC_CATEGORIES.find(c => c.key === sec.key)?.hint}
  </p>
@@ -284,19 +284,19 @@ export function Audit551Worksheet() {
  </div>
 
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 72, minWidth: 72 }}>Ref</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 280 }}>GITC description</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>IT layer</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>Frequency</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>Prev / Det</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Design (Y/S/N)</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Implemented</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Support W/P</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE planned</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE effective</th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 72, minWidth: 72 }}>Ref</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 280 }}>GITC description</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 130 }}>IT layer</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>Frequency</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>Prev / Det</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Design (Y/S/N)</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Implemented</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Support W/P</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE planned</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE effective</th>
  {!locked && <th className="px-2 py-3 w-8" />}
  </tr>
  </thead>
@@ -306,61 +306,61 @@ export function Audit551Worksheet() {
  <td className="px-2 py-2 text-center" style={{ width: 72, minWidth: 72 }}>
  <Input disabled={locked} value={r.ref}
  onChange={e => patchGitcRow(target, sec.key, r.id, { ref: e.target.value })}
- className="h-8 min-w-12 px-1 text-xs text-center font-mono" />
+ className="h-8 min-w-12 px-1 text-sm text-center font-mono" />
  </td>
  <td className="px-3 py-2">
  <Textarea disabled={locked} value={r.description}
  onChange={e => patchGitcRow(target, sec.key, r.id, { description: e.target.value })}
  placeholder="Describe the GITC and how it operates…"
- className="min-h-[60px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itLayer}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { itLayer: v as ITLayer })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {IT_LAYERS.map(l => <SelectItem key={l} value={l} className="text-xs">{l}</SelectItem>)}
+ {IT_LAYERS.map(l => <SelectItem key={l} value={l} className="text-sm">{l}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.frequency}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { frequency: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {FREQUENCIES.map(f => <SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>)}
+ {FREQUENCIES.map(f => <SelectItem key={f} value={f} className="text-sm">{f}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.prevDet}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { prevDet: v as PrevDet })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Preventive" className="text-xs">Preventive</SelectItem>
- <SelectItem value="Detective" className="text-xs">Detective</SelectItem>
+ <SelectItem value="Preventive" className="text-sm">Preventive</SelectItem>
+ <SelectItem value="Detective" className="text-sm">Detective</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.designEffective}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { designEffective: v as YSN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Effective</SelectItem>
- <SelectItem value="S" className="text-xs">S — Some treatment</SelectItem>
- <SelectItem value="N" className="text-xs">N — Deficiency</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Effective</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Some treatment</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Deficiency</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.implemented}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { implemented: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -374,22 +374,22 @@ export function Audit551Worksheet() {
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.oeTestPlanned}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { oeTestPlanned: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={r.oeTestEffective}
  onValueChange={v => patchGitcRow(target, sec.key, r.id, { oeTestEffective: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -418,7 +418,7 @@ export function Audit551Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To identify and evaluate risks arising from the use of IT (RAFUITs) and the general IT controls (GITCs)
  implemented by the entity that address those risks — including design and implementation.
@@ -446,10 +446,10 @@ export function Audit551Worksheet() {
  {!locked && (
  <div className="flex gap-2 shrink-0">
  <Select onValueChange={v => addRafuit(v)}>
- <SelectTrigger className="h-7 text-xs w-44"><SelectValue placeholder="Insert from library…" /></SelectTrigger>
+ <SelectTrigger className="h-7 text-sm w-44"><SelectValue placeholder="Insert from library…" /></SelectTrigger>
  <SelectContent className="max-h-80">
  {RAFUIT_LIBRARY.map(t => (
- <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>
+ <SelectItem key={t} value={t} className="text-sm">{t}</SelectItem>
  ))}
  </SelectContent>
  </Select>
@@ -461,15 +461,15 @@ export function Audit551Worksheet() {
  </div>
 
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Automated control</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>IT layer<sup>(1)</sup></th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 260 }}>Risk arising from use of IT</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 160 }}>IT process<sup>(2)</sup></th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>GITC reference(s)<sup>(3)</sup></th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Automated control</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>IT layer<sup>(1)</sup></th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 260 }}>Risk arising from use of IT</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 160 }}>IT process<sup>(2)</sup></th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>GITC reference(s)<sup>(3)</sup></th>
  {!locked && <th className="px-2 py-3 w-8" />}
  </tr>
  </thead>
@@ -481,14 +481,14 @@ export function Audit551Worksheet() {
  <Textarea disabled={locked} value={r.automatedControl}
  onChange={e => setRafuit(r.id, { automatedControl: e.target.value })}
  placeholder="Reference or describe the automated control…"
- className="min-h-[56px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itLayer}
  onValueChange={v => setRafuit(r.id, { itLayer: v as ITLayer })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {IT_LAYERS.map(l => <SelectItem key={l} value={l} className="text-xs">{l}</SelectItem>)}
+ {IT_LAYERS.map(l => <SelectItem key={l} value={l} className="text-sm">{l}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
@@ -496,14 +496,14 @@ export function Audit551Worksheet() {
  <Textarea disabled={locked} value={r.rafuit}
  onChange={e => setRafuit(r.id, { rafuit: e.target.value })}
  placeholder="Describe the RAFUIT (Appendix 1)…"
- className="min-h-[56px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itProcess}
  onValueChange={v => setRafuit(r.id, { itProcess: v as ITProcess })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- {IT_PROCESSES.map(p => <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>)}
+ {IT_PROCESSES.map(p => <SelectItem key={p} value={p} className="text-sm">{p}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
@@ -511,7 +511,7 @@ export function Audit551Worksheet() {
  <Input disabled={locked} value={r.gitcRefs}
  onChange={e => setRafuit(r.id, { gitcRefs: e.target.value })}
  placeholder="e.g., C1, C5"
- className="h-8 text-xs font-mono" />
+ className="h-8 text-sm font-mono" />
  </td>
  {!locked && (
  <td className="px-2 py-2 text-center">
@@ -531,11 +531,11 @@ export function Audit551Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Part A conclusion</label>
  <Select disabled={locked} value={data.rafuitConclusion}
  onValueChange={v => setData(d => ({...d, rafuitConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — All automated controls supported by effective GITCs</SelectItem>
- <SelectItem value="S" className="text-xs">S — Partial coverage / residual risk</SelectItem>
- <SelectItem value="N" className="text-xs">N — Significant gaps identified</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — All automated controls supported by effective GITCs</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Partial coverage / residual risk</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Significant gaps identified</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -544,7 +544,7 @@ export function Audit551Worksheet() {
  <Input disabled={locked} value={data.rafuitRationale}
  onChange={e => setData(d => ({...d, rafuitRationale: e.target.value }))}
  placeholder="Brief support for the conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>
@@ -568,7 +568,7 @@ export function Audit551Worksheet() {
  )}
 
  {/* Notes (1-2) reminder */}
- <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
+ <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-sm text-foreground/85 space-y-1.5">
  <p className="font-semibold text-foreground">Form 551 — Notes:</p>
  <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
  <li><b>Note 1:</b> Some GITCs are common to all relevant IT applications (e.g., a single Active Directory access process). Document these in the Common GITCs sheet.</li>
@@ -589,11 +589,11 @@ export function Audit551Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.gitcConclusion}
  onValueChange={v => setData(d => ({...d, gitcConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — GITCs designed &amp; implemented</SelectItem>
- <SelectItem value="S" className="text-xs">S — Partial reliance / residual risk</SelectItem>
- <SelectItem value="N" className="text-xs">N — Significant deficiencies identified</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — GITCs designed &amp; implemented</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Partial reliance / residual risk</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Significant deficiencies identified</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -602,7 +602,7 @@ export function Audit551Worksheet() {
  <Input disabled={locked} value={data.gitcRationale}
  onChange={e => setData(d => ({...d, gitcRationale: e.target.value }))}
  placeholder="Briefly support the overall conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>

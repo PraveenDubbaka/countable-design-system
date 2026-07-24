@@ -249,7 +249,7 @@ export function AuditScopeWorksheet({
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Define and document the scope of the audit engagement: entity coverage, reporting period,
  applicable framework, financial statement areas in scope, significant risks, and agreed
@@ -302,9 +302,9 @@ export function AuditScopeWorksheet({
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-1/3">Area</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28">Threshold (%)</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Materiality ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/3">Area</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-28">Threshold (%)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Materiality ($)</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -349,15 +349,15 @@ export function AuditScopeWorksheet({
  <table className="w-full" style={{ minWidth: 900 }}>
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-10">LS</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-44">Description</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28 whitespace-nowrap">
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-10">LS</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-44">Description</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-28 whitespace-nowrap">
  {isUS ? "Current Period ($)" : "Dec31–Dec30 ($)"}
  </th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-24">Materiality</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-36 whitespace-nowrap">Material misstatement likely</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe Potential Effect</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-36">Significant Planned Procedures</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-24">Materiality</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-36 whitespace-nowrap">Material misstatement likely</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Describe Potential Effect</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-36">Significant Planned Procedures</th>
  <th className="w-8" />
  </tr>
  </thead>
@@ -479,10 +479,10 @@ export function AuditScopeWorksheet({
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe potential misstatements</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe the overall response planned</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28">W/P reference</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">Actions</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Describe potential misstatements</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Describe the overall response planned</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-28">W/P reference</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-20">Actions</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -578,10 +578,10 @@ export function AuditScopeWorksheet({
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe potential misstatements</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Describe the planned procedures</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-28">W/P reference</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">Actions</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Describe potential misstatements</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Describe the planned procedures</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-28">W/P reference</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-20">Actions</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">

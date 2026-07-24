@@ -215,7 +215,7 @@ export function Audit550Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  To identify controls that address risks of material misstatement at the assertion level, evaluate whether
  those controls have been designed effectively and implemented, and assess control risk where operating
@@ -252,13 +252,13 @@ export function Audit550Worksheet() {
  <div className="flex items-start gap-3">
  <span className="text-xs font-mono text-muted-foreground mt-2 shrink-0 w-6">{rIdx + 1}.</span>
  <div className="flex-1 space-y-1">
- <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+ <label className="text-sm font-semibold text-foreground uppercase tracking-wider">
  Description of risk
  </label>
  <Textarea disabled={locked} value={risk.description}
  onChange={e => setRisk(cat.key, risk.id, { description: e.target.value })}
  placeholder="Describe the risk of material misstatement (link / 535 where applicable)…"
- className="min-h-[56px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </div>
  {!locked && cat.risks.length > 1 && (
  <button onClick={() => removeRisk(cat.key, risk.id)}
@@ -271,22 +271,22 @@ export function Audit550Worksheet() {
 
  {/* Controls table */}
  <div className="overflow-x-auto rounded-md border border-border">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Control</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Inherent risk</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Assertions</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>Auto / Manual<sup>(1)</sup></th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 180 }}>Characteristics<sup>(2)</sup></th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Design (Y/S/N)</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Implemented<sup>(3)</sup></th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>GITC supports</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE test planned</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Control risk</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Tested at</th>
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 240 }}>Control</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Inherent risk</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 170 }}>Assertions</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 150 }}>Auto / Manual<sup>(1)</sup></th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 180 }}>Characteristics<sup>(2)</sup></th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Design (Y/S/N)</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 110 }}>Implemented<sup>(3)</sup></th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>GITC supports</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>OE test planned</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Control risk</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>Tested at</th>
  {!locked && <th className="px-2 py-3 w-8" />}
  </tr>
  </thead>
@@ -299,16 +299,16 @@ export function Audit550Worksheet() {
  <Textarea disabled={locked} value={ct.description}
  onChange={e => setControl(cat.key, risk.id, ct.id, { description: e.target.value })}
  placeholder="Describe the control activity, owner, and how it operates…"
- className="min-h-[64px] text-xs resize-none rounded-[10px]" />
+ className="min-h-[64px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.inherentRisk}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { inherentRisk: v as IR })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="H" className="text-xs">H</SelectItem>
- <SelectItem value="M" className="text-xs">M</SelectItem>
- <SelectItem value="L" className="text-xs">L</SelectItem>
+ <SelectItem value="H" className="text-sm">H</SelectItem>
+ <SelectItem value="M" className="text-sm">M</SelectItem>
+ <SelectItem value="L" className="text-sm">L</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -332,57 +332,57 @@ export function Audit550Worksheet() {
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.automated}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { automated: v as AutoManual })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Manual" className="text-xs">Manual</SelectItem>
- <SelectItem value="Automated" className="text-xs">Automated</SelectItem>
- <SelectItem value="IT-dependent manual" className="text-xs">IT-dependent manual</SelectItem>
+ <SelectItem value="Manual" className="text-sm">Manual</SelectItem>
+ <SelectItem value="Automated" className="text-sm">Automated</SelectItem>
+ <SelectItem value="IT-dependent manual" className="text-sm">IT-dependent manual</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 space-y-1.5">
  <Select disabled={locked} value={ct.controlType}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { controlType: v })}>
- <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Type…" /></SelectTrigger>
+ <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="Type…" /></SelectTrigger>
  <SelectContent>
- {CONTROL_TYPES.map(t => <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>)}
+ {CONTROL_TYPES.map(t => <SelectItem key={t} value={t} className="text-sm">{t}</SelectItem>)}
  </SelectContent>
  </Select>
  <Select disabled={locked} value={ct.frequency}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { frequency: v })}>
- <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Frequency…" /></SelectTrigger>
+ <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="Frequency…" /></SelectTrigger>
  <SelectContent>
- {FREQUENCIES.map(t => <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>)}
+ {FREQUENCIES.map(t => <SelectItem key={t} value={t} className="text-sm">{t}</SelectItem>)}
  </SelectContent>
  </Select>
  <Select disabled={locked} value={ct.prevDet}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { prevDet: v as PrevDet })}>
- <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Prev / Det…" /></SelectTrigger>
+ <SelectTrigger className="h-7 text-sm"><SelectValue placeholder="Prev / Det…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Preventive" className="text-xs">Preventive</SelectItem>
- <SelectItem value="Detective" className="text-xs">Detective</SelectItem>
+ <SelectItem value="Preventive" className="text-sm">Preventive</SelectItem>
+ <SelectItem value="Detective" className="text-sm">Detective</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.designEffective}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { designEffective: v as YSN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Mitigated</SelectItem>
- <SelectItem value="S" className="text-xs">S — Some treatment</SelectItem>
- <SelectItem value="N" className="text-xs">N — Deficiency</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Mitigated</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Some treatment</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Deficiency</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.implemented}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { implemented: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -396,33 +396,33 @@ export function Audit550Worksheet() {
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.gitcSupports}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { gitcSupports: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.oeTestPlanned}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { oeTestPlanned: v as YN })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Yes</SelectItem>
- <SelectItem value="N" className="text-xs">No</SelectItem>
- <SelectItem value="NA" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">No</SelectItem>
+ <SelectItem value="NA" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.controlRisk}
  onValueChange={v => setControl(cat.key, risk.id, ct.id, { controlRisk: v as IR })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="H" className="text-xs">H</SelectItem>
- <SelectItem value="M" className="text-xs">M</SelectItem>
- <SelectItem value="L" className="text-xs">L</SelectItem>
+ <SelectItem value="H" className="text-sm">H</SelectItem>
+ <SelectItem value="M" className="text-sm">M</SelectItem>
+ <SelectItem value="L" className="text-sm">L</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -461,7 +461,7 @@ export function Audit550Worksheet() {
  ))}
 
  {/* Notes (1-3) reminder */}
- <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-xs text-foreground/85 space-y-1.5">
+ <div className="bg-primary/[0.03] border border-primary/15 rounded-md p-4 text-sm text-foreground/85 space-y-1.5">
  <p className="font-semibold text-foreground">Form 550 — Notes:</p>
  <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
  <li><b>Note 1:</b> If a control is automated, identify risks arising from the use of IT and the GITCs that support its operation.</li>
@@ -482,11 +482,11 @@ export function Audit550Worksheet() {
  <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Suitably designed &amp; implemented</SelectItem>
- <SelectItem value="S" className="text-xs">S — Partial reliance / residual risk</SelectItem>
- <SelectItem value="N" className="text-xs">N — Significant deficiencies identified</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Suitably designed &amp; implemented</SelectItem>
+ <SelectItem value="S" className="text-sm">S — Partial reliance / residual risk</SelectItem>
+ <SelectItem value="N" className="text-sm">N — Significant deficiencies identified</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -495,7 +495,7 @@ export function Audit550Worksheet() {
  <Input disabled={locked} value={data.overallRationale}
  onChange={e => setData(d => ({...d, overallRationale: e.target.value }))}
  placeholder="Briefly support the overall conclusion."
- className="h-8 text-xs" />
+ className="h-8 text-sm" />
  </div>
  </div>
  </div>

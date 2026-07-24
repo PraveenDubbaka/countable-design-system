@@ -269,7 +269,7 @@ export function Audit680Worksheet() {
 
  function ExemptionRow({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
  return (
- <label className="flex items-start gap-2 text-xs cursor-pointer">
+ <label className="flex items-start gap-2 text-sm cursor-pointer">
  <Checkbox disabled={locked} checked={value} onCheckedChange={c => onChange(!!c)} className="mt-0.5" />
  <span>{label}</span>
  </label>
@@ -283,7 +283,7 @@ export function Audit680Worksheet() {
  standard="CPA Canada Handbook — Part II"
  >
  {!isAspe && (
- <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+ <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
  Engagement framework: <span className="font-medium">{ctx.framework}</span>. This form is designed for ASPE engagements — these procedures may not apply. Toggle the applicable sections below.
  </div>
  )}

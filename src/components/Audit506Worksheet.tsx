@@ -105,12 +105,12 @@ function ColHeaders({ label }: { label: string }) {
   return (
     <thead className="sticky top-0 z-10">
       <tr className="bg-muted border-b border-border">
-        <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
-        <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">{label}</th>
-        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 140, minWidth: 140 }}>PSC (Y/N)</th>
-        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 380 }}>Response / comments</th>
-        <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" style={{ width: 100, minWidth: 100 }}>W/P ref.</th>
+        <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" />
+        <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+        <th className="w-[38%] px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">{label}</th>
+        <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 140, minWidth: 140 }}>PSC (Y/N)</th>
+        <th className="w-[38%] px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Response / comments</th>
+        <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" style={{ width: 100, minWidth: 100 }}>W/P ref.</th>
       </tr>
     </thead>
   );
@@ -204,7 +204,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
         <div className="rounded border border-border overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-muted text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border">
+              <tr className="bg-muted text-sm font-semibold text-foreground uppercase tracking-wider border-b border-border">
                 <th className="px-3 py-2 text-left">Who interviewed</th>
                 <th className="px-3 py-2 text-left border-l border-border">By whom (auditor)</th>
                 <th className="px-3 py-2 text-left border-l border-border" style={{ width: 160 }}>Date</th>
@@ -271,7 +271,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
               <td className="px-4 py-3 text-center align-top">
                 <Checkbox checked={row.checked} onCheckedChange={v => setFn(proc.id, { checked: !!v })} disabled={locked} />
               </td>
-              <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{proc.num}</td>
+              <td className="px-4 py-3 text-center align-top text-sm font-semibold font-mono text-foreground">{proc.num}</td>
               <td className="px-6 py-3 align-top text-sm text-foreground border-l-2 border-primary/20">{proc.description}</td>
               <td className="px-4 py-3 align-top" style={{ width: 140 }}>
                 <Select value={row.psc} onValueChange={v => setFn(proc.id, { psc: v })} disabled={locked}>
@@ -283,7 +283,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                   </SelectContent>
                 </Select>
               </td>
-              <td className="px-6 py-3 align-top" style={{ minWidth: 380 }}>
+              <td className="px-6 py-3 align-top">
                 <AttributedComment value={row.response} onChange={v => setFn(proc.id, { response: v })}
                   storageKey={`506-${isUS ? 'us' : 'ca'}-${prefix}-${proc.id}`}
                   placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
@@ -309,7 +309,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
       {/* Objective bar */}
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-        <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+        <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
         <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
           To document inquiries about fraud risks performed as part of the risk assessment.{" "}
           <span className="font-medium text-foreground">Part A</span> covers required inquiries of management, others in the entity, and TCWG.{" "}
@@ -421,9 +421,9 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                             <td className="px-4 py-3 text-center align-top">
                               <Checkbox checked={row.checked} onCheckedChange={v => setAppendix(item.id, { checked: !!v })} disabled={locked} />
                             </td>
-                            <td className="px-4 py-3 text-center align-top text-xs font-semibold font-mono text-foreground">{item.num}</td>
+                            <td className="px-4 py-3 text-center align-top text-sm font-semibold font-mono text-foreground">{item.num}</td>
                             <td className="px-6 py-3 align-top border-l-2 border-primary/20">
-                              <p className="text-xs font-semibold text-foreground mb-1">{item.label}</p>
+                              <p className="text-sm font-semibold text-foreground mb-1">{item.label}</p>
                               <p className="text-sm text-foreground">{item.description}</p>
                               <p className="text-xs text-muted-foreground mt-1.5 italic">{item.reference}</p>
                             </td>
@@ -437,7 +437,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                                 </SelectContent>
                               </Select>
                             </td>
-                            <td className="px-6 py-3 align-top" style={{ minWidth: 380 }}>
+                            <td className="px-6 py-3 align-top">
                               <Textarea disabled={locked} value={row.response}
                                 onChange={e => setAppendix(item.id, { response: e.target.value })}
                                 placeholder="Document findings and assessment…"

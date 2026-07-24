@@ -207,7 +207,7 @@ export function Audit670Worksheet() {
  <p className="px-6 py-4 text-xs text-muted-foreground">No journal entries selected yet. Each entry tested records the preparer, approver, attributes triggered, rationale and outcome — feeding the fraud assessment.</p>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead><tr className="bg-muted/40">
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[80px]">JE #</th>
  <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[110px]">Date</th>
@@ -224,17 +224,17 @@ export function Audit670Worksheet() {
  <tbody>
  {data.entries.map(ent => (
  <tr key={ent.id} className="hover:bg-muted/20 align-top">
- <td className="border-b border-border p-2"><Input disabled={locked} value={ent.jeRef} onChange={e => updEntry(ent.id, { jeRef: e.target.value })} className="h-8 text-xs font-mono" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} type="date" value={ent.date} onChange={e => updEntry(ent.id, { date: e.target.value })} className="h-8 text-xs" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ent.preparer} onChange={e => updEntry(ent.id, { preparer: e.target.value })} className="h-8 text-xs" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ent.approver} onChange={e => updEntry(ent.id, { approver: e.target.value })} className="h-8 text-xs" /></td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ent.amount} onChange={e => updEntry(ent.id, { amount: e.target.value })} className="h-8 text-xs font-mono text-right" inputMode="decimal" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.accounts} onChange={e => updEntry(ent.id, { accounts: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Dr / Cr accounts" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.attributes} onChange={e => updEntry(ent.id, { attributes: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Round amt, post-close, unusual account…" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.rationale} onChange={e => updEntry(ent.id, { rationale: e.target.value })} className="min-h-[44px] text-xs resize-none" placeholder="Business rationale & supporting doc reviewed" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ent.jeRef} onChange={e => updEntry(ent.id, { jeRef: e.target.value })} className="h-8 text-sm font-mono" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} type="date" value={ent.date} onChange={e => updEntry(ent.id, { date: e.target.value })} className="h-8 text-sm" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ent.preparer} onChange={e => updEntry(ent.id, { preparer: e.target.value })} className="h-8 text-sm" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ent.approver} onChange={e => updEntry(ent.id, { approver: e.target.value })} className="h-8 text-sm" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ent.amount} onChange={e => updEntry(ent.id, { amount: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
+ <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.accounts} onChange={e => updEntry(ent.id, { accounts: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Dr / Cr accounts" /></td>
+ <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.attributes} onChange={e => updEntry(ent.id, { attributes: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Round amt, post-close, unusual account…" /></td>
+ <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.rationale} onChange={e => updEntry(ent.id, { rationale: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Business rationale & supporting doc reviewed" /></td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={ent.outcome} onValueChange={v => updEntry(ent.id, { outcome: v as JeOutcome })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
  <SelectItem value="Appropriate">Appropriate</SelectItem>
  <SelectItem value="Requires follow-up">Requires follow-up</SelectItem>
@@ -242,7 +242,7 @@ export function Audit670Worksheet() {
  </SelectContent>
  </Select>
  </td>
- <td className="border-b border-border p-2"><Input disabled={locked} value={ent.wpRef} onChange={e => updEntry(ent.id, { wpRef: e.target.value })} className="h-8 text-xs" placeholder="—" /></td>
+ <td className="border-b border-border p-2"><Input disabled={locked} value={ent.wpRef} onChange={e => updEntry(ent.id, { wpRef: e.target.value })} className="h-8 text-sm" placeholder="—" /></td>
  <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => setData(d => ({...d, entries: d.entries.filter(x => x.id !== ent.id) }))}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
  </tr>
  ))}
@@ -251,7 +251,7 @@ export function Audit670Worksheet() {
  </div>
  )}
  {followUps.length > 0 && (
- <div className="px-6 py-3 border-t border-border bg-amber-50 text-xs text-amber-800">
+ <div className="px-6 py-3 border-t border-border bg-amber-50 text-sm text-amber-800">
  {followUps.length} entr{followUps.length === 1 ? "y" : "ies"} flagged for follow-up — ensure each is resolved before concluding, and consider impact /
  </div>
  )}

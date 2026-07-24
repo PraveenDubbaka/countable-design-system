@@ -118,7 +118,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  return (
  <>
  <tr className="bg-muted/40 border-y border-border">
- <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={6}>{title}</td>
+ <td className="px-4 py-2 text-sm font-semibold text-foreground" colSpan={6}>{title}</td>
  </tr>
  {rows.map((row, i) => {
  const trackedRole = ROW_TO_ROLE[row.id];
@@ -171,7 +171,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  </tr>
  )}
  <tr className="bg-muted/30 border-t border-border">
- <td className="px-4 py-2 text-xs font-semibold text-foreground">Subtotal</td>
+ <td className="px-4 py-2 text-sm font-semibold text-foreground">Subtotal</td>
  <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold">{fmtHrs(rows.reduce((a, r) => a + parseNum(r.hours), 0))}</td>
  <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold text-primary">{sectionLoggedHrs > 0 ? fmtHrs(sectionLoggedHrs) : '—'}</td>
  <td className="px-4 py-2" />
@@ -191,7 +191,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  }) => (
  <>
  <tr className="bg-muted/40 border-y border-border">
- <td className="px-4 py-2 text-xs font-semibold text-foreground" colSpan={2}>{title}</td>
+ <td className="px-4 py-2 text-sm font-semibold text-foreground" colSpan={2}>{title}</td>
  </tr>
  {rows.map((row, i) => (
  <tr key={row.id} className="hover:bg-muted/50 transition-colors border-b border-border/50">
@@ -211,7 +211,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  </tr>
  )}
  <tr className="bg-muted/30 border-t border-border">
- <td className="px-4 py-2 text-xs font-semibold text-foreground">Subtotal</td>
+ <td className="px-4 py-2 text-sm font-semibold text-foreground">Subtotal</td>
  <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold">{fmtHrs(subHrs(rows))}</td>
  </tr>
  </>
@@ -223,7 +223,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Document the detailed staff resources and time budget for the engagement, and compare against the proposed fee.
  </p>
@@ -248,11 +248,11 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Role</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Budget Hrs</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-primary uppercase tracking-wider w-28">Logged <span className="text-[10px] font-normal opacity-60">auto</span></th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Rate ($/hr)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Amount</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Role</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Budget Hrs</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-primary uppercase tracking-wider w-28">Logged <span className="text-[10px] font-normal opacity-60">auto</span></th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Rate ($/hr)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">Amount</th>
  <th className="px-4 py-3 w-10" />
  </tr>
  </thead>
@@ -305,8 +305,8 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Task</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Hours</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Task</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Hours</th>
  </tr>
  </thead>
  <tbody>
@@ -339,17 +339,17 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  <thead>
  <tr className="bg-muted border-b border-border">
  {['Date','Role','Task / Description','Hours',''].map(h => (
- <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
+ <th key={h} className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
  ))}
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  {entries.slice(0, 8).map(e => (
  <tr key={e.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2 text-xs tabular-nums whitespace-nowrap">{e.date}</td>
- <td className="px-4 py-2 text-xs whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
+ <td className="px-4 py-2 text-sm tabular-nums whitespace-nowrap">{e.date}</td>
+ <td className="px-4 py-2 text-sm whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
  <td className="px-4 py-2 text-xs text-muted-foreground max-w-[240px] truncate">{e.description}</td>
- <td className="px-4 py-2 text-xs tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
+ <td className="px-4 py-2 text-sm tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
  <td className="px-3 py-2 text-center">
  <button onClick={() => { removeEntry(e.id); toast.success('Entry removed'); }}
  className="text-muted-foreground hover:text-destructive transition-colors">

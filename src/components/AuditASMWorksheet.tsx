@@ -254,7 +254,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <td className="px-4 py-2.5 text-sm text-foreground align-top">{description}</td>
  <td className="px-3 py-2 align-top">
  <Input
- className="h-7 text-xs w-16 text-center"
+ className="h-7 text-sm w-16 text-center"
  value={row.wpRef}
  onChange={(e) => onChange("wpRef", e.target.value)}
  placeholder="—"
@@ -375,10 +375,10 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-12 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">#</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Description</th>
- <th className="w-20 px-3 py-2.5 text-center text-xs font-semibold text-foreground uppercase">W/P Ref.</th>
- <th className="w-80 px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercase">Responses and Comments</th>
+ <th className="w-12 px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">#</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Description</th>
+ <th className="w-20 px-3 py-2.5 text-center text-sm font-semibold text-foreground uppercase">W/P Ref.</th>
+ <th className="w-80 px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Responses and Comments</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -453,7 +453,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <td className="px-4 py-2.5 text-sm text-foreground align-top font-medium">{role}</td>
  <td className="px-3 py-2 align-top">
  <Input
- className="h-7 text-xs w-16 text-center"
+ className="h-7 text-sm w-16 text-center"
  value={s4[i].wpRef}
  onChange={(e) => updateTeamRow(i, "wpRef", e.target.value)}
  placeholder="—"
@@ -462,13 +462,13 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <td className="px-3 py-2 align-top">
  <div className="flex flex-col gap-1">
  <Input
- className="h-7 text-xs"
+ className="h-7 text-sm"
  placeholder="Name"
  value={s4[i].name}
  onChange={(e) => updateTeamRow(i, "name", e.target.value)}
  />
  <Input
- className="h-7 text-xs"
+ className="h-7 text-sm"
  placeholder="Experience / notes"
  value={s4[i].response}
  onChange={(e) => updateTeamRow(i, "response", e.target.value)}
@@ -667,7 +667,7 @@ function ReviewSection({ title, children }: { title: string; children: React.Rea
  return (
  <div className="rounded-md border border-border overflow-hidden">
  <div className="px-3 py-2 bg-muted border-b border-border">
- <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{title}</p>
+ <p className="text-sm font-semibold text-foreground uppercase tracking-wider">{title}</p>
  </div>
  <div className="px-3 py-2 space-y-1">{children}</div>
  </div>

@@ -165,7 +165,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Assist in the selection of an auditor's expert, plan the work to be performed, and agree on
  the terms of engagement. Using the work of an auditor's expert does not reduce the auditor's
@@ -198,7 +198,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
 
  {expertNeeded && (
  <div className="space-y-3">
- <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Which area(s) of expertise are required?</p>
+ <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Which area(s) of expertise are required?</p>
  <div className="space-y-2.5">
  {EXPERTISE_AREAS.map(area => (
  <div key={area.id} className="flex items-start gap-3">
@@ -281,7 +281,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  <Card title="Step 4 — Expert Assessment" subtitle="Evaluate competence, capabilities and objectivity" done={step4Done}>
  <div className="space-y-5">
  <div className="space-y-1.5">
- <label className="text-xs font-semibold text-foreground uppercase tracking-wider">Competence & capabilities</label>
+ <label className="text-sm font-semibold text-foreground uppercase tracking-wider">Competence & capabilities</label>
  <Textarea
  value={competenceNotes}
  onChange={e => { setCompetenceNotes(e.target.value); persist({ competenceNotes: e.target.value }); }}
@@ -292,7 +292,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  </div>
 
  <div className="space-y-2">
- <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+ <label className="text-sm font-semibold text-foreground uppercase tracking-wider">
  Threats to objectivity?
  </label>
  <p className="text-xs text-muted-foreground">Are there interests or relationships that may create a threat to the expert's objectivity?</p>
@@ -320,7 +320,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  </div>
 
  <div className="space-y-2">
- <label className="text-xs font-semibold text-foreground uppercase tracking-wider">Subject to firm's quality control?</label>
+ <label className="text-sm font-semibold text-foreground uppercase tracking-wider">Subject to firm's quality control?</label>
  <div className="flex items-center gap-3">
  <Select value={subjectToQC} onValueChange={(v) => { setSubjectToQC(v as YesNo); persist({ subjectToQC: v as YesNo }); }} disabled={concluded}>
  <SelectTrigger className="h-9 text-sm w-40">

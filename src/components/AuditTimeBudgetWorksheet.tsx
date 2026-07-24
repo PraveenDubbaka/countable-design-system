@@ -79,7 +79,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Compare estimated time and costs to the prior period and track actuals to complete the audit.
  {' '}<span className="text-primary font-medium">Actual columns auto-update from logged time entries below.</span>
@@ -141,9 +141,9 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  <TableCols />
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Description</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Description</th>
  {COL_HEADERS.map((h, hi) => (
- <th key={h} className={`px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${hi >= 4 ? 'text-primary' : 'text-foreground'}`}>
+ <th key={h} className={`px-4 py-3 text-right text-sm font-semibold uppercase tracking-wider whitespace-nowrap ${hi >= 4 ? 'text-primary' : 'text-foreground'}`}>
  {h}{hi >= 4 && <span className="ml-1 text-[10px] font-normal opacity-60">auto</span>}
  </th>
  ))}
@@ -176,7 +176,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  );
  })}
  <tr className="bg-muted/30 border-t border-border font-semibold">
- <td className="px-4 py-2 text-xs font-semibold text-foreground">Subtotal</td>
+ <td className="px-4 py-2 text-sm font-semibold text-foreground">Subtotal</td>
  {EDITABLE.map(f => <td key={f} className="px-4 py-2 text-sm tabular-nums text-foreground text-right">{sumField(section.rows, f) || '—'}</td>)}
  <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold text-primary">{fmtNum(sectionActual) || '—'}</td>
  <td className="px-4 py-2 text-sm tabular-nums text-right font-semibold text-primary">
@@ -222,7 +222,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  <thead>
  <tr className="bg-muted border-b border-border">
  {['Date','Role','Section / Task','Hours','Description',''].map(h => (
- <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
+ <th key={h} className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
  ))}
  </tr>
  </thead>
@@ -231,10 +231,10 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  const task = TB_ROWS_FLAT.find(r => r.id === e.tbRowId)?.label ?? e.tbRowId;
  return (
  <tr key={e.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2 text-xs tabular-nums whitespace-nowrap">{e.date}</td>
- <td className="px-4 py-2 text-xs whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
- <td className="px-4 py-2 text-xs">{SECTION_LABELS[e.tbSection] ?? e.tbSection} — {task}</td>
- <td className="px-4 py-2 text-xs tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
+ <td className="px-4 py-2 text-sm tabular-nums whitespace-nowrap">{e.date}</td>
+ <td className="px-4 py-2 text-sm whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
+ <td className="px-4 py-2 text-sm">{SECTION_LABELS[e.tbSection] ?? e.tbSection} — {task}</td>
+ <td className="px-4 py-2 text-sm tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
  <td className="px-4 py-2 text-xs text-muted-foreground max-w-[200px] truncate">{e.description}</td>
  <td className="px-3 py-2 text-center">
  <button onClick={() => { removeEntry(e.id); toast.success('Entry removed'); }}

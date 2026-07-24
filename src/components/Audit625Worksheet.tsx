@@ -524,12 +524,12 @@ export function Audit625Worksheet() {
  <table className="w-full text-sm">
  <thead className="bg-muted">
  <tr>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-10">#</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Topic communicated</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[90px]">Done</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[150px]">Audience</th>
- <th className="px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-[140px]">Date</th>
- <th className="px-4 py-2.5 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-[110px]">W/P ref.</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-10">#</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Topic communicated</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-[90px]">Done</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[150px]">Audience</th>
+ <th className="px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[140px]">Date</th>
+ <th className="px-4 py-2.5 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-[110px]">W/P ref.</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">

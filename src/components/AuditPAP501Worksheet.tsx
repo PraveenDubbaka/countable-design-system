@@ -127,12 +127,12 @@ function PartAColHeaders() {
  return (
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider" />
- <th className="w-10 px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider">#</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Procedure</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{width:140,minWidth:140}}>PSC (Y/N)</th>
- <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Exceptions / findings</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{width:90,minWidth:90}}>W/P ref.</th>
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider" />
+ <th className="w-10 px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">#</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Procedure</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{width:140,minWidth:140}}>PSC (Y/N)</th>
+ <th className="px-6 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Exceptions / findings</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{width:90,minWidth:90}}>W/P ref.</th>
  </tr>
  </thead>
  );
@@ -142,7 +142,7 @@ function PartAColHeaders() {
 function FinColHeaders({ showPrior = true, showLS = false }: { showPrior?: boolean; showLS?: boolean }) {
  return (
  <thead className="sticky top-0 z-10">
- <tr className="bg-muted border-b border-border text-xs font-semibold text-foreground uppercase tracking-wider">
+ <tr className="bg-muted border-b border-border text-sm font-semibold text-foreground uppercase tracking-wider">
  {showLS && <th className="px-3 py-3 text-center whitespace-nowrap" style={{width:52,minWidth:52}}>LS</th>}
  <th className="px-4 py-3 text-left" style={{minWidth:200}}>Description</th>
  <th className="px-3 py-3 text-right whitespace-nowrap" style={{width:120,minWidth:120}}>Current period</th>
@@ -370,18 +370,18 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  return (
  <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border">
  <td className="px-4 py-3 text-center"><Checkbox checked={row.checked} onCheckedChange={v => setPA(proc.id, { checked: !!v })} disabled={locked} /></td>
- <td className="px-4 py-3 text-center text-xs font-semibold font-mono text-foreground">{proc.num}</td>
+ <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{proc.num}</td>
  <td className="px-4 py-3">
- <p className="text-xs font-semibold text-foreground mb-0.5">{proc.description}</p>
+ <p className="text-sm font-semibold text-foreground mb-0.5">{proc.description}</p>
  </td>
  <td className="px-3 py-3" style={{width:140}}>
  <Select value={row.psc} onValueChange={v => setPA(proc.id, { psc: v })} disabled={locked}>
- <SelectTrigger className="h-8 text-xs w-24"><SelectValue placeholder="—" /></SelectTrigger>
- <SelectContent><SelectItem value="Y" className="text-xs">Y</SelectItem><SelectItem value="N" className="text-xs">N</SelectItem><SelectItem value="N/A" className="text-xs">N/A</SelectItem></SelectContent>
+ <SelectTrigger className="h-8 text-sm w-24"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectContent><SelectItem value="Y" className="text-sm">Y</SelectItem><SelectItem value="N" className="text-sm">N</SelectItem><SelectItem value="N/A" className="text-sm">N/A</SelectItem></SelectContent>
  </Select>
  </td>
  <td className="px-3 py-3">
- <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(proc.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[56px] text-xs resize-none rounded-[10px]" />
+ <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(proc.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-3 text-center" style={{width:90}}>
  <RefButton reference={row.wpRef} onAttach={doc => setPA(proc.id, { wpRef: [...row.wpRef, doc] })} onRemove={i => setPA(proc.id, { wpRef: row.wpRef.filter((_,idx)=>idx!==i) })} disabled={locked} />
@@ -397,16 +397,16 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <td className="px-4 py-2.5 text-center"><Checkbox checked={row.checked} onCheckedChange={v => setPA(item.id, { checked: !!v })} disabled={locked} /></td>
  <td className="px-4 py-2.5 text-center text-xs text-muted-foreground font-mono">{String.fromCharCode(97 + letterIdx)}.</td>
  <td className="px-4 py-2.5 pl-10">
- <p className="text-xs text-foreground leading-relaxed">{item.label}</p>
+ <p className="text-sm text-foreground leading-relaxed">{item.label}</p>
  </td>
  <td className="px-3 py-2.5" style={{width:140}}>
  <Select value={row.psc} onValueChange={v => setPA(item.id, { psc: v })} disabled={locked}>
- <SelectTrigger className="h-8 text-xs w-24"><SelectValue placeholder="—" /></SelectTrigger>
- <SelectContent><SelectItem value="Y" className="text-xs">Y</SelectItem><SelectItem value="N" className="text-xs">N</SelectItem><SelectItem value="N/A" className="text-xs">N/A</SelectItem></SelectContent>
+ <SelectTrigger className="h-8 text-sm w-24"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectContent><SelectItem value="Y" className="text-sm">Y</SelectItem><SelectItem value="N" className="text-sm">N</SelectItem><SelectItem value="N/A" className="text-sm">N/A</SelectItem></SelectContent>
  </Select>
  </td>
  <td className="px-3 py-2.5">
- <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(item.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[48px] text-xs resize-none rounded-[10px]" />
+ <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(item.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[48px] text-sm resize-none rounded-[10px]" />
  </td>
  <td className="px-3 py-2.5 text-center" style={{width:90}}>
  <RefButton reference={row.wpRef} onAttach={doc => setPA(item.id, { wpRef: [...row.wpRef, doc] })} onRemove={i => setPA(item.id, { wpRef: row.wpRef.filter((_,idx)=>idx!==i) })} disabled={locked} />
@@ -425,7 +425,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  return (
  <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
  {showLS && <td className="px-3 py-2 text-center align-middle" style={{width:52}}>{LS_MAP[id] ? <Badge variant="outline" className="font-mono text-[10px] px-1 py-0 h-5 rounded">{LS_MAP[id]}</Badge> : null}</td>}
- <td className={`px-4 py-2 text-xs ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+ <td className={`px-4 py-2 text-sm ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
  <td className="px-2 py-2" style={{width:120}}>
  <TdInput value={row.current} onChange={v => setter(id,{current:v})} placeholder="0" className="text-right font-mono" />
  </td>
@@ -433,20 +433,20 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <TdInput value={row.prior} onChange={v => setter(id,{prior:v})} placeholder="0" className="text-right font-mono" />
  </td>}
  {showPrior && <>
- <td className="px-3 py-2 text-right text-xs font-mono" style={{width:90}}>{pr!==0?fmtN(vpAmt):''}</td>
- <td className="px-3 py-2 text-right text-xs" style={{width:70}}>{fmtP(vpPct)}</td>
+ <td className="px-3 py-2 text-right text-sm font-mono" style={{width:90}}>{pr!==0?fmtN(vpAmt):''}</td>
+ <td className="px-3 py-2 text-right text-sm" style={{width:70}}>{fmtP(vpPct)}</td>
  </>}
  <td className="px-2 py-2" style={{width:90}}>
  <Select value={row.hasIssue} onValueChange={v => setter(id,{hasIssue:v})} disabled={locked}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
- <SelectContent><SelectItem value="Yes" className="text-xs">Yes</SelectItem><SelectItem value="No" className="text-xs">No</SelectItem></SelectContent>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectContent><SelectItem value="Yes" className="text-sm">Yes</SelectItem><SelectItem value="No" className="text-sm">No</SelectItem></SelectContent>
  </Select>
  </td>
  <td className="px-2 py-2" style={{minWidth:180}}>
- {row.hasIssue === 'Yes' && <AttributedComment value={row.explanation} onChange={v => setter(id,{explanation:v})} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-exp-${id}`} placeholder="Describe…" className="min-h-[44px] text-xs resize-none rounded-[10px]" minHeight="44px" />}
+ {row.hasIssue === 'Yes' && <AttributedComment value={row.explanation} onChange={v => setter(id,{explanation:v})} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-exp-${id}`} placeholder="Describe…" className="min-h-[44px] text-sm resize-none rounded-[10px]" minHeight="44px" />}
  </td>
  <td className="px-2 py-2" style={{width:140}}>
- {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setter(id,{auditResponse:v})} placeholder="Form/ref." className="text-xs" />}
+ {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setter(id,{auditResponse:v})} placeholder="Form/ref." className="text-sm" />}
  </td>
  </tr>
  );
@@ -458,12 +458,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  return (
  <tr className="border-b border-border bg-muted/40 align-top">
  {showLS && <td style={{width:52}} />}
- <td className="px-4 py-2 text-xs font-semibold text-foreground" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
- <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{c!==0?Math.abs(c).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
- {showPrior && <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
+ <td className="px-4 py-2 text-sm font-semibold text-foreground" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+ <td className="px-3 py-2 text-right text-sm font-semibold font-mono">{c!==0?Math.abs(c).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>
+ {showPrior && <td className="px-3 py-2 text-right text-sm font-semibold font-mono">{pr!==0?Math.abs(pr).toLocaleString('en-CA',{maximumFractionDigits:0}):''}</td>}
  {showPrior && <>
- <td className="px-3 py-2 text-right text-xs font-semibold font-mono">{pr!==0?fmtN(vpAmt):''}</td>
- <td className="px-3 py-2 text-right text-xs font-semibold">{fmtP(vpPct)}</td>
+ <td className="px-3 py-2 text-right text-sm font-semibold font-mono">{pr!==0?fmtN(vpAmt):''}</td>
+ <td className="px-3 py-2 text-right text-sm font-semibold">{fmtP(vpPct)}</td>
  </>}
  <td colSpan={3} />
  </tr>
@@ -477,12 +477,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  return (
  <tr className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
  {showLS && <td style={{width:52}} />}
- <td className="px-4 py-2 text-xs text-foreground italic" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
- <td className="px-3 py-2 text-right text-xs font-mono">{fmt(c)}</td>
- {showPrior && <td className="px-3 py-2 text-right text-xs font-mono">{fmt(pr)}</td>}
+ <td className="px-4 py-2 text-sm text-foreground italic" style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
+ <td className="px-3 py-2 text-right text-sm font-mono">{fmt(c)}</td>
+ {showPrior && <td className="px-3 py-2 text-right text-sm font-mono">{fmt(pr)}</td>}
  {showPrior && <>
- <td className="px-3 py-2 text-right text-xs font-mono">{isPercent ? '' : (pr!==0?fmtN(vpAmt):'')}</td>
- <td className="px-3 py-2 text-right text-xs">{isPercent ? '' : fmtP(vpPct)}</td>
+ <td className="px-3 py-2 text-right text-sm font-mono">{isPercent ? '' : (pr!==0?fmtN(vpAmt):'')}</td>
+ <td className="px-3 py-2 text-right text-sm">{isPercent ? '' : fmtP(vpPct)}</td>
  </>}
  <td colSpan={3} />
  </tr>
@@ -493,7 +493,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  function FinSectionRow({ label }: { label: string }) {
  return (
  <tr className="bg-muted border-b border-border">
- <td colSpan={99} className="px-4 py-2 text-xs font-semibold text-foreground uppercase tracking-wider">{label}</td>
+ <td colSpan={99} className="px-4 py-2 text-sm font-semibold text-foreground uppercase tracking-wider">{label}</td>
  </tr>
  );
  }
@@ -622,7 +622,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  {flowState === 'worksheet' && (
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Compare the entity&apos;s most recent financial results to expectations (budget, prior period, industry trends);
  document matters requiring an audit response; conclude on fraud risk indicators.
@@ -680,7 +680,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <span className="text-sm font-semibold text-foreground">Balance Sheet</span>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <FinColHeaders showPrior={showPrior} showLS />
  <tbody>
  <FinSectionRow label="Current Assets" />
@@ -740,7 +740,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <span className="text-sm font-semibold text-foreground">Ratios</span>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <FinColHeaders showPrior={showPrior} />
  <tbody>
  <FinEditRow id="rat-wc" label="Working capital" showPrior={showPrior} source="ratio" />
@@ -760,7 +760,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <span className="text-sm font-semibold text-foreground">Income Statement</span>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <FinColHeaders showPrior={showPrior} showLS />
  <tbody>
  <FinSectionRow label="Sales / Revenue" />
@@ -830,13 +830,13 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Tooltip>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-24">Part B ref.</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Summary of matter</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Management response</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Audit implications</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-24">Part B ref.</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Summary of matter</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Management response</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Audit implications</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">

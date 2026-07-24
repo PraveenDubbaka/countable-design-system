@@ -333,7 +333,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
  Perform preliminary analytical procedures to understand the entity and its environment, identify
  unusual fluctuations, and highlight areas requiring additional audit attention.
@@ -390,13 +390,13 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-44">Line Item</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Current Year ($)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Prior Year ($)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">$ Change</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-24">% Change</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-36">Threshold Exceeded</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation / Audit Response</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-44">Line Item</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">Current Year ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">Prior Year ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">$ Change</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-24">% Change</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-36">Threshold Exceeded</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Explanation / Audit Response</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -420,7 +420,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  value={isExplanations[i]}
  onChange={(v) => setIsExplanations((prev) => prev.map((x, j) => j === i ? v : x))}
  placeholder={exceeded ? "Required — explain variance…" : "Optional note…"}
- className="text-xs"
+ className="text-sm"
  />
  </td>
  </tr>
@@ -438,13 +438,13 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-52">Line Item</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Current Year ($)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">Prior Year ($)</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-32">$ Change</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-24">% Change</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-36">Threshold Exceeded</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Explanation / Audit Response</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-52">Line Item</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">Current Year ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">Prior Year ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-32">$ Change</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-24">% Change</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-36">Threshold Exceeded</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Explanation / Audit Response</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -468,7 +468,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  value={bsExplanations[i]}
  onChange={(v) => setBsExplanations((prev) => prev.map((x, j) => j === i ? v : x))}
  placeholder={exceeded ? "Required — explain variance…" : "Optional note…"}
- className="text-xs"
+ className="text-sm"
  />
  </td>
  </tr>
@@ -489,13 +489,13 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-44">Ratio</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Formula</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Current Year</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Prior Year</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-36">Industry Benchmark</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-36">Status</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Notes</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-44">Ratio</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Formula</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Current Year</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Prior Year</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-36">Industry Benchmark</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-36">Status</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Notes</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -514,7 +514,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  value={ratioNotes[i]}
  onChange={(v) => setRatioNotes((prev) => prev.map((x, j) => j === i ? v : x))}
  placeholder="Add note…"
- className="text-xs"
+ className="text-sm"
  />
  </td>
  </tr>
@@ -538,12 +538,12 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider w-20">Ref</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Matter Identified</th>
- <th className="px-4 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wider w-28">Amount</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-24">Priority</th>
- <th className="px-4 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Planned Audit Response</th>
- <th className="px-4 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wider w-28">Status</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-20">Ref</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Matter Identified</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Amount</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">Priority</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Planned Audit Response</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-28">Status</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -560,7 +560,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  value={matterResponses[i]}
  onChange={(v) => setMatterResponses((prev) => prev.map((x, j) => j === i ? v : x))}
  placeholder="Describe planned response…"
- className="text-xs"
+ className="text-sm"
  />
  </td>
  <td className="px-4 py-2.5 text-center">
