@@ -626,7 +626,7 @@ export function Audit520Worksheet() {
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[260px]">Audit Procedures</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[260px]">Procedures</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-20">Risk Source<br /><span className="font-normal normal-case text-muted-foreground">(W/P Ref.)</span></th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[180px]">RMM Identified</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">SCOTABD<br /><span className="font-normal normal-case text-muted-foreground">Impacted</span></th>
