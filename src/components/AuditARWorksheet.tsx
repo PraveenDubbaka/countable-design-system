@@ -276,7 +276,7 @@ function useARStore() {
  setData(d => ({...d, concluded: false, concludedOn: "" }));
  }
 
- return { data, locked: data.concluded, handleRowField, addRow, conclude, reopen };
+ return { data, locked: data.concluded, engagementId, handleRowField, addRow, conclude, reopen };
 }
 
 const INFO_CARD = "bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6";
@@ -308,7 +308,7 @@ function ARInfoBlock() {
 }
 
 export function AuditARWorksheet() {
- const { data, locked, handleRowField, addRow, conclude, reopen } = useARStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useARStore();
  return (
  <WorksheetLayout
  heading="B Accounts Receivable > Audit Procedures"
@@ -327,7 +327,7 @@ export function AuditARWorksheet() {
 }
 
 export function AuditARConfirmationWorksheet() {
- const { data, locked, handleRowField, addRow, conclude, reopen } = useARStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useARStore();
  return (
  <WorksheetLayout
  heading="B Accounts Receivable > Confirmation Procedures"

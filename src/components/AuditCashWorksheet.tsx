@@ -324,11 +324,11 @@ function useCashStore() {
  setData(d => ({...d, concluded: false, concludedOn: "" }));
  }
 
- return { data, locked: data.concluded, setHeader, handleRowField, addRow, conclude, reopen };
+ return { data, locked: data.concluded, engagementId, setHeader, handleRowField, addRow, conclude, reopen };
 }
 
 export function AuditCashWorksheet() {
- const { data, locked, setHeader, handleRowField, addRow, conclude, reopen } = useCashStore();
+ const { data, locked, engagementId, setHeader, handleRowField, addRow, conclude, reopen } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Audit Procedures"
@@ -367,7 +367,7 @@ export function AuditCashWorksheet() {
 }
 
 export function AuditCashBankRecWorksheet() {
- const { data, locked, handleRowField, addRow, conclude, reopen } = useCashStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Bank Reconciliation"
@@ -406,7 +406,7 @@ export function AuditCashBankRecWorksheet() {
 }
 
 export function AuditCashCountWorksheet() {
- const { data, locked, handleRowField, addRow, conclude, reopen } = useCashStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Cash Count"
