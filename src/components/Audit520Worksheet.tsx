@@ -438,16 +438,22 @@ export function Audit520Worksheet() {
  return () => clearTimeout(t);
  }, [data, storageKey]);
 
- // Auto-populate procedures for any row that has none but matches a library entry
+ // Auto-populate procedures and normalize SCOTABD for rows missing either
  useEffect(() => {
  setData(d => {
  let changed = false;
  const partBRows = d.partBRows.map(row => {
- if ((row.procedures ?? []).length > 0) return row;
+ const hasProcs = (row.procedures ?? []).length > 0;
+ const validScotabd = SCOTABD_OPTIONS.includes(row.scotabd);
+ if (hasProcs && validScotabd) return row;
  const match = bestLibraryMatch(row.scotabd, row.rmmIdentified);
  if (!match) return row;
+ const updates: Partial<PartBRow> = {};
+ if (!hasProcs) updates.procedures = [...match.procedures];
+ if (!validScotabd) updates.scotabd = match.scotabd;
+ if (Object.keys(updates).length === 0) return row;
  changed = true;
- return { ...row, procedures: [...match.procedures] };
+ return { ...row, ...updates };
  });
  return changed ? { ...d, partBRows } : d;
  });
