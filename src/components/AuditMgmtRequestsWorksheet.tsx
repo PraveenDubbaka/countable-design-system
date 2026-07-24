@@ -71,7 +71,7 @@ export function AuditMgmtRequestsWorksheet({ isUS = false }: AuditMgmtRequestsWo
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Document requests made to management for preparing analysis or obtaining documents that will assist in the audit.
  &nbsp;<span className="font-medium">Com:</span> V = Verbal &nbsp;|&nbsp; L = Letter &nbsp;|&nbsp; Em = Email
  </p>

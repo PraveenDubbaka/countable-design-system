@@ -135,7 +135,7 @@ export function Audit575Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Document internal control deficiencies identified during the audit (from Forms 520, 522, 530, 540, 550 and
  audit procedures), classify them by severity, assess potential impact on the financial statements, and
  record management's response. Significant deficiencies and material weaknesses must be communicated in
@@ -342,13 +342,13 @@ export function Audit575Worksheet() {
  <h3 className="text-sm font-semibold text-foreground">Communication &amp; overall conclusion</h3>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Date communicated to management / TCWG</label>
+ <label className="text-sm font-medium text-muted-foreground">Date communicated to management / TCWG</label>
  <Input disabled={locked} type="date" value={data.communicationDate}
  onChange={e => setData(d => ({...d, communicationDate: e.target.value }))}
  className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -360,7 +360,7 @@ export function Audit575Worksheet() {
  </Select>
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Rationale</label>
  <Input disabled={locked} value={data.conclusionRationale}
  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
  placeholder="Briefly support the conclusion."

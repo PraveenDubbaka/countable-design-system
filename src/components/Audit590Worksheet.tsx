@@ -431,7 +431,7 @@ export function Audit590Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Perform engagement scoping for all classes of transactions, account balances and disclosures (COTABDs).
  Identify SCOTABDs and material-only COTABDs, assess RMM at the assertion level, summarise the audit
  response, and complete a stand-back assessment to ensure all risks have been identified.
@@ -443,13 +443,13 @@ export function Audit590Worksheet() {
  {/* Materiality */}
  <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Overall materiality ($)</label>
+ <label className="text-sm font-medium text-muted-foreground">Overall materiality ($)</label>
  <Input disabled={locked} value={data.overallMateriality}
  onChange={e => setData(d => ({...d, overallMateriality: e.target.value }))}
  placeholder="From" className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Performance materiality ($)</label>
+ <label className="text-sm font-medium text-muted-foreground">Performance materiality ($)</label>
  <Input disabled={locked} value={data.performanceMateriality}
  onChange={e => setData(d => ({...d, performanceMateriality: e.target.value }))}
  placeholder="From" className="h-8 text-sm" />
@@ -676,13 +676,13 @@ export function Audit590Worksheet() {
          <button onClick={() => addProcedure590(r.id)} className="flex items-center gap-1 text-xs text-primary hover:underline">
           <Plus className="h-3 w-3" />Add
          </button>
-         <button onClick={() => setEditingProcsId(null)} className="text-xs text-muted-foreground hover:underline">Done</button>
+         <button onClick={() => setEditingProcsId(null)} className="text-sm text-muted-foreground hover:underline">Done</button>
         </div>
        </div>
       ) : (
        <div className="space-y-1 cursor-pointer min-h-[40px]">
         {r.procedures.length === 0 ? (
-         <span className="text-xs text-muted-foreground italic flex items-center gap-1">
+         <span className="text-sm text-muted-foreground italic flex items-center gap-1">
           <BookOpen className="h-3 w-3" />No procedures
          </span>
         ) : (
@@ -767,7 +767,7 @@ export function Audit590Worksheet() {
 
  <div className="grid grid-cols-2 gap-3 border-t border-border pt-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">PSC performed? (Y/N)</label>
+ <label className="text-sm font-medium text-muted-foreground">PSC performed? (Y/N)</label>
  <Select disabled={locked} value={data.standback.pscDone}
  onValueChange={v => setData(d => ({...d, standback: {...d.standback, pscDone: v as YN } }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -779,7 +779,7 @@ export function Audit590Worksheet() {
  </Select>
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">PSC initials</label>
+ <label className="text-sm font-medium text-muted-foreground">PSC initials</label>
  <Input disabled={locked} value={data.standback.pscInitials}
  onChange={e => setData(d => ({...d, standback: {...d.standback, pscInitials: e.target.value } }))}
  placeholder="e.g. JD"
@@ -796,7 +796,7 @@ export function Audit590Worksheet() {
  </p>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -808,7 +808,7 @@ export function Audit590Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Rationale</label>
  <Input disabled={locked} value={data.conclusionRationale}
  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
  placeholder="Briefly support the conclusion."
@@ -832,7 +832,7 @@ export function Audit590Worksheet() {
  {/* Conclude action */}
  <div className="flex justify-end pt-1">
  {locked ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800 font-medium">
  Concluded on {data.concludedOn}
  </div>
  ) : (

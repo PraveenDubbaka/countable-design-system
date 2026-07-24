@@ -378,7 +378,7 @@ export function Audit625Worksheet() {
  </SelectContent>
  </Select>
  </div>
- <p className="text-xs text-muted-foreground self-end leading-relaxed">
+ <p className="text-sm text-muted-foreground self-end leading-relaxed">
  Selecting a strategy loads the corresponding §5–§7 procedures below. Use professional judgment to add procedures if more than one strategy is planned.
  </p>
  </div>

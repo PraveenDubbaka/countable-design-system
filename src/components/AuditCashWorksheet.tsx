@@ -338,7 +338,7 @@ export function AuditCashWorksheet() {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
  <div className="grid grid-cols-3 gap-4">
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
  <Select disabled value="Cash">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -347,11 +347,11 @@ export function AuditCashWorksheet() {
  </Select>
  </div>
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
  <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
  <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
@@ -377,7 +377,7 @@ export function AuditCashBankRecWorksheet() {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
  <div className="grid grid-cols-3 gap-4">
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
  <Select disabled value="Cash">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -386,11 +386,11 @@ export function AuditCashBankRecWorksheet() {
  </Select>
  </div>
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
  <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
  <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
@@ -416,7 +416,7 @@ export function AuditCashCountWorksheet() {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
  <div className="grid grid-cols-3 gap-4">
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Name</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
  <Select disabled value="Cash">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -425,11 +425,11 @@ export function AuditCashCountWorksheet() {
  </Select>
  </div>
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
  <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
- <label className="text-xs font-medium text-muted-foreground mb-1 block">Materiality</label>
+ <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
  <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>

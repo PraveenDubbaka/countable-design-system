@@ -295,7 +295,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  function SubNote({ text }: { text: string }) {
  return (
  <tr className="bg-muted/20">
- <td className="px-3 py-1" /><td className="px-4 py-1.5 text-xs text-muted-foreground italic" colSpan={3}>{text}</td>
+ <td className="px-3 py-1" /><td className="px-4 py-1.5 text-sm text-muted-foreground italic" colSpan={3}>{text}</td>
  </tr>
  );
  }
@@ -360,7 +360,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-1">
  <p className="text-sm font-medium text-foreground">📅 Meeting found</p>
  <p className="text-sm text-muted-foreground">"Audit Planning Discussion — {entity}"</p>
- <p className="text-xs text-muted-foreground">{isUS ? "Jan 20, 2025, 2:00 PM" : "Apr 8, 2024, 10:00 AM"}</p>
+ <p className="text-sm text-muted-foreground">{isUS ? "Jan 20, 2025, 2:00 PM" : "Apr 8, 2024, 10:00 AM"}</p>
  </div>
  <div className="space-y-2">
  {["6 Attendees identified", "Team planning discussion extracted", "Audit team roles populated"].map(item => (
@@ -413,7 +413,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To document the scope, timing and direction of the audit as a guide for the development of the audit plan.{" "}
  <span className="font-medium text-foreground">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
  
@@ -564,7 +564,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {/* Conclude action */}
  <div className="flex justify-end pt-1">
  {concluded ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800 font-medium">
  Concluded on {concludedOn}
  </div>
  ) : (

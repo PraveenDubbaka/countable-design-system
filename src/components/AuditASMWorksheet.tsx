@@ -297,7 +297,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  return (
  <tr className="bg-muted/20">
  <td className="px-3 py-1" />
- <td className="px-4 py-1.5 text-xs text-muted-foreground italic" colSpan={4}>
+ <td className="px-4 py-1.5 text-sm text-muted-foreground italic" colSpan={4}>
  {text}
  </td>
  </tr>
@@ -360,12 +360,12 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  </div>
  <div className="col-span-2 flex items-start gap-3">
  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0 pt-0.5">Objective:</span>
- <p className="text-xs text-muted-foreground leading-relaxed flex-1">
+ <p className="text-sm text-muted-foreground leading-relaxed flex-1">
  To document the scope, timing and direction of the audit as a guide for the development of the audit plan.
  </p>
  </div>
  </div>
- <div className="mt-2 px-3 py-1.5 bg-muted/50 rounded text-xs text-muted-foreground">
+ <div className="mt-2 px-3 py-1.5 bg-muted/50 rounded text-sm text-muted-foreground">
  <span className="font-semibold">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
  </div>
  </div>
@@ -523,8 +523,8 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {/* ── Sign-off ── */}
  <WorksheetSignOff worksheetKey="asm" engagementId={engagementId} />
  <div className="px-6 py-3 border-t border-border bg-muted/20 flex justify-between">
- <span className="text-xs text-muted-foreground">Overall audit strategy — 430</span>
- <span className="text-xs text-muted-foreground">©2022 CPA Canada PEG</span>
+ <span className="text-sm text-muted-foreground">Overall audit strategy — 430</span>
+ <span className="text-sm text-muted-foreground">©2022 CPA Canada PEG</span>
  </div>
 
  </div>
@@ -574,7 +574,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-1">
  <p className="text-sm font-medium text-foreground">📅 Meeting found</p>
  <p className="text-sm text-muted-foreground">"Audit Planning Discussion — {entity}"</p>
- <p className="text-xs text-muted-foreground">{isUS ? "Jan 20, 2025, 2:00 PM" : "Apr 8, 2024, 10:00 AM"}</p>
+ <p className="text-sm text-muted-foreground">{isUS ? "Jan 20, 2025, 2:00 PM" : "Apr 8, 2024, 10:00 AM"}</p>
  </div>
  <div className="space-y-2">
  {[

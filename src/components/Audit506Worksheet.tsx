@@ -310,7 +310,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
         <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
-        <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+        <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
           To document inquiries about fraud risks performed as part of the risk assessment.{" "}
           <span className="font-medium text-foreground">Part A</span> covers required inquiries of management, others in the entity, and TCWG.{" "}
           <span className="font-medium text-foreground">Part B</span> covers other fraud risk assessment procedures.{" "}
@@ -340,7 +340,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                 list={data.mgmtInterviewees} roles={MGMT_ROLES}
                 onSet={setMgmtIv} onAdd={addMgmtIv} onRemove={removeMgmtIv}
               />
-              <p className="px-6 pt-3 pb-0.5 text-xs text-muted-foreground italic">Inquire about the following:</p>
+              <p className="px-6 pt-3 pb-0.5 text-sm text-muted-foreground italic">Inquire about the following:</p>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <ColHeaders label="Inquiry" />
@@ -363,7 +363,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                 list={data.tcwgInterviewees} roles={TCWG_ROLES}
                 onSet={setTcwgIv} onAdd={addTcwgIv} onRemove={removeTcwgIv}
               />
-              <p className="px-6 pt-3 pb-0.5 text-xs text-muted-foreground italic">Inquire about the following:</p>
+              <p className="px-6 pt-3 pb-0.5 text-sm text-muted-foreground italic">Inquire about the following:</p>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <ColHeaders label="Inquiry" />
@@ -398,7 +398,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
             >
               <div>
                 <span className="text-sm font-semibold text-foreground">Appendix A — Characteristics of fraud (fraud triangle assessment)</span>
-                <p className="text-xs text-muted-foreground mt-0.5">Click to expand and assess each fraud risk factor.</p>
+                <p className="text-sm text-muted-foreground mt-0.5">Click to expand and assess each fraud risk factor.</p>
               </div>
               {data.appendixOpen
                 ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -406,7 +406,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
             </button>
             {data.appendixOpen && (
               <div className="border-t border-border">
-                <p className="px-6 pt-4 pb-1 text-xs text-muted-foreground">
+                <p className="px-6 pt-4 pb-1 text-sm text-muted-foreground">
                   Assess each element of the fraud triangle to determine whether conditions for fraud are present. These three conditions are often referred to as the "fraud triangle."
                   <span className="italic"> Note: The presence of fraud risk factors does not necessarily indicate fraud exists. However, they should be considered when assessing the risk of material misstatement due to fraud.</span>
                 </p>
@@ -425,7 +425,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                             <td className="px-6 py-3 align-top border-l-2 border-primary/20">
                               <p className="text-sm font-semibold text-foreground mb-1">{item.label}</p>
                               <p className="text-sm text-foreground">{item.description}</p>
-                              <p className="text-xs text-muted-foreground mt-1.5 italic">{item.reference}</p>
+                              <p className="text-sm text-muted-foreground mt-1.5 italic">{item.reference}</p>
                             </td>
                             <td className="px-4 py-3 align-top" style={{ width: 140 }}>
                               <Select value={row.psc} onValueChange={v => setAppendix(item.id, { psc: v })} disabled={locked}>

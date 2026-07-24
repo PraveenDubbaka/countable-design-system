@@ -216,7 +216,7 @@ export function Audit550Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To identify controls that address risks of material misstatement at the assertion level, evaluate whether
  those controls have been designed effectively and implemented, and assess control risk where operating
  effectiveness is to be tested.
@@ -473,13 +473,13 @@ export function Audit550Worksheet() {
  {/* Overall conclusion */}
  <div className="bg-card border border-border rounded-md p-5 space-y-3">
  <h3 className="text-sm font-semibold text-foreground">Overall conclusion</h3>
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  Based on the work done, conclude on whether control design and implementation — and control risk where applicable —
  have been appropriately assessed. Carry forward (significant deficiencies) and the response plan.
  </p>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -491,7 +491,7 @@ export function Audit550Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Supporting rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Supporting rationale</label>
  <Input disabled={locked} value={data.overallRationale}
  onChange={e => setData(d => ({...d, overallRationale: e.target.value }))}
  placeholder="Briefly support the overall conclusion."

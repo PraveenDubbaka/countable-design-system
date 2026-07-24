@@ -101,8 +101,8 @@ export function WorksheetLayout({
  )}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-xs font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  {objective}
  </p>
  </div>
@@ -214,8 +214,8 @@ export function LinkedRisksCard({
  const visibleRisks = risks.filter(r => !(state.hiddenRefs ?? []).includes(r.ref));
  const hasRows = visibleRisks.length > 0 || state.manualRisks.length > 0;
 
- const th = "text-left px-3 py-2.5 font-medium text-xs border-b border-border";
- const td = "px-3 py-2.5 text-xs align-top border-b border-border last:border-b-0";
+ const th = "text-left px-3 py-2.5 font-medium text-sm border-b border-border";
+ const td = "px-3 py-2.5 text-sm align-top border-b border-border last:border-b-0";
 
  return (
  <WorksheetSection
@@ -223,7 +223,7 @@ export function LinkedRisksCard({
  right={
  <div className="flex items-center gap-2">
  {overallRisk && (
- <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium ${RISK_TONE[overallRisk]}`}>
+ <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium ${RISK_TONE[overallRisk]}`}>
  <span className="opacity-70">FS-level risk</span> · {overallRisk}
  </span>
  )}
@@ -237,12 +237,12 @@ export function LinkedRisksCard({
  bodyClassName="p-0"
  >
  {!hasRows ? (
- <p className="px-6 py-4 text-xs text-muted-foreground">
+ <p className="px-6 py-4 text-sm text-muted-foreground">
  {emptyHint ?? "No matching risks identified in Update to flow risks through."}
  </p>
  ) : (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead>
  <tr className="bg-muted/40">
  <th className={`${th} text-center w-10`}>#</th>
@@ -269,13 +269,13 @@ export function LinkedRisksCard({
  <td className={td}>
  <Input disabled={locked} value={ov.wpRef ?? r.ref}
  onChange={e => patchForm520(r.ref, { wpRef: e.target.value })}
- className="h-8 text-xs font-mono w-24" placeholder={r.ref} />
+ className="h-8 text-sm font-mono w-24" placeholder={r.ref} />
  </td>
  <td className={td}>
  <Select disabled={locked} value={fsAreaVal} onValueChange={v => patchForm520(r.ref, { fsArea: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select area…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select area…" /></SelectTrigger>
  <SelectContent>
- {FS_AREA_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+ {FS_AREA_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
@@ -283,33 +283,33 @@ export function LinkedRisksCard({
  <Textarea disabled={locked} value={rmmVal}
  onChange={e => patchForm520(r.ref, { rmmIdentified: e.target.value })}
  placeholder="Risk of material misstatement…"
- className="text-xs min-h-[56px] resize-none min-w-[200px]" />
+ className="text-sm min-h-[56px] resize-none min-w-[200px]" />
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={fraudVal} onValueChange={v => patchForm520(r.ref, { fraudRisk: v as "Y" | "N" | "" })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
- <SelectItem value="N" className="text-xs">N — No</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">N — No</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={irVal} onValueChange={v => patchForm520(r.ref, { inherentRisk: v as "H" | "M" | "L" | "" })}>
- <SelectTrigger className={`h-8 text-xs ${HML_CLASS[irVal] ?? ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className={`h-8 text-sm ${HML_CLASS[irVal] ?? ""}`}><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="H" className="text-xs">H — High</SelectItem>
- <SelectItem value="M" className="text-xs">M — Moderate</SelectItem>
- <SelectItem value="L" className="text-xs">L — Low</SelectItem>
+ <SelectItem value="H" className="text-sm">H — High</SelectItem>
+ <SelectItem value="M" className="text-sm">M — Moderate</SelectItem>
+ <SelectItem value="L" className="text-sm">L — Low</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={sigVal} onValueChange={v => patchForm520(r.ref, { significantRisk: v as "Y" | "N" | "" })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
- <SelectItem value="N" className="text-xs">N — No</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">N — No</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -329,13 +329,13 @@ export function LinkedRisksCard({
  <td className={td}>
  <Input disabled={locked} value={r.wpRefText ?? ""}
  onChange={e => patchManual(r.id, { wpRefText: e.target.value })}
- className="h-8 text-xs font-mono w-24" placeholder="W/P ref" />
+ className="h-8 text-sm font-mono w-24" placeholder="W/P ref" />
  </td>
  <td className={td}>
  <Select disabled={locked} value={r.fsArea} onValueChange={v => patchManual(r.id, { fsArea: v })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select area…" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select area…" /></SelectTrigger>
  <SelectContent>
- {FS_AREA_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-xs">{o}</SelectItem>)}
+ {FS_AREA_OPTIONS.map(o => <SelectItem key={o} value={o} className="text-sm">{o}</SelectItem>)}
  </SelectContent>
  </Select>
  </td>
@@ -344,33 +344,33 @@ export function LinkedRisksCard({
  autoFocus={r.id === newRowIdRef.current}
  onChange={e => patchManual(r.id, { rmmIdentified: e.target.value })}
  placeholder="Risk of material misstatement…"
- className="text-xs min-h-[56px] resize-none min-w-[200px]" />
+ className="text-sm min-h-[56px] resize-none min-w-[200px]" />
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={r.fraudRisk ?? ""} onValueChange={v => patchManual(r.id, { fraudRisk: v as "Y" | "N" | "" })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
- <SelectItem value="N" className="text-xs">N — No</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">N — No</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={r.inherentRisk ?? ""} onValueChange={v => patchManual(r.id, { inherentRisk: v as "H" | "M" | "L" | "" })}>
- <SelectTrigger className={`h-8 text-xs ${HML_CLASS[r.inherentRisk ?? ""] ?? ""}`}><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className={`h-8 text-sm ${HML_CLASS[r.inherentRisk ?? ""] ?? ""}`}><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="H" className="text-xs">H — High</SelectItem>
- <SelectItem value="M" className="text-xs">M — Moderate</SelectItem>
- <SelectItem value="L" className="text-xs">L — Low</SelectItem>
+ <SelectItem value="H" className="text-sm">H — High</SelectItem>
+ <SelectItem value="M" className="text-sm">M — Moderate</SelectItem>
+ <SelectItem value="L" className="text-sm">L — Low</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={r.significantRisk ?? ""} onValueChange={v => patchManual(r.id, { significantRisk: v as "Y" | "N" | "" })}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y — Yes</SelectItem>
- <SelectItem value="N" className="text-xs">N — No</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y — Yes</SelectItem>
+ <SelectItem value="N" className="text-sm">N — No</SelectItem>
  </SelectContent>
  </Select>
  </td>
@@ -414,11 +414,11 @@ export function ProcedureTable({
  showPsa?: boolean;
  showNumbers?: boolean;
 }) {
- const td = "border-b border-border px-3 py-2.5 text-xs align-top";
+ const td = "border-b border-border px-3 py-2.5 text-sm align-top";
  const colCount = (showNumbers ? 1 : 0) + (showPsa ? 1 : 0) + 4;
  return (
  <div className="overflow-x-auto">
- <table className="w-full text-xs border-collapse">
+ <table className="w-full text-sm border-collapse">
  <thead>
  <tr className="bg-muted/40">
  {showNumbers && <th className="text-left px-3 py-2.5 font-medium border-b border-border w-[40px]">#</th>}
@@ -449,7 +449,7 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, 
  return (
  <>
  <tr className="bg-primary/[0.06]">
- <td colSpan={colCount} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
+ <td colSpan={colCount} className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
  </tr>
  {rows.map(r => {
  n += 1;
@@ -457,20 +457,20 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, 
  <tr key={r.id} className="hover:bg-muted/20">
  {showNumbers && <td className={`${td} text-muted-foreground font-medium`}>{n}</td>}
  <td className={td}><span className="block whitespace-pre-wrap leading-snug">{r.procedure}</span></td>
- {showPsa && <td className={`${td} font-mono text-[11px] whitespace-nowrap`}>{r.psa || "—"}</td>}
+ {showPsa && <td className={`${td} font-mono text-xs whitespace-nowrap`}>{r.psa || "—"}</td>}
  <td className={td}>
  <Select disabled={locked} value={r.psc} onValueChange={v => onChange(sectionIdx, r.id, "psc", v)}>
- <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="—" /></SelectTrigger>
+ <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Y" className="text-xs">Y</SelectItem>
- <SelectItem value="N" className="text-xs">N</SelectItem>
- <SelectItem value="N/A" className="text-xs">N/A</SelectItem>
+ <SelectItem value="Y" className="text-sm">Y</SelectItem>
+ <SelectItem value="N" className="text-sm">N</SelectItem>
+ <SelectItem value="N/A" className="text-sm">N/A</SelectItem>
  </SelectContent>
  </Select>
  </td>
  <td className={td}>
  <Textarea disabled={locked} value={r.comments} onChange={e => onChange(sectionIdx, r.id, "comments", e.target.value)}
- className="min-h-[56px] text-xs resize-none" placeholder="—" />
+ className="min-h-[56px] text-sm resize-none" placeholder="—" />
  </td>
  <td className={`${td} text-center`}>
  <RefButton
@@ -512,9 +512,9 @@ export function ConcludedRow({ concludedOn, onReopen }: { concludedOn: string; o
  {CURRENT_USER.initials}
  </div>
  <div className="flex-1 min-w-0">
- <p className="text-[11px] text-muted-foreground leading-tight">Concluded by</p>
+ <p className="text-xs text-muted-foreground leading-tight">Concluded by</p>
  <p className="text-sm font-medium leading-tight">{CURRENT_USER.name}</p>
- <p className="text-[11px] text-muted-foreground leading-tight">{formatConcludeTs(concludedOn)}</p>
+ <p className="text-xs text-muted-foreground leading-tight">{formatConcludeTs(concludedOn)}</p>
  </div>
  {onReopen && <Button size="sm" onClick={onReopen}>Reopen worksheet</Button>}
  </div>

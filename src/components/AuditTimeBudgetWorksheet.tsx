@@ -80,7 +80,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Compare estimated time and costs to the prior period and track actuals to complete the audit.
  {' '}<span className="text-primary font-medium">Actual columns auto-update from logged time entries below.</span>
  </p>
@@ -104,7 +104,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="flex items-center gap-8">
  {([['Prior', priorRate, setPriorRate], ['Budget', budgetRate, setBudgetRate], ['Actual', actualRate, setActualRate]] as const).map(([label, value, setter]) => (
  <div key={label as string} className="flex flex-col gap-1.5">
- <label className="text-xs font-medium text-muted-foreground">{label as string} ($/hr)</label>
+ <label className="text-sm font-medium text-muted-foreground">{label as string} ($/hr)</label>
  <Input className="h-8 text-sm w-28 tabular-nums text-right" placeholder="0.00"
  value={value as string} onChange={e => (setter as (v: string) => void)(e.target.value)} />
  </div>
@@ -215,7 +215,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 border-b border-border flex items-center justify-between">
  <span className="text-sm font-semibold text-foreground">Time Log</span>
- <span className="text-xs text-muted-foreground">{totalLogged.toFixed(1)}h across {entries.length} entries</span>
+ <span className="text-sm text-muted-foreground">{totalLogged.toFixed(1)}h across {entries.length} entries</span>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full">
@@ -235,7 +235,7 @@ export function AuditTimeBudgetWorksheet({ isUS = false }: { isUS?: boolean }) {
  <td className="px-4 py-2 text-sm whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
  <td className="px-4 py-2 text-sm">{SECTION_LABELS[e.tbSection] ?? e.tbSection} — {task}</td>
  <td className="px-4 py-2 text-sm tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
- <td className="px-4 py-2 text-xs text-muted-foreground max-w-[200px] truncate">{e.description}</td>
+ <td className="px-4 py-2 text-sm text-muted-foreground max-w-[200px] truncate">{e.description}</td>
  <td className="px-3 py-2 text-center">
  <button onClick={() => { removeEntry(e.id); toast.success('Entry removed'); }}
  className="text-muted-foreground hover:text-destructive transition-colors">

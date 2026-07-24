@@ -250,7 +250,7 @@ export function AuditScopeWorksheet({
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Define and document the scope of the audit engagement: entity coverage, reporting period,
  applicable framework, financial statement areas in scope, significant risks, and agreed
  reporting requirements.
@@ -277,7 +277,7 @@ export function AuditScopeWorksheet({
  {/* Left side: carry-forward values */}
  <div className="flex flex-col gap-3 sm:w-64">
  <div>
- <label className="block text-xs font-medium text-muted-foreground mb-1">Materiality ($)</label>
+ <label className="block text-sm font-medium text-muted-foreground mb-1">Materiality ($)</label>
  <Input
  value={materialityAmt}
  onChange={(e) => setMaterialityAmt(e.target.value.replace(/[^0-9.]/g, ""))}
@@ -286,7 +286,7 @@ export function AuditScopeWorksheet({
  />
  </div>
  <div>
- <label className="block text-xs font-medium text-muted-foreground mb-1">Clearly trivial misstatement ($)</label>
+ <label className="block text-sm font-medium text-muted-foreground mb-1">Clearly trivial misstatement ($)</label>
  <Input
  value={clearlyTrivialAmt}
  onChange={(e) => setClearlyTrivialAmt(e.target.value.replace(/[^0-9.]/g, ""))}

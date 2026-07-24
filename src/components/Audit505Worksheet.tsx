@@ -289,7 +289,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To provide an additional listing of potential inquiries of management, those responsible for financial
  reporting and other appropriate individuals within the entity.{" "}
  <span className="font-medium text-foreground">Note:</span> Where responses are incomplete, unsatisfactory
@@ -324,7 +324,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  {proc.description}
  {proc.items.length > 0 && (
  <ul className="mt-2 space-y-0.5 list-disc list-inside">
- {proc.items.map((item, i) => <li key={i} className="text-xs text-muted-foreground">{item}</li>)}
+ {proc.items.map((item, i) => <li key={i} className="text-sm text-muted-foreground">{item}</li>)}
  </ul>
  )}
  </td>
@@ -455,7 +455,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  {/* Inquiry items table */}
  <div className="overflow-x-auto">
- <p className="px-6 pt-3 pb-0.5 text-xs text-muted-foreground italic">
+ <p className="px-6 pt-3 pb-0.5 text-sm text-muted-foreground italic">
  Inquire about matters such as the following:
  </p>
  <table className="w-full">
@@ -530,7 +530,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  placeholder="Document overall results and cross-reference to other relevant forms (e.g., — Risk Register)."
  className="min-h-[100px] text-sm resize-none bg-background"
  />
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  Where inquiries are made using this form, document the results here and provide a cross reference to other relevant forms.
  Where responses are incomplete, unsatisfactory or inconsistent, perform additional risk assessment procedures.
  </p>

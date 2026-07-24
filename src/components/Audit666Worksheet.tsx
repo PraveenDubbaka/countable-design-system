@@ -198,7 +198,7 @@ export function Audit666Worksheet() {
  bodyClassName="p-0"
  >
  {data.parties.length === 0 ? (
- <p className="px-6 py-4 text-xs text-muted-foreground">
+ <p className="px-6 py-4 text-sm text-muted-foreground">
  No related parties recorded. Each entry flows in (TCWG), (representations) and the 900-series disclosure forms.
  </p>
  ) : (

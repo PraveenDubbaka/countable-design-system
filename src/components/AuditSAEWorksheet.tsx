@@ -147,7 +147,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">{title}</span>
- {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+ {subtitle && <span className="text-sm text-muted-foreground">{subtitle}</span>}
  {done !== undefined && (
  <Badge variant={done ? "success" : "secondary"} className="ml-auto text-[10px] px-2 py-0.5">
  {done ? "Complete" : "Incomplete"}
@@ -166,7 +166,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Assist in the selection of an auditor's expert, plan the work to be performed, and agree on
  the terms of engagement. Using the work of an auditor's expert does not reduce the auditor's
  responsibility for the audit opinion.
@@ -254,7 +254,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  {/* Step 3 */}
  <Card title="Step 3 — Nature, Scope & Objectives" subtitle="Describe the exact nature, timing and extent of the expert's work" done={step3Done}>
  <div className="space-y-3">
- <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-muted-foreground bg-muted rounded-md px-4 py-3">
+ <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm text-muted-foreground bg-muted rounded-md px-4 py-3">
  {[
  "Nature of the matter to which the expert's work relates",
  "Risks of material misstatement in that matter",
@@ -295,7 +295,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  <label className="text-sm font-semibold text-foreground uppercase tracking-wider">
  Threats to objectivity?
  </label>
- <p className="text-xs text-muted-foreground">Are there interests or relationships that may create a threat to the expert's objectivity?</p>
+ <p className="text-sm text-muted-foreground">Are there interests or relationships that may create a threat to the expert's objectivity?</p>
  <Select value={objectivityThreat} onValueChange={(v) => { setObjectivityThreat(v as YesNo); persist({ objectivityThreat: v as YesNo }); }} disabled={concluded}>
  <SelectTrigger className="h-9 text-sm w-40">
  <SelectValue placeholder="Select…" />
@@ -332,7 +332,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  </SelectContent>
  </Select>
  {subjectToQC === "no" && (
- <span className="text-xs text-muted-foreground">External expert — additional procedures may be required to evaluate their work.</span>
+ <span className="text-sm text-muted-foreground">External expert — additional procedures may be required to evaluate their work.</span>
  )}
  </div>
  </div>
@@ -342,7 +342,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  {/* Step 5 */}
  <Card title="Step 5 — Auditor's Understanding" subtitle="Document sufficient understanding of the expert's field to plan and evaluate their work" done={step5Done}>
  <div className="space-y-3">
- <div className="text-xs text-muted-foreground bg-muted rounded-md px-4 py-3 space-y-1">
+ <div className="text-sm text-muted-foreground bg-muted rounded-md px-4 py-3 space-y-1">
  <p className="font-medium">Understanding must be sufficient to:</p>
  <div className="flex items-start gap-1.5"><span className="text-muted-foreground/50">•</span><span>Determine the nature, scope and objectives of the expert's work for audit purposes</span></div>
  <div className="flex items-start gap-1.5"><span className="text-muted-foreground/50">•</span><span>Evaluate the adequacy of the expert's work for our audit conclusions</span></div>
@@ -407,7 +407,7 @@ export function AuditSAEWorksheet({ isUS }: { isUS?: boolean }) {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-2">
  <span className="text-sm font-semibold text-foreground">Conclusion</span>
- <span className="text-xs text-muted-foreground">— Document the basis for the selection or rationale for not requiring an expert.</span>
+ <span className="text-sm text-muted-foreground">— Document the basis for the selection or rationale for not requiring an expert.</span>
  </div>
  <div className="px-6 py-5">
  <Textarea

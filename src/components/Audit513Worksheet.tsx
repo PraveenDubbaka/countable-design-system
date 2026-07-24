@@ -198,7 +198,7 @@ function SectionCard({ title, subtitle, children }: {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border">
  <span className="text-sm font-semibold text-foreground">{title}</span>
- {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+ {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
  </div>
  {children}
  </div>
@@ -213,7 +213,7 @@ function PartHeader({ letter, title, description }: { letter: string; title: str
  </span>
  <div>
  <p className="text-sm font-semibold text-foreground">{title}</p>
- <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
+ <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
  </div>
  </div>
  );
@@ -331,7 +331,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Obtain an understanding of accounting estimates and related disclosures to provide an appropriate basis for the assessment of the risk of material misstatement at the financial statement and assertion levels.
  </p>
  </div>
@@ -391,10 +391,10 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <td className="px-5 py-3 text-sm text-foreground">
  <span className="font-medium">Identify and describe accounting estimates and related disclosures expected to be in the F/S by:</span>
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- <li className="text-xs text-muted-foreground">Reviewing the results of understanding the entity and its environment.</li>
- <li className="text-xs text-muted-foreground">Inquiring about transactions, events and conditions that give rise to accounting estimates.</li>
- <li className="text-xs text-muted-foreground">Considering requirements of the AFRF and regulatory factors.</li>
- <li className="text-xs text-muted-foreground">Recording all estimates identified in the table below.</li>
+ <li className="text-sm text-muted-foreground">Reviewing the results of understanding the entity and its environment.</li>
+ <li className="text-sm text-muted-foreground">Inquiring about transactions, events and conditions that give rise to accounting estimates.</li>
+ <li className="text-sm text-muted-foreground">Considering requirements of the AFRF and regulatory factors.</li>
+ <li className="text-sm text-muted-foreground">Recording all estimates identified in the table below.</li>
  </ul>
  </td>
  <td className="px-4 py-3 w-28">
@@ -556,7 +556,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </span>
  )}
  </p>
- <p className="text-xs text-muted-foreground">Use a separate or 513-2 for each estimate. Document risk factors</p>
+ <p className="text-sm text-muted-foreground">Use a separate or 513-2 for each estimate. Document risk factors</p>
  </div>
  </div>
  )}
@@ -584,7 +584,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <tr className="hover:bg-muted/30 transition-colors align-top">
  <td className="px-5 py-3 text-sm text-foreground">
  <p className="font-medium mb-1">Understand estimate preparation</p>
- <p className="text-xs text-muted-foreground">Understand management's process for preparing estimates and making F/S disclosures. Consider responses to entity-level risks and controls</p>
+ <p className="text-sm text-muted-foreground">Understand management's process for preparing estimates and making F/S disclosures. Consider responses to entity-level risks and controls</p>
  </td>
  <td className="px-4 py-3 w-28">
  <Select value={data.partBPsc} onValueChange={v => patch("partBPsc", v)} disabled={locked}>
@@ -688,7 +688,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  {/* Conclude action */}
  <div className="flex justify-end pt-1">
  {data.concluded ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800 font-medium">
  Concluded on {data.concludedOn}
  </div>
  ) : (

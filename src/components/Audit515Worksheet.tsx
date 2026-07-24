@@ -195,7 +195,7 @@ function SectionCard({ title, subtitle, children }: {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border">
  <span className="text-sm font-semibold text-foreground">{title}</span>
- {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+ {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
  </div>
  {children}
  </div>
@@ -316,7 +316,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Understand the use and extent of related-party relationships and transactions, recognise fraud risk factors, and assess possible risks of material misstatement (fraud or error) in the F/S.
  </p>
  </div>
@@ -343,7 +343,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  {/* Cross-reference banner */}
  <div className="rounded-md border border-border bg-card px-4 py-3 flex items-start gap-3">
  <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
- <p className="text-xs text-muted-foreground leading-relaxed">
+ <p className="text-sm text-muted-foreground leading-relaxed">
  Information on related parties may already have been documented.
  </p>
  </div>
@@ -378,8 +378,8 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <>
  Document controls/procedures that ensure related parties are identified and significant transactions are:
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- <li className="text-xs text-muted-foreground">Authorised and approved (especially those outside the normal course of business).</li>
- <li className="text-xs text-muted-foreground">Accounted for and disclosed in accordance with the applicable financial reporting framework.</li>
+ <li className="text-sm text-muted-foreground">Authorised and approved (especially those outside the normal course of business).</li>
+ <li className="text-sm text-muted-foreground">Accounted for and disclosed in accordance with the applicable financial reporting framework.</li>
  </ul>
  </>
  ),
@@ -411,9 +411,9 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <>
  Inspect the following for any indications of undisclosed related-party relationships or transactions:
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- <li className="text-xs text-muted-foreground">Minutes of corporate meetings.</li>
- <li className="text-xs text-muted-foreground">Bank and legal confirmations.</li>
- <li className="text-xs text-muted-foreground">Other records or documents (e.g., tax returns, loan agreements).</li>
+ <li className="text-sm text-muted-foreground">Minutes of corporate meetings.</li>
+ <li className="text-sm text-muted-foreground">Bank and legal confirmations.</li>
+ <li className="text-sm text-muted-foreground">Other records or documents (e.g., tax returns, loan agreements).</li>
  </ul>
  </>
  ),
@@ -425,9 +425,9 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <>
  Inquire of key employees, advisors and any component auditors about:
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- <li className="text-xs text-muted-foreground">Related parties not already identified and, if so, details of transactions.</li>
- <li className="text-xs text-muted-foreground">Agreements or loan guarantees not reflected in the F/S.</li>
- <li className="text-xs text-muted-foreground">Payments (kickbacks), preferential terms or side deals not disclosed.</li>
+ <li className="text-sm text-muted-foreground">Related parties not already identified and, if so, details of transactions.</li>
+ <li className="text-sm text-muted-foreground">Agreements or loan guarantees not reflected in the F/S.</li>
+ <li className="text-sm text-muted-foreground">Payments (kickbacks), preferential terms or side deals not disclosed.</li>
  </ul>
  </>
  ),
@@ -447,8 +447,8 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <>
  Identify significant risks that will require special attention. This includes:
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- <li className="text-xs text-muted-foreground">Fraud risk factors (involving related parties).</li>
- <li className="text-xs text-muted-foreground">Significant related-party transactions outside the normal course of business.</li>
+ <li className="text-sm text-muted-foreground">Fraud risk factors (involving related parties).</li>
+ <li className="text-sm text-muted-foreground">Significant related-party transactions outside the normal course of business.</li>
  </ul>
  </>
  ),
@@ -557,7 +557,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  {/* Conclude action */}
  <div className="flex justify-end pt-1">
  {data.concluded ? (
- <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-xs text-green-800 font-medium">
+ <div className="rounded-md border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800 font-medium">
  Concluded on {data.concludedOn}
  </div>
  ) : (

@@ -224,10 +224,10 @@ export function Audit535Worksheet() {
  <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{item.num}</td>
  <td className="px-6 py-3 text-sm text-foreground">
  <div className="font-semibold">{item.title}</div>
- {item.intro && <div className="mt-1 text-xs text-muted-foreground">{item.intro}</div>}
+ {item.intro && <div className="mt-1 text-sm text-muted-foreground">{item.intro}</div>}
  {item.items && item.items.length > 0 && (
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- {item.items.map((sub, i) => <li key={i} className="text-xs text-muted-foreground">{sub}</li>)}
+ {item.items.map((sub, i) => <li key={i} className="text-sm text-muted-foreground">{sub}</li>)}
  </ul>
  )}
  {item.note && (
@@ -271,7 +271,7 @@ export function Audit535Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures.
  <span className="block mt-1.5 text-[11px]">
  <span className="font-semibold text-foreground">Legend: </span>
@@ -315,33 +315,33 @@ export function Audit535Worksheet() {
 
  <div className="grid grid-cols-2 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Business cycle / SCOTABD</label>
+ <label className="text-sm font-medium text-muted-foreground">Business cycle / SCOTABD</label>
  <Input disabled={locked} value={s.cycle} onChange={e => setScotabd(idx, { cycle: e.target.value })} placeholder="e.g., Revenue, receivables and receipts" className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">IT applications used</label>
+ <label className="text-sm font-medium text-muted-foreground">IT applications used</label>
  <Input disabled={locked} value={s.itApps} onChange={e => setScotabd(idx, { itApps: e.target.value })} placeholder="e.g., QuickBooks, TruckMate" className="h-8 text-sm" />
  </div>
  </div>
 
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">How was understanding obtained (inquiry, observation, inspection, walkthrough)</label>
+ <label className="text-sm font-medium text-muted-foreground">How was understanding obtained (inquiry, observation, inspection, walkthrough)</label>
  <Textarea disabled={locked} value={s.understandingObtained} onChange={e => setScotabd(idx, { understandingObtained: e.target.value })} placeholder="Inspection of documents: …&#10;Inquiries of: …&#10;Observation of: …&#10;Walkthrough performed: …" className="min-h-[80px] text-sm resize-none rounded-[10px]" />
  </div>
 
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Business process (flow of information)</label>
+ <label className="text-sm font-medium text-muted-foreground">Business process (flow of information)</label>
  <AttributedComment value={s.processDescription} onChange={v => setScotabd(idx, { processDescription: v })} storageKey={`535-${engagementId ?? "def"}-proc-${idx}`} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." disabled={locked} className="min-h-[110px] text-sm resize-none rounded-[10px]" minHeight="110px" />
  </div>
 
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Events and conditions other than transactions</label>
+ <label className="text-sm font-medium text-muted-foreground">Events and conditions other than transactions</label>
  <Textarea disabled={locked} value={s.nonTransactionEvents} onChange={e => setScotabd(idx, { nonTransactionEvents: e.target.value })} placeholder="How the entity captures, processes and discloses these events." className="min-h-[70px] text-sm resize-none rounded-[10px]" />
  </div>
 
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Process supports F/S preparation?</label>
+ <label className="text-sm font-medium text-muted-foreground">Process supports F/S preparation?</label>
  <Select disabled={locked} value={s.supportsFs} onValueChange={v => setScotabd(idx, { supportsFs: v as YN })}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
@@ -352,7 +352,7 @@ export function Audit535Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">If No — significant deficiencies &amp; audit response</label>
+ <label className="text-sm font-medium text-muted-foreground">If No — significant deficiencies &amp; audit response</label>
  <Input disabled={locked} value={s.deficiencyNote} onChange={e => setScotabd(idx, { deficiencyNote: e.target.value })} placeholder="Describe deficiency and planned response…" className="h-8 text-sm" />
  </div>
  </div>
@@ -365,15 +365,15 @@ export function Audit535Worksheet() {
  <div className="bg-card border border-border rounded-md p-5 space-y-3">
  <h3 className="text-sm font-semibold text-foreground">Evaluation of risks identified</h3>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">New risks identified ()</label>
+ <label className="text-sm font-medium text-muted-foreground">New risks identified ()</label>
  <AttributedComment value={data.newRisksIdentified} onChange={v => setData(d => ({...d, newRisksIdentified: v }))} storageKey={`535-${engagementId ?? "def"}-newRisks`} placeholder="Describe any new RMMs identified during this understanding." disabled={locked} className="min-h-[70px] text-sm resize-none rounded-[10px]" minHeight="70px" />
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Controls identified for D&amp;I testing</label>
+ <label className="text-sm font-medium text-muted-foreground">Controls identified for D&amp;I testing</label>
  <Textarea disabled={locked} value={data.controlsIdentified} onChange={e => setData(d => ({...d, controlsIdentified: e.target.value }))} className="min-h-[70px] text-sm resize-none rounded-[10px]" placeholder="List controls over significant risks, journal entries, and assertion-level risks." />
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Significant deficiencies communicated to TCWG</label>
+ <label className="text-sm font-medium text-muted-foreground">Significant deficiencies communicated to TCWG</label>
  <Textarea disabled={locked} value={data.deficienciesComm} onChange={e => setData(d => ({...d, deficienciesComm: e.target.value }))} className="min-h-[60px] text-sm resize-none rounded-[10px]" placeholder="Summarize deficiencies and date communicated." />
  </div>
  </div>
@@ -381,10 +381,10 @@ export function Audit535Worksheet() {
  {/* Audit conclusion */}
  <div className="bg-card border border-border rounded-md p-5 space-y-3">
  <h3 className="text-sm font-semibold text-foreground">Audit conclusion</h3>
- <p className="text-xs text-muted-foreground">A sufficient understanding of the entity’s information system and communication process has been obtained to determine if it supports the preparation of the F/S in accordance with the applicable financial reporting framework.</p>
+ <p className="text-sm text-muted-foreground">A sufficient understanding of the entity’s information system and communication process has been obtained to determine if it supports the preparation of the F/S in accordance with the applicable financial reporting framework.</p>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Conclusion</label>
  <Select disabled={locked} value={data.conclusion} onValueChange={v => setData(d => ({...d, conclusion: v as YN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
@@ -394,7 +394,7 @@ export function Audit535Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Supporting rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Supporting rationale</label>
  <Input disabled={locked} value={data.conclusionNotes} onChange={e => setData(d => ({...d, conclusionNotes: e.target.value }))} placeholder="Briefly support the conclusion." className="h-8 text-sm" />
  </div>
  </div>

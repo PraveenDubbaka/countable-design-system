@@ -199,7 +199,7 @@ function SectionCard({ title, subtitle, children }: {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border">
  <span className="text-sm font-semibold text-foreground">{title}</span>
- {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+ {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
  </div>
  {children}
  </div>
@@ -214,7 +214,7 @@ function PartHeader({ letter, title, description }: { letter: string; title: str
  </span>
  <div>
  <p className="text-sm font-semibold text-foreground">{title}</p>
- <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
+ <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
  </div>
  </div>
  );
@@ -235,7 +235,7 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  <span className="font-medium">{label}</span>
  {bullets && (
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- {bullets.map((b, i) => <li key={i} className="text-xs text-muted-foreground">{b}</li>)}
+ {bullets.map((b, i) => <li key={i} className="text-sm text-muted-foreground">{b}</li>)}
  </ul>
  )}
  </td>
@@ -283,7 +283,7 @@ function ProcessTable({ rows, locked, onChange }: {
  <span className="font-medium">{label}</span>
  {bullets && (
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- {bullets.map((b, i) => <li key={i} className="text-xs text-muted-foreground">{b}</li>)}
+ {bullets.map((b, i) => <li key={i} className="text-sm text-muted-foreground">{b}</li>)}
  </ul>
  )}
  </td>
@@ -590,7 +590,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Gain an understanding of the entity's IT environment and assess the overall criticality of IT to the entity and impact on the audit approach. Complete Parts A–C, then to document information flows. Identified RAFUIT and GITCs are documented
  </p>
  </div>
@@ -785,7 +785,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  {topic.bullets && (
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
  {topic.bullets.map((b, i) => (
- <li key={i} className="text-xs text-muted-foreground">{b}</li>
+ <li key={i} className="text-sm text-muted-foreground">{b}</li>
  ))}
  </ul>
  )}
@@ -901,7 +901,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
 
  <div className="pt-2 border-t border-border space-y-2">
- <p className="text-xs font-medium text-muted-foreground">Response / Comments</p>
+ <p className="text-sm font-medium text-muted-foreground">Response / Comments</p>
  <Textarea
  disabled={locked}
  value={data.dTestingResponse.response}
@@ -911,7 +911,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  />
  <div className="flex items-center gap-3">
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">PSC?</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">PSC?</p>
  <Select value={data.dTestingResponse.psc} onValueChange={v => patchProcess("dTestingResponse", { psc: v })} disabled={locked}>
  <SelectTrigger className="h-8 w-24 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
  <SelectContent>
@@ -922,7 +922,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">W/P Ref.</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">W/P Ref.</p>
  <RefButton
  reference={data.dTestingResponse.wpRef}
  onAttach={doc => patchProcess("dTestingResponse", { wpRef: [...data.dTestingResponse.wpRef, doc] })}

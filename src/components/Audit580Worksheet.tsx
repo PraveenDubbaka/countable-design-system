@@ -250,7 +250,7 @@ export function Audit580Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Identify, assess and respond to the presumed risk of material misstatement due to fraud in revenue
  recognition. Document each revenue stream, the related fraud risk and inherent risk
  assessment, and the planned audit response.
@@ -262,14 +262,14 @@ export function Audit580Worksheet() {
  {/* Engagement context */}
  <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Account balance / class of transactions / disclosure</label>
+ <label className="text-sm font-medium text-muted-foreground">Account balance / class of transactions / disclosure</label>
  <Input disabled={locked} value={data.accountBalance}
  onChange={e => setData(d => ({...d, accountBalance: e.target.value }))}
  placeholder="e.g. Revenue — Freight services"
  className="h-8 text-sm" />
  </div>
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Performance materiality ($)</label>
+ <label className="text-sm font-medium text-muted-foreground">Performance materiality ($)</label>
  <Input disabled={locked} value={data.performanceMateriality}
  onChange={e => setData(d => ({...d, performanceMateriality: e.target.value }))}
  placeholder="From"
@@ -524,7 +524,7 @@ export function Audit580Worksheet() {
  <h3 className="text-sm font-semibold text-foreground">Conclusion on the presumption of fraud risk</h3>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Is a fraud risk in revenue recognition identified?</label>
+ <label className="text-sm font-medium text-muted-foreground">Is a fraud risk in revenue recognition identified?</label>
  <Select disabled={locked} value={data.fraudRiskIdentified}
  onValueChange={v => setData(d => ({...d, fraudRiskIdentified: v as YN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -536,7 +536,7 @@ export function Audit580Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">
+ <label className="text-sm font-medium text-muted-foreground">
  {data.fraudRiskIdentified === "N" ? "Rationale for rebutting the presumption" : "Rationale"}
  </label>
  <Textarea disabled={locked} value={data.rebuttalRationale}
@@ -555,7 +555,7 @@ export function Audit580Worksheet() {
  </p>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -567,7 +567,7 @@ export function Audit580Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Rationale</label>
  <Input disabled={locked} value={data.conclusionRationale}
  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
  placeholder="Briefly support the overall conclusion."

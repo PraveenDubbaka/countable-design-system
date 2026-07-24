@@ -168,7 +168,7 @@ export function Audit630Worksheet() {
  </tbody>
  </table>
  </div>
- <div className="px-6 py-2.5 text-xs text-muted-foreground border-t border-border bg-muted/30">
+ <div className="px-6 py-2.5 text-sm text-muted-foreground border-t border-border bg-muted/30">
  Negative confirmations are appropriate only when: RMM is low; other substantive evidence exists; controls are reliable; population is large, small and homogeneous; and a low exception rate is expected.
  </div>
  </div>

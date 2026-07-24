@@ -204,7 +204,7 @@ export function Audit670Worksheet() {
  bodyClassName="p-0"
  >
  {data.entries.length === 0 ? (
- <p className="px-6 py-4 text-xs text-muted-foreground">No journal entries selected yet. Each entry tested records the preparer, approver, attributes triggered, rationale and outcome — feeding the fraud assessment.</p>
+ <p className="px-6 py-4 text-sm text-muted-foreground">No journal entries selected yet. Each entry tested records the preparer, approver, attributes triggered, rationale and outcome — feeding the fraud assessment.</p>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-sm border-collapse">

@@ -273,7 +273,7 @@ export function Audit645Worksheet() {
  bodyClassName="p-0"
  >
  {data.matters.length === 0 ? (
- <p className="px-6 py-4 text-xs text-muted-foreground">
+ <p className="px-6 py-4 text-sm text-muted-foreground">
  No matters recorded. Add each identified litigation, claim, or instance of non-compliance — these flow in (TCWG), (representations), (estimates) and (auditor's report).
  </p>
  ) : (

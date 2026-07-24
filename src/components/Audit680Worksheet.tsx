@@ -353,7 +353,7 @@ export function Audit680Worksheet() {
  </SelectContent>
  </Select>
  </div>
- <div className="text-xs text-muted-foreground self-end pb-1">
+ <div className="text-sm text-muted-foreground self-end pb-1">
  Selection determines the procedures applicable in the table below (revised engagement letter, EOM paragraph, additional procedures over comparatives, etc.).
  </div>
  </div>

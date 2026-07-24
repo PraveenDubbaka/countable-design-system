@@ -269,10 +269,10 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{item.num}</td>
  <td className="px-6 py-3 text-sm text-foreground" style={{ width: '28%', minWidth: 240 }}>
  <div className="font-semibold">{item.title}</div>
- {item.intro && <div className="mt-1 text-xs text-muted-foreground">{item.intro}</div>}
+ {item.intro && <div className="mt-1 text-sm text-muted-foreground">{item.intro}</div>}
  {item.items && item.items.length > 0 && (
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
- {item.items.map((sub, i) => <li key={i} className="text-xs text-muted-foreground">{sub}</li>)}
+ {item.items.map((sub, i) => <li key={i} className="text-sm text-muted-foreground">{sub}</li>)}
  </ul>
  )}
  </td>
@@ -313,7 +313,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To ensure appropriate communication among the engagement team resulting in a well-planned audit.{" "}
  <span className="font-medium text-foreground">Notes:</span> Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable). This form is divided into two parts — Part A would typically take place at the commencement of the audit; Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.{" "}
  <span className="font-medium text-foreground">F/S</span> = Financial statements. <span className="font-medium text-foreground">TCWG</span> = Those charged with governance. <span className="font-medium text-foreground">RMMs</span> = Risks of material misstatement. <span className="font-medium text-foreground">RAPs</span> = Risk assessment procedures.
@@ -343,7 +343,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  onChange={e => setData(d => ({...d, meetingDate: e.target.value }))}
  className="h-9 text-sm w-fit"
  />
- <p className="text-xs text-muted-foreground mt-1">Applies to all attendees listed below.</p>
+ <p className="text-sm text-muted-foreground mt-1">Applies to all attendees listed below.</p>
  </div>
 
  <div>

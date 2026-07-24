@@ -224,7 +224,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Document the detailed staff resources and time budget for the engagement, and compare against the proposed fee.
  </p>
  </div>
@@ -285,7 +285,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  </table>
  </div>
  <div className="px-6 py-4 border-t border-border">
- <label className="text-xs font-medium text-muted-foreground block mb-2">Comments and explanations for variances</label>
+ <label className="text-sm font-medium text-muted-foreground block mb-2">Comments and explanations for variances</label>
  <AttributedComment value={staffComments} onChange={setStaffComments} storageKey={`budget-staff-${engagementId}`} placeholder="Enter comments…" className="min-h-[72px] text-sm resize-none" />
  </div>
  </div>
@@ -322,7 +322,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  </table>
  </div>
  <div className="px-6 py-4 border-t border-border">
- <label className="text-xs font-medium text-muted-foreground block mb-2">Comments (over/under budget reasons)</label>
+ <label className="text-sm font-medium text-muted-foreground block mb-2">Comments (over/under budget reasons)</label>
  <AttributedComment value={timeComments} onChange={setTimeComments} storageKey={`budget-time-${engagementId}`} placeholder="Enter comments…" className="min-h-[72px] text-sm resize-none" />
  </div>
  </div>
@@ -332,7 +332,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 border-b border-border flex items-center justify-between">
  <span className="text-sm font-semibold text-foreground">Time Log</span>
- <span className="text-xs text-muted-foreground">{entries.reduce((a,e)=>a+e.hours,0).toFixed(1)}h · {entries.length} entries</span>
+ <span className="text-sm text-muted-foreground">{entries.reduce((a,e)=>a+e.hours,0).toFixed(1)}h · {entries.length} entries</span>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full">
@@ -348,7 +348,7 @@ export function AuditDetailedBudgetWorksheet({ isUS = false }: AuditDetailedBudg
  <tr key={e.id} className="hover:bg-muted/50 transition-colors">
  <td className="px-4 py-2 text-sm tabular-nums whitespace-nowrap">{e.date}</td>
  <td className="px-4 py-2 text-sm whitespace-nowrap">{ROLE_LABELS[e.roleKey]}</td>
- <td className="px-4 py-2 text-xs text-muted-foreground max-w-[240px] truncate">{e.description}</td>
+ <td className="px-4 py-2 text-sm text-muted-foreground max-w-[240px] truncate">{e.description}</td>
  <td className="px-4 py-2 text-sm tabular-nums font-medium text-right">{e.hours.toFixed(1)}</td>
  <td className="px-3 py-2 text-center">
  <button onClick={() => { removeEntry(e.id); toast.success('Entry removed'); }}

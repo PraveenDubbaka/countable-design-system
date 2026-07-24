@@ -550,7 +550,7 @@ export function Audit520Worksheet() {
  {/* ── Part A ────────────────────────────────────────────────── */}
  <SectionCard title="Part A — Identify and Assess RMMs at the Financial Statement Level">
  <div className="px-6 py-2 border-b border-border bg-muted/20">
- <p className="text-xs text-muted-foreground">Document the risks identified that relate to the financial statements as a whole. Complete Part A before Part B, as FSL risks can impact assertion-level risks.</p>
+ <p className="text-sm text-muted-foreground">Document the risks identified that relate to the financial statements as a whole. Complete Part A before Part B, as FSL risks can impact assertion-level risks.</p>
  </div>
  <div className="overflow-x-auto">
  <table className="w-full">
@@ -623,7 +623,7 @@ export function Audit520Worksheet() {
  {/* ── Part B ────────────────────────────────────────────────── */}
  <SectionCard title="Part B — Identify RMMs and Assess Inherent Risk at the Assertion Level">
  <div className="px-6 py-2 border-b border-border bg-muted/20">
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  Document risks at the assertion level and assess inherent risk (IR), including significant risks.&nbsp;
  <span className="font-medium text-foreground">Assertions:</span> C = Completeness · AV = Accuracy &amp; Valuation · E = Existence · P = Presentation
  </p>
@@ -660,7 +660,7 @@ export function Audit520Worksheet() {
  if (procs.length === 0 && !isEditing) {
  return (
  <div className="space-y-1.5">
- <span className="text-xs text-muted-foreground italic">No procedures documented</span>
+ <span className="text-sm text-muted-foreground italic">No procedures documented</span>
  {!locked && (
  <div className="flex flex-wrap items-center gap-2">
  <button onClick={() => setPickerForRowId(isPicking ? null : row.id)} className="text-xs text-primary hover:underline flex items-center gap-0.5">
@@ -674,7 +674,7 @@ export function Audit520Worksheet() {
  )}
  {suggestion && !locked && !isPicking && (
  <div className="flex items-center gap-1.5 mt-0.5 px-2 py-1.5 rounded-md bg-primary/[0.06] border border-primary/20">
- <span className="text-xs text-muted-foreground">Suggested:</span>
+ <span className="text-sm text-muted-foreground">Suggested:</span>
  <button onClick={() => loadLibraryForRow(row.id, suggestion)} className="text-xs text-primary hover:underline text-left leading-snug">
  {suggestion.name}
  </button>
@@ -724,7 +724,7 @@ export function Audit520Worksheet() {
  <button onClick={() => setPickerForRowId(isPicking ? null : row.id)} className="text-xs text-primary hover:underline flex items-center gap-0.5">
  <BookOpen className="h-3 w-3" /> From library
  </button>
- <button onClick={() => { setEditingProcsRowId(null); setPickerForRowId(null); }} className="text-xs text-muted-foreground hover:text-foreground ml-auto border border-border rounded px-2 py-0.5">
+ <button onClick={() => { setEditingProcsRowId(null); setPickerForRowId(null); }} className="text-sm text-muted-foreground hover:text-foreground ml-auto border border-border rounded px-2 py-0.5">
  Done
  </button>
  </div>
@@ -755,7 +755,7 @@ export function Audit520Worksheet() {
  ))}
  </ol>
  {procs.length > 4 && (
- <p className="text-xs text-muted-foreground mt-1 pl-5">…and {procs.length - 4} more</p>
+ <p className="text-sm text-muted-foreground mt-1 pl-5">…and {procs.length - 4} more</p>
  )}
  {!locked && (
  <button onClick={() => setEditingProcsRowId(row.id)} className="mt-2 text-xs text-primary hover:underline flex items-center gap-0.5 pl-5">
@@ -868,7 +868,7 @@ export function Audit520Worksheet() {
  {RISK_LIBRARY.map(entry => (
  <button key={entry.id} className="w-full flex flex-col items-start px-3 py-2 hover:bg-muted text-left transition-colors" onClick={() => addFromLibrary(entry)}>
  <span className="text-sm text-foreground leading-snug">{entry.name}</span>
- <span className="text-xs text-muted-foreground mt-0.5">{entry.scotabd} · {entry.assertions.join(", ")}</span>
+ <span className="text-sm text-muted-foreground mt-0.5">{entry.scotabd} · {entry.assertions.join(", ")}</span>
  </button>
  ))}
  </div>

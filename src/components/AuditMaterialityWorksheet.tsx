@@ -372,7 +372,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Establish overall materiality, performance materiality, and the clearly trivial threshold for the audit
  and document the rationale for each determination.
  </p>
@@ -547,7 +547,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
  <div className="flex items-center gap-8 mr-8">
  <div className="flex flex-col items-end gap-1">
- <span className="text-xs text-muted-foreground">Threshold (%)</span>
+ <span className="text-sm text-muted-foreground">Threshold (%)</span>
  <TdInput
  value={ctThresholdPct}
  onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
@@ -556,7 +556,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  />
  </div>
  <div className="flex flex-col items-end gap-1">
- <span className="text-xs text-muted-foreground">Amount ($)</span>
+ <span className="text-sm text-muted-foreground">Amount ($)</span>
  <TdInput
  value={ctAmount ? formatDisplay(ctAmount) : ""}
  readOnly
@@ -569,7 +569,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  {/* Opening balances note */}
  <div className="border-t border-border px-4 py-3 flex items-start gap-2 bg-muted/20">
  <Info className="h-3.5 w-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
- <p className="text-xs text-muted-foreground">If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances.</p>
+ <p className="text-sm text-muted-foreground">If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances.</p>
  </div>
  </div>
 
@@ -784,7 +784,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  </Tooltip>
  </div>
  <div className="px-6 py-5">
- <p className="text-xs text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
+ <p className="text-sm text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
  <AttributedComment value={qualDisclosures} onChange={v => setQualDisclosures(v)} storageKey={`materiality-qualDisc-${isUS ? "us" : "ca"}`} placeholder="Describe qualitative disclosures that could be material…" className="min-h-[80px] text-sm resize-none" />
  </div>
  </div>
@@ -826,7 +826,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  </div>
  <div className="px-6 py-3 border-t border-border space-y-2">
  <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>
- <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+ <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
  If there are more than two F/S areas or disclosures that require an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
  </p>
@@ -928,7 +928,7 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-2">
  <span className="text-sm font-semibold text-foreground">Conclusion</span>
- <span className="text-xs text-muted-foreground">— Document any changes in the materiality assessments and the final materiality</span>
+ <span className="text-sm text-muted-foreground">— Document any changes in the materiality assessments and the final materiality</span>
  </div>
  <div className="px-6 py-5">
  <Textarea

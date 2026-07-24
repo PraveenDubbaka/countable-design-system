@@ -419,7 +419,7 @@ export function Audit551Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To identify and evaluate risks arising from the use of IT (RAFUITs) and the general IT controls (GITCs)
  implemented by the entity that address those risks — including design and implementation.
  <span className="block mt-1.5 text-[11px]">
@@ -528,7 +528,7 @@ export function Audit551Worksheet() {
 
  <div className="px-6 py-4 bg-muted/20 border-t border-border grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Part A conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Part A conclusion</label>
  <Select disabled={locked} value={data.rafuitConclusion}
  onValueChange={v => setData(d => ({...d, rafuitConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -540,7 +540,7 @@ export function Audit551Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Rationale</label>
  <Input disabled={locked} value={data.rafuitRationale}
  onChange={e => setData(d => ({...d, rafuitRationale: e.target.value }))}
  placeholder="Brief support for the conclusion."
@@ -580,13 +580,13 @@ export function Audit551Worksheet() {
  {/* Overall GITC conclusion */}
  <div className="bg-card border border-border rounded-md p-5 space-y-3">
  <h3 className="text-sm font-semibold text-foreground">Overall GITC conclusion</h3>
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  Based on the work done, conclude on whether identified GITCs are designed appropriately and implemented,
  and whether they support reliance on the automated controls documented
  </p>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.gitcConclusion}
  onValueChange={v => setData(d => ({...d, gitcConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -598,7 +598,7 @@ export function Audit551Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Supporting rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Supporting rationale</label>
  <Input disabled={locked} value={data.gitcRationale}
  onChange={e => setData(d => ({...d, gitcRationale: e.target.value }))}
  placeholder="Briefly support the overall conclusion."

@@ -285,7 +285,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  {proc.subitems && (
  <ul className="mt-1.5 space-y-0.5 list-none pl-2">
  {proc.subitems.map((sub, i) => (
- <li key={i} className="text-xs text-muted-foreground">{sub}</li>
+ <li key={i} className="text-sm text-muted-foreground">{sub}</li>
  ))}
  </ul>
  )}
@@ -348,7 +348,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To identify possible risk factors based on a review of minutes from meetings of those charged with governance or, if no minutes were prepared, the results of inquiries to determine matters that would normally have been included.{" "}
  <span className="font-medium text-foreground">Note:</span>{" "}
  Use <span className="font-medium text-foreground">Part A</span> when minutes are available; use{" "}
@@ -368,7 +368,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
  <div>
  <span className="text-sm font-semibold text-foreground">Part A — Review of minutes prepared by entity</span>
- <p className="text-xs text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
+ <p className="text-sm text-muted-foreground mt-0.5">Complete this part when minutes or governance documents are available.</p>
  </div>
  <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap ml-4">
  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
@@ -382,7 +382,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border">
  <span className="text-sm font-semibold text-foreground">Part B — Inquiries when no meetings held or no minutes prepared</span>
- <p className="text-xs text-muted-foreground mt-0.5">Complete this part when formal minutes are not available.</p>
+ <p className="text-sm text-muted-foreground mt-0.5">Complete this part when formal minutes are not available.</p>
  </div>
  {renderProcTable(PART_B, id => data.partB[id], setPB)}
  </div>
@@ -392,7 +392,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-start justify-between gap-4">
  <div>
  <span className="text-sm font-semibold text-foreground">Part C — Extracts from minutes and other matters that have audit implications</span>
- <p className="text-xs text-muted-foreground mt-0.5">MT = Meeting type, such as directors, audit committee or other committees.</p>
+ <p className="text-sm text-muted-foreground mt-0.5">MT = Meeting type, such as directors, audit committee or other committees.</p>
  </div>
  <Button size="sm" onClick={() => setImportPartCOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
  <Sparkles className="h-3.5 w-3.5 mr-1.5" />

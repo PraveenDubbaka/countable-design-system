@@ -219,7 +219,7 @@ export function Audit650Worksheet() {
  </div>
  </div>
  {dateWarning && (
- <p className="mt-3 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">{dateWarning}</p>
+ <p className="mt-3 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">{dateWarning}</p>
  )}
  <p className="mt-3 text-[11px] text-muted-foreground leading-relaxed">
  Period end: <span className="font-medium text-foreground">{ctx.periodEndDisplay}</span>. The auditor's report shall be dated no earlier than the date the auditor obtained sufficient appropriate evidence, including that those with the recognized authority have asserted responsibility for the F/S.
@@ -251,7 +251,7 @@ export function Audit650Worksheet() {
  bodyClassName="p-0"
  >
  {data.events.length === 0 ? (
- <p className="px-6 py-4 text-xs text-muted-foreground">No subsequent events recorded. Each identified event flows in (representations), (TCWG) and (auditor's report).</p>
+ <p className="px-6 py-4 text-sm text-muted-foreground">No subsequent events recorded. Each identified event flows in (representations), (TCWG) and (auditor's report).</p>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-sm border-collapse">

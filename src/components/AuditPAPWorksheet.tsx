@@ -334,7 +334,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Perform preliminary analytical procedures to understand the entity and its environment, identify
  unusual fluctuations, and highlight areas requiring additional audit attention.
  </p>
@@ -502,10 +502,10 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  {baseRatios.map((row, i) => (
  <tr key={row.ratio} className="hover:bg-muted/50 transition-colors">
  <td className="px-4 py-2.5 text-sm font-medium text-foreground whitespace-nowrap">{row.ratio}</td>
- <td className="px-4 py-2.5 text-xs text-muted-foreground">{row.formula}</td>
+ <td className="px-4 py-2.5 text-sm text-muted-foreground">{row.formula}</td>
  <td className="px-4 py-2.5 text-sm tabular-nums text-foreground text-right font-medium">{row.cy}</td>
  <td className="px-4 py-2.5 text-sm tabular-nums text-muted-foreground text-right">{row.py}</td>
- <td className="px-4 py-2.5 text-xs text-muted-foreground text-center">{row.benchmark}</td>
+ <td className="px-4 py-2.5 text-sm text-muted-foreground text-center">{row.benchmark}</td>
  <td className="px-4 py-2.5 text-center">
  <RatioStatusBadge status={row.status} />
  </td>
@@ -530,7 +530,7 @@ export function AuditPAPWorksheet({ isUS = false }: AuditPAPWorksheetProps) {
  tooltip="Document all matters identified through PAP that require follow-up during fieldwork."
  >
  <div className="px-6 py-3 border-b border-border">
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  The following matters were identified through preliminary analytical procedures and require follow-up during fieldwork.
  </p>
  </div>

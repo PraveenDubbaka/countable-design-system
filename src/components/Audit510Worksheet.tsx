@@ -446,7 +446,7 @@ function FieldRow({ label, sublabel, field, locked, onChange, storageKey }: {
  <tr className="group hover:bg-muted/30 transition-colors align-top">
  <td className="px-5 py-3 text-sm text-foreground w-[38%]">
  <span>{label}</span>
- {sublabel && <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{sublabel}</p>}
+ {sublabel && <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{sublabel}</p>}
  </td>
  <td className="px-4 py-3">
  {storageKey ? (
@@ -510,7 +510,7 @@ function RequiredInquiryBanner({ inquiry, locked, onChange }: {
  <div className="flex items-center gap-1.5 mb-3">
  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
  <span className="text-sm font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wide">Required Inquiries</span>
- <span className="text-xs text-amber-700 dark:text-amber-400 ml-1">— to be completed every period</span>
+ <span className="text-sm text-amber-700 dark:text-amber-400 ml-1">— to be completed every period</span>
  </div>
  <div className="grid grid-cols-3 gap-3">
  <div>
@@ -1238,7 +1238,7 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Perform and document risk assessment procedures to identify events, conditions and circumstances that may result in a material misstatement through understanding the entity, its environment and the applicable financial reporting framework. Identified risk factors are carried forward Review and update this form each period.
  </p>
  </div>

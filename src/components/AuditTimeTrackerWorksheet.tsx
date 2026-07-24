@@ -300,7 +300,7 @@ export function AuditTimeTrackerWorksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Track actual time against budgeted hours by role and section. Budget is based on
  CAS industry standards and fully editable. Blended rate, cost variance, and fee
  position are computed automatically from engagement hourly rates.
@@ -341,7 +341,7 @@ export function AuditTimeTrackerWorksheet() {
  {ratesMissing && (
  <div className="mx-5 mt-4 flex items-center gap-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 px-3 py-2">
  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
- <p className="text-xs text-amber-700 dark:text-amber-400">
+ <p className="text-sm text-amber-700 dark:text-amber-400">
  Some rates are missing. Set team rates at engagement creation, or edit them directly in the table below.
  </p>
  </div>
@@ -350,13 +350,13 @@ export function AuditTimeTrackerWorksheet() {
  {/* Total hours + fee + apply */}
  <div className="px-5 pt-4 pb-3 flex flex-wrap items-end gap-4 border-b border-border/60">
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Total Budget Hours</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Total Budget Hours</p>
  <Input value={budget.totalHrs}
  onChange={e => setBudget(b => ({...b, totalHrs: e.target.value }))}
  placeholder="e.g. 150" className="h-8 w-32 text-sm" />
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Proposed Fee ($)</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Proposed Fee ($)</p>
  <Input value={budget.proposedFee}
  onChange={e => setBudget(b => ({...b, proposedFee: e.target.value }))}
  placeholder="e.g. 25000" className="h-8 w-36 text-sm" />
@@ -539,11 +539,11 @@ export function AuditTimeTrackerWorksheet() {
  {/* Row 1: Date, Role, User Name, Section, Task */}
  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Date</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Date</p>
  <Input type="date" value={logDate} onChange={e => setLogDate(e.target.value)} className="h-8 text-sm" />
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Role</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Role</p>
  <Select value={logRole} onValueChange={v => handleLogRoleChange(v as RoleKey)}>
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -552,7 +552,7 @@ export function AuditTimeTrackerWorksheet() {
  </Select>
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">User Name</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">User Name</p>
  <Select value={logUserName} onValueChange={setLogUserName}>
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -563,7 +563,7 @@ export function AuditTimeTrackerWorksheet() {
  </Select>
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Section</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Section</p>
  <Select value={logSection} onValueChange={setLogSection}>
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -572,7 +572,7 @@ export function AuditTimeTrackerWorksheet() {
  </Select>
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Task</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Task</p>
  <Select value={logTask} onValueChange={setLogTask}>
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -584,18 +584,18 @@ export function AuditTimeTrackerWorksheet() {
  {/* Row 2: Hours, Cost (auto), Description, Log Time */}
  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Hours</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Hours</p>
  <Input type="number" step="0.25" min="0" value={logHours}
  onChange={e => setLogHours(e.target.value)} placeholder="0.0" className="h-8 text-sm" />
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Cost (auto)</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Cost (auto)</p>
  <div className="h-8 flex items-center px-3 rounded-[10px] border border-border bg-muted/40 text-sm text-foreground">
  {logCost > 0 ? fmt$(logCost) : <span className="text-muted-foreground">—</span>}
  </div>
  </div>
  <div>
- <p className="text-xs font-medium text-muted-foreground mb-1">Description</p>
+ <p className="text-sm font-medium text-muted-foreground mb-1">Description</p>
  <Input value={logDesc} onChange={e => setLogDesc(e.target.value)}
  placeholder="Work performed (optional)…" className="h-8 text-sm" />
  </div>
@@ -618,7 +618,7 @@ export function AuditTimeTrackerWorksheet() {
  Clear filters
  </button>
  )}
- <span className="text-xs text-muted-foreground">
+ <span className="text-sm text-muted-foreground">
  {hasFilters
  ? `${filteredEntries.length} of ${entries.length} entries`
  : `${entries.length} entries`
@@ -644,7 +644,7 @@ export function AuditTimeTrackerWorksheet() {
  <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1.5 px-1">Filter by date</p>
  <Input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)} className="h-7 text-sm" />
  {filterDate && (
- <button onClick={() => setFilterDate('')} className="mt-1.5 w-full text-left text-xs text-muted-foreground hover:text-foreground px-1">Clear</button>
+ <button onClick={() => setFilterDate('')} className="mt-1.5 w-full text-left text-sm text-muted-foreground hover:text-foreground px-1">Clear</button>
  )}
  </DropdownMenuContent>
  </DropdownMenu>
@@ -711,7 +711,7 @@ export function AuditTimeTrackerWorksheet() {
  <Input value={filterDesc} onChange={e => setFilterDesc(e.target.value)}
  placeholder="Search…" className="h-7 text-sm" autoFocus />
  {filterDesc && (
- <button onClick={() => setFilterDesc('')} className="mt-1.5 w-full text-left text-xs text-muted-foreground hover:text-foreground px-1">Clear</button>
+ <button onClick={() => setFilterDesc('')} className="mt-1.5 w-full text-left text-sm text-muted-foreground hover:text-foreground px-1">Clear</button>
  )}
  </DropdownMenuContent>
  </DropdownMenu>

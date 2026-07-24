@@ -232,7 +232,7 @@ export function Audit540Worksheet() {
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-xs text-muted-foreground flex-1 leading-relaxed">
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To identify controls that address the risk of material misstatement at the assertion level and evaluate whether
  the controls have been designed effectively and have been implemented.
  <span className="block mt-1.5 text-[11px]">
@@ -491,7 +491,7 @@ export function Audit540Worksheet() {
  {/* Per-cycle conclusion */}
  <div className="px-6 py-4 bg-muted/20 border-t border-border grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Cycle conclusion — design</label>
+ <label className="text-sm font-medium text-muted-foreground">Cycle conclusion — design</label>
  <Select disabled={locked} value={cycle.designConclusion}
  onValueChange={v => patchCycle(cycle.id, { designConclusion: v as YSN })}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -503,7 +503,7 @@ export function Audit540Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Rationale / impact (control risk)</label>
+ <label className="text-sm font-medium text-muted-foreground">Rationale / impact (control risk)</label>
  <Input disabled={locked} value={cycle.conclusionRationale}
  onChange={e => patchCycle(cycle.id, { conclusionRationale: e.target.value })}
  placeholder="Briefly support the conclusion and link"
@@ -535,13 +535,13 @@ export function Audit540Worksheet() {
  {/* Overall conclusion */}
  <div className="bg-card border border-border rounded-md p-5 space-y-3">
  <h3 className="text-sm font-semibold text-foreground">Overall audit conclusion</h3>
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  Based on the work above, conclude on the overall design and implementation of controls over the cycles assessed.
  Carry control risk assessments forward and communicate significant deficiencies
  </p>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Overall conclusion</label>
+ <label className="text-sm font-medium text-muted-foreground">Overall conclusion</label>
  <Select disabled={locked} value={data.overallConclusion}
  onValueChange={v => setData(d => ({...d, overallConclusion: v as YSN }))}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select…" /></SelectTrigger>
@@ -553,7 +553,7 @@ export function Audit540Worksheet() {
  </Select>
  </div>
  <div className="col-span-2 space-y-1">
- <label className="text-xs font-medium text-muted-foreground">Supporting rationale</label>
+ <label className="text-sm font-medium text-muted-foreground">Supporting rationale</label>
  <Input disabled={locked} value={data.overallNotes}
  onChange={e => setData(d => ({...d, overallNotes: e.target.value }))}
  placeholder="Briefly support the overall conclusion."

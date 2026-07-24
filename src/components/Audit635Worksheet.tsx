@@ -467,7 +467,7 @@ export function Audit635Worksheet() {
  onChange={handler("testsOfControls")}
  />
  ) : (
- <p className="text-xs text-muted-foreground">
+ <p className="text-sm text-muted-foreground">
  Not applicable — substantive procedures alone provide sufficient appropriate audit evidence at the assertion level.
  </p>
  )}
