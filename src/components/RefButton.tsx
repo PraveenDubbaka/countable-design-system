@@ -48,7 +48,7 @@ export function RefButton({ reference, onAttach, onRemove, disabled }: RefButton
 
  if (disabled && refs.length > 0) {
  return (
- <div className="flex flex-wrap items-center gap-1">
+ <div className="flex flex-wrap items-start justify-center gap-1">
  {refs.map((ref, i) => (
  <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-muted-foreground bg-muted rounded">
  <File className="h-3 w-3" />
@@ -60,7 +60,7 @@ export function RefButton({ reference, onAttach, onRemove, disabled }: RefButton
  }
 
  return (
- <div className="flex flex-wrap items-center gap-1">
+ <div className="flex flex-wrap items-start justify-center gap-1">
  <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileUpload} />
  {refs.map((ref, i) => (
  <div key={i} className="flex items-center gap-1 px-2 py-1 bg-primary/10 border border-primary/30 rounded text-xs text-primary">
