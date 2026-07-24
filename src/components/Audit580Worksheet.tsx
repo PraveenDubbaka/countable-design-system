@@ -458,9 +458,9 @@ export function Audit580Worksheet() {
  <tr className="bg-muted border-b border-border">
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 220 }}>Procedure</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 120 }}>P&amp;SA</th>
- <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
  <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 100 }}>PSC (Y/N)</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider" style={{ minWidth: 360 }}>Exceptions / difficulties</th>
+ <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 90 }}>W/P ref.</th>
  </tr>
  </thead>
  <tbody>
@@ -474,13 +474,6 @@ export function Audit580Worksheet() {
  <Input disabled={locked} value={p.psa}
  onChange={e => patchProcedure(p.id, { psa: e.target.value })}
  className="h-8 text-sm font-mono" />
- </td>
- <td className="px-3 py-3 text-center">
- <RefButton
- reference={p.wpRef}
- onAttach={doc => patchProcedure(p.id, { wpRef: [...p.wpRef, doc] })}
- onRemove={idx => patchProcedure(p.id, { wpRef: p.wpRef.filter((_, i2) => i2 !== idx) })}
- />
  </td>
  <td className="px-3 py-3">
  <Select disabled={locked} value={p.psc}
@@ -498,6 +491,13 @@ export function Audit580Worksheet() {
  onChange={e => patchProcedure(p.id, { exceptions: e.target.value })}
  placeholder="Summarize exceptions or difficulties encountered…"
  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ </td>
+ <td className="px-3 py-3 text-center">
+ <RefButton
+ reference={p.wpRef}
+ onAttach={doc => patchProcedure(p.id, { wpRef: [...p.wpRef, doc] })}
+ onRemove={idx => patchProcedure(p.id, { wpRef: p.wpRef.filter((_, i2) => i2 !== idx) })}
+ />
  </td>
  </tr>
  ))}
