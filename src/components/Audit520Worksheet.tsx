@@ -877,7 +877,7 @@ export function Audit520Worksheet() {
  </SectionCard>
 
  {/* ── Conclusion ─────────────────────────────────────────────── */}
- <SectionCard title="Conclusion">
+ <SectionCard title="Overall Conclusion">
  <div className="px-6 py-5 space-y-4">
  <p className="text-sm text-muted-foreground">
  RMMs at the financial statement level and inherent risk at the assertion level have been appropriately identified and assessed.

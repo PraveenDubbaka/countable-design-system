@@ -326,7 +326,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  </SectionCard>
 
  {/* ── Conclusion ────────────────────────────────────────────────── */}
- <SectionCard title="Conclusion">
+ <SectionCard title="Overall Conclusion">
  <div className="px-6 py-5 space-y-4">
  <p className="text-sm text-muted-foreground">
  Summarize whether any differences indicate possible management bias and the overall impact on the current period audit.

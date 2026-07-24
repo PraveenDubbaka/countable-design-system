@@ -948,7 +948,7 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  />
  </div>
 
- <SectionCard title="Conclusion">
+ <SectionCard title="Overall Conclusion">
  <div className="px-6 py-5 space-y-4">
  <p className="text-sm text-muted-foreground">
  Sufficient information has been obtained to understand the IT environment relevant to the preparation of the F/S.
