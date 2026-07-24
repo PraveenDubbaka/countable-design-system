@@ -2159,11 +2159,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  id: "aud-ra-identify", code: "IR", label: "Identify Risk", icon: "folder",
  children: [
  { id: "aud-ra-506", code: "506", label: "Fraud", icon: "checklist", route: "checklist/aud-ra-506" },
+ { id: "aud-ra-580", code: "580", label: "Revenue Recognition", icon: "worksheet", route: "checklist/aud-ra-580" },
  { id: "aud-ra-513", code: "513", label: "Accounting Estimates", icon: "worksheet", route: "checklist/aud-ra-513" },
  { id: "aud-ra-515", code: "515", label: "Related Parties", icon: "worksheet", route: "checklist/aud-ra-515" },
  { id: "aud-ra-525", code: "525", label: "Going Concern", icon: "checklist", route: "checklist/aud-ra-525" },
  { id: "aud-ra-530", code: "530", label: "Entity Level - Risks and Controls", icon: "checklist", route: "checklist/aud-ra-530" },
- { id: "aud-ra-580", code: "580", label: "Revenue Recognition", icon: "worksheet", route: "checklist/aud-ra-580" },
  { id: "aud-ra-520", code: "520", label: "Risk Register", icon: "worksheet", route: "checklist/aud-ra-520" },
  { id: "aud-ra-590", code: "590", label: "Engagement Scoping", icon: "worksheet", route: "checklist/aud-ra-590" },
  ]
