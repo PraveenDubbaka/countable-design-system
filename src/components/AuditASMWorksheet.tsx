@@ -7,6 +7,9 @@ import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AttributedComment } from "@/components/ui/AttributedComment";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_ENGAGEMENT_ID, DEMO_TEAM } from "@/components/demo/demoFixtureData";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -131,6 +134,7 @@ export interface AuditASMWorksheetProps {
 
 export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  const { engagementId = "" } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const seed = isUS ? US_DATA : CA_DATA;
 
  // ── Header fields ────────────────────────────────────────────────────────────
@@ -159,9 +163,9 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  const [subseq, setSubseq] = useState<RowState>({...seed.subseq });
 
  // ── Footer ───────────────────────────────────────────────────────────────────
- const [preparedBy, setPreparedBy] = useState(seed.preparedBy);
+ const [preparedBy, setPreparedBy] = useState(isDemoEngagement ? DEMO_TEAM.senior : seed.preparedBy);
  const [preparedDate, setPreparedDate] = useState(seed.preparedDate);
- const [reviewedBy, setReviewedBy] = useState(seed.reviewedBy);
+ const [reviewedBy, setReviewedBy] = useState(isDemoEngagement ? DEMO_TEAM.manager : seed.reviewedBy);
  const [reviewedDate, setReviewedDate] = useState(seed.reviewedDate);
 
  // ── Import flow ───────────────────────────────────────────────────────────────
@@ -331,6 +335,12 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
 
  return (
  <div className="flex flex-col h-full">
+ {isDemoEngagement && (
+  <LukaStatusBar
+   isActive={true}
+   message="Luka is cascading materiality and risk findings into the overall audit strategy…"
+  />
+ )}
 
  {/* ── Body ── */}
  <div className="flex-1 overflow-y-auto bg-muted/30">
@@ -392,6 +402,16 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  onChange={(f, v) => updateRow(setS1, 0, f, v)}
  storageKey={`asm-${engagementId}-s1-0`}
  />
+ {isDemoEngagement && (
+ <tr>
+  <td colSpan={99} className="px-4 pb-2">
+   <div className="flex items-center gap-2">
+    <AutomationStateChip state="luka-drafted" />
+    <span className="text-xs text-muted-foreground">Populated from Xero trial balance · Dec 31, 2025</span>
+   </div>
+  </td>
+ </tr>
+ )}
  <DataRow
  num="1.2"
  description="Industry-specific or specialized requirements."

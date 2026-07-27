@@ -14,6 +14,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { loadEngagements } from "@/store/engagementsStore";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { DEMO_ENGAGEMENT_ID, DEMO_TEAM } from "@/components/demo/demoFixtureData";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
@@ -251,6 +254,21 @@ const LUKA_PAP501_FILLS: Record<string, Record<string, string>> = {
  },
 };
 
+const NPM_PAP501_SEED = {
+ comparePrior: 'No',
+ numStreams: 1,
+ streamLabels: ['Manufactured goods', 'Stream 2', 'Stream 3', 'Stream 4', 'Stream 5'],
+ preparedBy: DEMO_TEAM.senior,
+ preparedDate: 'Jul 27, 2026',
+ reviewedBy: DEMO_TEAM.manager,
+ fin: {
+  's1': { current: '14,200,000', budget: '13,800,000', prior: '', hasIssue: 'Yes', explanation: 'Revenue $400K above budget (+2.9%). Driven by stronger H2 demand in precision CNC components.', auditResponse: 'Perform revenue cut-off testing. Confirm via shipping logs and customer POs.' },
+  'cos1': { current: '10,540,000', budget: '10,200,000', prior: '', hasIssue: 'No', explanation: 'COS in line with budget. Gross margin 25.8% vs 26.1% budgeted — minor unfavourable variance.', auditResponse: '' },
+  'exp-sal': { current: '1,820,000', budget: '1,750,000', prior: '', hasIssue: 'No', explanation: 'Headcount increased from 58 to 62. New hires in Q3 (machining floor).', auditResponse: '' },
+  'exp-int': { current: '198,000', budget: '210,000', prior: '', hasIssue: 'No', explanation: 'Term loan interest slightly below budget — early partial repayment in Q2.', auditResponse: '' },
+ },
+} as const;
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
@@ -272,9 +290,15 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  ? (() => { const v = parseFloat(matData.overallMateriality.replace(/,/g, '')); return isNaN(v) ? '—' : `$${(v * 0.7).toLocaleString('en-CA', {maximumFractionDigits:0})}`; })()
  : '—';
 
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
+
  const [data, setData] = useState<PAP501Data>(() => {
  if (isNewEngagement) return buildDefault();
  const saved = readJsonFromLocalStorage<PAP501Data | null>(storageKey, null);
+ if (!saved && isDemoEngagement) {
+  const def = buildDefault();
+  return { ...def, ...NPM_PAP501_SEED, fin: { ...def.fin, ...NPM_PAP501_SEED.fin } };
+ }
  if (!saved) return buildDefault();
  const def = buildDefault();
  return {
@@ -617,6 +641,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  return (
  <div className="flex flex-col h-full">
+ {isDemoEngagement && (
+  <LukaStatusBar
+   isActive={true}
+   message="Luka is populating preliminary analytics from Xero trial balance and engagement data…"
+  />
+ )}
 
  {/* Body */}
  <div className="flex-1 overflow-y-auto bg-muted/30">

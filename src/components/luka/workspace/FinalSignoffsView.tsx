@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { LukaIcon } from "@/components/LukaIcon";
 import BottomPrompter from "./BottomPrompter";
+import { useParams } from "react-router-dom";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 
 const FONT = "'DM Sans', system-ui, sans-serif";
 const MONO = "'Share Tech Mono', 'DM Sans', monospace";
@@ -260,6 +262,8 @@ const loadPersisted = (): { signoffs: SignoffMap; activeRole: Role; openSections
 };
 
 const FinalSignoffsView = () => {
+ const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === 'AUD-NPM-Dec312025';
  const persisted = loadPersisted();
  const [signoffs, setSignoffs] = useState<SignoffMap>(persisted?.signoffs ?? {});
  const [openSections, setOpenSections] = useState<Record<string, boolean>>(
@@ -393,6 +397,12 @@ const FinalSignoffsView = () => {
  return (
  <div className="min-h-full flex flex-col">
  <div className="flex-1 w-full max-w-full md:max-w-[96%] lg:max-w-[1100px] mx-auto px-6 py-8 transition-all duration-500 ease-out">
+ {isDemoEngagement && (
+  <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-[#EAF4EE] border border-[#2E7D52]/20">
+   <AutomationStateChip state="approved" />
+   <span className="text-xs text-[#2E7D52] font-medium">Planning and risk assessment sections pre-approved by Luka · pending partner review</span>
+  </div>
+ )}
  {/* Luka greeting */}
  <div className="flex items-start gap-4">
  <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
@@ -809,6 +819,14 @@ const FinalSignoffsView = () => {
  signoff={so}
  onUndo={() => undo(section.key, iIdx, r)}
  />
+ ) : (isDemoEngagement && (section.key === 'onboarding' || section.key === 'documents') && r === 'preparer') ? (
+ <div className="flex items-center gap-1.5 flex-wrap">
+  <AutomationStateChip state="approved" />
+  <SignButton
+  persona={p}
+  onClick={() => sign(section.key, iIdx, r)}
+  />
+ </div>
  ) : (
  <SignButton
  persona={p}

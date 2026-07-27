@@ -13,6 +13,10 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_ENGAGEMENT_ID, DEMO_PROVENANCE } from "@/components/demo/demoFixtureData";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -206,6 +210,7 @@ function buildEventsSummaryFromRisks(rows: Risk520Row[], entity: string): string
 
 export function Audit625Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
  const overall = useMemo(() => overallRisk520(risks), [risks]);
@@ -217,7 +222,11 @@ export function Audit625Worksheet() {
  const storageKey = `audit-625-data-${engagementId ?? "default"}`;
  const [data, setData] = useState<Data625>(() => {
  const def = buildDefault();
- const stored = readJsonFromLocalStorage<Partial<Data625>>(storageKey, def) ?? def;
+ const rawStored = readJsonFromLocalStorage<Partial<Data625> | null>(storageKey, null);
+ if (!rawStored && isDemoEngagement) {
+  return { ...def, eventsSummary: 'Term loan covenant (DSCR ≥ 1.25×) monitored quarterly. Current DSCR: 1.42×. No material uncertainty identified. Management has confirmed access to $1.2M revolving credit facility. No indicators of going concern risk at Dec 31, 2025.' };
+ }
+ const stored = rawStored ?? def;
  const merged = {...def,...stored } as Data625;
  if (!Array.isArray(merged.communication)) merged.communication = def.communication;
  return merged;
@@ -298,6 +307,12 @@ export function Audit625Worksheet() {
  objective={`Evaluate management's plan of action to address identified events or conditions that cast doubt on the entity's ability to continue as a going concern (Part 2 — Part 1 is).`}
  standard={`${ctx.standardPrefix} 570`}
  >
+ {isDemoEngagement && (
+  <LukaStatusBar
+   isActive={true}
+   message="Luka is populating going concern analysis from Xero data and term loan agreement…"
+  />
+ )}
  {/* Linked 520 going-concern risks (with FS-level chip) */}
  <LinkedRisksCard overallRisk={overall} risks={gcRisks} storageKey={`audit-625-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="No going-concern related risks tagged in Add or tag risks in to auto-populate this evaluation." />
 
@@ -324,6 +339,14 @@ export function Audit625Worksheet() {
  className="text-sm min-h-[96px]"
  placeholder="Summarise the going-concern events/conditions identified in and the related assessed risks"
  />
+ {isDemoEngagement && (
+ <div className="flex items-center gap-2 mt-2">
+  <AutomationStateChip state="luka-drafted" />
+  <ProvenancePopover data={DEMO_PROVENANCE.covenantRatio}>
+   <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">Why this? ↗</span>
+  </ProvenancePopover>
+ </div>
+ )}
  </WorksheetSection>
 
  {/* §1 — Management's plan of action */}
