@@ -40,13 +40,13 @@ export const DEMO_ENGAGEMENT_ID = 'AUD-NPM-Dec312025';
 export const DEMO_PROVENANCE = {
   revenue: {
     value: '$14,200,000',
-    source: 'QBO GL, account 4000 (Revenue) · 4,211 transactions · pulled 2026-07-20 14:02',
+    source: 'Xero GL, account 4000 (Revenue) · 4,211 transactions · pulled 2026-07-20 14:02',
     logic: 'Sum of all credit entries to account 4000 for the period Jan 1 – Dec 31, 2025.',
     confidence: 'High' as const,
   },
   materiality: {
     value: '$142,000 (1% of revenue)',
-    source: 'Derived from QBO trial balance · revenue benchmark selected',
+    source: 'Derived from Xero trial balance · revenue benchmark selected',
     logic: 'Manufacturing entity; revenue selected as benchmark because earnings are volatile across the 3-year window and primary users are the lender and shareholder.',
     confidence: 'High' as const,
   },
@@ -64,7 +64,7 @@ export const DEMO_PROVENANCE = {
   },
   relatedParty: {
     value: 'Northline Holdings Inc. — shareholder-owned holdco',
-    source: 'QBO GL counterparty matching · Ontario Business Registry · Cap table',
+    source: 'Xero GL counterparty matching · Ontario Business Registry · Cap table',
     logic: 'Rent payments to Northline Holdings Inc. identified via GL counterparty analysis; corporate registry confirms common directorship with Northline Precision.',
     confidence: 'High' as const,
   },

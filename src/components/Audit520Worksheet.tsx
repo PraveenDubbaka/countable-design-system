@@ -529,7 +529,7 @@ export function Audit520Worksheet() {
     {isDemoEngagement && (
       <LukaStatusBar
         isActive={true}
-        message="Luka is populating risk register from connected QBO data, prior file, and risk library…"
+        message="Luka is populating risk register from connected Xero data, prior file, and risk library…"
       />
     )}
 

@@ -375,7 +375,7 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  return (
  <div className="flex flex-col h-full">
 
- <LukaStatusBar isActive={isDemoEngagement} />
+ <LukaStatusBar isActive={isDemoEngagement} message="Luka is populating information from Xero and prior file…" />
 
  {/* Objective bar */}
  
