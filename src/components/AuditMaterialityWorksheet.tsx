@@ -478,10 +478,10 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  {isDemoEngagement && row.basis === 'grossRevenue' ? (
    <div className="flex items-center justify-end gap-1.5 min-h-[32px]">
+     <AutomationStateChip state="auto" />
      <ProvenancePopover data={DEMO_PROVENANCE.revenue}>
        <span className="text-sm tabular-nums">{row.periodAmount ? formatDisplay(row.periodAmount) : "—"}</span>
      </ProvenancePopover>
-     <AutomationStateChip state="auto" />
    </div>
  ) : (
  <TdInput
@@ -554,10 +554,10 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums font-bold text-primary text-right">
  {isDemoEngagement && overallMateriality ? (
    <div className="flex items-center justify-end gap-1.5">
+     <AutomationStateChip state="luka-drafted" />
      <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
        <span className="font-bold text-primary">{formatDisplay(overallMateriality)}</span>
      </ProvenancePopover>
-     <AutomationStateChip state="luka-drafted" />
    </div>
  ) : (overallMateriality ? formatDisplay(overallMateriality) : "—")}
  </td>
