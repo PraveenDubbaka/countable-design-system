@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { LukaIcon } from '@/components/LukaIcon';
 
 export type AutomationState =
   | 'auto'
@@ -16,12 +17,12 @@ interface AutomationStateChipProps {
 }
 
 const CONFIG: Record<AutomationState, { label: string; dot: string; bg: string; text: string; border: string }> = {
-  'auto':         { label: 'Auto',         dot: '●', bg: 'bg-[#EAF7F7]', text: 'text-[#39ADAD]', border: 'border-[#39ADAD]/30' },
-  'luka-drafted': { label: 'Luka drafted', dot: '◐', bg: 'bg-[#EEF4FB]', text: 'text-[#1C63A6]', border: 'border-[#1C63A6]/30' },
-  'needs-input':  { label: 'Needs input',  dot: '◑', bg: 'bg-[#FEF6E7]', text: 'text-[#B4720A]', border: 'border-[#B4720A]/30' },
-  'judgment':     { label: 'Judgment',     dot: '○', bg: 'bg-[#F1F3F6]', text: 'text-[#5A6B7F]', border: 'border-[#5A6B7F]/30' },
-  'approved':     { label: 'Approved',     dot: '✓', bg: 'bg-[#EAF4EE]', text: 'text-[#2E7D52]', border: 'border-[#2E7D52]/30' },
-  'exception':    { label: 'Exception',    dot: '⚠', bg: 'bg-[#FBEAEA]', text: 'text-[#BB1B1B]', border: 'border-[#BB1B1B]/30' },
+  'auto':         { label: 'Auto',      dot: '●', bg: 'bg-[#EAF7F7]', text: 'text-[#39ADAD]', border: 'border-[#39ADAD]/30' },
+  'luka-drafted': { label: 'Luka',      dot: '',  bg: 'bg-violet-50',  text: 'text-violet-600', border: 'border-violet-200' },
+  'needs-input':  { label: 'Needs input', dot: '◑', bg: 'bg-[#FEF6E7]', text: 'text-[#B4720A]', border: 'border-[#B4720A]/30' },
+  'judgment':     { label: 'Judgment',  dot: '○', bg: 'bg-[#F1F3F6]', text: 'text-[#5A6B7F]', border: 'border-[#5A6B7F]/30' },
+  'approved':     { label: 'Approved',  dot: '✓', bg: 'bg-[#EAF4EE]', text: 'text-[#2E7D52]', border: 'border-[#2E7D52]/30' },
+  'exception':    { label: 'Exception', dot: '⚠', bg: 'bg-[#FBEAEA]', text: 'text-[#BB1B1B]', border: 'border-[#BB1B1B]/30' },
 };
 
 export function AutomationStateChip({ state, approver, timestamp, className }: AutomationStateChipProps) {
@@ -39,7 +40,11 @@ export function AutomationStateChip({ state, approver, timestamp, className }: A
         bg, text, border, className
       )}
     >
-      <span className="text-[10px]">{dot}</span>
+      {state === 'luka-drafted' ? (
+        <LukaIcon size={13} inverted bare />
+      ) : (
+        <span className="text-[10px]">{dot}</span>
+      )}
       {label}
     </span>
   );
