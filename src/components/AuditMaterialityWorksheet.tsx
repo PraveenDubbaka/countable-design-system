@@ -477,7 +477,7 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  {isDemoEngagement && row.basis === 'grossRevenue' ? (
    <div className="flex items-center justify-end gap-1.5 min-h-[32px]">
-     <AutomationStateChip state="auto" />
+     <AutomationStateChip state="luka-drafted" />
      <ProvenancePopover data={DEMO_PROVENANCE.revenue}>
        <span className="text-sm tabular-nums">{row.periodAmount ? formatDisplay(row.periodAmount) : "—"}</span>
      </ProvenancePopover>
