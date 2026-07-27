@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info, BookOpen, X } from "lucide-react";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
@@ -460,6 +462,7 @@ export function Audit520Worksheet() {
  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
  const locked = data.concluded;
+ const isDemoEngagement = engagementId === 'AUD-NPM-Dec312025';
 
  function updatePartA(id: string, field: keyof PartARow, val: string) {
  setData(d => ({...d, partARows: d.partARows.map(r => r.id === id ? {...r, [field]: val } : r) }));
@@ -543,6 +546,11 @@ export function Audit520Worksheet() {
  </p>
  </div>
 
+ <LukaStatusBar
+   isActive={isDemoEngagement}
+   message="Luka is populating risk register from connected QBO data, prior file, and risk library…"
+ />
+
  {/* ── Scrollable body ────────────────────────────────────────────── */}
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-6">
@@ -572,6 +580,11 @@ export function Audit520Worksheet() {
  <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
  {formatRefList(row.wpRefSource)}
  </div>
+ {isDemoEngagement && (
+   <div className="mt-1">
+     <AutomationStateChip state={row.rmmIdentified ? 'luka-drafted' : 'needs-input'} />
+   </div>
+ )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[240px]">
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartA(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pA-rmm-${row.id}`} placeholder="Describe the risk of material misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
@@ -770,6 +783,11 @@ export function Audit520Worksheet() {
  <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
  {formatRefList(row.wpRefSource)}
  </div>
+ {isDemoEngagement && (
+   <div className="mt-1">
+     <AutomationStateChip state={row.rmmIdentified ? 'luka-drafted' : 'needs-input'} />
+   </div>
+ )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[180px]">
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />

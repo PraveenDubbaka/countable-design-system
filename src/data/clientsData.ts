@@ -28,6 +28,33 @@ export interface Client {
 
 export const clientsData: Client[] = [
  {
+ id: 'DEMO-NPM',
+ entityName: 'Northline Precision',
+ legalEntityName: 'Northline Precision Manufacturing Inc.',
+ entityType: 'Corporation (CCPC)',
+ status: 'Accepted',
+ integration: 'quickbooks',
+ contactName: 'Northline Demo',
+ contactPerson: 'R. Chandra',
+ engagementPartner: 'R. Chandra',
+ email: 'demo@northlineprecision.ca',
+ repository: 'Repository',
+ assignedPartner: 'R. Chandra',
+ assignedTeam: 'Audit Team',
+ businessPhone: '905-555-0142',
+ cellPhone: null,
+ engagements: [
+   {
+     id: 'AUD-NPM-Dec312025',
+     type: 'Audit (AUD)',
+     periodEnd: 'Dec 31, 2025',
+     status: 'In Progress',
+     hasRF: false,
+     dateCreated: 'Jul 27, 2026 09:00 AM',
+   }
+ ],
+ },
+ {
  id: 'CR001',
  entityName: 'CR tickets',
  legalEntityName: 'CR Tickets Inc.',

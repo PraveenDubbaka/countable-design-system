@@ -15,6 +15,7 @@ const ENG_KEY = 'cds_engagements_v1';
 const META_KEY = (id: string) => `engagement-meta-${id}`;
 
 export const SEED_ENGAGEMENTS: EngagementRecord[] = [
+ { id: "AUD-NPM-Dec312025", client: "Northline Precision Manufacturing Inc.", type: "Audit (AUD)", yearEnd: "Dec 31, 2025", team: "R. Chandra · S. Whitfield · D. Okonkwo", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jul 27, 2026 09:00 AM", firstYearAudit: true },
  { id: "AUD-US-Dec312024", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2024", team: "View Assignees", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 22, 2026 08:00 AM", firstYearAudit: false },
  { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", team: "View Assignees", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 21, 2026 10:00 AM", firstYearAudit: false },
  { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "View Assignees", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 21, 2026 09:00 AM", firstYearAudit: false },
@@ -29,7 +30,25 @@ export const SEED_ENGAGEMENTS: EngagementRecord[] = [
  { id: "COM-SHR-Dec302023", client: "ShRoll Forward", type: "Compilation (COM)", yearEnd: "Dec 30, 2023", team: "View Assignees", status: "In Progress", statusVariant: "inProgress", hasRF: true, dateCreated: "Jan 13, 2026 03:51 AM", firstYearAudit: false },
 ];
 
+function seedDemoEngagementMeta() {
+ const key = 'engagement-meta-AUD-NPM-Dec312025';
+ if (localStorage.getItem(key)) return;
+ const meta: EngagementMeta = {
+   firstYearAudit: true,
+   accountingFramework: 'ASPE',
+   accountingStandards: 'CAS',
+   industry: 'Manufacturing',
+   periodStart: 'Jan 1, 2025',
+   periodEnd: 'Dec 31, 2025',
+   auditPeriodType: 'Full Year',
+   firstTimeAdoption: false,
+   budget: '138',
+ };
+ localStorage.setItem(key, JSON.stringify(meta));
+}
+
 export function loadEngagements(): EngagementRecord[] {
+ seedDemoEngagementMeta();
  try {
  const raw = localStorage.getItem(ENG_KEY);
  if (raw) return JSON.parse(raw);

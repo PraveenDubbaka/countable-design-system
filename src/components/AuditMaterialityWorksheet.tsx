@@ -11,6 +11,10 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
+import { DEMO_PROVENANCE } from "@/components/demo/demoFixtureData";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
@@ -75,6 +79,7 @@ function sumColumn(rows: EntityRow[], field: keyof EntityRow): string {
 // TB benchmark values — sourced from QBO connector via TrialBalance
 const TB_CA = { grossRevenue: 12500000, profitBeforeTax: 460000, totalAssets: 21800000, totalExpenses: 12040000, netAssets: 8400000 };
 const TB_US = { grossRevenue: 18400000, profitBeforeTax: 1003000, totalAssets: 13100000, totalExpenses: 17444000, netAssets: 3183000 };
+const TB_NPM = { grossRevenue: 14200000, profitBeforeTax: 1140000, totalAssets: 9617340, totalExpenses: 13060000, netAssets: 4800000 };
 type TBKey = keyof typeof TB_CA;
 
 const BASIS_OPTIONS: { value: string; label: string; tbKey: TBKey }[] = [
@@ -152,17 +157,19 @@ function TdSelect({
 
 interface AuditMaterialityWorksheetProps {
  isUS?: boolean;
+ engagementId?: string;
 }
 
-export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWorksheetProps) {
+export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditMaterialityWorksheetProps) {
+ const isDemoEngagement = engagementId === 'AUD-NPM-Dec312025';
  const [showAddDialog, setShowAddDialog] = useState(false);
  const [concluded, setConcluded] = useState(false);
 
  const [periodStart, setPeriodStart] = useState(isUS ? "2024-01-01" : "2024-04-01");
  const [periodEnd, setPeriodEnd] = useState(isUS ? "2024-12-31" : "2025-03-31");
 
- const TB = isUS ? TB_US : TB_CA;
- const entityLabel = isUS ? "Harbor Freight LLC" : "Shipping Line Inc.";
+ const TB = isDemoEngagement ? TB_NPM : (isUS ? TB_US : TB_CA);
+ const entityLabel = isDemoEngagement ? "Northline Precision Manufacturing Inc." : (isUS ? "Harbor Freight LLC" : "Shipping Line Inc.");
 
  // Preliminary Materiality — two benchmark rows seeded from Trial Balance
  const [selectedRowId, setSelectedRowId] = useState(SEED_ROW_A);
@@ -368,6 +375,8 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  return (
  <div className="flex flex-col h-full">
 
+ <LukaStatusBar isActive={isDemoEngagement} />
+
  {/* Objective bar */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
@@ -467,12 +476,21 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  />
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
+ {isDemoEngagement && row.basis === 'grossRevenue' ? (
+   <div className="flex items-center justify-end gap-1.5 min-h-[32px]">
+     <ProvenancePopover data={DEMO_PROVENANCE.revenue}>
+       <span className="text-sm tabular-nums">{row.periodAmount ? formatDisplay(row.periodAmount) : "—"}</span>
+     </ProvenancePopover>
+     <AutomationStateChip state="auto" />
+   </div>
+ ) : (
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
  onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
  placeholder="e.g. 12,500,000.00"
  className="tabular-nums text-right"
  />
+ )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  <TdInput
@@ -533,7 +551,16 @@ export function AuditMaterialityWorksheet({ isUS = false }: AuditMaterialityWork
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.extrapolatedPeriod ? formatDisplay(selectedRow.extrapolatedPeriod) : "—"}</td>
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.benchmarkPct || "—"}</td>
- <td className="pl-4 pr-7 py-2 text-sm tabular-nums font-bold text-primary text-right">{overallMateriality ? formatDisplay(overallMateriality) : "—"}</td>
+ <td className="pl-4 pr-7 py-2 text-sm tabular-nums font-bold text-primary text-right">
+ {isDemoEngagement && overallMateriality ? (
+   <div className="flex items-center justify-end gap-1.5">
+     <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
+       <span className="font-bold text-primary">{formatDisplay(overallMateriality)}</span>
+     </ProvenancePopover>
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ ) : (overallMateriality ? formatDisplay(overallMateriality) : "—")}
+ </td>
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.materialityPY || "—"}</td>
  <td className="px-4 py-2" />
  <td className="px-4 py-2" />

@@ -114,10 +114,15 @@ export default function Engagements() {
  });
  };
 
- const filteredEngagements = engagementList.filter(e =>
+ const filteredEngagements = (() => {
+ const base = engagementList.filter(e =>
  e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
  e.client.toLowerCase().includes(searchQuery.toLowerCase())
  );
+ const demo = base.filter(e => e.id === 'AUD-NPM-Dec312025');
+ const rest = base.filter(e => e.id !== 'AUD-NPM-Dec312025');
+ return [...demo, ...rest];
+ })();
 
  const handleDelete = (id: string, e: React.MouseEvent) => {
  e.stopPropagation();
@@ -252,7 +257,14 @@ export default function Engagements() {
  <Highlight text={engagement.id} query={searchQuery} />
  </span>
  </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]"><Highlight text={engagement.client} query={searchQuery} /></td>
+ <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[240px]">
+ <div className="flex items-center gap-2">
+ <Highlight text={engagement.client} query={searchQuery} />
+ {engagement.id === 'AUD-NPM-Dec312025' && (
+ <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#39ADAD] text-white shrink-0">🎬 Demo</span>
+ )}
+ </div>
+ </td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
  <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
  <td className="px-6 py-2 whitespace-nowrap">
