@@ -313,31 +313,15 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  return (
  <div className="flex flex-col h-full">
  {/* Objective bar */}
- <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+ 
+ <div className="flex-1 overflow-y-auto bg-muted/30">
+ <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-base text-muted-foreground flex-1 leading-relaxed">
  Understand the use and extent of related-party relationships and transactions, recognise fraud risk factors, and assess possible risks of material misstatement (fraud or error) in the F/S.
  </p>
  </div>
-
- {/* Abbreviations */}
- <div className="px-6 py-2 border-b border-border bg-card shrink-0 flex items-center gap-3 flex-wrap">
- {[
- ["F/S", "Financial statements"],
- ["PSC", "Procedure successfully completed"],
- ["RMM", "Risk of material misstatement"],
- ["TCWG", "Those charged with governance"],
- ["OCB", "Outside the normal course of business"],
- ].map(([abbr, meaning]) => (
- <span key={abbr} className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
- <span className="font-semibold text-foreground">{abbr}</span> = {meaning}
- </span>
- ))}
- </div>
-
- {/* Scrollable body */}
- <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-6">
 
  {/* Cross-reference banner */}

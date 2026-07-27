@@ -99,14 +99,15 @@ export function WorksheetLayout({
  )}
  </div>
  )}
- <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+ 
+ <div className="flex-1 overflow-y-auto bg-muted/30">
+ <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-base text-muted-foreground flex-1 leading-relaxed">
  {objective}
  </p>
  </div>
- <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-4">{children}</div>
  </div>
  </div>

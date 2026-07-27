@@ -525,34 +525,15 @@ export function Audit520Worksheet() {
  <div className="flex flex-col h-full">
 
  {/* ── Objective bar ─────────────────────────────────────────────── */}
- <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
+ 
+ <div className="flex-1 overflow-y-auto bg-muted/30">
+ <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
  <p className="text-base text-foreground leading-relaxed">
  <span className="font-semibold text-primary">Objective: </span>
  To document and assess identified risks of material misstatement at the financial statement level and assess inherent risk(s) at the assertion level, including significant risks, to be used as a basis for designing and implementing the appropriate audit response.
  </p>
  </div>
-
- {/* ── Legend bar ────────────────────────────────────────────────── */}
- <div className="px-6 py-1.5 border-b border-border bg-muted/20 shrink-0">
- <p className="text-[10.5px] text-muted-foreground">
- <span className="font-medium">F/S</span> = Financial statements &nbsp;·&nbsp;
- <span className="font-medium">RMM</span> = Risk of material misstatement &nbsp;·&nbsp;
- <span className="font-medium">SCOTABD</span> = Significant class of transactions, account balance, or disclosure &nbsp;·&nbsp;
- <span className="font-medium">IR</span> = Inherent risk &nbsp;·&nbsp;
- <span className="font-medium">H</span> = High &nbsp;·&nbsp;
- <span className="font-medium">M</span> = Medium &nbsp;·&nbsp;
- <span className="font-medium">L</span> = Low
- </p>
- </div>
-
- <LukaStatusBar
-   isActive={isDemoEngagement}
-   message="Luka is populating risk register from connected QBO data, prior file, and risk library…"
- />
-
- {/* ── Scrollable body ────────────────────────────────────────────── */}
- <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-6">
 
  {/* ── Part A ────────────────────────────────────────────────── */}
