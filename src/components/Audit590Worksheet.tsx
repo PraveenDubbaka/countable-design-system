@@ -466,7 +466,7 @@ export function Audit590Worksheet() {
  placeholder="From" className="h-8 text-sm" />
  {isDemoEngagement && (
    <div className="flex items-center gap-2 mt-1">
-     <AutomationStateChip state="auto" />
+     <AutomationStateChip state="luka-drafted" />
      <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
        <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">Why this? ↗</span>
      </ProvenancePopover>

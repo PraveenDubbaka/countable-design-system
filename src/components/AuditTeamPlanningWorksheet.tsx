@@ -310,7 +310,11 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
 
  return (
  <div className="flex flex-col h-full">
- <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
+
+ <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
+
+ <div className="flex-1 overflow-y-auto bg-muted/30">
+ <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-base text-muted-foreground flex-1 leading-relaxed">
@@ -319,10 +323,6 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <span className="font-medium text-foreground">F/S</span> = Financial statements. <span className="font-medium text-foreground">TCWG</span> = Those charged with governance. <span className="font-medium text-foreground">RMMs</span> = Risks of material misstatement. <span className="font-medium text-foreground">RAPs</span> = Risk assessment procedures.
  </p>
  </div>
-
- <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
-
- <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="p-6 space-y-4">
 
  {/* Meeting details */}
