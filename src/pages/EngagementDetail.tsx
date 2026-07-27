@@ -2850,6 +2850,7 @@ export default function EngagementDetail() {
  onSaveEdits={() => setIsLetterEditing(false)}
  onCancelEdits={() => setIsLetterEditing(false)}
  saveRef={letterSaveRef}
+ clientName={clientName !== "Unknown Client" ? clientName : undefined}
  />
  ) : (
  <DocumentView

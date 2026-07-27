@@ -20,6 +20,8 @@ interface LetterViewProps {
  onCancelEdits?: () => void;
  /** Parent passes a ref — LetterView stores its save handler here so parent can call it */
  saveRef?: React.MutableRefObject<(() => void) | null>;
+ /** When provided, replaces the default template client name with this value in the rendered letter */
+ clientName?: string;
 }
 
 /**
@@ -30,7 +32,7 @@ interface LetterViewProps {
  * (existing schema, no migration needed). Edit mode toggles a
  * contentEditable surface; Save persists the new HTML back to the checklist.
  */
-export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef }: LetterViewProps) {
+export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName }: LetterViewProps) {
  const isReport = variant === "report";
  const [showAddDialog, setShowAddDialog] = useState(false);
  const [isEditingLocal, setIsEditingLocal] = useState(false);
@@ -38,8 +40,10 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
  const isEditing = isEditingProp !== undefined ? isEditingProp : isEditingLocal;
  const editorRef = useRef<HTMLDivElement | null>(null);
 
- const letterHtml =
- checklist.sections?.[0]?.questions?.[0]?.text ?? "";
+ const rawLetterHtml = checklist.sections?.[0]?.questions?.[0]?.text ?? "";
+ const letterHtml = clientName
+   ? rawLetterHtml.replaceAll('Shipping Line Inc.', clientName)
+   : rawLetterHtml;
 
  // When entering edit mode, seed the editor with the current HTML.
  useEffect(() => {

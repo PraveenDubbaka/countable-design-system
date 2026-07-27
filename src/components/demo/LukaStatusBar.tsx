@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Zap, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { LukaIcon } from '@/components/LukaIcon';
 
 interface LukaStatusBarProps {
   message?: string;
@@ -9,7 +10,7 @@ interface LukaStatusBarProps {
 }
 
 export function LukaStatusBar({
-  message = 'Luka is populating information from QBO and prior file…',
+  message = 'Luka is populating information from Xero and prior file…',
   isActive = true,
   className,
 }: LukaStatusBarProps) {
@@ -18,14 +19,14 @@ export function LukaStatusBar({
 
   return (
     <div className={cn(
-      'flex items-center gap-2 px-4 py-2 bg-[#EEF4FB] border-b border-[#1C63A6]/20 text-[#1C63A6] text-xs',
+      'flex items-center gap-2 px-4 py-2 bg-violet-50 border-b border-violet-200 text-violet-700 text-xs',
       className
     )}>
-      <Zap className="h-3 w-3 fill-[#1C63A6] shrink-0" strokeWidth={0} />
+      <LukaIcon size={13} bare inverted className="shrink-0" />
       <span className="flex-1 font-medium">{message}</span>
       <button
         onClick={() => setDismissed(true)}
-        className="text-[#1C63A6]/60 hover:text-[#1C63A6] transition-colors"
+        className="text-violet-400 hover:text-violet-700 transition-colors"
       >
         <X className="h-3 w-3" />
       </button>
