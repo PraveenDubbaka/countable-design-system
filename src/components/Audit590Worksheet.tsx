@@ -10,6 +10,10 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency, type FsaBalance } from "@/lib/engagementContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -302,6 +306,7 @@ function bestProcMatch590(fsa: string): ProcEntry590 | null {
 
 export function Audit590Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
  const storageKey = `audit-590-data-${engagementId ?? "default"}`;
  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -427,6 +432,12 @@ export function Audit590Worksheet() {
 
  return (
  <div className="flex flex-col h-full">
+    {isDemoEngagement && (
+      <LukaStatusBar
+        isActive={true}
+        message="Luka is pulling performance materiality from Form 420 and populating engagement scope…"
+      />
+    )}
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
@@ -453,6 +464,14 @@ export function Audit590Worksheet() {
  <Input disabled={locked} value={data.performanceMateriality}
  onChange={e => setData(d => ({...d, performanceMateriality: e.target.value }))}
  placeholder="From" className="h-8 text-sm" />
+ {isDemoEngagement && (
+   <div className="flex items-center gap-2 mt-1">
+     <AutomationStateChip state="auto" />
+     <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
+       <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">Why this? ↗</span>
+     </ProvenancePopover>
+   </div>
+ )}
  </div>
  </div>
 

@@ -938,6 +938,7 @@ export default function EngagementDetail() {
  const [showClientSwitchDialog, setShowClientSwitchDialog] = useState(false);
  const [selectedClientEngagement, setSelectedClientEngagement] = useState<string | null>(null);
  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+ const isDemoEngagement = engagementId === 'AUD-NPM-Dec312025';
  const [showAddChecklistSheet, setShowAddChecklistSheet] = useState(false);
  const [showRequestPanel, setShowRequestPanel] = useState(false);
  const [requestPanelFullscreen, setRequestPanelFullscreen] = useState(false);
@@ -2311,10 +2312,12 @@ export default function EngagementDetail() {
  onClick={() => toast('Share coming soon')}>
  <Share2 className="h-3 w-3" />Share
  </Button>
+ {!isDemoEngagement && (
  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
  onClick={() => toast('Delete coming soon')}>
  <Trash2 className="h-3 w-3" />Delete
  </Button>
+ )}
  </>
  )}
  {checklistKey && WORKSHEET_KEYS.has(checklistKey) && (
@@ -2402,6 +2405,7 @@ export default function EngagementDetail() {
  </svg>}
  label="Replace"
  />
+ {!isDemoEngagement && (
  <ExpandableIconButton
  variant="secondary"
  size="sm"
@@ -2410,6 +2414,7 @@ export default function EngagementDetail() {
  className="text-destructive hover:text-destructive focus-visible:text-destructive"
  onClick={() => setShowDeleteDialog(true)}
  />
+ )}
  </>
  ) : (() => {
  const sec = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey);
@@ -2495,6 +2500,7 @@ export default function EngagementDetail() {
  </svg>}
  label="Replace"
  />
+ {!isDemoEngagement && (
  <ExpandableIconButton
  variant="secondary"
  size="sm"
@@ -2503,6 +2509,7 @@ export default function EngagementDetail() {
  className="text-destructive hover:text-destructive focus-visible:text-destructive"
  onClick={() => setShowDeleteDialog(true)}
  />
+ )}
  </>}
  </div>
  </div>

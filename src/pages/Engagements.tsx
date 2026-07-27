@@ -126,6 +126,10 @@ export default function Engagements() {
 
  const handleDelete = (id: string, e: React.MouseEvent) => {
  e.stopPropagation();
+ if (id === 'AUD-NPM-Dec312025') {
+   toast.error('Demo engagement cannot be deleted.');
+   return;
+ }
  deleteEngagement(id);
  toast.success(`Engagement ${id} deleted`);
  };
@@ -284,12 +288,14 @@ export default function Engagements() {
  >
  <Pencil className="h-4 w-4 text-link group-hover/edit:icon-edit" />
  </button>
+ {engagement.id !== 'AUD-NPM-Dec312025' && (
  <button
  className="p-1.5 hover:bg-destructive/10 rounded-lg transition-colors group/trash"
  onClick={(e) => handleDelete(engagement.id, e)}
  >
  <Trash2 className="h-4 w-4 text-destructive group-hover/trash:icon-trash" />
  </button>
+ )}
  </div>
  </td>
  </tr>

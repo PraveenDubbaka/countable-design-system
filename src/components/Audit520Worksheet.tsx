@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Trash2, Info, BookOpen, X } from "lucide-react";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
+import { DEMO_PROVENANCE } from "@/components/demo/demoFixtureData";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
@@ -524,6 +526,13 @@ export function Audit520Worksheet() {
  return (
  <div className="flex flex-col h-full">
 
+    {isDemoEngagement && (
+      <LukaStatusBar
+        isActive={true}
+        message="Luka is populating risk register from connected QBO data, prior file, and risk library…"
+      />
+    )}
+
  {/* ── Objective bar ─────────────────────────────────────────────── */}
  
  <div className="flex-1 overflow-y-auto bg-muted/30">
@@ -569,6 +578,20 @@ export function Audit520Worksheet() {
  </td>
  <td className="px-4 py-2.5 align-top min-w-[240px]">
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartA(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pA-rmm-${row.id}`} placeholder="Describe the risk of material misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
+ {isDemoEngagement && row.rmmIdentified && (() => {
+   const rmmLower = row.rmmIdentified.toLowerCase();
+   const provenance =
+     rmmLower.includes('warranty') ? DEMO_PROVENANCE.warrantyProvision :
+     rmmLower.includes('related') ? DEMO_PROVENANCE.relatedParty :
+     null;
+   return provenance ? (
+     <div className="mt-1">
+       <ProvenancePopover data={provenance}>
+         <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">Why this? ↗</span>
+       </ProvenancePopover>
+     </div>
+   ) : null;
+ })()}
  </td>
  <td className="px-4 py-2.5 align-top w-20">
  <Select disabled={locked} value={row.fraudRisk} onValueChange={v => updatePartA(row.id, "fraudRisk", v as YN)}>
