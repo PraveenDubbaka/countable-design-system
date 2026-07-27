@@ -622,8 +622,8 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  {flowState === 'worksheet' && (
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-base text-muted-foreground flex-1 leading-relaxed">
  Compare the entity&apos;s most recent financial results to expectations (budget, prior period, industry trends);
  document matters requiring an audit response; conclude on fraud risk indicators.
  </p>

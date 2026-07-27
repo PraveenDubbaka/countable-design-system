@@ -312,8 +312,8 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  <div className="flex flex-col h-full">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-base text-muted-foreground flex-1 leading-relaxed">
  To ensure appropriate communication among the engagement team resulting in a well-planned audit.{" "}
  <span className="font-medium text-foreground">Notes:</span> Ensure involvement of the engagement partner and key team members (plus the engagement quality reviewer, if applicable). This form is divided into two parts — Part A would typically take place at the commencement of the audit; Part B would start by reviewing the assessed risks and developing appropriate audit responses. In some cases, the two discussions could be combined.{" "}
  <span className="font-medium text-foreground">F/S</span> = Financial statements. <span className="font-medium text-foreground">TCWG</span> = Those charged with governance. <span className="font-medium text-foreground">RMMs</span> = Risks of material misstatement. <span className="font-medium text-foreground">RAPs</span> = Risk assessment procedures.
