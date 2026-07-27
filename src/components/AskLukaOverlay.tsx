@@ -1825,7 +1825,6 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  clientName={selectedEngagement?.client ?? ""}
  yearEnd={selectedEngagement?.yearEnd ?? ""}
  threadId={pbcThreadId}
- demoAutoStart={selectedEngagement?.id === 'AUD-NPM-Dec312025'}
  onViewDoc={(content, templateLabel) => {
  setPBCDocContent(content);
  setPBCDocHtml(null);
