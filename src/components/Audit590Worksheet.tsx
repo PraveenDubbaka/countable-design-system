@@ -379,6 +379,7 @@ export function Audit590Worksheet() {
  const [mapProcsRowId, setMapProcsRowId] = useState<string | null>(null);
  const [procPanelTab, setProcPanelTab] = useState<"my" | "global">("global");
  const [procSearch, setProcSearch] = useState("");
+ const [procPanelClosing, setProcPanelClosing] = useState(false);
  const prevActiveProcIdsRef = useRef<string>("");
 
  // Backfill plannedProcedureId for existing material rows that don't have one yet
@@ -414,6 +415,15 @@ export function Audit590Worksheet() {
  setActiveProcedureIds(engagementId, activeIds);
  }, [data.rows, engagementId]);
 
+ function closeProcPanel() {
+  setProcPanelClosing(true);
+  setProcSearch("");
+  setTimeout(() => {
+   setMapProcsRowId(null);
+   setProcPanelClosing(false);
+  }, 260);
+ }
+
  function selectPlannedProc(rowId: string, procId: string) {
  setData(d => ({
  ...d,
@@ -422,7 +432,7 @@ export function Audit590Worksheet() {
  plannedProcedureId: r.plannedProcedureId === procId ? "" : procId,
  }),
  }));
- if (procId) setMapProcsRowId(null);
+ if (procId) closeProcPanel();
  }
 
  function updateProcedure590(id: string, i: number, val: string) {
@@ -770,7 +780,7 @@ export function Audit590Worksheet() {
         );
        })()}
        {!locked && (
-        <button type="button" onClick={() => setMapProcsRowId(r.id)} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors w-fit">
+        <button type="button" onClick={() => { setProcPanelClosing(false); setMapProcsRowId(r.id); }} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors w-fit">
          Map Procedures
         </button>
        )}
@@ -931,7 +941,7 @@ export function Audit590Worksheet() {
 
  </div>
 
- {/* Select Procedures Panel */}
+ {/* Select Procedures Drawer */}
  {mapProcsRowId && (() => {
   const row = data.rows.find(r => r.id === mapProcsRowId);
   if (!row) return null;
@@ -939,74 +949,84 @@ export function Audit590Worksheet() {
    !procSearch.trim() || n.label.toLowerCase().includes(procSearch.toLowerCase())
   );
   return (
-   <div className="fixed inset-0 z-50 flex items-start justify-center pt-16" onClick={() => { setMapProcsRowId(null); setProcSearch(""); }}>
-    <div className="w-80 bg-background border border-border rounded-xl shadow-2xl flex flex-col max-h-[calc(100vh-8rem)] overflow-hidden" onClick={e => e.stopPropagation()}>
-     {/* Header */}
-     <div className="px-4 py-3 border-b border-border flex items-center justify-between shrink-0">
-      <p className="text-sm font-semibold text-foreground">Select Procedures</p>
-      <button onClick={() => { setMapProcsRowId(null); setProcSearch(""); }} className="text-muted-foreground hover:text-foreground transition-colors">
-       <X className="h-4 w-4" />
-      </button>
-     </div>
-     {/* Tabs */}
-     <div className="flex shrink-0" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
-      <button
-       onClick={() => setProcPanelTab("my")}
-       className={`flex-1 py-2 px-1 text-sm font-medium text-center transition-colors border-b-[3px] ${procPanelTab === "my" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}
-      >My Templates</button>
-      <button
-       onClick={() => setProcPanelTab("global")}
-       className={`flex-1 py-2 px-1 text-sm font-medium text-center transition-colors border-b-[3px] ${procPanelTab === "global" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}
-      >Global Templates</button>
-     </div>
-     {/* Search */}
-     <div className="px-3 pt-3 pb-2 shrink-0">
-      <div className="relative">
-       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-       <input
-        type="text"
-        value={procSearch}
-        onChange={e => setProcSearch(e.target.value)}
-        placeholder="Search"
-        className="w-full h-8 pl-8 pr-3 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/30 placeholder:text-muted-foreground"
-       />
+   <>
+    <style>{`
+     @keyframes proc-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+     @keyframes proc-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+    `}</style>
+    <div className="fixed inset-0 z-50 flex justify-end" onClick={closeProcPanel}>
+     <div
+      className="h-full w-80 bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden"
+      style={{ animation: `${procPanelClosing ? "proc-slide-out" : "proc-slide-in"} 0.25s cubic-bezier(0.16,1,0.3,1) forwards` }}
+      onClick={e => e.stopPropagation()}
+     >
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between shrink-0">
+       <p className="text-sm font-semibold text-foreground">Select Procedures</p>
+       <button onClick={closeProcPanel} className="text-muted-foreground hover:text-foreground transition-colors">
+        <X className="h-4 w-4" />
+       </button>
+      </div>
+      {/* Tabs */}
+      <div className="flex shrink-0" style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+       <button
+        onClick={() => setProcPanelTab("my")}
+        className={`flex-1 py-2 px-1 text-sm font-medium text-center transition-colors border-b-[3px] ${procPanelTab === "my" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}
+       >My Templates</button>
+       <button
+        onClick={() => setProcPanelTab("global")}
+        className={`flex-1 py-2 px-1 text-sm font-medium text-center transition-colors border-b-[3px] ${procPanelTab === "global" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}
+       >Global Templates</button>
+      </div>
+      {/* Search */}
+      <div className="px-3 pt-3 pb-2 shrink-0">
+       <div className="relative">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        <input
+         type="text"
+         value={procSearch}
+         onChange={e => setProcSearch(e.target.value)}
+         placeholder="Search"
+         className="w-full h-8 pl-8 pr-3 text-sm rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/30 placeholder:text-muted-foreground"
+        />
+       </div>
+      </div>
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto px-2 pb-3">
+       {procPanelTab === "global" ? (
+        <>
+         {/* Procedures folder header */}
+         <div className="flex items-center gap-1.5 py-1.5 px-2 text-sm font-semibold text-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4 text-primary flex-shrink-0" fill="currentColor" aria-hidden="true">
+           <path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2.1-32.1l112-192z" />
+           <rect x="208" y="328" width="160" height="48" rx="14" fill="#ffffff" />
+          </svg>
+          <span>Procedures</span>
+         </div>
+         {filtered.length === 0 && (
+          <p className="text-xs text-muted-foreground text-center py-4">No matches</p>
+         )}
+         {filtered.map(node => {
+          const selected = row.plannedProcedureId === node.id;
+          return (
+           <button key={node.id} type="button"
+            onClick={() => selectPlannedProc(row.id, node.id)}
+            className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors text-sm ${selected ? "bg-primary/10" : "hover:bg-muted"}`}
+            style={{ paddingLeft: "1.75rem" }}
+           >
+            <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+            <span className={`truncate flex-1 ${selected ? "text-primary font-medium" : "text-foreground"}`}>{node.label}</span>
+           </button>
+          );
+         })}
+        </>
+       ) : (
+        <p className="text-xs text-muted-foreground text-center py-8">No templates yet</p>
+       )}
       </div>
      </div>
-     {/* Content */}
-     <div className="flex-1 overflow-y-auto px-2 pb-3">
-      {procPanelTab === "global" ? (
-       <>
-        {/* Procedures folder header */}
-        <div className="flex items-center gap-1.5 py-1.5 px-2 text-sm font-semibold text-foreground">
-         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4 text-primary flex-shrink-0" fill="currentColor" aria-hidden="true">
-          <path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2.1-32.1l112-192z" />
-          <rect x="208" y="328" width="160" height="48" rx="14" fill="#ffffff" />
-         </svg>
-         <span>Procedures</span>
-        </div>
-        {filtered.length === 0 && (
-         <p className="text-xs text-muted-foreground text-center py-4">No matches</p>
-        )}
-        {filtered.map(node => {
-         const selected = row.plannedProcedureId === node.id;
-         return (
-          <button key={node.id} type="button"
-           onClick={() => { selectPlannedProc(row.id, node.id); setProcSearch(""); }}
-           className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors text-sm ${selected ? "bg-primary/10" : "hover:bg-muted"}`}
-           style={{ paddingLeft: "1.75rem" }}
-          >
-           <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-           <span className={`truncate flex-1 ${selected ? "text-primary font-medium" : "text-foreground"}`}>{node.label}</span>
-          </button>
-         );
-        })}
-       </>
-      ) : (
-       <p className="text-xs text-muted-foreground text-center py-8">No templates yet</p>
-      )}
-     </div>
     </div>
-   </div>
+   </>
   );
  })()}
  </div>
