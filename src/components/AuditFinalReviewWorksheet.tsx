@@ -83,7 +83,7 @@ function Cb({ checked, onChange, disabled }: { checked: boolean; onChange: () =>
       type="button"
       onClick={onChange}
       disabled={disabled}
-      className="flex items-center justify-center w-5 h-5 rounded border border-border bg-background hover:border-primary/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+      className="inline-flex items-center justify-center w-5 h-5 rounded border border-border bg-background hover:border-primary/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
       aria-checked={checked}
       role="checkbox"
     >
