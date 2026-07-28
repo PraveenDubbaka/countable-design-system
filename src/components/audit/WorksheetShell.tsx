@@ -71,7 +71,7 @@ export function WorksheetLayout({
  objective,
  standard: _standard,
  children,
- heading,
+ heading: _heading,
  onAdd,
 }: {
  objective: string;
@@ -80,25 +80,8 @@ export function WorksheetLayout({
  heading?: string;
  onAdd?: () => void;
 }) {
- const parts = heading ? heading.split(">").map(p => p.trim()) : [];
  return (
  <div className="flex flex-col h-full">
- {heading && (
- <div className="px-6 py-3 border-b border-border bg-card flex items-center gap-1.5 shrink-0">
- {parts.map((part, i) => (
- <span key={i} className="flex items-center gap-1.5">
- {i > 0 && <span className="text-muted-foreground text-sm select-none">›</span>}
- <span className={`text-sm ${i === parts.length - 1 ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{part}</span>
- </span>
- ))}
- <div className="flex-1" />
- {onAdd && (
- <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={onAdd}>
- <Plus className="h-3 w-3" /> Add
- </Button>
- )}
- </div>
- )}
  
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
