@@ -116,6 +116,7 @@ import {
  generateAuditCompletionChecklist,
  generateEngagementPartnerAuditCompletionChecklist,
  generateAuditorsReportChecklist,
+ generateModifiedOpinionChecklist,
  generateManagementRepresentationsChecklist,
  generateAuditIndependenceChecklist,
  generateAMLComplianceChecklist,
@@ -380,7 +381,8 @@ const buildDefaultAuditChecklists = () => {
  { generator: generate670JournalEntryTestingChecklist, id: "default-audit-rp-670" },
  // Financial Statements
  { generator: generateAuditorsReportChecklist, id: "default-audit-ar" },
- // Completion & Signoffs
+ // Completion & Signoffs — Modified Opinion
+ { generator: generateModifiedOpinionChecklist, id: "default-audit-so-306" },
  { generator: generateAccumulationOfMisstatementsChecklist, id: "default-audit-so-aim" },
  { generator: generateFinalAnalyticalReviewChecklist, id: "default-audit-so-far" },
  { generator: generateSubsequentEventsChecklist, id: "default-audit-subseq" },
@@ -602,7 +604,8 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-rp-670": "default-audit-rp-670",
  // Audit — Financial Statements
  "aud-ar": "default-audit-ar",
- // Audit — Completion & Signoffs
+ // Audit — Completion & Signoffs — Modified Opinion
+ "aud-so-306": "default-audit-so-306",
  "aud-so-aim": "default-audit-so-aim",
  "aud-so-far": "default-audit-so-far",
  "aud-subseq": "default-audit-subseq",
@@ -817,6 +820,7 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
  'default-audit-rp-670': { section: 'RP', code: 'JET', label: 'Use of Journal Entries' },
  // CA Audit — FS
  'default-audit-ar': { section: 'FS', code: 'IAR', label: "Independent Auditor's Report" },
+ 'default-audit-so-306': { section: 'SO', code: '306', label: 'Modified Opinion' },
  // CA Audit — SO
  'default-audit-so-aim': { section: 'SO', code: 'AIM', label: 'Accumulation of Identified Misstatements' },
  'default-audit-so-far': { section: 'SO', code: 'FAR', label: 'Final Analytical Review' },
