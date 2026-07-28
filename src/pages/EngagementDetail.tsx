@@ -763,6 +763,8 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
  'aud-rp-666': 'Related-Party Transactions',
  'aud-rp-670': 'Use of Journal Entries',
  'aud-rp-680': 'ASPE Supplementary Audit Procedures',
+ 'aud-so-sign': 'SO Signoffs',
+ 'aud-so-fr': 'FR Final Review',
 };
 
 // All custom-component worksheet pages (not checklist-based) that support PDF/Word export
