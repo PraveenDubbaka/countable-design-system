@@ -26,6 +26,9 @@ import { Audit325Worksheet } from "@/components/Audit325Worksheet";
 import { Audit330Worksheet } from "@/components/Audit330Worksheet";
 import { Audit335Worksheet } from "@/components/Audit335Worksheet";
 import { Audit340Worksheet } from "@/components/Audit340Worksheet";
+import { Audit370Worksheet } from "@/components/Audit370Worksheet";
+import { Audit375Worksheet } from "@/components/Audit375Worksheet";
+import { AuditAIMWorksheet } from "@/components/AuditAIMWorksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 
@@ -209,6 +212,8 @@ import {
  generateAuditWorksheetFindingsCA,
  generateAuditWorksheetSummaryMisstatementsCA,
  generateAuditWorksheetMattersCommunicatedCA,
+ generateAuditWorksheetFutureConsiderationCA,
+ generateAuditWorksheetDocumentingConsultationCA,
  generateUSJournalEntryTestingLog,
  generateUSRelatedPartyTransactionsWorksheet,
  generateUSGoodwillImpairmentAssessment,
@@ -415,6 +420,8 @@ const buildDefaultAuditChecklists = () => {
  { generator: generateAuditWorksheetFindingsCA, id: "default-audit-so-330" },
  { generator: generateAuditWorksheetSummaryMisstatementsCA, id: "default-audit-so-335" },
  { generator: generateAuditWorksheetMattersCommunicatedCA, id: "default-audit-so-340" },
+ { generator: generateAuditWorksheetFutureConsiderationCA, id: "default-audit-so-370" },
+ { generator: generateAuditWorksheetDocumentingConsultationCA, id: "default-audit-so-375" },
  ];
  return items.map(({ generator, id }) => {
  const data = generator();
@@ -639,6 +646,8 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-so-330": "default-audit-so-330",
  "aud-so-335": "default-audit-so-335",
  "aud-so-340": "default-audit-so-340",
+ "aud-so-370": "default-audit-so-370",
+ "aud-so-375": "default-audit-so-375",
  "aud-so-aim": "default-audit-so-aim",
  "aud-so-far": "default-audit-so-far",
  "aud-subseq": "default-audit-subseq",
@@ -863,6 +872,8 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
  'default-audit-so-330': { section: 'SO', code: '330', label: 'Audit Findings and Matters for Discussion' },
  'default-audit-so-335': { section: 'SO', code: '335', label: 'Summary of Identified Misstatements' },
  'default-audit-so-340': { section: 'SO', code: '340', label: 'Matters to be Communicated to Management and TCWG' },
+ 'default-audit-so-370': { section: 'SO', code: '370', label: 'Matters for Future Consideration' },
+ 'default-audit-so-375': { section: 'SO', code: '375', label: 'Documenting Consultation' },
  // CA Audit — SO
  'default-audit-so-aim': { section: 'SO', code: 'AIM', label: 'Accumulation of Identified Misstatements' },
  'default-audit-so-far': { section: 'SO', code: 'FAR', label: 'Final Analytical Review' },
@@ -2866,6 +2877,12 @@ export default function EngagementDetail() {
  <Audit335Worksheet />
  ) : (checklistKey === 'aud-so-340') ? (
  <Audit340Worksheet />
+ ) : (checklistKey === 'aud-so-370') ? (
+ <Audit370Worksheet />
+ ) : (checklistKey === 'aud-so-375') ? (
+ <Audit375Worksheet />
+ ) : (checklistKey === 'aud-so-aim') ? (
+ <AuditAIMWorksheet />
  ) : checklist ? (
  <div className="p-4 bg-background">
  {/* ASM import banner */}

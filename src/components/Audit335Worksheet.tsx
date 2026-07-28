@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, AlertTriangle, CheckCircle2, Info } from "lucide-react";
+import { Plus, Trash2, AlertTriangle, CheckCircle2, Info, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
@@ -138,6 +138,35 @@ export function Audit335Worksheet() {
 
  const locked = data.concluded;
 
+ // ── Import from 670 Journal Entry Testing ────────────────────────────────────
+ const je670Available = useMemo(() => {
+  const je670 = readJsonFromLocalStorage<{ entries?: { id: string; outcome: string; accounts: string; amount: string; attributes: string; rationale: string }[] }>(
+   `audit-670-data-${engagementId ?? "default"}`, null,
+  );
+  return (je670?.entries ?? []).filter(e => e.outcome === "Misstatement identified");
+ }, [engagementId]);
+
+ const alreadyImportedIds = useMemo(() => new Set(data.rows.map(r => r.id)), [data.rows]);
+
+ function importFrom670() {
+  const newRows = je670Available
+   .filter(e => !alreadyImportedIds.has(`670-${e.id}`))
+   .map(e => ({
+    ...blankRow(0),
+    id: `670-${e.id}`,
+    description: e.accounts || "",
+    circumstances: e.attributes || e.rationale || "Identified during journal entry testing (670)",
+    pretaxIncome: e.amount || "",
+   }));
+  if (newRows.length === 0) return;
+  setData(d => ({
+   ...d,
+   rows: [...d.rows.filter(r => r.description !== "" || r.pretaxIncome !== ""), ...newRows],
+  }));
+ }
+
+ const newToImport = je670Available.filter(e => !alreadyImportedIds.has(`670-${e.id}`)).length;
+
  // ── Auto-calculated totals ──────────────────────────────────────────────────
  const totals = useMemo(() => {
   const sum = (field: keyof Pick<MisstatementRow, "assets"|"liabilities"|"pretaxIncome"|"equity">) => ({
@@ -253,9 +282,17 @@ export function Audit335Worksheet() {
 
    {/* ── Misstatements Table ────────────────────────────────────────────── */}
    <div className={CARD}>
-    <div className="px-5 py-3 border-b border-border">
-     <span className="text-sm font-semibold text-foreground">Identified misstatements</span>
-     <span className="ml-2 text-xs text-muted-foreground">Positive = overstatement · Negative / (brackets) = understatement</span>
+    <div className="px-5 py-3 border-b border-border flex items-center justify-between gap-4 flex-wrap">
+     <div>
+      <span className="text-sm font-semibold text-foreground">Identified misstatements</span>
+      <span className="ml-2 text-xs text-muted-foreground">Positive = overstatement · Negative / (brackets) = understatement</span>
+     </div>
+     {!locked && je670Available.length > 0 && (
+      <Button variant="secondary" size="sm" className="h-7 text-xs gap-1.5 shrink-0" onClick={importFrom670}>
+       <Download className="h-3 w-3" />
+       {newToImport > 0 ? `Import ${newToImport} from JE Testing (670)` : "All JE misstatements imported"}
+      </Button>
+     )}
     </div>
     <div className="overflow-x-auto">
      <table className="w-full min-w-[1100px] border-collapse">
