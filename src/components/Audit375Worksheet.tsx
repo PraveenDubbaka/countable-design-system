@@ -2,24 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Info } from "lucide-react";
+import { Info, Plus, X } from "lucide-react";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
-import { WorksheetLayout, WorksheetHeader, ConcludeBar, type SignOffData } from "@/components/audit/WorksheetShell";
+import { WorksheetLayout, WorksheetHeader, ConcludeBar } from "@/components/audit/WorksheetShell";
 
 type RefField = RefDoc[];
-
-interface SignOff375 extends SignOffData {
-  approvedBy: string;
-  approvedDate: string;
-}
 
 interface Data375 {
   personsConsulted: string;
   engagementLetterDate: string;
   engagementLetterWpRef: RefField;
-  consultationDates: string;
+  consultationDates: string[];
   natureDescription: string;
   natureWpRef: RefField;
   standardsDescription: string;
@@ -28,7 +23,6 @@ interface Data375 {
   workPerformedWpRef: RefField;
   conclusion: string;
   conclusionWpRef: RefField;
-  signOff: SignOff375;
   concluded: boolean;
   concludedOn: string;
 }
@@ -38,7 +32,7 @@ function buildDefault(): Data375 {
     personsConsulted: "",
     engagementLetterDate: "",
     engagementLetterWpRef: [],
-    consultationDates: "",
+    consultationDates: [],
     natureDescription: "",
     natureWpRef: [],
     standardsDescription: "",
@@ -47,14 +41,13 @@ function buildDefault(): Data375 {
     workPerformedWpRef: [],
     conclusion: "",
     conclusionWpRef: [],
-    signOff: { preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "", approvedBy: "", approvedDate: "" },
     concluded: false,
     concludedOn: "",
   };
 }
 
 const CARD = "bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden";
-const SECTION_HEAD = "px-5 py-2.5 bg-foreground text-background text-sm font-semibold uppercase tracking-wider";
+const SECTION_HEAD = "px-5 py-2.5 bg-muted/30 text-foreground text-sm font-semibold border-b border-border";
 const TH = "px-4 py-2.5 text-left text-xs font-semibold text-foreground uppercase tracking-wider border-b border-border";
 const TD = "px-4 py-2.5 text-sm text-foreground border-b border-border align-top";
 
@@ -75,7 +68,7 @@ function Section({ heading, subheading, content, wpRef, locked, placeholder, onC
     <table className="w-full border-collapse">
       <thead>
         <tr>
-          <th className={SECTION_HEAD + " w-auto text-left"}>{heading}{subheading && <span className="block font-normal normal-case tracking-normal text-xs mt-0.5 text-background/70">{subheading}</span>}</th>
+          <th className={SECTION_HEAD + " w-auto text-left"}>{heading}{subheading && <span className="block font-normal normal-case tracking-normal text-xs mt-0.5 text-muted-foreground">{subheading}</span>}</th>
           <th className={SECTION_HEAD + " w-28 text-center"}>W/P Ref.</th>
         </tr>
       </thead>
@@ -206,13 +199,42 @@ export function Audit375Worksheet() {
               <tr className="hover:bg-muted/20">
                 <td className={TD + " font-medium"}>Date(s) of consultation</td>
                 <td className={TD}>
-                  <Input
-                    disabled={locked}
-                    value={data.consultationDates}
-                    onChange={e => upd("consultationDates", e.target.value)}
-                    placeholder="e.g. 2025-03-14, 2025-03-21"
-                    className="h-9 text-sm"
-                  />
+                  <div className="flex flex-col gap-2">
+                    {data.consultationDates.map((date, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Input
+                          disabled={locked}
+                          type="date"
+                          value={date}
+                          onChange={e => {
+                            const updated = [...data.consultationDates];
+                            updated[i] = e.target.value;
+                            upd("consultationDates", updated);
+                          }}
+                          className="h-9 text-sm max-w-[200px]"
+                        />
+                        {!locked && (
+                          <button
+                            type="button"
+                            onClick={() => upd("consultationDates", data.consultationDates.filter((_, j) => j !== i))}
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    {!locked && (
+                      <button
+                        type="button"
+                        onClick={() => upd("consultationDates", [...data.consultationDates, ""])}
+                        className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors w-fit"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        Add Date
+                      </button>
+                    )}
+                  </div>
                 </td>
                 <td className={TD + " w-28"} />
               </tr>
@@ -235,7 +257,7 @@ export function Audit375Worksheet() {
         />
       </div>
 
-      {/* ── Standards & work performed ───────────────────────────────── */}
+      {/* ── Standards ────────────────────────────────────────────────── */}
       <div className={CARD}>
         <Section
           heading="Document the relevant accounting or auditing standards being addressed."
@@ -247,6 +269,10 @@ export function Audit375Worksheet() {
           onAttach={doc => upd("standardsWpRef", [...data.standardsWpRef, doc])}
           onRemove={i => upd("standardsWpRef", data.standardsWpRef.filter((_, i2) => i2 !== i))}
         />
+      </div>
+
+      {/* ── Work performed ───────────────────────────────────────────── */}
+      <div className={CARD}>
         <Section
           heading="Document the work performed, including issues raised, analysis and discussions."
           subheading="Also document possible alternatives for how the transaction/disclosure could have been accounted for."
@@ -272,48 +298,6 @@ export function Audit375Worksheet() {
           onAttach={doc => upd("conclusionWpRef", [...data.conclusionWpRef, doc])}
           onRemove={i => upd("conclusionWpRef", data.conclusionWpRef.filter((_, i2) => i2 !== i))}
         />
-      </div>
-
-      {/* ── Extended sign-off (includes Approved by) ─────────────────── */}
-      <div className={CARD}>
-        <div className="px-5 py-3 border-b border-border">
-          <span className="text-sm font-semibold text-foreground uppercase tracking-wider">Sign-off</span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] border-collapse">
-            <tbody>
-              <tr className="bg-muted/40">
-                <td className={TD + " w-[130px] font-medium"}>Prepared by</td>
-                <td className={TD}>
-                  <Input disabled={locked} value={data.signOff.preparedBy} onChange={e => upd("signOff", { ...data.signOff, preparedBy: e.target.value })} placeholder="Name" className="h-8 text-sm" />
-                </td>
-                <td className={TD + " w-20 font-medium"}>Date</td>
-                <td className={TD}>
-                  <Input disabled={locked} type="date" value={data.signOff.preparedDate} onChange={e => upd("signOff", { ...data.signOff, preparedDate: e.target.value })} className="h-8 text-sm" />
-                </td>
-                <td className={TD + " w-[130px] font-medium"}>Reviewed by</td>
-                <td className={TD}>
-                  <Input disabled={locked} value={data.signOff.reviewedBy} onChange={e => upd("signOff", { ...data.signOff, reviewedBy: e.target.value })} placeholder="Name" className="h-8 text-sm" />
-                </td>
-                <td className={TD + " w-20 font-medium"}>Date</td>
-                <td className={TD}>
-                  <Input disabled={locked} type="date" value={data.signOff.reviewedDate} onChange={e => upd("signOff", { ...data.signOff, reviewedDate: e.target.value })} className="h-8 text-sm" />
-                </td>
-              </tr>
-              <tr>
-                <td className={TD + " font-medium"}>Approved by</td>
-                <td className={TD}>
-                  <Input disabled={locked} value={(data.signOff as SignOff375).approvedBy} onChange={e => upd("signOff", { ...data.signOff, approvedBy: e.target.value })} placeholder="Engagement partner / practitioner" className="h-8 text-sm" />
-                </td>
-                <td className={TD + " font-medium"}>Date</td>
-                <td className={TD}>
-                  <Input disabled={locked} type="date" value={(data.signOff as SignOff375).approvedDate} onChange={e => upd("signOff", { ...data.signOff, approvedDate: e.target.value })} className="h-8 text-sm" />
-                </td>
-                <td colSpan={4} className={TD + " text-xs text-muted-foreground italic"}>Engagement partner / practitioner</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
 
       <ConcludeBar
