@@ -2342,6 +2342,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-so-306", code: "306", label: "Modified Opinion", icon: "checklist", route: "checklist/aud-so-306" },
  { id: "aud-so-310", code: "310", label: "Audit Completion", icon: "checklist", route: "checklist/aud-so-310" },
  { id: "aud-so-311", code: "311", label: "Withdrawal", icon: "worksheet", route: "checklist/aud-so-311" },
+ { id: "aud-so-312", code: "312", label: "Engagement Partner — Audit Completion", icon: "checklist", route: "checklist/aud-so-312" },
+ { id: "aud-so-313", code: "313", label: "Supplementary and Other Information", icon: "checklist", route: "checklist/aud-so-313" },
  { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
  { id: "aud-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist", route: "checklist/aud-disc" },
  { id: "aud-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-ep" },

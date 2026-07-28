@@ -4990,6 +4990,97 @@ export const generateForm310AuditCompletionChecklist = (): Checklist => {
  };
 };
 
+// Checklist — Engagement Partner Audit Completion (312) template
+export const generateForm312EngagementPartnerChecklist = (): Checklist => {
+ const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+ id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+ required: false, answer: '',...(subQuestions? { subQuestions } : {})
+ });
+
+ const sections: Section[] = [
+ {
+  id: 'section-ep312-1',
+  title: '1. Relevant Ethical Requirements, Engagement Acceptance/Continuance',
+  questions: [
+  q('ep312-q1', '<p>Have you made inquiries of the engagement team to ensure that:</p><ul><li>The team understands the relevant ethical requirements, including those related to independence?</li><li>The team maintained their independence throughout the engagement?</li><li>Any potential breaches of ethical requirements, independence, or compliance with laws and regulations were communicated to you?</li><li>Where a potential breach was identified: The threat was evaluated, appropriate actions taken and conclusions documented? Firm policies were adhered to?</li></ul><p><em>CAS 220.17–18</em></p>'),
+  q('ep312-q2', '<p>Were you alert throughout the engagement for breaches of relevant ethical requirements or the firm\'s related policies or procedures by members of the engagement team?</p><p><em>CAS 220.19</em></p>'),
+  q('ep312-q3', '<p>If you or the engagement team became aware of information that may have caused the firm to decline the audit engagement, had that information been known by the firm prior to accepting or continuing the client relationship or specific engagement, did you communicate that information promptly to the firm, so that you and the firm could take necessary action?</p><p><em>CAS 220.24</em></p>'),
+  ],
+  isExpanded: true
+ },
+ {
+  id: 'section-ep312-2',
+  title: '2. Engagement Resources',
+  questions: [
+  q('ep312-q4', '<p>Were sufficient and appropriate staffing, technological and intellectual resources made available to the engagement team?</p><p><em>CAS 220.25</em></p>'),
+  q('ep312-q5', '<p>Did you ensure that the engagement team, including any external resources, had the appropriate competence and capabilities (including sufficient time) to perform the engagement?</p><p><em>CAS 220.26</em></p>'),
+  q('ep312-q6', '<p>Where changes in staffing or timing were necessary, did you take appropriate actions to ensure that additional resources were made available to the team?</p><p><em>CAS 220.27</em></p>'),
+  q('ep312-q7', '<p>Have you utilized the resources assigned or made available to the engagement team appropriately, given the nature and circumstances of the audit engagement?</p><p><em>CAS 220.28</em></p>'),
+  ],
+  isExpanded: true
+ },
+ {
+  id: 'section-ep312-3',
+  title: '3. Engagement Performance',
+  questions: [
+  q('ep312-q8', '<p>When planning and performing the engagement, was information obtained in the engagement acceptance and continuance process taken into account?</p><p><em>CAS 220.23</em></p>'),
+  q('ep312-q9', '<p>Where the results of firm monitoring or external inspections could have affected this engagement, were they taken into consideration when planning and performing the engagement?</p><p><em>CAS 220.39</em></p>'),
+  q('ep312-q10', '<p>Have you created an environment for the engagement that emphasizes the firm\'s culture and expected behaviour of engagement team members by:</p><ul><li>Being sufficiently and appropriately involved in the audit, including planning and the engagement team discussion?</li><li>Emphasizing the following to all engagement team members: Management and achievement of quality on the engagement is each member\'s responsibility; Importance of professional ethics, values and attitudes; Importance of open and robust communication within the team; and Exercising professional skepticism throughout the engagement?</li><li>Supervising, directing and reviewing work of engagement team members who designed or performed procedures?</li></ul><p><em>CAS 220.13–15, 300.5</em></p>'),
+  q('ep312-q11', '<p>Were you sufficiently involved throughout the engagement to ensure that the audit procedures were:</p><ul><li>Planned and performed in accordance with the firm\'s policies and professional standards, and any applicable legal and regulatory requirements?</li><li>Appropriate given the nature and circumstances of the engagement, including significant judgments made and conclusions reached?</li></ul><p><em>CAS 220.30</em></p>'),
+  q('ep312-q12', '<p>Did you perform a timely review of audit evidence at appropriate stages in the audit, including documentation related to:</p><ul><li>Significant matters?</li><li>Significant judgments, including those related to difficult or contentious matters?</li><li>Significant risks and the results of the audit response?</li><li>Other matters that, in your judgment, are relevant to fulfilling your role as the engagement partner?</li><li>The F/S?</li><li>The auditor\'s report?</li><li>Any formal written communications to management/TCWG, including deficiencies in internal control or potential key audit matters, or to regulatory authorities?</li></ul><p><em>CAS 220.31, 33–34</em></p>'),
+  q('ep312-q13', '<p>Did you take responsibility for the engagement team undertaking any consultations on the engagement? If so, have you determined that the:</p><ul><li>Engagement team has undertaken appropriate consultation during the engagement, both within the engagement team, and between the engagement team and others at the appropriate level within or outside the firm;</li><li>Nature and scope of, and conclusions resulting from, such consultations are agreed with the party consulted; and</li><li>Conclusions agreed to have been implemented?</li></ul><p><em>CAS 220.35</em></p>'),
+  q('ep312-q14', '<p>Where differences of opinion arose within the engagement team or between the engagement team and other firm members, were:</p><ul><li>The differences of opinion addressed and resolved in accordance with the firm\'s policies?</li><li>The conclusions reached adequately documented and implemented prior to the date of the audit report?</li></ul><p><em>CAS 220.37–38</em></p>'),
+  ],
+  isExpanded: true
+ },
+ {
+  id: 'section-ep312-4',
+  title: '4. Engagement Quality Review',
+  questions: [
+  q('ep312-q15', '<p>Where an engagement quality review is required, I am satisfied that:</p><ul><li>An engagement quality reviewer (EQR) has been appointed;</li><li>The engagement team and I have cooperated with the EQR;</li><li>Significant matters and significant judgments arising during the audit have been discussed with the EQR; and</li><li>The EQR has been completed before the date of the auditor\'s report.</li></ul><p><em>CAS 220.36</em></p>'),
+  ],
+  isExpanded: true
+ },
+ {
+  id: 'section-ep312-5',
+  title: '5. Overall Evaluation and Conclusions',
+  questions: [
+  q('ep312-q16', '<p><em>Based on my review of audit documentation and discussions with the engagement team, I take ultimate responsibility and am satisfied that:</em></p><p>The audit was conducted in accordance with Canadian Auditing Standards.</p><p><em>CAS 220.9</em></p>'),
+  q('ep312-q17', '<p>I have an understanding of the relevant ethical requirements, including those related to independence, that are applicable given the nature and circumstances of the audit engagement.</p><p><em>CAS 220.16</em></p>'),
+  q('ep312-q18', '<p>Relevant ethical requirements, including those related to independence, have been fulfilled.</p><p><em>Note: If relevant ethical requirements have not been fulfilled, take appropriate action, such as following firm policies, communicating with TCWG and/or regulatory authorities or professional bodies, seeking legal advice, withdrawing from the engagement.</em></p><p><em>CAS 220.20–21</em></p>'),
+  q('ep312-q19', '<p>I have directed and supervised the engagement team and the review of their work.</p><p><em>CAS 220.29</em></p>'),
+  q('ep312-q20', '<p>I have discussed the matters required per CAS 240.16 and 315.17 with the engagement team, and any matters I identified to be communicated to absent engagement team members were communicated.</p><p><em>CAS 240.16, 315.17</em></p>'),
+  q('ep312-q21', '<p>I have reviewed the overall audit strategy and audit plan, including any subsequent changes.</p><p><em>CAS 300.11</em></p>'),
+  q('ep312-q22', '<p>Significant judgments made and conclusions reached by the engagement team are appropriate given the nature and circumstances of the engagement.</p><p><em>CAS 220.40(a)</em></p>'),
+  q('ep312-q23', '<p>The nature and circumstances of the audit engagement, including any changes, and the firm\'s policies or procedures have been taken into account to manage and achieve audit quality.</p><p><em>CAS 220.40(b)</em></p>'),
+  q('ep312-q24', '<p>No restrictions in scope were imposed on us.</p><p><em>Note: The audit opinion must be modified if the audit team is unable to obtain sufficient appropriate audit evidence to conclude that the F/S as a whole are free from material misstatement. See Form 306 if modifying the opinion.</em></p><p><em>CAS 700.17(b)</em></p>'),
+  q('ep312-q25', '<p>The audit evidence obtained is sufficient, appropriate and adequately documented to provide a basis for our audit opinion, including the F/S and disclosures.</p><p><em>CAS 220.32</em></p>'),
+  q('ep312-q26', '<p>The F/S: Fair presentation framework: Are presented fairly, in all material respects, in accordance with the AFRF; or Compliance framework: Are prepared, in all material respects, in accordance with the AFRF.</p><p><em>CAS 700.16, 19</em></p>'),
+  q('ep312-q27', '<p>The auditor\'s report is appropriately worded (see Form 305).</p><p><em>CAS 700</em></p>'),
+  ],
+  isExpanded: true
+ },
+ {
+  id: 'section-ep312-6',
+  title: '6. System of Quality Management',
+  questions: [
+  q('ep312-q28', '<p>I confirm that all of the firm\'s policies and procedures related to the acceptance and continuance, and performance of an audit engagement have been met.</p><p><em>CAS 220.22</em></p>'),
+  ],
+  isExpanded: true
+ },
+ ];
+
+ return {
+ id: 'global-template-form312-engagement-partner',
+ title: 'Engagement Partner — Audit Completion',
+ description: 'Checklist for the engagement partner to confirm satisfaction that the audit was completed in accordance with CASs and the firm\'s SOQM.',
+ objective: 'To document that the engagement partner has completed an evaluation and is satisfied, and takes responsibility for, the conclusion that the audit was completed and documented in accordance with the relevant CASs and the firm\'s SOQM (CAS 220.41).',
+ sections,
+ createdAt: new Date(),
+ updatedAt: new Date(),
+ };
+};
+
 // Checklist — Supplementary and Other Information (313) template
 export const generateSupplementaryInfoChecklist = (): Checklist => {
  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
