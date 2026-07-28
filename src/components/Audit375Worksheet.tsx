@@ -101,9 +101,15 @@ export function Audit375Worksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const ctx = useEngagementContext();
   const storageKey = `audit-375-data-${engagementId ?? "default"}`;
-  const [data, setData] = useState<Data375>(
-    () => readJsonFromLocalStorage<Data375>(storageKey, buildDefault()) ?? buildDefault(),
-  );
+  const [data, setData] = useState<Data375>(() => {
+    const stored = readJsonFromLocalStorage<Data375>(storageKey, buildDefault()) ?? buildDefault();
+    return {
+      ...stored,
+      consultationDates: Array.isArray(stored.consultationDates)
+        ? stored.consultationDates
+        : stored.consultationDates ? [stored.consultationDates as unknown as string] : [],
+    };
+  });
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const first = useRef(true);
