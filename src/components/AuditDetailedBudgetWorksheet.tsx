@@ -6,11 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
- useTimeEntries, ROLE_LABELS,
- type RoleKey,
-} from '@/lib/useTimeEntries';
+import { useTimeEntries, ROLE_LABELS, type RoleKey } from '@/lib/useTimeEntries';
 
 interface AuditDetailedBudgetWorksheetProps {
  isUS?: boolean;

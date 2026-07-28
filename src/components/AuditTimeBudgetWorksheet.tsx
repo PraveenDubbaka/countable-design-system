@@ -5,11 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
- useTimeEntries, ROLE_TO_TB_ROW, ROLE_LABELS,
- type RoleKey, type TimeEntry,
-} from '@/lib/useTimeEntries';
+import { useTimeEntries, ROLE_TO_TB_ROW, ROLE_LABELS, type RoleKey, type TimeEntry } from '@/lib/useTimeEntries';
 
 interface BudgetRow { id: string; label: string; priorHrs: string; priorDollar: string; budgetHrs: string; budgetDollar: string; }
 
