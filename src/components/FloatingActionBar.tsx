@@ -417,14 +417,23 @@ export function FloatingActionBar({
  >
  {/* Select All — checklists only, when onSelectAll handler provided */}
  {isChecklist && onSelectAll && (
- <button
+ <div
+ role="button"
+ tabIndex={0}
  onClick={(e) => {
  e.stopPropagation();
  const allSelected = totalQuestions > 0 && selectedQuestions.size === totalQuestions;
  onSelectAll(!allSelected);
  }}
+ onKeyDown={(e) => {
+ if (e.key === 'Enter' || e.key === ' ') {
+ e.preventDefault();
+ const allSelected = totalQuestions > 0 && selectedQuestions.size === totalQuestions;
+ onSelectAll(!allSelected);
+ }
+ }}
  onMouseDown={(e) => e.stopPropagation()}
- className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group"
+ className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted transition-colors group cursor-pointer"
  title={selectedQuestions.size === totalQuestions && totalQuestions > 0 ? "Deselect all" : "Select all"}
  >
  <Checkbox
@@ -435,7 +444,7 @@ export function FloatingActionBar({
  }
  className="h-4 w-4 pointer-events-none"
  />
- </button>
+ </div>
  )}
 
  {/* Smart Layout - Hidden in preview mode and non-checklists */}
