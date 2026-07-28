@@ -31,6 +31,7 @@ interface MisstatementRow {
 interface EvalItem {
  psc: "Y" | "N" | "NA" | "";
  response: string;
+ wpRef: RefField;
 }
 
 interface Data335 {
@@ -62,7 +63,7 @@ function blankRow(idx: number): MisstatementRow {
  };
 }
 
-function blankEval(): EvalItem { return { psc: "", response: "" }; }
+function blankEval(): EvalItem { return { psc: "", response: "", wpRef: [] }; }
 
 function parseAmt(s: string): number {
  if (!s.trim()) return 0;
@@ -401,6 +402,7 @@ export function Audit335Worksheet() {
         <th className={TH + " w-[42%]"}>Evaluation of misstatements</th>
         <th className={TH + " w-[90px] text-center"}>PSC?</th>
         <th className={TH}>Document the response and any difficulties encountered</th>
+        <th className={TH + " w-24 text-center"}>W/P Ref.</th>
        </tr>
       </thead>
       <tbody>
@@ -434,6 +436,14 @@ export function Audit335Worksheet() {
             onChange={e => setEval(key, { response: e.target.value })}
             placeholder="Document response and any difficulties encountered…"
             className="min-h-[72px] text-sm resize-none" />
+          </td>
+          <td className={TD + " w-24 text-center"}>
+           <RefButton
+            reference={evalData.wpRef}
+            onAttach={doc => setEval(key, { wpRef: [...evalData.wpRef, doc] })}
+            onRemove={i => setEval(key, { wpRef: evalData.wpRef.filter((_, i2) => i2 !== i) })}
+            disabled={locked}
+           />
           </td>
          </tr>
         );
