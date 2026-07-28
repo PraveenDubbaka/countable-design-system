@@ -651,7 +651,11 @@ export function Audit590Worksheet() {
  </tr>
  </thead>
  <tbody>
- {data.rows.map((r, i) => {
+ {[...data.rows].sort((a, b) => {
+   const order = ALL_PROCEDURE_NODES.map(n => n.lsCode);
+   const ai = order.indexOf(a.lsCode); const bi = order.indexOf(b.lsCode);
+   return (ai === -1 ? order.length : ai) - (bi === -1 ? order.length : bi);
+ }).map((r, i) => {
  const cls = classifyRow(r);
  return (
  <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
