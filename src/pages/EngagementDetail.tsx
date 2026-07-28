@@ -20,6 +20,7 @@ import { BulkRequestsWorksheet } from "@/components/BulkRequestsWorksheet";
 import { AuditTeamPlanningWorksheet } from "@/components/AuditTeamPlanningWorksheet";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
+import { Audit311Worksheet } from "@/components/Audit311Worksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 
@@ -2820,6 +2821,8 @@ export default function EngagementDetail() {
  <Audit670Worksheet />
  ) : (checklistKey === 'aud-rp-680') ? (
  <Audit680Worksheet />
+ ) : (checklistKey === 'aud-so-311') ? (
+ <Audit311Worksheet />
  ) : checklist ? (
  <div className="p-4 bg-background">
  {/* ASM import banner */}
