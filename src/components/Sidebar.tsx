@@ -2349,8 +2349,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-so-340", code: "340", label: "Mgmt & TCWG Matters", icon: "worksheet", route: "checklist/aud-so-340" },
  { id: "aud-so-370", code: "370", label: "Future Considerations", icon: "worksheet", route: "checklist/aud-so-370" },
  { id: "aud-so-375", code: "375", label: "Consultation", icon: "worksheet", route: "checklist/aud-so-375" },
- { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
- { id: "aud-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist", route: "checklist/aud-disc" },
+ { id: "aud-comp", code: "CM", label: "Completion", icon: "completion", route: "checklist/aud-comp" },
+ { id: "aud-disc", code: "DC", label: "Disclosure", icon: "checklist", route: "checklist/aud-disc" },
  { id: "aud-so-sign", code: "SO", label: "Signoffs", icon: "completion" },
  { id: "aud-so-fr", code: "FR", label: "Final Review", icon: "completion" },
  ]
