@@ -234,7 +234,7 @@ export function Audit375Worksheet() {
                       <button
                         type="button"
                         onClick={() => upd("consultationDates", [...data.consultationDates, ""])}
-                        className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors w-fit"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-border bg-background hover:bg-muted text-foreground transition-colors w-fit"
                       >
                         <Plus className="h-3.5 w-3.5" />
                         Add Date
