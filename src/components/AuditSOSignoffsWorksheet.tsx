@@ -319,7 +319,6 @@ export function AuditSOSignoffsWorksheet() {
   return (
     <WorksheetLayout
       heading="Canada > Completion & Signoffs"
-      objective="File completion signoffs — confirm all working papers have been reviewed and all items are complete before issuing the auditor's report."
       standard="CAS 220"
     >
       <WorksheetHeader

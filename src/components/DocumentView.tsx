@@ -1765,8 +1765,8 @@ function DocumentQuestionBlock({
  {/* Sub-questions */}
  {question.subQuestions && question.subQuestions.length > 0 &&
  <div className="dv-sub-questions mt-0 mb-0 relative">
- <SortableContext items={question.subQuestions.map((sq) => sq.id)} strategy={verticalListSortingStrategy}>
- {question.subQuestions.map((sub, si) =>
+ <SortableContext items={question.subQuestions.filter(Boolean).map((sq) => sq.id)} strategy={verticalListSortingStrategy}>
+ {question.subQuestions.filter(Boolean).map((sub, si) =>
  <DocumentQuestionBlock
  key={sub.id}
  question={sub}

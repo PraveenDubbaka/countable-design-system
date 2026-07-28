@@ -1333,6 +1333,10 @@ export default function EngagementDetail() {
 .map((c: any) => {
  const def = defaultById.get(c?.id);
  if (!def) return c;
+ // If section IDs diverge from the default, the schema changed — always use the fresh default.
+ const storedFirstSectionId = c?.data?.sections?.[0]?.id;
+ const defaultFirstSectionId = def?.data?.sections?.[0]?.id;
+ if (storedFirstSectionId && defaultFirstSectionId && storedFirstSectionId !== defaultFirstSectionId) return def;
  // Preserve entries that have user-filled answers (e.g. Luka autofill)
  const hasAnswers = c?.data?.sections?.some((s: any) =>
  s?.questions?.some((q: any) => q?.answer && q.answer !== '')

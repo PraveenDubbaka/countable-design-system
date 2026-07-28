@@ -27,6 +27,7 @@ interface FinalReviewData {
   teamChecks: { [rowKey: string]: { [memberKey: string]: boolean } };
   clientSignoffDate: string;
   clientSignoffNote: string;
+  engLetterDate: string;
   finalSignoffs: { [memberKey: string]: MemberFinalSignoff };
   packagerName: string;
   packagerInstructions: string;
@@ -40,6 +41,7 @@ function buildDefault(): FinalReviewData {
     teamChecks: {},
     clientSignoffDate: "",
     clientSignoffNote: "",
+    engLetterDate: "",
     finalSignoffs: {},
     packagerName: "",
     packagerInstructions: "",
@@ -134,7 +136,7 @@ export function AuditFinalReviewWorksheet() {
   }
 
   function signAllMember(mKey: string) {
-    const SECTION_KEYS = ["pl", "ra", "rp", "tb", "pr", "issues", "comments", "docs-req", "completion", "client-signoff"];
+    const SECTION_KEYS = ["co-checklist", "pl", "ra", "rp", "tb", "pr", "issues", "comments", "docs-req", "completion", "client-signoff"];
     setData(d => {
       const next = { ...d.teamChecks };
       SECTION_KEYS.forEach(k => {
@@ -163,7 +165,6 @@ export function AuditFinalReviewWorksheet() {
   return (
     <WorksheetLayout
       heading="Canada > Completion & Signoffs"
-      objective="Final review of the audit engagement — confirm all sections are complete, obtain final signoff, and prepare the engagement package for archiving."
       standard="CAS 220"
     >
       <WorksheetHeader
@@ -286,28 +287,45 @@ export function AuditFinalReviewWorksheet() {
               ))}
             </tr>
 
-            {/* Client Onboarding — sub-items */}
-            <tr className="border-b border-border">
-              <td className={SEC_HEAD} colSpan={2 + team.length}>Client Onboarding Checklist</td>
+            {/* Client Onboarding — single row, sub-items in first cell */}
+            <tr className="border-b border-border hover:bg-muted/5">
+              <td className={TD + " align-top"}>
+                <div className="font-medium text-sm mb-2">Client Onboarding Checklist</div>
+                <div className="space-y-1.5 pl-1">
+                  {([
+                    { key: "co-acc-cont",     label: "Client acceptance and continuance" },
+                    { key: "co-independence", label: "Independence" },
+                    { key: "co-knowledge",    label: "Knowledge of client business" },
+                    { key: "co-planning",     label: "Planning" },
+                    { key: "co-eng-letter",   label: "Engagement Letter" },
+                  ] as { key: string; label: string }[]).map(item => (
+                    <div key={item.key} className="flex items-center gap-2">
+                      <Cb checked={!!data.checks[item.key]} onChange={() => toggleCheck(item.key)} />
+                      <span className="text-xs text-muted-foreground">{item.label}</span>
+                      {item.key === "co-eng-letter" && (
+                        <Input
+                          type="date"
+                          value={data.engLetterDate}
+                          onChange={e => upd("engLetterDate", e.target.value)}
+                          className="h-6 text-xs w-32 ml-1"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </td>
+              <td className={TD + " text-center align-top pt-3"}>
+                <Cb checked={!!data.checks["co-section"]} onChange={() => toggleCheck("co-section")} />
+              </td>
+              {team.map(m => (
+                <td key={m.role} className={TD + " text-center align-top pt-3"}>
+                  <Cb
+                    checked={!!(data.teamChecks["co-checklist"]?.[memberKey(m.role)])}
+                    onChange={() => toggleTeamCheck("co-checklist", memberKey(m.role))}
+                  />
+                </td>
+              ))}
             </tr>
-            {[
-              { key: "co-new-accept", label: "New engagement acceptance" },
-              { key: "co-exist-cont", label: "Existing engagement continuance" },
-              { key: "co-eng-letter", label: "Engagement Letter" },
-            ].map(item => (
-              <tr key={item.key} className="border-b border-border/50 hover:bg-muted/5">
-                <td className={TD + " pl-8"}>
-                  <div className="flex items-center gap-2">
-                    <Cb checked={!!data.checks[item.key]} onChange={() => toggleCheck(item.key)} />
-                    <span>{item.label}</span>
-                  </div>
-                </td>
-                <td className={TD + " text-center"}>
-                  {data.checks[item.key] && <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />}
-                </td>
-                {team.map(m => <td key={m.role} className={TD} />)}
-              </tr>
-            ))}
 
             {/* Section rows with per-member checkboxes */}
             {[
