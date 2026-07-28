@@ -14,7 +14,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds } from "@/lib/lsMapping";
+import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -47,7 +47,7 @@ interface CotabdRow {
  procedures: string[];
  wpRef: RefDoc[];
  lsCode: string;
- plannedProcedureIds: string[];
+ plannedProcedureId: string;
 }
 
 interface StandbackItem {
@@ -149,7 +149,7 @@ function emptyRow(fsa = ""): CotabdRow {
  risk520Ref: "", inherentRisk: "", significantRisk: "", controlRisk: "",
  assertions: emptyAssertions(),
  auditResponse: "", procedures: [], wpRef: [],
- lsCode: "", plannedProcedureIds: [],
+ lsCode: "", plannedProcedureId: "",
  };
 }
 
@@ -164,7 +164,7 @@ function rowFromFsa(f: FsaBalance): CotabdRow {
  row.controlRisk = "H"; // not tested by default per CAS
  const ls = getLsInfo(f.fsa);
  row.lsCode = ls?.lsCode ?? "";
- row.plannedProcedureIds = ls && f.amount > 0 ? [ls.wpNodeId] : [];
+ row.plannedProcedureId = ls && f.amount > 0 ? (getGcaProcIdForWp(ls.wpNodeId) || "") : "";
  if (f.assertionsX) {
  for (const a of f.assertionsX) {
  row.assertions[a] = { marker: "X", rmm: f.inherentRisk };
@@ -209,7 +209,7 @@ function normalize(saved: any): Data590 {
  assertions: {...emptyAssertions(),...(r?.assertions ?? {}) },
  wpRef: Array.isArray(r?.wpRef) ? r.wpRef : [],
  lsCode: r?.lsCode ?? getLsInfo(r?.fsa ?? "")?.lsCode ?? "",
- plannedProcedureIds: Array.isArray(r?.plannedProcedureIds) ? r.plannedProcedureIds : [],
+ plannedProcedureId: typeof r?.plannedProcedureId === "string" ? r.plannedProcedureId : (Array.isArray(r?.plannedProcedureIds) && r.plannedProcedureIds[0] ? getGcaProcIdForWp(r.plannedProcedureIds[0]) : ""),
  }));
  merged.standback = {
  a: { done: !!saved?.standback?.a?.done, notes: saved?.standback?.a?.notes ?? "" },
@@ -379,45 +379,48 @@ export function Audit590Worksheet() {
  const [mapProcsRowId, setMapProcsRowId] = useState<string | null>(null);
  const prevActiveProcIdsRef = useRef<string>("");
 
- // Backfill plannedProcedureIds for existing material rows that don't have any yet
+ // Backfill plannedProcedureId for existing material rows that don't have one yet
  useEffect(() => {
  setData(d => {
  let changed = false;
  const rows = d.rows.map(row => {
- if ((row.plannedProcedureIds ?? []).length > 0 || row.material !== "Y" || !row.lsCode) return row;
+ if (row.plannedProcedureId || row.material !== "Y" || !row.lsCode) return row;
  const lsInfo = ALL_PROCEDURE_NODES.find(n => n.lsCode === row.lsCode);
  if (!lsInfo) return row;
+ const gcaId = getGcaProcIdForWp(lsInfo.wpNodeId);
+ if (!gcaId) return row;
  changed = true;
- return { ...row, plannedProcedureIds: [lsInfo.wpNodeId] };
+ return { ...row, plannedProcedureId: gcaId };
  });
  return changed ? { ...d, rows } : d;
  });
  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
- // Sync active procedure IDs to localStorage so Sidebar can filter dynamically
+ // Sync active procedure IDs (mapped to aud-wp-*) to localStorage so Sidebar can filter
  useEffect(() => {
  if (!engagementId) return;
- const activeIds = [...new Set(data.rows.flatMap(r => r.plannedProcedureIds ?? []))].sort();
+ const activeIds = [...new Set(
+ data.rows
+ .map(r => r.plannedProcedureId)
+ .filter(Boolean)
+ .map(gcaId => getAudWpIdForProc(gcaId))
+ .filter(Boolean)
+ )].sort();
  const serialized = activeIds.join(",");
  if (serialized === prevActiveProcIdsRef.current) return;
  prevActiveProcIdsRef.current = serialized;
  setActiveProcedureIds(engagementId, activeIds);
  }, [data.rows, engagementId]);
 
- function togglePlannedProc(rowId: string, wpNodeId: string) {
+ function selectPlannedProc(rowId: string, procId: string) {
  setData(d => ({
  ...d,
- rows: d.rows.map(r => {
- if (r.id !== rowId) return r;
- const has = r.plannedProcedureIds.includes(wpNodeId);
- return {
+ rows: d.rows.map(r => r.id !== rowId ? r : {
  ...r,
- plannedProcedureIds: has
- ? r.plannedProcedureIds.filter(id => id !== wpNodeId)
- : [...r.plannedProcedureIds, wpNodeId],
- };
+ plannedProcedureId: r.plannedProcedureId === procId ? "" : procId,
  }),
  }));
+ if (procId) setMapProcsRowId(null);
  }
 
  function updateProcedure590(id: string, i: number, val: string) {
@@ -442,11 +445,12 @@ export function Audit590Worksheet() {
  if ("fsa" in patch && patch.fsa !== r.fsa) {
  updated.lsCode = getLsInfo(updated.fsa)?.lsCode ?? r.lsCode;
  }
- // Auto-add the default procedure worksheet when a row first becomes material
- if (patch.material === "Y" && updated.lsCode) {
+ // Auto-set the default procedure worksheet when a row first becomes material
+ if (patch.material === "Y" && updated.lsCode && !updated.plannedProcedureId) {
  const lsInfo = ALL_PROCEDURE_NODES.find(n => n.lsCode === updated.lsCode);
- if (lsInfo && !updated.plannedProcedureIds.includes(lsInfo.wpNodeId)) {
- updated.plannedProcedureIds = [...updated.plannedProcedureIds, lsInfo.wpNodeId];
+ if (lsInfo) {
+ const gcaId = getGcaProcIdForWp(lsInfo.wpNodeId);
+ if (gcaId) updated.plannedProcedureId = gcaId;
  }
  }
  return updated;
@@ -749,30 +753,26 @@ export function Audit590Worksheet() {
      {/* Planned Procedures */}
      <td className="px-3 py-2 align-top">
       <div className="flex flex-col gap-1 min-h-[40px]">
-       {r.plannedProcedureIds.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-         {r.plannedProcedureIds.map(nodeId => {
-          const node = ALL_PROCEDURE_NODES.find(n => n.wpNodeId === nodeId);
-          if (!node) return null;
-          return (
-           <span key={nodeId} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-mono font-semibold text-primary">
-            {node.lsCode}
-            {!locked && (
-             <button type="button" onClick={() => togglePlannedProc(r.id, nodeId)} className="hover:text-destructive ml-0.5">
-              <X className="h-2.5 w-2.5" />
-             </button>
-            )}
-           </span>
-          );
-         })}
-        </div>
-       )}
+       {r.plannedProcedureId && (() => {
+        const node = CA_GLOBAL_PROC_NODES.find(n => n.id === r.plannedProcedureId);
+        if (!node) return null;
+        return (
+         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-medium text-primary max-w-[150px]">
+          <span className="truncate">{node.label}</span>
+          {!locked && (
+           <button type="button" onClick={() => selectPlannedProc(r.id, "")} className="hover:text-destructive ml-0.5 shrink-0">
+            <X className="h-2.5 w-2.5" />
+           </button>
+          )}
+         </span>
+        );
+       })()}
        {!locked && (
         <button type="button" onClick={() => setMapProcsRowId(r.id)} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors w-fit">
          Map Procedures
         </button>
        )}
-       {locked && r.plannedProcedureIds.length === 0 && (
+       {locked && !r.plannedProcedureId && (
         <span className="text-xs text-muted-foreground italic">None</span>
        )}
       </div>
@@ -948,18 +948,17 @@ export function Audit590Worksheet() {
      </div>
      {/* Procedure list */}
      <div className="flex-1 overflow-y-auto p-3 space-y-0.5">
-      {ALL_PROCEDURE_NODES.map(node => {
-       const checked = row.plannedProcedureIds.includes(node.wpNodeId);
+      {CA_GLOBAL_PROC_NODES.map(node => {
+       const selected = row.plannedProcedureId === node.id;
        return (
-        <label key={node.wpNodeId} className="flex items-center gap-3 py-2.5 px-3 rounded-md cursor-pointer hover:bg-muted/50 transition-colors">
-         <input type="checkbox" checked={checked} onChange={() => togglePlannedProc(row.id, node.wpNodeId)} className="h-4 w-4 rounded" />
-         <div className="flex items-center gap-2 min-w-0">
-          <span className="shrink-0 inline-block w-8 text-center font-mono text-[11px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
-           {node.lsCode}
-          </span>
-          <span className="text-sm text-foreground truncate">{node.wpLabel}</span>
+        <button key={node.id} type="button"
+         onClick={() => selectPlannedProc(row.id, node.id)}
+         className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-md text-left transition-colors ${selected ? "bg-primary/10" : "hover:bg-muted/50"}`}>
+         <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 ${selected ? "border-primary" : "border-border"}`}>
+          {selected && <div className="h-2 w-2 rounded-full bg-primary" />}
          </div>
-        </label>
+         <span className={`text-sm truncate ${selected ? "text-primary font-medium" : "text-foreground"}`}>{node.label}</span>
+        </button>
        );
       })}
      </div>

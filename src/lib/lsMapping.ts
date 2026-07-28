@@ -4,6 +4,43 @@ export interface LsInfo {
   wpLabel: string;
 }
 
+export interface CAProcNode {
+  id: string;       // gca-ws-proc-* ID (global template)
+  label: string;    // display label
+  audWpId: string;  // corresponding aud-wp-* for sidebar filtering
+}
+
+export const CA_GLOBAL_PROC_NODES: CAProcNode[] = [
+  { id: "gca-ws-proc-cash-grp",  label: "Cash",                              audWpId: "aud-wp-a"  },
+  { id: "gca-ws-proc-ar-grp",    label: "Accounts Receivable",               audWpId: "aud-wp-b"  },
+  { id: "gca-ws-proc-inv",       label: "Inventory",                         audWpId: "aud-wp-c"  },
+  { id: "gca-ws-proc-invest",    label: "Investments",                        audWpId: "aud-wp-d"  },
+  { id: "gca-ws-proc-lr",        label: "Loans & Advances Receivable",        audWpId: "aud-wp-e"  },
+  { id: "gca-ws-proc-rp",        label: "Related party",                      audWpId: ""          },
+  { id: "gca-ws-proc-ppe",       label: "Property, Plant and Equipment",      audWpId: "aud-wp-h"  },
+  { id: "gca-ws-proc-intang",    label: "Intangibles and Goodwill",           audWpId: ""          },
+  { id: "gca-ws-proc-ltinv",     label: "Other Investments",                  audWpId: "aud-wp-k"  },
+  { id: "gca-ws-proc-bankdebt",  label: "Bank indebtedness",                  audWpId: "aud-wp-dd" },
+  { id: "gca-ws-proc-ap",        label: "Accounts Payable and Accrued Liab.", audWpId: "aud-wp-bb" },
+  { id: "gca-ws-proc-tax",       label: "Income Taxes",                       audWpId: "aud-wp-cc" },
+  { id: "gca-ws-proc-notedebt",  label: "Note Payable and Bank Debt",         audWpId: "aud-wp-kk" },
+  { id: "gca-ws-proc-lp",        label: "Loans & Advances Payable",           audWpId: "aud-wp-jj" },
+  { id: "gca-ws-proc-ltd",       label: "Long term debt",                     audWpId: "aud-wp-kk" },
+  { id: "gca-ws-proc-equity",    label: "Equity",                             audWpId: "aud-wp-tt" },
+  { id: "gca-ws-proc-rev",       label: "Revenue",                            audWpId: "aud-wp-20" },
+  { id: "gca-ws-proc-cos",       label: "Cost of Sales",                      audWpId: "aud-wp-30" },
+  { id: "gca-ws-proc-payroll",   label: "Payroll",                            audWpId: "aud-wp-40" },
+  { id: "gca-ws-proc-exp",       label: "Other Expenses",                     audWpId: "aud-wp-80" },
+];
+
+export function getGcaProcIdForWp(audWpId: string): string {
+  return CA_GLOBAL_PROC_NODES.find(n => n.audWpId === audWpId)?.id ?? "";
+}
+
+export function getAudWpIdForProc(gcaProcId: string): string {
+  return CA_GLOBAL_PROC_NODES.find(n => n.id === gcaProcId)?.audWpId ?? "";
+}
+
 export const ALL_PROCEDURE_NODES: LsInfo[] = [
   { lsCode: "A",  wpNodeId: "aud-wp-a",  wpLabel: "Cash and cash equivalents" },
   { lsCode: "B",  wpNodeId: "aud-wp-b",  wpLabel: "Accounts receivable" },
