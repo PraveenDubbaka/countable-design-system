@@ -391,45 +391,52 @@ export function Audit335Worksheet() {
 
    {/* ── Evaluation of Misstatements ──────────────────────────────────── */}
    <div className={CARD}>
-    <div className="px-5 py-3.5 border-b border-border">
-     <span className="text-sm font-semibold text-foreground uppercase tracking-wider">Evaluation of misstatements</span>
-    </div>
-    <div className="divide-y divide-border">
-     {EVAL_ITEMS.map((item, i) => {
-      const key = `eval${i + 1}` as "eval1"|"eval2"|"eval3"|"eval4";
-      const evalData = data[key];
-      return (
-       <div key={key} className="grid grid-cols-[1fr_110px_1fr] gap-0">
-        <div className="px-5 py-4 text-sm text-foreground">
-         <span className="font-semibold">{item.num}</span>{" "}{item.text}
-        </div>
-        <div className="border-x border-border px-4 py-4 flex flex-col items-center justify-center gap-1.5">
-         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">PSC?</span>
-         <Select disabled={locked} value={evalData.psc}
-          onValueChange={v => setEval(key, { psc: v as EvalItem["psc"] })}>
-          <SelectTrigger className={cn(
-           "text-sm h-9 w-20",
-           evalData.psc === "Y" && "border-green-400 text-green-700 dark:text-green-400",
-           evalData.psc === "N" && "border-destructive text-destructive",
-          )}>
-           <SelectValue placeholder="—" />
-          </SelectTrigger>
-          <SelectContent>
-           <SelectItem value="Y">Y</SelectItem>
-           <SelectItem value="N">N</SelectItem>
-           <SelectItem value="NA">N/A</SelectItem>
-          </SelectContent>
-         </Select>
-        </div>
-        <div className="px-5 py-4">
-         <Textarea disabled={locked} value={evalData.response}
-          onChange={e => setEval(key, { response: e.target.value })}
-          placeholder="Document response and any difficulties encountered…"
-          className="min-h-[72px] text-sm resize-none" />
-        </div>
-       </div>
-      );
-     })}
+    <div className="overflow-x-auto">
+     <table className="w-full border-collapse">
+      <thead>
+       <tr className="bg-muted">
+        <th className={TH + " w-[42%]"}>Procedure</th>
+        <th className={TH + " w-[90px] text-center"}>PSC?</th>
+        <th className={TH}>Document the response and any difficulties encountered</th>
+       </tr>
+      </thead>
+      <tbody>
+       {EVAL_ITEMS.map((item, i) => {
+        const key = `eval${i + 1}` as "eval1"|"eval2"|"eval3"|"eval4";
+        const evalData = data[key];
+        return (
+         <tr key={key} className="hover:bg-muted/20">
+          <td className={TD + " w-[42%]"}>
+           <span className="font-medium">{item.num}</span>{" "}{item.text}
+          </td>
+          <td className={TD + " w-[90px] text-center"}>
+           <Select disabled={locked} value={evalData.psc}
+            onValueChange={v => setEval(key, { psc: v as EvalItem["psc"] })}>
+            <SelectTrigger className={cn(
+             "text-sm h-9 w-20 mx-auto",
+             evalData.psc === "Y" && "border-green-400 text-green-700 dark:text-green-400",
+             evalData.psc === "N" && "border-destructive text-destructive",
+            )}>
+             <SelectValue placeholder="—" />
+            </SelectTrigger>
+            <SelectContent>
+             <SelectItem value="Y">Y</SelectItem>
+             <SelectItem value="N">N</SelectItem>
+             <SelectItem value="NA">N/A</SelectItem>
+            </SelectContent>
+           </Select>
+          </td>
+          <td className={TD}>
+           <Textarea disabled={locked} value={evalData.response}
+            onChange={e => setEval(key, { response: e.target.value })}
+            placeholder="Document response and any difficulties encountered…"
+            className="min-h-[72px] text-sm resize-none" />
+          </td>
+         </tr>
+        );
+       })}
+      </tbody>
+     </table>
     </div>
    </div>
 
