@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Plus, Trash2, BookOpen, X, Search, FileText } from "lucide-react";
+import { Info, Plus, Trash2, BookOpen, X, Search, FileText, ChevronRight } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
@@ -380,6 +380,7 @@ export function Audit590Worksheet() {
  const [procPanelTab, setProcPanelTab] = useState<"my" | "global">("global");
  const [procSearch, setProcSearch] = useState("");
  const [procPanelClosing, setProcPanelClosing] = useState(false);
+ const [expandedProcFolders, setExpandedProcFolders] = useState<Set<string>>(new Set());
  const prevActiveProcIdsRef = useRef<string>("");
 
  // Backfill plannedProcedureId for existing material rows that don't have one yet
@@ -947,9 +948,15 @@ export function Audit590Worksheet() {
   const row = data.rows.find(r => r.id === mapProcsRowId);
   if (!row) return null;
   const allProcItems = getGlobalProcedureItems();
-  const filtered = allProcItems.filter(n =>
-   !procSearch.trim() || n.name.toLowerCase().includes(procSearch.toLowerCase())
-  );
+  const searchQ = procSearch.trim().toLowerCase();
+  // When searching, flatten all items (including folder children) and filter by name
+  const flattenItems = (items: typeof allProcItems): typeof allProcItems =>
+   items.flatMap(n => n.type === "folder" && n.children ? [n, ...flattenItems(n.children)] : [n]);
+  const searchMatches = (items: typeof allProcItems): boolean =>
+   items.some(n => n.name.toLowerCase().includes(searchQ) || (n.children ? searchMatches(n.children) : false));
+  const filtered = searchQ
+   ? flattenItems(allProcItems).filter(n => n.name.toLowerCase().includes(searchQ))
+   : allProcItems;
   return (
    <>
     <style>{`
@@ -1008,11 +1015,12 @@ export function Audit590Worksheet() {
          {filtered.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-4">No matches</p>
          )}
-         {filtered.map(node => {
+         {/* When searching: flat filtered list; otherwise: tree with expand/collapse */}
+         {searchQ ? filtered.map(node => {
           const selected = row.plannedProcedureId === node.id;
           return (
            <button key={node.id} type="button"
-            onClick={() => selectPlannedProc(row.id, node.id)}
+            onClick={() => node.type !== "folder" && selectPlannedProc(row.id, node.id)}
             className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors text-sm ${selected ? "bg-primary/10" : "hover:bg-muted"}`}
             style={{ paddingLeft: "1.75rem" }}
            >
@@ -1026,6 +1034,54 @@ export function Audit590Worksheet() {
             )}
             <span className={`truncate flex-1 ${selected ? "text-primary font-medium" : node.type === "folder" ? "text-foreground font-semibold" : "text-foreground"}`}>{node.name}</span>
            </button>
+          );
+         }) : filtered.map(node => {
+          const isFolder = node.type === "folder";
+          const isExpanded = expandedProcFolders.has(node.id);
+          const selected = row.plannedProcedureId === node.id;
+          return (
+           <div key={node.id}>
+            {isFolder ? (
+             <button type="button"
+              onClick={() => setExpandedProcFolders(prev => {
+               const next = new Set(prev);
+               next.has(node.id) ? next.delete(node.id) : next.add(node.id);
+               return next;
+              })}
+              className="w-full flex items-center gap-1.5 py-1.5 px-2 rounded-md text-left transition-colors text-sm hover:bg-muted"
+              style={{ paddingLeft: "1.25rem" }}
+             >
+              <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground flex-shrink-0 transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-3.5 w-3.5 text-primary flex-shrink-0" fill="currentColor" aria-hidden="true">
+               <path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2.1-32.1l112-192z" />
+               <rect x="208" y="328" width="160" height="48" rx="14" fill="#ffffff" />
+              </svg>
+              <span className="truncate flex-1 text-foreground font-semibold">{node.name}</span>
+             </button>
+            ) : (
+             <button type="button"
+              onClick={() => selectPlannedProc(row.id, node.id)}
+              className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors text-sm ${selected ? "bg-primary/10" : "hover:bg-muted"}`}
+              style={{ paddingLeft: "1.75rem" }}
+             >
+              <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+              <span className={`truncate flex-1 ${selected ? "text-primary font-medium" : "text-foreground"}`}>{node.name}</span>
+             </button>
+            )}
+            {isFolder && isExpanded && node.children && node.children.map(child => {
+             const childSelected = row.plannedProcedureId === child.id;
+             return (
+              <button key={child.id} type="button"
+               onClick={() => selectPlannedProc(row.id, child.id)}
+               className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors text-sm ${childSelected ? "bg-primary/10" : "hover:bg-muted"}`}
+               style={{ paddingLeft: "2.75rem" }}
+              >
+               <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+               <span className={`truncate flex-1 ${childSelected ? "text-primary font-medium" : "text-foreground"}`}>{child.name}</span>
+              </button>
+             );
+            })}
+           </div>
           );
          })}
         </>
