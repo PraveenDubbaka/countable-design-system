@@ -21,6 +21,9 @@ import { AuditTeamPlanningWorksheet } from "@/components/AuditTeamPlanningWorksh
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
 import { Audit311Worksheet } from "@/components/Audit311Worksheet";
+import { Audit320Worksheet } from "@/components/Audit320Worksheet";
+import { Audit325Worksheet } from "@/components/Audit325Worksheet";
+import { Audit330Worksheet } from "@/components/Audit330Worksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 
@@ -199,6 +202,9 @@ import {
  generateAuditWorksheetDocumentingConsultationUS,
  generateAuditWorksheetWithdrawalUS,
  generateAuditWorksheetWithdrawalCA,
+ generateAuditWorksheetSignificantDecisionsCA,
+ generateAuditWorksheetKeyAuditMattersCA,
+ generateAuditWorksheetFindingsCA,
  generateUSJournalEntryTestingLog,
  generateUSRelatedPartyTransactionsWorksheet,
  generateUSGoodwillImpairmentAssessment,
@@ -400,6 +406,9 @@ const buildDefaultAuditChecklists = () => {
  { generator: generateAuditCompletionChecklist, id: "default-audit-comp" },
  { generator: generateEngagementPartnerAuditCompletionChecklist, id: "default-audit-ep" },
  { generator: generateAuditWorksheetWithdrawalCA, id: "default-audit-so-311" },
+ { generator: generateAuditWorksheetSignificantDecisionsCA, id: "default-audit-so-320" },
+ { generator: generateAuditWorksheetKeyAuditMattersCA, id: "default-audit-so-325" },
+ { generator: generateAuditWorksheetFindingsCA, id: "default-audit-so-330" },
  ];
  return items.map(({ generator, id }) => {
  const data = generator();
@@ -619,6 +628,9 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-so-311": "default-audit-so-311",
  "aud-so-312": "default-audit-so-312",
  "aud-so-313": "default-audit-so-313",
+ "aud-so-320": "default-audit-so-320",
+ "aud-so-325": "default-audit-so-325",
+ "aud-so-330": "default-audit-so-330",
  "aud-so-aim": "default-audit-so-aim",
  "aud-so-far": "default-audit-so-far",
  "aud-subseq": "default-audit-subseq",
@@ -838,6 +850,9 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
  'default-audit-so-311': { section: 'SO', code: '311', label: 'Withdrawal' },
  'default-audit-so-312': { section: 'SO', code: '312', label: 'Engagement Partner — Audit Completion' },
  'default-audit-so-313': { section: 'SO', code: '313', label: 'Supplementary and Other Information' },
+ 'default-audit-so-320': { section: 'SO', code: '320', label: 'Notes on Significant Audit Decisions' },
+ 'default-audit-so-325': { section: 'SO', code: '325', label: 'Key Audit Matters' },
+ 'default-audit-so-330': { section: 'SO', code: '330', label: 'Audit Findings and Matters for Discussion' },
  // CA Audit — SO
  'default-audit-so-aim': { section: 'SO', code: 'AIM', label: 'Accumulation of Identified Misstatements' },
  'default-audit-so-far': { section: 'SO', code: 'FAR', label: 'Final Analytical Review' },
@@ -2831,6 +2846,12 @@ export default function EngagementDetail() {
  <Audit680Worksheet />
  ) : (checklistKey === 'aud-so-311') ? (
  <Audit311Worksheet />
+ ) : (checklistKey === 'aud-so-320') ? (
+ <Audit320Worksheet />
+ ) : (checklistKey === 'aud-so-325') ? (
+ <Audit325Worksheet />
+ ) : (checklistKey === 'aud-so-330') ? (
+ <Audit330Worksheet />
  ) : checklist ? (
  <div className="p-4 bg-background">
  {/* ASM import banner */}
