@@ -2347,6 +2347,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-so-320", code: "320", label: "Notes on Significant Audit Decisions", icon: "worksheet", route: "checklist/aud-so-320" },
  { id: "aud-so-325", code: "325", label: "Key Audit Matters", icon: "worksheet", route: "checklist/aud-so-325" },
  { id: "aud-so-330", code: "330", label: "Audit Findings and Matters for Discussion", icon: "worksheet", route: "checklist/aud-so-330" },
+ { id: "aud-so-335", code: "335", label: "Summary of Identified Misstatements", icon: "worksheet", route: "checklist/aud-so-335" },
  { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
  { id: "aud-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist", route: "checklist/aud-disc" },
  { id: "aud-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-ep" },

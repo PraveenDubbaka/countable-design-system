@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
@@ -206,13 +207,9 @@ export function Audit320Worksheet() {
     </div>
     {!locked && (
      <div className="px-4 py-3 border-t border-border">
-      <button
-       onClick={addRow}
-       className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-       <Plus className="h-4 w-4" />
-       Add Row
-      </button>
+      <Button variant="secondary" size="sm" className="h-7 text-xs gap-1" onClick={addRow}>
+       <Plus className="h-3 w-3" /> Add Row
+      </Button>
      </div>
     )}
    </div>
