@@ -4805,6 +4805,191 @@ export const generateModifiedOpinionChecklist = (): Checklist => {
  };
 };
 
+// Checklist — Audit Completion (310) template
+export const generateForm310AuditCompletionChecklist = (): Checklist => {
+ const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+ id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+ required: false, answer: '',...(subQuestions? { subQuestions } : {})
+ });
+
+ const sections: Section[] = [
+ {
+ id: 'section-ac310-1',
+ title: '1. Preliminary Activities',
+ questions: [
+ q('ac310-q1', '<p>Does the audit file contain appropriate documentation related to relevant ethical requirements, and acceptance and continuance of the audit engagement?</p>'),
+ q('ac310-q2', '<p>Are the terms of engagement agreed with management, and is a signed engagement letter included in the audit file?</p>'),
+ q('ac310-q3', '<p>If applicable, is the agreement with the auditor\'s expert signed and included in the audit file?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-2',
+ title: '2. Planning and Risk Assessment',
+ questions: [
+ q('ac310-q4', '<p>Have the overall audit strategy and audit plan been documented, reflecting matters raised in audit team discussions?</p>'),
+ q('ac310-q5', '<p>Have overall materiality, performance materiality, materiality for specific circumstances (if applicable), clearly trivial misstatement threshold and the factors in determining their amounts been documented?</p><p><em>Note: This includes any qualitative disclosures that could be material.</em></p>'),
+ q('ac310-q6', '<p>Have all the planned risk assessment procedures been performed and results documented, including the understanding of:</p><ul><li>The entity and its environment, the AFRF and how inherent risk factors affect susceptibility of assertions to misstatement?</li><li>The entity\'s control environment?</li><li>The entity\'s risk assessment process?</li><li>The entity\'s process for monitoring the system of internal control?</li><li>The entity\'s information system and communication?</li></ul><p><em>Note: Documentation must include the understanding of the entity and its environment, and internal control related to accounting estimates.</em></p>'),
+ q('ac310-q7', '<p>Have the following been documented:</p><ul><li>Engagement team discussion, including decisions reached regarding fraud?</li><li>If applicable, rebuttal of presumed fraud risk related to revenue recognition?</li><li>The assessment of RMMs (due to fraud and error) identified at the F/S level and at the assertion level?</li><li>The D&amp;I (and OE where applicable) of controls, including controls that address RMMs due to fraud?</li><li>The rationale for significant judgments made?</li></ul>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-3',
+ title: '3. Responding to Risk',
+ questions: [
+ q('ac310-q8', '<p>Have the planned further audit procedures been performed and the results documented, including:</p><ul><li>The overall responses to the RMMs, including fraud, at the F/S level?</li><li>The linkage between the overall responses to the RMMs, including fraud, at the assertion level?</li><li>The nature, timing and extent of further procedures performed, including those designed to address the risk of management override of controls and significant risks?</li><li>The linkage of the further audit procedures to the RMMs at the assertion level?</li><li>Unpredictable procedures addressing fraud risks?</li><li>Procedures addressing identified or suspected non-compliance with laws and regulations, including significant professional judgments and conclusions reached?</li><li>Response(s) if management has not taken appropriate steps to understand and address estimation uncertainty?</li><li>Evaluation of the implications of any indicators of possible management bias related to accounting estimates?</li><li>Significant judgments made relating to whether accounting estimates and related disclosures are reasonable?</li><li>How any inconsistencies regarding a significant matter were addressed?</li><li>The reasoning for departures from CAS requirements and how alternative procedures performed achieved the required objective?</li></ul><p><em>Note: If confirmed that, or unable to conclude whether, the F/S are materially misstated as a result of fraud, evaluate the implications for the audit.</em></p>'),
+ q('ac310-q9', '<p>Where deviations were found in substantive (sampling) tests, was:</p>', [
+ q('ac310-q9a', '<p>The nature and cause investigated?</p>'),
+ q('ac310-q9b', '<p>Their possible effect on other areas of the audit evaluated?</p>'),
+ ]),
+ q('ac310-q10', '<p>If audit evidence about the operating effectiveness of controls obtained in previous audits was used in the current period audit, are the conclusions reached about relying on those controls documented?</p>'),
+ q('ac310-q11', '<p>Have all identified related parties and the nature of their relationships been documented?</p>'),
+ q('ac310-q12', '<p>If fraud was identified or suspected, has it been determined whether law, regulation or relevant ethical requirements:</p>', [
+ q('ac310-q12a', '<p>Require reporting to an appropriate authority outside the entity?</p>'),
+ q('ac310-q12b', '<p>Establish responsibilities under which reporting to an appropriate authority outside the entity may be appropriate in the circumstances?</p>'),
+ ]),
+ q('ac310-q13', '<p>Have any consultations and their conclusions been documented?</p>'),
+ q('ac310-q14', '<p>If internal audit provided assistance or its work was used, have requirements per CAS 610.36–37 been documented?</p>'),
+ q('ac310-q15', '<p>If the comparative information had possible material misstatements, were additional audit procedures performed to confirm/deny their existence?</p><p><em>Note: If the prior period F/S were also audited by the firm, follow the relevant requirements of CAS 560.14–17. If the prior period F/S are amended, determine that the comparative information in the current period F/S agrees with the amended prior period F/S.</em></p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-4',
+ title: '4. Communications with Those Charged with Governance, Management and Others',
+ questions: [
+ q('ac310-q16', '<p>Have the following been communicated to management, TCWG, regulators and others:</p>', [
+ q('ac310-q16a', '<p>Identified or indications of fraud?</p>'),
+ q('ac310-q16b', '<p>Identified or suspected non-compliance with laws and regulations?</p>'),
+ q('ac310-q16c', '<p>Other significant audit matters?</p>'),
+ ]),
+ q('ac310-q17', '<p>Have the following been communicated to management:</p>', [
+ q('ac310-q17a', '<p>Significant deficiencies in internal control (in writing; consider using the sample audit findings letter AL3.3)?</p>'),
+ q('ac310-q17b', '<p>Other deficiencies in internal control?</p>'),
+ q('ac310-q17c', '<p>Identified misstatements that management has been asked to correct (other than those clearly trivial), including those in F/S disclosures?</p>'),
+ ]),
+ q('ac310-q18', '<p><strong>Those Charged with Governance Only</strong> — Have copies of the following communications with TCWG been included in the audit file?</p><p><em>Note: For matters communicated orally, document when and to whom they were communicated. For matters communicated in writing, include a copy in the audit file.</em></p>'),
+ q('ac310-q19', '<p>Planning — Have the following been communicated to TCWG:</p>', [
+ q('ac310-q19a', '<p>The planned scope and timing of the audit, including significant risks identified?</p>'),
+ q('ac310-q19b', '<p>A description of the audit team\'s responsibilities?</p>'),
+ q('ac310-q19c', '<p>The form, timing and expected general content of communications?</p>'),
+ q('ac310-q19d', '<p>Relevant ethical requirements (including independence) applied?</p>'),
+ ]),
+ q('ac310-q20', '<p>Internal control — Have significant deficiencies in internal control been communicated to TCWG in writing?</p>'),
+ q('ac310-q21', '<p>Audit results — Have the following been communicated to TCWG:</p>', [
+ q('ac310-q21a', '<p>Views about significant qualitative aspects of accounting practices and, when applicable, why an acceptable significant accounting practice is not the most appropriate for the entity?</p>'),
+ q('ac310-q21b', '<p>Significant difficulties encountered during the audit?</p>'),
+ q('ac310-q21c', '<p>Any circumstances that affect the form and content of the auditor\'s report?</p>'),
+ q('ac310-q21d', '<p>Any other significant matters relevant to the oversight of the financial reporting process?</p>'),
+ q('ac310-q21e', '<p>Misstatements not corrected by management — have TCWG been informed of their effect on the audit opinion, requested to correct them, and informed of the effect of uncorrected prior period misstatements?</p>'),
+ q('ac310-q21f', '<p>Unless all TCWG are involved in managing the entity: significant matters arising during the audit that were discussed with management, and have written representations been requested?</p>'),
+ ]),
+ q('ac310-q22', '<p>Has there been timely and adequate two-way communication? If not, were the reasons evaluated and appropriate action taken?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-5',
+ title: '5. Subsequent Changes',
+ questions: [
+ q('ac310-q23', '<p>Changes made to the original audit strategy and plan — Have the reasons for any significant changes made to the original audit strategy been documented?</p>'),
+ q('ac310-q24', '<p>Changes in RMMs — Have the RMMs been updated based on new information obtained since the original assessment, including when misstatements that were not expected are detected at an interim date?</p>'),
+ q('ac310-q25', '<p>Revisions to materiality — Have any revisions to overall materiality, performance materiality and materiality for specific circumstances (if applicable) been documented?</p>'),
+ q('ac310-q26', '<p>Limitation of scope — After the engagement was accepted and management imposed a limitation on the scope of the audit that is likely to result in a qualified or disclaimer of opinion, was a request made that management remove the limitation?</p><p><em>Note: If management refuses to remove the limitation, refer to CAS 705.12–14 for guidance on the implications on the audit, including performing alternative procedures (if possible), modifying the audit opinion or withdrawing from the audit.</em></p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-6',
+ title: '6. Overall Evaluation',
+ questions: [
+ q('ac310-q27', '<p>Have working papers been signed off and dated by the preparer and reviewer, prepared on a timely basis, and do they include appropriate details about the procedures performed, results, findings and conclusions reached?</p>'),
+ q('ac310-q28', '<p>For any inconsistencies identified when performing the final analytical procedures, were inquiries made and evidence obtained to explain them?</p>'),
+ q('ac310-q29', '<p>Based on the audit procedures performed and audit evidence obtained:</p>', [
+ q('ac310-q29a', '<p>Are the risk assessments still appropriate, including when management bias has been identified?</p>'),
+ q('ac310-q29b', '<p>Are management\'s decisions relating to recognition, measurement, presentation and disclosure (including accounting estimates) in accordance with the AFRF?</p>'),
+ q('ac310-q29c', '<p>Has sufficient appropriate evidence been obtained to form an opinion on whether the F/S are prepared, in all material respects, in accordance with the AFRF, taking into account all relevant evidence (whether corroborative or contradictory)?</p>'),
+ q('ac310-q29d', '<p>Is the going concern basis of accounting appropriate and supported by sufficient appropriate audit evidence?</p>'),
+ q('ac310-q29e', '<p>Did the engagement team remain alert throughout the audit for evidence of events or conditions that could affect the entity\'s ability to continue as a going concern?</p>'),
+ ]),
+ q('ac310-q30', '<p>Do the F/S, including disclosures, agree with or reconcile to the underlying accounting records?</p>'),
+ q('ac310-q31', '<p>In forming an audit opinion as to whether the F/S are prepared, in all material respects, in accordance with the AFRF, is/are the:</p>', [
+ q('ac310-q31a', '<p>AFRF adequately referred to or described?</p>'),
+ q('ac310-q31b', '<p>Entity\'s accounting practices, including management\'s judgments, free from any indicators of possible management bias?</p>'),
+ q('ac310-q31c', '<p>Significant accounting policies appropriately disclosed?</p>'),
+ q('ac310-q31d', '<p>Accounting policies consistent with the AFRF and appropriate?</p>'),
+ q('ac310-q31e', '<p>Accounting estimates and related disclosures reasonable?</p>'),
+ q('ac310-q31f', '<p>Information presented in the F/S relevant, reliable, comparable and understandable?</p>'),
+ q('ac310-q31g', '<p>Disclosures adequate to enable the intended users to understand the effect of material transactions and events on the information conveyed in the F/S?</p>'),
+ q('ac310-q31h', '<p>Terminology used in the F/S, including title of each F/S, appropriate?</p>'),
+ q('ac310-q31i', '<p>Identified related party relationships and transactions appropriately accounted for and disclosed?</p>'),
+ ]),
+ q('ac310-q32', '<p>If the answer is "No" to any of the questions in procedure 30 above and the F/S are materially misstated, or sufficient appropriate audit evidence cannot be obtained to conclude that the F/S are not materially misstated, has the audit opinion been modified in accordance with CAS 705?</p><p><em>Note: Use Form 306 when modifying the audit opinion.</em></p>'),
+ q('ac310-q33', '<p>If the F/S are prepared in accordance with a fair presentation framework but do not achieve fair presentation, has the matter been discussed with management and resolved? If not resolved, has a determination been made whether it is necessary to modify the audit opinion?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-7',
+ title: '7. Reporting',
+ questions: [
+ q('ac310-q34', '<p>Identified misstatements — Have the following been documented:</p>', [
+ q('ac310-q34a', '<p>All misstatements accumulated during the audit, and whether they have been corrected?</p>'),
+ q('ac310-q34b', '<p>The conclusion as to whether uncorrected misstatements are material, individually or in aggregate, and the basis for that conclusion?</p>'),
+ ]),
+ q('ac310-q35', '<p>Subsequent events — Have subsequent events procedures been performed up to the report date and any events that may require adjustment of, or disclosure in, the F/S been identified and addressed?</p>'),
+ q('ac310-q36', '<p>If there is a significant delay in the approval of the F/S by management or TCWG after the date of the F/S:</p>', [
+ q('ac310-q36a', '<p>Have inquiries been made with management or TCWG regarding the reasons for the delay?</p>'),
+ q('ac310-q36b', '<p>Has Form 625 been completed if the delay is believed to be related to events or conditions relating to the going concern assessment?</p>'),
+ ]),
+ q('ac310-q37', '<p>Is a signed management representation letter (dated on or before date of audit report) included in the audit file?</p>'),
+ q('ac310-q38', '<p>Where applicable, was the engagement quality review completed and the approval evidenced in the file (signed off) on or before the audit report was dated?</p>'),
+ q('ac310-q39', '<p>Has Form 305 been completed to ensure the form and content of the auditor\'s report are appropriate?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-8',
+ title: '8. Audit Procedures After the Audit Report Date',
+ questions: [
+ q('ac310-q40', '<p>If, in exceptional circumstances, new or additional audit procedures were performed or new conclusions drawn after the date of the auditor\'s report, have the following been documented:</p>', [
+ q('ac310-q40a', '<p>The circumstances encountered?</p>'),
+ q('ac310-q40b', '<p>The new or additional audit procedures performed, audit evidence obtained, and conclusions reached, and their effect on the auditor\'s report?</p>'),
+ q('ac310-q40c', '<p>When and by whom the resulting changes to audit documentation were made and reviewed?</p>'),
+ ]),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-9',
+ title: '9. File Assembly and Archival',
+ questions: [
+ q('ac310-q41', '<p>Has all audit documentation been assembled in the audit file on a timely basis after the date of the auditor\'s report (usually not more than 60 days after)?</p><p><em>Note: Ensure that audit documentation is not deleted or discarded before the end of the retention period. If it becomes necessary to modify existing audit documentation or add new audit documentation after assembly of the final audit file has been completed, document: the specific reasons for making them; and when and by whom they were made and reviewed.</em></p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-ac310-10',
+ title: '10. System of Quality Management',
+ questions: [
+ q('ac310-q42', '<p>Have all firm policies and procedures related to the performance of an audit engagement been met and completed?</p>'),
+ ],
+ isExpanded: true
+ },
+ ];
+
+ return {
+ id: 'global-template-form310-audit-completion',
+ title: 'Audit Completion',
+ description: 'Checklist to determine if CAS requirements have been fulfilled before issuing the auditor\'s report.',
+ objective: 'To determine if the CAS requirements have been fulfilled before issuing the auditor\'s report.',
+ sections,
+ createdAt: new Date(),
+ updatedAt: new Date(),
+ };
+};
+
 // Checklist — Supplementary and Other Information (313) template
 export const generateSupplementaryInfoChecklist = (): Checklist => {
  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
