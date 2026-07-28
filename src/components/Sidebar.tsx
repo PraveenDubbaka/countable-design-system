@@ -2335,9 +2335,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-rp-650", code: "650", label: "Subsequent Events", icon: "worksheet", route: "checklist/aud-rp-650" },
  { id: "aud-rp-655", code: "655", label: "Final Analytics", icon: "worksheet", route: "checklist/aud-rp-655" },
  { id: "aud-so-aim", code: "AIM", label: "Misstatements", icon: "completion", route: "checklist/aud-so-aim" },
- { id: "aud-wgc-final", code: "GC", label: "Going Concern — Final", icon: "checklist", route: "checklist/aud-wgc-final" },
  { id: "aud-mr", code: "314", label: "Mgmt Representations", icon: "checklist", route: "checklist/aud-mr" },
- { id: "aud-tcwg-fin", code: "TCWG", label: "Governance Comms", icon: "letter", route: "checklist/aud-tcwg-fin" },
  { id: "aud-fs-iar", code: "305", label: "Auditor's Report", icon: "checklist", route: "checklist/aud-ar" },
  { id: "aud-so-306", code: "306", label: "Modified Opinion", icon: "checklist", route: "checklist/aud-so-306" },
  { id: "aud-so-310", code: "310", label: "Audit Completion", icon: "checklist", route: "checklist/aud-so-310" },
@@ -2351,12 +2349,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-so-340", code: "340", label: "Mgmt & TCWG Matters", icon: "worksheet", route: "checklist/aud-so-340" },
  { id: "aud-so-370", code: "370", label: "Future Considerations", icon: "worksheet", route: "checklist/aud-so-370" },
  { id: "aud-so-375", code: "375", label: "Consultation", icon: "worksheet", route: "checklist/aud-so-375" },
- { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
- { id: "aud-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist", route: "checklist/aud-disc" },
- { id: "aud-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-ep" },
- { id: "aud-so-sign", code: "SO", label: "Signoffs", icon: "completion" },
- { id: "aud-so-fr", code: "FR", label: "Final Review", icon: "completion" },
- { id: "aud-so-alf", code: "ALF", label: "Archive & Lock File", icon: "completion" },
  ]
  },
  ];
