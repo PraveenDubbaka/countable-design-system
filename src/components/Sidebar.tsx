@@ -2336,7 +2336,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-rp-655", code: "655", label: "Final Analytics", icon: "worksheet", route: "checklist/aud-rp-655" },
  { id: "aud-so-aim", code: "AIM", label: "Misstatements", icon: "checklist", route: "checklist/aud-so-aim" },
  { id: "aud-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-wgc-final" },
- { id: "aud-mr", code: "MR", label: "Management Representation Letter", icon: "checklist", route: "checklist/aud-mr" },
+ { id: "aud-mr", code: "314", label: "Management Representations", icon: "checklist", route: "checklist/aud-mr" },
  { id: "aud-tcwg-fin", code: "TCWG", label: "Governance Comms", icon: "letter", route: "checklist/aud-tcwg-fin" },
  { id: "aud-fs-iar", code: "305", label: "Independent Auditor's Report", icon: "checklist", route: "checklist/aud-ar" },
  { id: "aud-so-306", code: "306", label: "Modified Opinion", icon: "checklist", route: "checklist/aud-so-306" },
