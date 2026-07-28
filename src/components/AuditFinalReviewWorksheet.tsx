@@ -108,9 +108,10 @@ export function AuditFinalReviewWorksheet() {
   const engRec = loadEngagements().find(e => e.id === (engagementId ?? "")) ?? null;
   const team = ctx.team;
 
-  const [data, setData] = useState<FinalReviewData>(
-    () => readJsonFromLocalStorage<FinalReviewData>(storageKey, buildDefault()) ?? buildDefault()
-  );
+  const [data, setData] = useState<FinalReviewData>(() => {
+    const stored = readJsonFromLocalStorage<FinalReviewData>(storageKey, buildDefault());
+    return stored ? { ...buildDefault(), ...stored } : buildDefault();
+  });
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const first = useRef(true);
