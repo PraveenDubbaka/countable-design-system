@@ -4,12 +4,13 @@ import { CheckSquare, Square, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CURRENT_USER } from "@/lib/useTimeEntries";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetLayout, WorksheetHeader } from "@/components/audit/WorksheetShell";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
-import { getEngagementMeta } from "@/store/engagementsStore";
+import { loadEngagements } from "@/store/engagementsStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -43,7 +44,24 @@ function buildDefault(): FinalReviewData {
   };
 }
 
-// ── Simple checkbox component ─────────────────────────────────────────────────
+// ── Team roles ────────────────────────────────────────────────────────────────
+
+const ROLE_CONFIG = [
+  { key: "preparer", label: "Preparer",            roleMatch: "Senior Auditor",     color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"     },
+  { key: "partner",  label: "Partner",              roleMatch: "Engagement Partner", color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300" },
+  { key: "qcr",      label: "Quality Reviewer",     roleMatch: "EQCR",              color: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" },
+  { key: "admin",    label: "Admin / Tax Reviewer", roleMatch: "Manager",            color: "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300"     },
+];
+
+function initials(name: string): string {
+  return name.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+}
+
+function getTeamMember(team: { role: string; name: string }[], roleMatch: string): string {
+  return team.find(m => m.role.includes(roleMatch))?.name ?? roleMatch;
+}
+
+// ── Simple checkbox for checklist sub-items ───────────────────────────────────
 
 function Cb({ checked, onChange, disabled }: { checked: boolean; onChange: () => void; disabled?: boolean }) {
   return (
@@ -66,19 +84,73 @@ const TH = "px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground up
 const TD = "px-4 py-2.5 text-sm text-foreground border-b border-border";
 const SEC_HEAD = "px-4 py-2 bg-muted/30 border-b border-border text-sm font-semibold text-foreground";
 
-interface StatusBadge {
-  label: string;
-  variant: "resolved" | "completed" | "pending";
+// ── Multi-role team cell ──────────────────────────────────────────────────────
+
+interface MultiRoleCellProps {
+  sectionKey: string;
+  checks: CheckState;
+  toggle: (key: string) => void;
+  team: { role: string; name: string }[];
+  showSignoffBtn?: boolean;
+  onSignoff?: () => void;
 }
 
-function Badge({ label, variant }: StatusBadge) {
-  const cls =
-    variant === "resolved"
-      ? "bg-green-50 text-green-700 border border-green-200"
-      : variant === "completed"
-      ? "bg-blue-50 text-blue-700 border border-blue-200"
-      : "bg-amber-50 text-amber-700 border border-amber-200";
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${cls}`}>{label}</span>;
+function MultiRoleCell({ sectionKey, checks, toggle, team, showSignoffBtn, onSignoff }: MultiRoleCellProps) {
+  const signedCount = ROLE_CONFIG.filter(r => checks[`${sectionKey}-${r.key}`]).length;
+  const allDone = signedCount === ROLE_CONFIG.length;
+
+  return (
+    <div className="space-y-0.5">
+      {showSignoffBtn && (
+        <div className="mb-1.5">
+          <Button
+            size="sm"
+            variant={allDone ? "outline" : "default"}
+            onClick={onSignoff}
+            className={allDone ? "border-green-400 text-green-700 hover:bg-green-50 dark:text-green-400 dark:border-green-600" : ""}
+          >
+            {allDone && <CheckCircle2 className="h-4 w-4" />}
+            {allDone ? "Signed off" : "Signoff section"}
+          </Button>
+        </div>
+      )}
+      <div className="divide-y divide-border/40">
+        {ROLE_CONFIG.map(role => {
+          const memberName = getTeamMember(team, role.roleMatch);
+          const signed = checks[`${sectionKey}-${role.key}`] ?? false;
+          return (
+            <div key={role.key} className="flex items-center gap-2 py-1">
+              <span className={`h-6 w-6 rounded-full text-[10px] font-semibold flex-shrink-0 inline-flex items-center justify-center ${role.color}`}>
+                {initials(memberName)}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-medium text-foreground leading-tight truncate">{memberName}</div>
+                <div className="text-[10px] text-muted-foreground leading-tight">{role.label}</div>
+              </div>
+              {signed ? (
+                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+              ) : (
+                <Button
+                  size="sm"
+                  className="h-6 px-2 text-[11px] flex-shrink-0"
+                  onClick={() => toggle(`${sectionKey}-${role.key}`)}
+                >
+                  Sign Off
+                </Button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SectionDoneIndicator({ sectionKey, checks }: { sectionKey: string; checks: CheckState }) {
+  const signedCount = ROLE_CONFIG.filter(r => checks[`${sectionKey}-${r.key}`]).length;
+  if (signedCount === ROLE_CONFIG.length) return <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />;
+  if (signedCount > 0) return <span className="text-[11px] font-semibold text-primary">{signedCount}/{ROLE_CONFIG.length}</span>;
+  return null;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -87,7 +159,8 @@ export function AuditFinalReviewWorksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const ctx = useEngagementContext();
   const storageKey = `audit-fr-final-review-${engagementId ?? "default"}`;
-  const meta = getEngagementMeta(engagementId ?? "");
+
+  const engRec = loadEngagements().find(e => e.id === (engagementId ?? "")) ?? null;
 
   const [data, setData] = useState<FinalReviewData>(
     () => readJsonFromLocalStorage<FinalReviewData>(storageKey, buildDefault()) ?? buildDefault()
@@ -109,16 +182,23 @@ export function AuditFinalReviewWorksheet() {
     setData(d => ({ ...d, checks: { ...d.checks, [key]: !d.checks[key] } }));
   }
 
+  function signSection(sectionKey: string) {
+    setData(d => {
+      const next = { ...d.checks };
+      ROLE_CONFIG.forEach(r => { next[`${sectionKey}-${r.key}`] = true; });
+      return { ...d, checks: next };
+    });
+  }
+
   function signAll() {
-    const all: CheckState = {};
-    [
-      "co", "pl", "ra", "rp", "do", "tb",
-      "pr-assets", "pr-liab", "pr-equity", "pr-rev", "pr-exp",
-      "fs", "so-aim", "so-se",
-      "issues", "comments", "docs-req", "completion",
-      "client-signoff",
-    ].forEach(k => { all[k] = true; });
-    setData(d => ({ ...d, checks: all }));
+    setData(d => {
+      const next = { ...d.checks };
+      const sections = ["pl", "ra", "rp", "tb", "pr", "issues", "comments", "docs-req", "completion", "client-signoff"];
+      sections.forEach(s => {
+        ROLE_CONFIG.forEach(r => { next[`${s}-${r.key}`] = true; });
+      });
+      return { ...d, checks: next };
+    });
   }
 
   function performFinalSignoff() {
@@ -152,18 +232,22 @@ export function AuditFinalReviewWorksheet() {
                 <td className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase border-b border-border bg-muted/10 w-[160px]">Engagement ID</td>
                 <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{engagementId ?? "—"}</td>
                 <td className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase border-b border-border bg-muted/10 w-[140px]">Engagement Type</td>
-                <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{meta.type}</td>
+                <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{engRec?.type ?? "—"}</td>
                 <td className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase border-b border-border bg-muted/10 w-[160px]">Accounting Standards</td>
                 <td className="px-4 py-3 text-sm text-foreground border-b border-border">Canadian Auditing Standards (CAS)</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase bg-muted/10 border-b border-border">Year End Date</td>
-                <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{meta.yearEnd}</td>
+                <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{engRec?.yearEnd ?? ctx.periodEndDisplay ?? "—"}</td>
                 <td className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase bg-muted/10 border-b border-border">Legal Entity Name</td>
-                <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{meta.client}</td>
+                <td className="px-4 py-3 text-sm text-foreground border-b border-border border-r border-border/40">{engRec?.client ?? ctx.entityName ?? "—"}</td>
                 <td className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase bg-muted/10 border-b border-border">Engagement Status</td>
-                <td className="px-4 py-3 text-sm text-foreground border-b border-border">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">{meta.status}</span>
+                <td className="px-4 py-3 border-b border-border">
+                  {engRec ? (
+                    <Badge variant={engRec.statusVariant as Parameters<typeof Badge>[0]["variant"]}>{engRec.status}</Badge>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">—</span>
+                  )}
                 </td>
               </tr>
             </tbody>
@@ -176,15 +260,26 @@ export function AuditFinalReviewWorksheet() {
         <div className="bg-card border border-border rounded-md overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]">
           <div className={SEC_HEAD}>Client Team Info</div>
           <div className="px-4 py-3 text-sm text-foreground">
-            <div className="font-semibold">{meta.client}</div>
+            <div className="font-semibold">{engRec?.client ?? ctx.entityName ?? "—"}</div>
             <div className="text-muted-foreground text-xs mt-0.5">Client</div>
           </div>
         </div>
         <div className="bg-card border border-border rounded-md overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.06)]">
           <div className={SEC_HEAD}>Team Info</div>
-          <div className="px-4 py-3 text-sm text-foreground">
-            <div className="font-semibold">{meta.team || "View Assignees"}</div>
-            <div className="text-muted-foreground text-xs mt-0.5">Engagement Team</div>
+          <div className="px-4 py-3 space-y-1.5">
+            {ctx.team.length > 0 ? ctx.team.map(member => (
+              <div key={member.role} className="flex items-center gap-2">
+                <span className="h-6 w-6 rounded-full bg-primary/10 text-[10px] font-semibold inline-flex items-center justify-center text-primary flex-shrink-0">
+                  {initials(member.name)}
+                </span>
+                <div>
+                  <div className="text-xs font-medium text-foreground leading-tight">{member.name}</div>
+                  <div className="text-[10px] text-muted-foreground leading-tight">{member.role}</div>
+                </div>
+              </div>
+            )) : (
+              <div className="text-sm text-muted-foreground">No team members assigned</div>
+            )}
           </div>
         </div>
       </div>
@@ -212,45 +307,30 @@ export function AuditFinalReviewWorksheet() {
             <tr>
               <th className={TH}>File Completion Checklist</th>
               <th className={TH + " w-16 text-center"}>Done</th>
-              <th className={TH + " w-64"}>Team</th>
+              <th className={TH + " w-80"}>Team</th>
             </tr>
           </thead>
           <tbody>
             {/* Master SignOff All row */}
             <tr className="border-b border-border bg-muted/10">
-              <td className={TD + " font-medium"} />
+              <td className={TD + " font-semibold"}>Signoffs Master Sheet</td>
               <td className={TD + " text-center"} />
               <td className={TD}>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground flex-shrink-0">
-                      {(CURRENT_USER.name || "U").slice(0, 2).toUpperCase()}
-                    </div>
-                    <div className="text-[12px]">
-                      <div className="font-semibold text-foreground">{CURRENT_USER.name}</div>
-                      <div className="text-muted-foreground">Preparer</div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={signAll}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors w-fit"
-                  >
-                    <CheckSquare className="h-3 w-3" />
-                    Signoff All
-                  </button>
-                </div>
+                <Button size="sm" onClick={signAll}>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Signoff All
+                </Button>
               </td>
             </tr>
 
-            {/* Client Onboarding */}
+            {/* Client Onboarding — sub-item checklist */}
             <tr className="border-b border-border">
               <td className={SEC_HEAD} colSpan={3}>Client Onboarding Checklist</td>
             </tr>
             {[
-              { key: "co-new-accept", label: "New engagement acceptance" },
-              { key: "co-exist-cont", label: "Existing engagement continuance" },
-              { key: "co-eng-letter", label: "Engagement Letter" },
+              { key: "co-new-accept",  label: "New engagement acceptance" },
+              { key: "co-exist-cont",  label: "Existing engagement continuance" },
+              { key: "co-eng-letter",  label: "Engagement Letter" },
             ].map(item => (
               <tr key={item.key} className="border-b border-border/50 hover:bg-muted/5">
                 <td className={TD + " pl-8"}>
@@ -260,7 +340,7 @@ export function AuditFinalReviewWorksheet() {
                   </div>
                 </td>
                 <td className={TD + " text-center"}>
-                  <Cb checked={!!data.checks[item.key + "-done"]} onChange={() => toggleCheck(item.key + "-done")} />
+                  {data.checks[item.key] && <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />}
                 </td>
                 <td className={TD} />
               </tr>
@@ -270,10 +350,32 @@ export function AuditFinalReviewWorksheet() {
             <tr className="border-b border-border hover:bg-muted/5">
               <td className={TD + " font-medium"}>Planning</td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["pl"]} onChange={() => toggleCheck("pl")} />
+                <SectionDoneIndicator sectionKey="pl" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["pl-team"]} onChange={() => toggleCheck("pl-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="pl" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("pl")} />
+              </td>
+            </tr>
+
+            {/* Risk Assessment */}
+            <tr className="border-b border-border hover:bg-muted/5">
+              <td className={TD + " font-medium"}>Risk Assessment</td>
+              <td className={TD + " text-center"}>
+                <SectionDoneIndicator sectionKey="ra" checks={data.checks} />
+              </td>
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="ra" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("ra")} />
+              </td>
+            </tr>
+
+            {/* Response to Assessed Risks */}
+            <tr className="border-b border-border hover:bg-muted/5">
+              <td className={TD + " font-medium"}>Response to Assessed Risks</td>
+              <td className={TD + " text-center"}>
+                <SectionDoneIndicator sectionKey="rp" checks={data.checks} />
+              </td>
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="rp" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("rp")} />
               </td>
             </tr>
 
@@ -281,10 +383,10 @@ export function AuditFinalReviewWorksheet() {
             <tr className="border-b border-border hover:bg-muted/5">
               <td className={TD + " font-medium"}>Trial Balance & Adj Entries</td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["tb"]} onChange={() => toggleCheck("tb")} />
+                <SectionDoneIndicator sectionKey="tb" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["tb-team"]} onChange={() => toggleCheck("tb-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="tb" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("tb")} />
               </td>
             </tr>
 
@@ -292,20 +394,20 @@ export function AuditFinalReviewWorksheet() {
             <tr className="border-b border-border hover:bg-muted/5">
               <td className={TD + " font-medium"}>Procedures</td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["pr"]} onChange={() => toggleCheck("pr")} />
+                <SectionDoneIndicator sectionKey="pr" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["pr-team"]} onChange={() => toggleCheck("pr-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="pr" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("pr")} />
               </td>
             </tr>
 
-            {/* Completion and Signoffs */}
+            {/* Completion and Signoffs sub-section */}
             <tr className="border-b border-border">
               <td className={SEC_HEAD} colSpan={3}>Completion and Signoffs</td>
             </tr>
             {[
               { key: "so-aim", label: "Accumulation of Identified Misstatements (AIM)" },
-              { key: "so-se", label: "Subsequent events" },
+              { key: "so-se",  label: "Subsequent events" },
             ].map(item => (
               <tr key={item.key} className="border-b border-border/50 hover:bg-muted/5">
                 <td className={TD + " pl-8"}>
@@ -315,7 +417,7 @@ export function AuditFinalReviewWorksheet() {
                   </div>
                 </td>
                 <td className={TD + " text-center"}>
-                  <Cb checked={!!data.checks[item.key + "-done"]} onChange={() => toggleCheck(item.key + "-done")} />
+                  {data.checks[item.key] && <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />}
                 </td>
                 <td className={TD} />
               </tr>
@@ -326,14 +428,14 @@ export function AuditFinalReviewWorksheet() {
               <td className={TD + " font-medium"}>
                 <div className="flex items-center gap-2">
                   Issues
-                  <Badge label="Resolved" variant="resolved" />
+                  <Badge variant="success">Resolved</Badge>
                 </div>
               </td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["issues"]} onChange={() => toggleCheck("issues")} />
+                <SectionDoneIndicator sectionKey="issues" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["issues-team"]} onChange={() => toggleCheck("issues-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="issues" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("issues")} />
               </td>
             </tr>
 
@@ -342,14 +444,14 @@ export function AuditFinalReviewWorksheet() {
               <td className={TD + " font-medium"}>
                 <div className="flex items-center gap-2">
                   Comments
-                  <Badge label="Resolved" variant="resolved" />
+                  <Badge variant="success">Resolved</Badge>
                 </div>
               </td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["comments"]} onChange={() => toggleCheck("comments")} />
+                <SectionDoneIndicator sectionKey="comments" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["comments-team"]} onChange={() => toggleCheck("comments-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="comments" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("comments")} />
               </td>
             </tr>
 
@@ -358,14 +460,14 @@ export function AuditFinalReviewWorksheet() {
               <td className={TD + " font-medium"}>
                 <div className="flex items-center gap-2">
                   Documents Request List
-                  <Badge label="Completed" variant="completed" />
+                  <Badge variant="completed">Completed</Badge>
                 </div>
               </td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["docs-req"]} onChange={() => toggleCheck("docs-req")} />
+                <SectionDoneIndicator sectionKey="docs-req" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["docs-req-team"]} onChange={() => toggleCheck("docs-req-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="docs-req" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("docs-req")} />
               </td>
             </tr>
 
@@ -373,10 +475,10 @@ export function AuditFinalReviewWorksheet() {
             <tr className="border-b border-border hover:bg-muted/5">
               <td className={TD + " font-medium"}>Completion</td>
               <td className={TD + " text-center"}>
-                <Cb checked={!!data.checks["completion"]} onChange={() => toggleCheck("completion")} />
+                <SectionDoneIndicator sectionKey="completion" checks={data.checks} />
               </td>
-              <td className={TD}>
-                <Cb checked={!!data.checks["completion-team"]} onChange={() => toggleCheck("completion-team")} />
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="completion" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("completion")} />
               </td>
             </tr>
 
@@ -409,11 +511,8 @@ export function AuditFinalReviewWorksheet() {
                   </div>
                 </div>
               </td>
-              <td className={TD}>
-                <div className="flex flex-col gap-2">
-                  <Cb checked={!!data.checks["client-signoff"]} onChange={() => toggleCheck("client-signoff")} />
-                  <Cb checked={!!data.checks["client-signoff-team"]} onChange={() => toggleCheck("client-signoff-team")} />
-                </div>
+              <td className={TD + " py-1.5"}>
+                <MultiRoleCell sectionKey="client-signoff" checks={data.checks} toggle={toggleCheck} team={ctx.team} showSignoffBtn onSignoff={() => signSection("client-signoff")} />
               </td>
             </tr>
           </tbody>
@@ -438,11 +537,11 @@ export function AuditFinalReviewWorksheet() {
         <div className={SEC_HEAD}>Final Completion Signoff</div>
         <div className="px-4 py-4">
           {data.finalSignoffDone ? (
-            <div className="flex items-center gap-3 p-3 rounded-md bg-green-50 border border-green-200">
+            <div className="flex items-center gap-3 p-3 rounded-md bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800">
               <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
               <div>
-                <div className="text-sm font-semibold text-green-800">{CURRENT_USER.name}</div>
-                <div className="text-xs text-green-700">
+                <div className="text-sm font-semibold text-green-800 dark:text-green-300">{CURRENT_USER.name}</div>
+                <div className="text-xs text-green-700 dark:text-green-400">
                   Final signoff completed{" "}
                   {data.finalSignoffAt
                     ? new Date(data.finalSignoffAt).toLocaleString("en-US", {
@@ -455,7 +554,7 @@ export function AuditFinalReviewWorksheet() {
               <button
                 type="button"
                 onClick={() => { upd("finalSignoffDone", false); upd("finalSignoffAt", ""); }}
-                className="ml-auto text-xs text-green-700 underline hover:text-green-900"
+                className="ml-auto text-xs text-green-700 underline hover:text-green-900 dark:text-green-400"
               >
                 Undo
               </button>
@@ -471,14 +570,10 @@ export function AuditFinalReviewWorksheet() {
                   <div className="text-xs text-muted-foreground">Preparer</div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={performFinalSignoff}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors w-fit"
-              >
+              <Button onClick={performFinalSignoff}>
                 <CheckSquare className="h-4 w-4" />
                 Signoff
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -497,9 +592,11 @@ export function AuditFinalReviewWorksheet() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={CURRENT_USER.name}>{CURRENT_USER.name}</SelectItem>
-                  <SelectItem value="R. Chandra">R. Chandra</SelectItem>
-                  <SelectItem value="S. Whitfield">S. Whitfield</SelectItem>
-                  <SelectItem value="D. Okonkwo">D. Okonkwo</SelectItem>
+                  {ctx.team.map(m => (
+                    m.name !== CURRENT_USER.name && (
+                      <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>
+                    )
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -529,7 +626,6 @@ export function AuditFinalReviewWorksheet() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 text-xs"
                 onClick={() => {
                   upd("packagerName", "");
                   upd("packagerInstructions", "");
@@ -540,7 +636,6 @@ export function AuditFinalReviewWorksheet() {
               </Button>
               <Button
                 size="sm"
-                className="h-8 text-xs"
                 onClick={() => upd("packagerAssigned", true)}
                 disabled={!data.packagerName || !data.packagerDueDate}
               >
@@ -571,30 +666,26 @@ export function AuditFinalReviewWorksheet() {
         <div className={SEC_HEAD}>Actions</div>
         <div className="px-4 py-3 flex flex-wrap gap-2">
           {[
-            { label: "Finalize Report", disabled: !data.finalSignoffDone },
-            { label: "Create Package", disabled: !data.packagerAssigned },
-            { label: "Roll Forward Template", disabled: false },
-            { label: "Complete & Archive", disabled: !data.finalSignoffDone },
-            { label: "Export Data", disabled: false },
+            { label: "Finalize Report",       disabled: !data.finalSignoffDone },
+            { label: "Create Package",         disabled: !data.packagerAssigned },
+            { label: "Roll Forward Template",  disabled: false                  },
+            { label: "Complete & Archive",     disabled: !data.finalSignoffDone },
+            { label: "Export Data",            disabled: false                  },
           ].map(action => (
-            <button
+            <Button
               key={action.label}
-              type="button"
+              variant={action.disabled ? "outline" : "default"}
+              size="sm"
               disabled={action.disabled}
-              className={`px-4 py-2 rounded text-sm font-medium border transition-colors ${
-                action.disabled
-                  ? "border-border text-muted-foreground/50 bg-muted/20 cursor-not-allowed"
-                  : "border-primary/30 text-primary bg-primary/5 hover:bg-primary/10"
-              }`}
             >
               {action.label}
-            </button>
+            </Button>
           ))}
         </div>
         {!data.finalSignoffDone && (
-          <div className="flex items-center gap-2 px-4 py-2 text-xs text-amber-700 border-t border-border bg-amber-50/50">
+          <div className="flex items-center gap-2 px-4 py-2 text-xs text-amber-700 border-t border-border bg-amber-50/50 dark:bg-amber-900/20 dark:text-amber-400">
             <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
-            Complete the Final Completion Signoff to enable Finalize Report and Complete & Archive.
+            Complete the Final Completion Signoff to enable Finalize Report and Complete &amp; Archive.
           </div>
         )}
       </div>
