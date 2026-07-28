@@ -29,6 +29,8 @@ import { Audit340Worksheet } from "@/components/Audit340Worksheet";
 import { Audit370Worksheet } from "@/components/Audit370Worksheet";
 import { Audit375Worksheet } from "@/components/Audit375Worksheet";
 import { AuditAIMWorksheet } from "@/components/AuditAIMWorksheet";
+import { AuditSOSignoffsWorksheet } from "@/components/AuditSOSignoffsWorksheet";
+import { AuditFinalReviewWorksheet } from "@/components/AuditFinalReviewWorksheet";
 
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 
@@ -237,6 +239,8 @@ import {
  generate501APAPChecklist,
  generate505MgmtInquiriesChecklist,
  generate506FraudIdentificationChecklist,
+ generateAuditCACompletionChecklist,
+ generateAuditCADisclosureChecklist,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -412,7 +416,8 @@ const buildDefaultAuditChecklists = () => {
  { generator: generateGoingConcernFinalAssessmentChecklist, id: "default-audit-wgc-final" },
  { generator: generateManagementRepresentationsChecklist, id: "default-audit-mr" },
  { generator: generateTCWGFinalCommunicationChecklist, id: "default-audit-tcwg-fin" },
- { generator: generateAuditCompletionChecklist, id: "default-audit-comp" },
+ { generator: generateAuditCACompletionChecklist, id: "default-audit-comp" },
+ { generator: generateAuditCADisclosureChecklist, id: "default-audit-disc" },
  { generator: generateEngagementPartnerAuditCompletionChecklist, id: "default-audit-ep" },
  { generator: generateAuditWorksheetWithdrawalCA, id: "default-audit-so-311" },
  { generator: generateAuditWorksheetSignificantDecisionsCA, id: "default-audit-so-320" },
@@ -655,6 +660,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-mr": "default-audit-mr",
  "aud-tcwg-fin": "default-audit-tcwg-fin",
  "aud-comp": "default-audit-comp",
+ "aud-disc": "default-audit-disc",
  "aud-ep": "default-audit-ep",
  // US Audit (GAAS) — Client Onboarding
  "aud-us-form-408": "default-us-audit-form-408",
@@ -776,6 +782,7 @@ const WORKSHEET_KEYS = new Set([
  'aud-ra-575', 'aud-ra-580', 'aud-ra-590',
  'aud-rp-605', 'aud-rp-610', 'aud-rp-625', 'aud-rp-630', 'aud-rp-635',
  'aud-rp-645', 'aud-rp-650', 'aud-rp-655', 'aud-rp-666', 'aud-rp-670', 'aud-rp-680',
+ 'aud-so-sign', 'aud-so-fr',
 ]);
 
 const FS_PAGE_KEYS = new Set([
@@ -881,7 +888,8 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
  'default-audit-wgc-final': { section: 'SO', code: 'GC', label: 'Going Concern (Final Assessment)' },
  'default-audit-mr': { section: 'SO', code: 'MR', label: 'Management Representation Letter' },
  'default-audit-tcwg-fin': { section: 'SO', code: 'TCWG', label: 'Communication with Those Charged with Governance' },
- 'default-audit-comp': { section: 'SO', code: 'CM', label: 'Completion Checklist' },
+ 'default-audit-comp': { section: 'SO', code: 'CM', label: 'Completion' },
+ 'default-audit-disc': { section: 'SO', code: 'DC', label: 'Disclosure' },
  'default-audit-ep': { section: 'SO', code: 'QCR', label: 'Quality Control Review' },
 };
 
@@ -2883,6 +2891,10 @@ export default function EngagementDetail() {
  <Audit375Worksheet />
  ) : (checklistKey === 'aud-so-aim') ? (
  <AuditAIMWorksheet />
+ ) : (checklistKey === 'aud-so-sign') ? (
+ <AuditSOSignoffsWorksheet />
+ ) : (checklistKey === 'aud-so-fr') ? (
+ <AuditFinalReviewWorksheet />
  ) : checklist ? (
  <div className="p-4 bg-background">
  {/* ASM import banner */}

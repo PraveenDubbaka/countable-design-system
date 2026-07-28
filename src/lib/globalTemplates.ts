@@ -2020,6 +2020,352 @@ export const generateReviewCompletionChecklist = (): Checklist => {
  };
 };
 
+// Audit CA — Completion Checklist (CM) — mirrors Review completion structure with CAS-specific content
+export const generateAuditCACompletionChecklist = (): Checklist => {
+ const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+ id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+ required: false, answer: '', explanation: '', reference: '',
+ ...(subQuestions ? { subQuestions } : {})
+ });
+
+ const sections: Section[] = [
+ {
+ id: 'section-acc-1',
+ title: 'Engagement Management',
+ questions: [
+ q('acc-em-qm', '<p><strong>Quality management</strong></p><p>Was the engagement performed in accordance with the firm\'s quality management policies and procedures (CSQM 1 / CAS 220)?</p>'),
+ q('acc-em-info', '<p><strong>Has any information come to our attention during the engagement to indicate:</strong></p>', [
+ q('acc-em-info-i', '<p>i. There is no longer a rational purpose for the engagement?</p>'),
+ q('acc-em-info-ii', '<p>ii. An audit engagement would no longer be appropriate in the circumstances?</p>'),
+ q('acc-em-info-iii', '<p>iii. Were all ethical requirements met, including any independence prohibitions or threats identified? If yes, explain how they were addressed.</p>'),
+ q('acc-em-info-d', '<p>d. Has the time spent on the engagement been recorded and any significant variances from the budget explained?</p>'),
+ ]),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-2',
+ title: 'Planning and Risk Assessment',
+ questions: [
+ q('acc-pl-1', '<p>Was our understanding of the entity and its environment, and our risk assessment procedures, sufficient to:</p>', [
+ q('acc-pl-1a', '<p>a. Identify areas in the F/S where risks of material misstatement (RMMs) are likely to arise?</p>'),
+ q('acc-pl-1b', '<p>b. Provide a basis for designing and implementing responses to those assessed risks?</p>'),
+ q('acc-pl-1c', '<p>c. Document the overall audit strategy and audit plan, including materiality and the engagement team discussion?</p>'),
+ ]),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-3',
+ title: 'Procedures Performed',
+ questions: [
+ q('acc-pp-1', '<p>Were the procedures performed and documented sufficient to obtain sufficient appropriate audit evidence with respect to all material assertions in the F/S? (CAS 330)</p>'),
+ q('acc-pp-2', '<p>Where tests of controls were performed, were deviations investigated and conclusions documented? (CAS 330.17)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-4',
+ title: 'Findings',
+ questions: [
+ q('acc-find-1', '<p>Where we became aware of matters that caused us to believe the F/S may be materially misstated, did we perform sufficient additional procedures to conclude that the F/S are either not materially misstated or that an appropriate modification to the auditor\'s report is required? (CAS 330.26)</p>'),
+ q('acc-find-2', '<p>Have all significant findings or issues arising from the audit been discussed with management and, where appropriate, those charged with governance? (CAS 260.9)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-5',
+ title: 'Subsequent Events',
+ questions: [
+ q('acc-se-1', '<p>Have subsequent events procedures been performed through to the date of the auditor\'s report? (CAS 560.6)</p>'),
+ q('acc-se-2', '<p>Have subsequent events that may require adjustment of, or disclosure in, the F/S been identified and appropriately addressed? (CAS 560.7–.9)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-6',
+ title: 'Going Concern',
+ questions: [
+ q('acc-gc-1', '<p>Where there is significant doubt about the entity\'s ability to continue as a going concern: (CAS 570)</p>', [
+ q('acc-gc-1a', '<p>a. Have appropriate disclosures been made in the F/S in accordance with the applicable financial reporting framework?</p>'),
+ q('acc-gc-1b', '<p>b. Has the auditor\'s report been modified appropriately (qualified or adverse if management refuses to disclose, or modified if use of going-concern basis is inappropriate)?</p>'),
+ q('acc-gc-1c', '<p>c. Where a material uncertainty exists but the going-concern basis remains appropriate, has an Emphasis of Matter paragraph been included to draw attention to the disclosure in the F/S?</p>'),
+ ]),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-7',
+ title: 'Identified Misstatements',
+ questions: [
+ q('acc-im-1', '<p>a. Was management asked to correct all identified misstatements other than those considered clearly trivial? (CAS 450.8)</p>'),
+ q('acc-im-2', '<p>b. If management declined to correct any identified misstatements, were the reasons evaluated and found acceptable, and have the uncorrected misstatements been assessed for materiality individually and in aggregate? (CAS 450.11)</p>'),
+ q('acc-im-3', '<p>c. Have the effects of uncorrected misstatements been communicated to those charged with governance, including a request that they be corrected? (CAS 450.12)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-8',
+ title: 'Conclusions',
+ questions: [
+ q('acc-cl-1', '<p>a. Have all planned audit procedures, including management representations and final analytical procedures, been completed? (CAS 580, CAS 520)</p>'),
+ q('acc-cl-2', '<p>b. Have the results and overall conclusions (including the basis for the audit opinion) been documented in the working papers?</p>'),
+ q('acc-cl-3', '<p>c. Has a signed management representation letter (dated no earlier than the date of the auditor\'s report) been obtained and included in the audit file? (CAS 580.20)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-9',
+ title: 'Documentation',
+ questions: [
+ q('acc-doc-1', '<p>a. Have all working papers been signed off, dated by the preparer and reviewer, and assembled on a timely basis after the date of the auditor\'s report (within 60 days)? (CAS 230.14–.16)</p>'),
+ q('acc-doc-2', '<p>b. Have file reviewer queries been addressed within the file?</p>'),
+ q('acc-doc-3', '<p>c. Have all engagement issues and significant judgments been documented in sufficient detail that an experienced auditor with no prior connection could understand the procedures performed, evidence obtained, and conclusions reached?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-10',
+ title: 'Communication',
+ questions: [
+ q('acc-comm-1', '<p>a. Have the required matters — including significant findings, significant difficulties encountered, and independence matters — been communicated to those charged with governance on a timely basis? (CAS 260)</p>'),
+ q('acc-comm-2', '<p>b. Have discussions with management or TCWG been documented, including details of any decisions made? (CAS 260.23)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-fs',
+ title: 'Financial Statements',
+ questions: [
+ q('acc-fs-1', '<p>a. Has evidence been obtained that demonstrates the F/S agree with the entity\'s underlying accounting records (trial balance)?</p>'),
+ q('acc-fs-2', '<p>b. Is the terminology used, including the title of each F/S, appropriate?</p>'),
+ q('acc-fs-3', '<p>c. Is the overall presentation, structure and content of the F/S in accordance with the applicable financial reporting framework (ASPE/IFRS)?</p>'),
+ q('acc-fs-4', '<p>d. Are the F/S and notes accurately cross-referenced?</p>'),
+ q('acc-fs-5', '<p>e. Are the accounting policies appropriate, consistently applied, and appropriately disclosed?</p>'),
+ q('acc-fs-6', '<p>f. Do the F/S and disclosures appear to be relevant, reliable, comparable and understandable?</p>'),
+ q('acc-fs-7', '<p>g. Are related party relationships and transactions appropriately accounted for and disclosed? (CAS 550)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-report',
+ title: "Auditor's Report",
+ questions: [
+ q('acc-rep-1', '<p>a. Has sufficient appropriate audit evidence been obtained to support an unmodified opinion on the F/S as a whole? If not, has the opinion been appropriately modified and a basis for modification paragraph prepared? (CAS 705)</p>'),
+ q('acc-rep-2', "<p>b. Is the form, content and date of the auditor's report in accordance with the requirements of CAS 700?</p>"),
+ q('acc-rep-3', "<p>c. If applicable, was the engagement quality control reviewer's review completed and evidenced in the file on or before the date of the auditor's report? (CAS 220.30)</p>"),
+ q('acc-rep-4', '<p>d. Has approval of the final F/S by a recognized authority (e.g., board of directors) been obtained or confirmed?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-emphasis',
+ title: 'Emphasis of Matter Paragraph',
+ questions: [
+ q('acc-emp-1', '<p>Are there significant matters appropriately disclosed in the F/S that should be brought to users\' attention (e.g., a material uncertainty related to going concern, restatement, or special-purpose framework)? An Emphasis of Matter paragraph may be used to highlight such disclosures. (CAS 706.8)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-acc-other',
+ title: 'Other Matter Paragraph',
+ questions: [
+ q('acc-om-1', '<p>Are there significant matters relevant to users\' understanding of the audit, the auditor\'s responsibilities, or the auditor\'s report that are not presented or disclosed in the F/S? (CAS 706.9) An Other Matter paragraph may be used to:</p><ul><li>Communicate that prior period F/S were audited by a predecessor auditor or were not audited.</li><li>Note restrictions on the distribution of the auditor\'s report.</li></ul>'),
+ ],
+ isExpanded: true
+ },
+ ];
+
+ return {
+ id: 'global-template-audit-ca-completion',
+ title: 'Completion',
+ description: 'Completion procedures for a Canadian audit engagement (CAS).',
+ objective: `This form covers:
+• Engagement Management
+• Planning and Risk Assessment
+• Procedures Performed
+• Findings
+• Subsequent Events
+• Going Concern
+• Identified Misstatements
+• Conclusions
+• Documentation
+• Communication
+• Financial Statements
+• Auditor's Report
+• Emphasis of Matter Paragraph
+• Other Matter Paragraph
+
+PSC = Procedure successfully completed.
+CAS = Canadian Auditing Standard.
+AFRF = Applicable financial reporting framework.
+F/S = Financial statements.
+RMM(s) = Risk(s) of material misstatement.
+TCWG = Those charged with governance.`,
+ sections,
+ createdAt: new Date(),
+ updatedAt: new Date()
+ };
+};
+
+// Audit CA — Disclosure Checklist (DC) — financial statement disclosure review for audit engagements
+export const generateAuditCADisclosureChecklist = (): Checklist => {
+ const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
+ id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
+ required: false, answer: '', explanation: '', reference: '',
+ ...(subQuestions ? { subQuestions } : {})
+ });
+
+ const sections: Section[] = [
+ {
+ id: 'section-adc-1',
+ title: 'Quality Management',
+ questions: [
+ q('adc-qm-1', '<p>Was the disclosure review performed in accordance with the firm\'s quality management policies and the applicable financial reporting framework (ASPE / IFRS)?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-2',
+ title: 'General Financial Statement Presentation',
+ questions: [
+ q('adc-gen-1', '<p>Do the financial statements present fairly, in all material respects, the financial position, results of operations, and cash flows in accordance with the applicable financial reporting framework (ASPE / IFRS)?</p>'),
+ q('adc-gen-2', '<p>Do the notes prominently identify that the financial statements have been prepared in accordance with ASPE (or IFRS, as applicable)?</p>'),
+ q('adc-gen-3', '<p>Is there a clear and concise description of the entity\'s significant accounting policies, including: (a) areas requiring judgment; (b) selections from alternative acceptable principles; (c) methods peculiar to the industry?</p>'),
+ q('adc-gen-4', '<p>Are comparative figures presented for all amounts reported in the financial statements (unless the first period of adoption or other standards permit otherwise)?</p>'),
+ q('adc-gen-5', '<p>Are the footnotes and supporting schedules clearly cross-referenced to/from the financial statements?</p>'),
+ q('adc-gen-6', '<p>Where there has been a change in accounting policy or estimate, or correction of an error, have the appropriate disclosures been made in accordance with the applicable framework?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-3',
+ title: 'Balance Sheet Items',
+ questions: [
+ q('adc-bs-1', '<p>Cash and cash equivalents — Have restricted cash balances been excluded from current assets and disclosed? Has the entity disclosed its policy for determining cash equivalents?</p>'),
+ q('adc-bs-2', '<p>Accounts receivable — Has the allowance for doubtful accounts, and the basis for its estimation, been appropriately disclosed?</p>'),
+ q('adc-bs-3', '<p>Inventories — Has the cost formula (FIFO, weighted-average), carrying amount, and any write-down to net realizable value been disclosed?</p>'),
+ q('adc-bs-4', '<p>Property, plant and equipment — Have the carrying amounts by class, depreciation methods, useful lives or rates, and accumulated depreciation been disclosed?</p>'),
+ q('adc-bs-5', '<p>Intangible assets — Have carrying amounts, amortization methods, rates, and any impairment losses been disclosed?</p>'),
+ q('adc-bs-6', '<p>Long-term debt — Have the terms, interest rates, maturity dates, security, and any covenants or restrictions been disclosed?</p>'),
+ q('adc-bs-7', '<p>Equity — Have authorized and issued share capital, restrictions on retained earnings, and any dividends declared been disclosed?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-4',
+ title: 'Income Statement and Other Comprehensive Income',
+ questions: [
+ q('adc-is-1', '<p>Revenue — Has the entity\'s revenue recognition policy been disclosed and applied consistently? Are any disaggregation requirements met?</p>'),
+ q('adc-is-2', '<p>Income taxes — Have current and deferred tax assets/liabilities, and the income tax expense/recovery, been appropriately disclosed? (ASPE 3465 / IAS 12)</p>'),
+ q('adc-is-3', '<p>Are there any extraordinary or unusual items requiring separate disclosure or explanation?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-5',
+ title: 'Financial Instruments and Risk',
+ questions: [
+ q('adc-fi-1', '<p>Have the carrying amounts and measurement bases of financial instruments (amortized cost vs. fair value) been disclosed?</p>'),
+ q('adc-fi-2', '<p>For each significant risk arising from financial instruments, has the entity disclosed: (a) exposures and how they arise; (b) objectives, policies and processes for managing risk? Consider credit, currency, interest rate, liquidity, and market risk.</p>'),
+ q('adc-fi-3', '<p>Have financial assets and liabilities been offset only when the entity has a legally enforceable right to do so and intends to settle on a net basis?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-6',
+ title: 'Related-Party Transactions',
+ questions: [
+ q('adc-rp-1', '<p>Have all related parties been identified and the nature of the relationships disclosed?</p>'),
+ q('adc-rp-2', '<p>Where there are transactions with related parties, do the financial statements disclose: (a) recognized amount and measurement basis; (b) outstanding balances, their terms and conditions; (c) contractual obligations separately; (d) contingencies separately?</p>'),
+ q('adc-rp-3', '<p>Have key management personnel compensation disclosures been made as required?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-7',
+ title: 'Measurement Uncertainty and Estimates',
+ questions: [
+ q('adc-mu-1', '<p>Have material measurement uncertainties been disclosed, including the nature of the uncertainty, circumstances giving rise to it, and the recognized amount of the item?</p>'),
+ q('adc-mu-2', '<p>Have significant judgments made in applying accounting policies that have the most significant effect on the amounts recognized in the financial statements been disclosed?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-8',
+ title: 'Going Concern',
+ questions: [
+ q('adc-gc-1', '<p>Where management is aware of material uncertainties related to events or conditions that may cast significant doubt on the entity\'s ability to continue as a going concern, have these uncertainties been disclosed? (CAS 570 / ASPE 1400)</p>'),
+ q('adc-gc-2', '<p>Has the going concern basis of accounting been assessed as appropriate based on the audit evidence obtained?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-9',
+ title: 'Contingencies and Commitments',
+ questions: [
+ q('adc-cc-1', '<p>Have contingent liabilities (and contingent assets, where applicable) been appropriately assessed and disclosed, including the nature, estimated financial effect, and uncertainties? (ASPE 3290)</p>'),
+ q('adc-cc-2', '<p>Have contractual commitments (operating leases, capital commitments, purchase obligations) been disclosed with minimum future payments?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-10',
+ title: 'Subsequent Events',
+ questions: [
+ q('adc-se-1', '<p>Have subsequent events that require adjustment of, or disclosure in, the financial statements been identified and appropriately treated? (ASPE 3820 / CAS 560)</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-11',
+ title: 'Leases',
+ questions: [
+ q('adc-ls-1', '<p>Have lease obligations (finance/capital leases) been appropriately classified and disclosed, including future minimum lease payments and the current/long-term split?</p>'),
+ q('adc-ls-2', '<p>Have operating lease commitments been disclosed with the minimum future payments?</p>'),
+ ],
+ isExpanded: true
+ },
+ {
+ id: 'section-adc-12',
+ title: 'Employee Benefits',
+ questions: [
+ q('adc-eb-1', '<p>Have defined benefit or defined contribution pension plan disclosures been made, including the nature of the plan, funding policy, and actuarial assumptions where applicable? (ASPE 3462)</p>'),
+ q('adc-eb-2', '<p>Have other employee future benefits (e.g., post-retirement benefits) been appropriately disclosed?</p>'),
+ ],
+ isExpanded: true
+ },
+ ];
+
+ return {
+ id: 'global-template-audit-ca-disclosure',
+ title: 'Disclosure',
+ description: 'Financial statement disclosure review checklist for Canadian audit engagements (ASPE/IFRS).',
+ objective: `This checklist is used to verify that all required financial statement disclosures have been made in accordance with the applicable financial reporting framework (ASPE or IFRS) before issuing the auditor's report.
+
+This form covers:
+• General Financial Statement Presentation
+• Balance Sheet Items
+• Income Statement
+• Financial Instruments and Risk
+• Related-Party Transactions
+• Measurement Uncertainty and Estimates
+• Going Concern
+• Contingencies and Commitments
+• Subsequent Events
+• Leases
+• Employee Benefits
+
+ASPE = Accounting Standards for Private Enterprises.
+AFRF = Applicable financial reporting framework.
+F/S = Financial statements.
+TCWG = Those charged with governance.`,
+ sections,
+ createdAt: new Date(),
+ updatedAt: new Date()
+ };
+};
+
 // Subsequent Events template
 export const generateSubsequentEventsChecklist = (): Checklist => {
  const sections: Section[] = [
