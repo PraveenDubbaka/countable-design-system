@@ -290,7 +290,7 @@ export function AuditFinalReviewWorksheet() {
             {/* Client Onboarding — single row, sub-items in first cell */}
             <tr className="border-b border-border hover:bg-muted/5">
               <td className={TD + " align-top"}>
-                <div className="font-medium text-sm mb-2">Client Onboarding Checklist</div>
+                <div className="font-medium text-sm mb-2">Client Onboarding</div>
                 <div className="space-y-1.5 pl-1">
                   {([
                     { key: "co-acc-cont",     label: "Client acceptance and continuance" },
