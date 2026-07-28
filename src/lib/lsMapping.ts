@@ -18,6 +18,11 @@ export function getGlobalProcedureItems(
   return findNodeById(worksheets, "gca-ws-proc")?.children ?? [];
 }
 
+/** Find any node (including nested folder children) within the gca-ws-proc subtree. */
+export function findGlobalProcedureNode(id: string): GlobalTemplate | null {
+  return findNodeById(getGlobalProcedureItems(), id);
+}
+
 export interface LsInfo {
   lsCode: string;
   wpNodeId: string;
@@ -58,7 +63,16 @@ export function getGcaProcIdForWp(audWpId: string): string {
 }
 
 export function getAudWpIdForProc(gcaProcId: string): string {
-  return CA_GLOBAL_PROC_NODES.find(n => n.id === gcaProcId)?.audWpId ?? "";
+  const direct = CA_GLOBAL_PROC_NODES.find(n => n.id === gcaProcId);
+  if (direct) return direct.audWpId;
+  // For children nested inside a folder group (e.g. gca-ws-proc-cash inside gca-ws-proc-cash-grp),
+  // resolve to the parent group's audWpId.
+  for (const group of getGlobalProcedureItems()) {
+    if (group.type === "folder" && group.children?.some(c => c.id === gcaProcId)) {
+      return CA_GLOBAL_PROC_NODES.find(n => n.id === group.id)?.audWpId ?? "";
+    }
+  }
+  return "";
 }
 
 export const ALL_PROCEDURE_NODES: LsInfo[] = [

@@ -14,7 +14,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems } from "@/lib/lsMapping";
+import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -767,8 +767,7 @@ export function Audit590Worksheet() {
      <td className="px-3 py-2 align-top">
       <div className="flex flex-col gap-1 min-h-[40px]">
        {r.plannedProcedureId && (() => {
-        const procItems = getGlobalProcedureItems();
-        const node = procItems.find(n => n.id === r.plannedProcedureId);
+        const node = findGlobalProcedureNode(r.plannedProcedureId);
         if (!node) return null;
         return (
          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-medium text-primary max-w-[150px]">
