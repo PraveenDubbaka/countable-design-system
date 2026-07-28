@@ -398,7 +398,7 @@ export function Audit335Worksheet() {
      <table className="w-full border-collapse">
       <thead>
        <tr className="bg-muted">
-        <th className={TH + " w-[42%]"}>Procedure</th>
+        <th className={TH + " w-[42%]"}>Evaluation of misstatements</th>
         <th className={TH + " w-[90px] text-center"}>PSC?</th>
         <th className={TH}>Document the response and any difficulties encountered</th>
        </tr>
