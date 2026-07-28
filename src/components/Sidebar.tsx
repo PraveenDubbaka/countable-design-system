@@ -901,6 +901,31 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [renameValue, setRenameValue] = useState("");
  const [selectedMoveFolder, setSelectedMoveFolder] = useState("");
 
+ // Active procedure IDs synced from the 590 worksheet via localStorage
+ const [activeProcedureIds, setActiveProcedureIds] = useState<string[]>(() => {
+  const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
+  if (!id) return [];
+  try {
+   const raw = localStorage.getItem(`audit-590-active-procs-${id}`);
+   return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+ });
+ useEffect(() => {
+  const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
+  if (!id) return;
+  const key = `audit-590-active-procs-${id}`;
+  const read = () => {
+   try {
+    const raw = localStorage.getItem(key);
+    setActiveProcedureIds(raw ? JSON.parse(raw) : []);
+   } catch { setActiveProcedureIds([]); }
+  };
+  read();
+  const onStorage = (e: StorageEvent) => { if (e.key === key) read(); };
+  window.addEventListener("storage", onStorage);
+  return () => window.removeEventListener("storage", onStorage);
+ }, [location.pathname]);
+
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
  const seedDefaultCompilationChecklists = (): SavedChecklist[] => {
@@ -1908,6 +1933,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const isUSAuditEngagement = sidebarType === 'audit-us';
  const isAuditEngagement = sidebarType === 'audit-ca' || sidebarType === 'audit-us';
  const engFirstYear = engMeta?.firstYearAudit === true;
+
+ // Filter aud-wp-* leaf nodes to only those planned in the 590 worksheet
+ const filterProcTree = (nodes: SectionNode[], activeIds: string[]): SectionNode[] =>
+  nodes.reduce<SectionNode[]>((acc, node) => {
+   if (node.id.startsWith("aud-wp-")) {
+    if (activeIds.includes(node.id)) acc.push(node);
+   } else if (node.children) {
+    const kids = filterProcTree(node.children, activeIds);
+    if (kids.length > 0) acc.push({ ...node, children: kids });
+   } else {
+    acc.push(node);
+   }
+   return acc;
+  }, []);
 
  const usAuditEngagementTree: SectionNode[] = [
  {
@@ -3028,7 +3067,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Collect all node IDs for the "select all" signoff toggles
  const collectIds = (nodes: SectionNode[]): string[] =>
  nodes.flatMap(n => [n.id,...(n.children ? collectIds(n.children) : [])]);
- const activeTree = isUSAuditEngagement ? usAuditEngagementTree : isAuditEngagement ? auditEngagementTree : engagementTree;
+ const caTree = isAuditEngagement && !isUSAuditEngagement && activeProcedureIds.length > 0
+  ? auditEngagementTree.map(section =>
+   section.id === "aud-pr" && section.children
+    ? { ...section, children: filterProcTree(section.children, activeProcedureIds) }
+    : section
+  )
+  : auditEngagementTree;
+ const activeTree = isUSAuditEngagement ? usAuditEngagementTree : isAuditEngagement ? caTree : engagementTree;
  allNodeIdsRef.current = collectIds(activeTree);
 
  const hasEngSidebarMatch = !engSidebarQ || activeTree.some(engSidebarNodeMatches);

@@ -14,6 +14,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -45,6 +46,8 @@ interface CotabdRow {
  auditResponse: string;
  procedures: string[];
  wpRef: RefDoc[];
+ lsCode: string;
+ plannedProcedureIds: string[];
 }
 
 interface StandbackItem {
@@ -146,6 +149,7 @@ function emptyRow(fsa = ""): CotabdRow {
  risk520Ref: "", inherentRisk: "", significantRisk: "", controlRisk: "",
  assertions: emptyAssertions(),
  auditResponse: "", procedures: [], wpRef: [],
+ lsCode: "", plannedProcedureIds: [],
  };
 }
 
@@ -158,6 +162,9 @@ function rowFromFsa(f: FsaBalance): CotabdRow {
  row.inherentRisk = f.inherentRisk;
  row.significantRisk = f.significantRisk;
  row.controlRisk = "H"; // not tested by default per CAS
+ const ls = getLsInfo(f.fsa);
+ row.lsCode = ls?.lsCode ?? "";
+ row.plannedProcedureIds = ls && f.amount > 0 ? [ls.wpNodeId] : [];
  if (f.assertionsX) {
  for (const a of f.assertionsX) {
  row.assertions[a] = { marker: "X", rmm: f.inherentRisk };
@@ -201,6 +208,8 @@ function normalize(saved: any): Data590 {
 ...r,
  assertions: {...emptyAssertions(),...(r?.assertions ?? {}) },
  wpRef: Array.isArray(r?.wpRef) ? r.wpRef : [],
+ lsCode: r?.lsCode ?? getLsInfo(r?.fsa ?? "")?.lsCode ?? "",
+ plannedProcedureIds: Array.isArray(r?.plannedProcedureIds) ? r.plannedProcedureIds : [],
  }));
  merged.standback = {
  a: { done: !!saved?.standback?.a?.done, notes: saved?.standback?.a?.notes ?? "" },
@@ -367,6 +376,49 @@ export function Audit590Worksheet() {
 
  const locked = data.concluded;
  const [editingProcsId, setEditingProcsId] = useState<string | null>(null);
+ const [mapProcsRowId, setMapProcsRowId] = useState<string | null>(null);
+ const prevActiveProcIdsRef = useRef<string>("");
+
+ // Backfill plannedProcedureIds for existing material rows that don't have any yet
+ useEffect(() => {
+ setData(d => {
+ let changed = false;
+ const rows = d.rows.map(row => {
+ if ((row.plannedProcedureIds ?? []).length > 0 || row.material !== "Y" || !row.lsCode) return row;
+ const lsInfo = ALL_PROCEDURE_NODES.find(n => n.lsCode === row.lsCode);
+ if (!lsInfo) return row;
+ changed = true;
+ return { ...row, plannedProcedureIds: [lsInfo.wpNodeId] };
+ });
+ return changed ? { ...d, rows } : d;
+ });
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+ // Sync active procedure IDs to localStorage so Sidebar can filter dynamically
+ useEffect(() => {
+ if (!engagementId) return;
+ const activeIds = [...new Set(data.rows.flatMap(r => r.plannedProcedureIds ?? []))].sort();
+ const serialized = activeIds.join(",");
+ if (serialized === prevActiveProcIdsRef.current) return;
+ prevActiveProcIdsRef.current = serialized;
+ setActiveProcedureIds(engagementId, activeIds);
+ }, [data.rows, engagementId]);
+
+ function togglePlannedProc(rowId: string, wpNodeId: string) {
+ setData(d => ({
+ ...d,
+ rows: d.rows.map(r => {
+ if (r.id !== rowId) return r;
+ const has = r.plannedProcedureIds.includes(wpNodeId);
+ return {
+ ...r,
+ plannedProcedureIds: has
+ ? r.plannedProcedureIds.filter(id => id !== wpNodeId)
+ : [...r.plannedProcedureIds, wpNodeId],
+ };
+ }),
+ }));
+ }
 
  function updateProcedure590(id: string, i: number, val: string) {
   setData(d => ({ ...d, rows: d.rows.map(r => r.id === id ? { ...r, procedures: r.procedures.map((p, j) => j === i ? val : p) } : r) }));
@@ -381,7 +433,25 @@ export function Audit590Worksheet() {
 
  // ── Row mutators ────────────────────────────────────────────────────────────
  function patchRow(id: string, patch: Partial<CotabdRow>) {
- setData(d => ({...d, rows: d.rows.map(r => r.id === id ? {...r,...patch } : r) }));
+ setData(d => ({
+ ...d,
+ rows: d.rows.map(r => {
+ if (r.id !== id) return r;
+ const updated = { ...r, ...patch };
+ // Re-derive lsCode when FSA name changes
+ if ("fsa" in patch && patch.fsa !== r.fsa) {
+ updated.lsCode = getLsInfo(updated.fsa)?.lsCode ?? r.lsCode;
+ }
+ // Auto-add the default procedure worksheet when a row first becomes material
+ if (patch.material === "Y" && updated.lsCode) {
+ const lsInfo = ALL_PROCEDURE_NODES.find(n => n.lsCode === updated.lsCode);
+ if (lsInfo && !updated.plannedProcedureIds.includes(lsInfo.wpNodeId)) {
+ updated.plannedProcedureIds = [...updated.plannedProcedureIds, lsInfo.wpNodeId];
+ }
+ }
+ return updated;
+ }),
+ }));
  }
  function patchAssertion(id: string, a: Assertion, patch: Partial<AssertionCell>) {
  setData(d => ({
@@ -537,7 +607,7 @@ export function Audit590Worksheet() {
  <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10 border-r border-border">#</th>
+ <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-16 border-r border-border">LS</th>
  <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 200 }}>FSA / COTABD</th>
  <th rowSpan={2} className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 130 }}>Current yr ($)</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 90 }}>Material?</th>
@@ -547,7 +617,8 @@ export function Audit590Worksheet() {
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>Sig. risk</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>CR</th>
  <th colSpan={4} className="px-3 py-2 text-center text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border border-b border-border">Assertions / RMM</th>
- <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 260 }}>Procedures</th>
+ <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 200 }}>Procedures</th>
+ <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 180 }}>Planned Procedures</th>
  <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 220 }}>Audit response</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Classification</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap" style={{ width: 80 }}>W/P</th>
@@ -568,7 +639,9 @@ export function Audit590Worksheet() {
  const cls = classifyRow(r);
  return (
  <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
- <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
+ <td className="px-3 py-2 text-center">
+ <Input disabled value={r.lsCode || "—"} className="h-7 w-14 text-center font-mono text-sm" />
+ </td>
  <td className="px-3 py-2">
  <Input disabled={locked} value={r.fsa}
  onChange={e => patchRow(r.id, { fsa: e.target.value })}
@@ -715,6 +788,37 @@ export function Audit590Worksheet() {
         {!locked && <span className="text-[10px] text-muted-foreground/60 block mt-1">Click to edit</span>}
        </div>
       )}
+     </td>
+     {/* Planned Procedures */}
+     <td className="px-3 py-2 align-top">
+      <div className="flex flex-col gap-1 min-h-[40px]">
+       {r.plannedProcedureIds.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+         {r.plannedProcedureIds.map(nodeId => {
+          const node = ALL_PROCEDURE_NODES.find(n => n.wpNodeId === nodeId);
+          if (!node) return null;
+          return (
+           <span key={nodeId} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-mono font-semibold text-primary">
+            {node.lsCode}
+            {!locked && (
+             <button type="button" onClick={() => togglePlannedProc(r.id, nodeId)} className="hover:text-destructive ml-0.5">
+              <X className="h-2.5 w-2.5" />
+             </button>
+            )}
+           </span>
+          );
+         })}
+        </div>
+       )}
+       {!locked && (
+        <button type="button" onClick={() => setMapProcsRowId(r.id)} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 transition-colors w-fit">
+         Map Procedures
+        </button>
+       )}
+       {locked && r.plannedProcedureIds.length === 0 && (
+        <span className="text-xs text-muted-foreground italic">None</span>
+       )}
+      </div>
      </td>
      <td className="px-3 py-2">
       <Textarea disabled={locked} value={r.auditResponse}
@@ -867,6 +971,51 @@ export function Audit590Worksheet() {
  </div>
 
  </div>
+
+ {/* Map Procedures Panel — fixed overlay, inside the root div so it renders in component tree */}
+ {mapProcsRowId && (() => {
+  const row = data.rows.find(r => r.id === mapProcsRowId);
+  if (!row) return null;
+  return (
+   <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setMapProcsRowId(null)}>
+    <div className="h-full w-80 bg-background border-l border-border shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+     {/* Header */}
+     <div className="px-5 py-4 border-b border-border flex items-center justify-between shrink-0">
+      <div>
+       <p className="text-sm font-semibold text-foreground">Map Procedures</p>
+       <p className="text-xs text-muted-foreground mt-0.5">{row.fsa || "Unnamed FSA"}</p>
+      </div>
+      <button onClick={() => setMapProcsRowId(null)} className="text-muted-foreground hover:text-foreground transition-colors">
+       <X className="h-4 w-4" />
+      </button>
+     </div>
+     {/* Procedure list */}
+     <div className="flex-1 overflow-y-auto p-3 space-y-0.5">
+      {ALL_PROCEDURE_NODES.map(node => {
+       const checked = row.plannedProcedureIds.includes(node.wpNodeId);
+       return (
+        <label key={node.wpNodeId} className="flex items-center gap-3 py-2.5 px-3 rounded-md cursor-pointer hover:bg-muted/50 transition-colors">
+         <input type="checkbox" checked={checked} onChange={() => togglePlannedProc(row.id, node.wpNodeId)} className="h-4 w-4 rounded" />
+         <div className="flex items-center gap-2 min-w-0">
+          <span className="shrink-0 inline-block w-8 text-center font-mono text-[11px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+           {node.lsCode}
+          </span>
+          <span className="text-sm text-foreground truncate">{node.wpLabel}</span>
+         </div>
+        </label>
+       );
+      })}
+     </div>
+     {/* Footer */}
+     <div className="px-5 py-4 border-t border-border shrink-0">
+      <button onClick={() => setMapProcsRowId(null)} className="w-full py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+       Done
+      </button>
+     </div>
+    </div>
+   </div>
+  );
+ })()}
  </div>
  );
 }
