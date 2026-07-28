@@ -8337,6 +8337,7 @@ export const generateAuditWorksheetWithdrawalUS = (): Checklist => {
  };
 };
 
+
 // ── Audit Worksheet – Notes on Significant Audit Decisions (United States) ───
 export const generateAuditWorksheetSignificantDecisionsUS = (): Checklist => {
  const row = (id: string): Question => ({ id, text: '', answerType: 'none', required: false, answer: '', explanation: '', reference: '' });

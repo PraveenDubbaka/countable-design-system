@@ -195,6 +195,7 @@ import {
  generateAuditWorksheetFutureConsiderationUS,
  generateAuditWorksheetDocumentingConsultationUS,
  generateAuditWorksheetWithdrawalUS,
+ generateAuditWorksheetWithdrawalCA,
  generateUSJournalEntryTestingLog,
  generateUSRelatedPartyTransactionsWorksheet,
  generateUSGoodwillImpairmentAssessment,
@@ -393,6 +394,7 @@ const buildDefaultAuditChecklists = () => {
  { generator: generateTCWGFinalCommunicationChecklist, id: "default-audit-tcwg-fin" },
  { generator: generateAuditCompletionChecklist, id: "default-audit-comp" },
  { generator: generateEngagementPartnerAuditCompletionChecklist, id: "default-audit-ep" },
+ { generator: generateAuditWorksheetWithdrawalCA, id: "default-audit-so-311" },
  ];
  return items.map(({ generator, id }) => {
  const data = generator();
@@ -606,9 +608,10 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-rp-670": "default-audit-rp-670",
  // Audit — Financial Statements
  "aud-ar": "default-audit-ar",
- // Audit — Completion & Signoffs — Modified Opinion / Audit Completion
+ // Audit — Completion & Signoffs — Modified Opinion / Audit Completion / Withdrawal
  "aud-so-306": "default-audit-so-306",
  "aud-so-310": "default-audit-so-310",
+ "aud-so-311": "default-audit-so-311",
  "aud-so-aim": "default-audit-so-aim",
  "aud-so-far": "default-audit-so-far",
  "aud-subseq": "default-audit-subseq",
@@ -825,6 +828,7 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
  'default-audit-ar': { section: 'FS', code: 'IAR', label: "Independent Auditor's Report" },
  'default-audit-so-306': { section: 'SO', code: '306', label: 'Modified Opinion' },
  'default-audit-so-310': { section: 'SO', code: '310', label: 'Audit Completion' },
+ 'default-audit-so-311': { section: 'SO', code: '311', label: 'Withdrawal' },
  // CA Audit — SO
  'default-audit-so-aim': { section: 'SO', code: 'AIM', label: 'Accumulation of Identified Misstatements' },
  'default-audit-so-far': { section: 'SO', code: 'FAR', label: 'Final Analytical Review' },
