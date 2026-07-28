@@ -391,6 +391,9 @@ export function Audit335Worksheet() {
 
    {/* ── Evaluation of Misstatements ──────────────────────────────────── */}
    <div className={CARD}>
+    <div className="px-5 py-3.5 border-b border-border">
+     <span className="text-sm font-semibold text-foreground uppercase tracking-wider">Evaluation of misstatements</span>
+    </div>
     <div className="overflow-x-auto">
      <table className="w-full border-collapse">
       <thead>
