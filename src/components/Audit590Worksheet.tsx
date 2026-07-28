@@ -617,7 +617,6 @@ export function Audit590Worksheet() {
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>Sig. risk</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 80 }}>CR</th>
  <th colSpan={4} className="px-3 py-2 text-center text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border border-b border-border">Assertions / RMM</th>
- <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 200 }}>Procedures</th>
  <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 180 }}>Planned Procedures</th>
  <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider border-r border-border" style={{ minWidth: 220 }}>Audit response</th>
  <th rowSpan={2} className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap border-r border-border" style={{ width: 110 }}>Classification</th>
@@ -747,48 +746,6 @@ export function Audit590Worksheet() {
  );
  })}
 
- <td className="px-3 py-2 align-top" onClick={() => !locked && setEditingProcsId(r.id)}>
-      {editingProcsId === r.id && !locked ? (
-       <div className="space-y-1.5" onClick={e => e.stopPropagation()}>
-        {r.procedures.map((p, i) => (
-         <div key={i} className="flex items-start gap-1">
-          <span className="mt-1.5 text-[10px] text-muted-foreground shrink-0 w-4 text-right">{i + 1}.</span>
-          <textarea
-           value={p}
-           onChange={e => updateProcedure590(r.id, i, e.target.value)}
-           className="flex-1 text-xs resize-none bg-transparent border-0 border-b border-border focus:outline-none focus:border-primary py-0.5 min-h-[40px]"
-           rows={2}
-          />
-          <button onClick={() => removeProcedure590(r.id, i)} className="mt-1.5 text-muted-foreground hover:text-destructive shrink-0">
-           <X className="h-3 w-3" />
-          </button>
-         </div>
-        ))}
-        <div className="flex gap-2 pt-1">
-         <button onClick={() => addProcedure590(r.id)} className="flex items-center gap-1 text-xs text-primary hover:underline">
-          <Plus className="h-3 w-3" />Add
-         </button>
-         <button onClick={() => setEditingProcsId(null)} className="text-sm text-muted-foreground hover:underline">Done</button>
-        </div>
-       </div>
-      ) : (
-       <div className="space-y-1 cursor-pointer min-h-[40px]">
-        {r.procedures.length === 0 ? (
-         <span className="text-sm text-muted-foreground italic flex items-center gap-1">
-          <BookOpen className="h-3 w-3" />No procedures
-         </span>
-        ) : (
-         r.procedures.map((p, i) => (
-          <div key={i} className="flex items-start gap-1.5 text-xs text-foreground">
-           <span className="text-muted-foreground shrink-0 mt-0.5">{i + 1}.</span>
-           <span className="leading-snug">{p}</span>
-          </div>
-         ))
-        )}
-        {!locked && <span className="text-[10px] text-muted-foreground/60 block mt-1">Click to edit</span>}
-       </div>
-      )}
-     </td>
      {/* Planned Procedures */}
      <td className="px-3 py-2 align-top">
       <div className="flex flex-col gap-1 min-h-[40px]">
