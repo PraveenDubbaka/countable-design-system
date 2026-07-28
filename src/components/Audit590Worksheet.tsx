@@ -14,7 +14,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc } from "@/lib/lsMapping";
+import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -766,11 +766,12 @@ export function Audit590Worksheet() {
      <td className="px-3 py-2 align-top">
       <div className="flex flex-col gap-1 min-h-[40px]">
        {r.plannedProcedureId && (() => {
-        const node = CA_GLOBAL_PROC_NODES.find(n => n.id === r.plannedProcedureId);
+        const procItems = getGlobalProcedureItems();
+        const node = procItems.find(n => n.id === r.plannedProcedureId);
         if (!node) return null;
         return (
          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-medium text-primary max-w-[150px]">
-          <span className="truncate">{node.label}</span>
+          <span className="truncate">{node.name}</span>
           {!locked && (
            <button type="button" onClick={() => selectPlannedProc(r.id, "")} className="hover:text-destructive ml-0.5 shrink-0">
             <X className="h-2.5 w-2.5" />
@@ -945,8 +946,9 @@ export function Audit590Worksheet() {
  {mapProcsRowId && (() => {
   const row = data.rows.find(r => r.id === mapProcsRowId);
   if (!row) return null;
-  const filtered = CA_GLOBAL_PROC_NODES.filter(n =>
-   !procSearch.trim() || n.label.toLowerCase().includes(procSearch.toLowerCase())
+  const allProcItems = getGlobalProcedureItems();
+  const filtered = allProcItems.filter(n =>
+   !procSearch.trim() || n.name.toLowerCase().includes(procSearch.toLowerCase())
   );
   return (
    <>
@@ -1014,8 +1016,15 @@ export function Audit590Worksheet() {
             className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors text-sm ${selected ? "bg-primary/10" : "hover:bg-muted"}`}
             style={{ paddingLeft: "1.75rem" }}
            >
-            <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-            <span className={`truncate flex-1 ${selected ? "text-primary font-medium" : "text-foreground"}`}>{node.label}</span>
+            {node.type === "folder" ? (
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-3.5 w-3.5 text-primary flex-shrink-0" fill="currentColor" aria-hidden="true">
+              <path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2.1-32.1l112-192z" />
+              <rect x="208" y="328" width="160" height="48" rx="14" fill="#ffffff" />
+             </svg>
+            ) : (
+             <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+            )}
+            <span className={`truncate flex-1 ${selected ? "text-primary font-medium" : node.type === "folder" ? "text-foreground font-semibold" : "text-foreground"}`}>{node.name}</span>
            </button>
           );
          })}

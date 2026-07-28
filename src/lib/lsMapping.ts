@@ -1,3 +1,23 @@
+import { GlobalTemplate, initialGlobalWorksheets } from "@/components/Sidebar";
+
+function findNodeById(nodes: GlobalTemplate[], id: string): GlobalTemplate | null {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    if (node.children) {
+      const found = findNodeById(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+/** Direct children of the Global Worksheets > Procedures folder (gca-ws-proc). */
+export function getGlobalProcedureItems(
+  worksheets: GlobalTemplate[] = initialGlobalWorksheets
+): GlobalTemplate[] {
+  return findNodeById(worksheets, "gca-ws-proc")?.children ?? [];
+}
+
 export interface LsInfo {
   lsCode: string;
   wpNodeId: string;

@@ -124,7 +124,7 @@ const initialTemplates: Template[] = [{
 }];
 
 // Global Templates data structure for "master" tab
-interface GlobalTemplate {
+export interface GlobalTemplate {
  id: string;
  name: string;
  type: "folder" | "file";
@@ -132,7 +132,7 @@ interface GlobalTemplate {
  isExpanded?: boolean;
 }
 
-const initialGlobalTemplates: GlobalTemplate[] = [
+export const initialGlobalTemplates: GlobalTemplate[] = [
  {
  id: "global-1",
  name: "Compilation",
@@ -285,7 +285,7 @@ const initialGlobalTemplates: GlobalTemplate[] = [
 ];
 
 // Global Worksheets data structure — shown when "Worksheets" is selected in the dropdown
-const initialGlobalWorksheets: GlobalTemplate[] = [
+export const initialGlobalWorksheets: GlobalTemplate[] = [
  {
  id: "gws-review",
  name: "Review",
