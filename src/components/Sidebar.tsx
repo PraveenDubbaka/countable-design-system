@@ -2320,7 +2320,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  children: [
  { id: "aud-fs-cover", label: "Cover Page", icon: "doc", route: "checklist/aud-fs-cover" },
  { id: "aud-fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/aud-fs-toc" },
- { id: "aud-fs-iar", label: "Independent Auditor's Report", icon: "checklist", route: "checklist/aud-ar" },
  { id: "aud-fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/aud-fs-bs" },
  { id: "aud-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc", route: "checklist/aud-fs-is" },
  { id: "aud-fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/aud-fs-cf" },
@@ -2339,6 +2338,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-wgc-final" },
  { id: "aud-mr", code: "MR", label: "Management Representation Letter", icon: "checklist", route: "checklist/aud-mr" },
  { id: "aud-tcwg-fin", code: "TCWG", label: "Governance Comms", icon: "letter", route: "checklist/aud-tcwg-fin" },
+ { id: "aud-fs-iar", label: "Independent Auditor's Report", icon: "checklist", route: "checklist/aud-ar" },
  { id: "aud-comp", code: "CM", label: "Completion Checklist", icon: "completion", route: "checklist/aud-comp" },
  { id: "aud-disc", code: "DC", label: "Disclosure Checklist", icon: "checklist", route: "checklist/aud-disc" },
  { id: "aud-ep", code: "QCR", label: "Quality Control Review", icon: "completion", route: "checklist/aud-ep" },
