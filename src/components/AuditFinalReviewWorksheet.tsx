@@ -293,11 +293,9 @@ export function AuditFinalReviewWorksheet() {
                 <div className="font-medium text-sm mb-2">Client Onboarding</div>
                 <div className="space-y-1.5 pl-1">
                   {([
-                    { key: "co-acc-cont",     label: "Client acceptance and continuance" },
-                    { key: "co-independence", label: "Independence" },
-                    { key: "co-knowledge",    label: "Knowledge of client business" },
-                    { key: "co-planning",     label: "Planning" },
-                    { key: "co-eng-letter",   label: "Engagement Letter" },
+                    { key: "co-408",      label: "408 Initial Audit Engagements" },
+                    { key: "co-410",      label: "410 New Engagement — Acceptance/Continuance" },
+                    { key: "co-al1-1",    label: "AL1.1 Engagement Letter" },
                   ] as { key: string; label: string }[]).map(item => (
                     <div key={item.key} className="flex items-center gap-2">
                       <Cb checked={!!data.checks[item.key]} onChange={() => toggleCheck(item.key)} />
