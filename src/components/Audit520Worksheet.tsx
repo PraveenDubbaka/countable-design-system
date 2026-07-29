@@ -10,6 +10,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
@@ -530,7 +531,15 @@ export function Audit520Worksheet() {
       <LukaStatusBar
         isActive={true}
         message="Luka is populating risk register from connected Xero data, prior file, and risk library…"
-        actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+        actions={DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
+          ...a,
+          onTrigger: () => dispatchLukaSuggest({
+            label: a.label,
+            sources: DEMO_LUKA_ACTIONS.riskAssessment.sources,
+            engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+            worksheetKey: "520",
+          }),
+        }))}
       />
     )}
 
