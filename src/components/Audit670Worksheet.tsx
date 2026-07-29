@@ -16,6 +16,8 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 type YN = "Y" | "N" | "";
 
@@ -121,6 +123,7 @@ const JE_KEYWORDS = ["journal", "management override", "override", "fraud", "man
 
 export function Audit670Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
 
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
@@ -171,6 +174,13 @@ export function Audit670Worksheet() {
  objective="Determine whether material misstatements (fraud or error) have occurred from inappropriate, fictitious, or unauthorized journal entries (responding to the presumed management-override risk)."
  standard={`${ctx.standardPrefix} 240.32`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  <WorksheetSection title="Performance materiality">
  <div className="flex items-center gap-6">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>

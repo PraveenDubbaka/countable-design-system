@@ -17,6 +17,8 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 type YN = "Y" | "N" | "";
 type YNNA = YN | "N/A";
@@ -122,6 +124,7 @@ const RP_KEYWORDS = ["related part", "related-party", "shareholder", "management
 
 export function Audit666Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
 
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
@@ -176,6 +179,13 @@ export function Audit666Worksheet() {
  objective="Obtain evidence that related-party relationships and transactions have been identified, accounted for, and disclosed in the F/S in accordance with the AFRF."
  standard={`${ctx.standardPrefix} 550`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  <WorksheetSection title="Performance materiality">
  <div className="flex items-center gap-6">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>

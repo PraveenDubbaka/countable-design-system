@@ -16,6 +16,8 @@ import { RefButton, type RefDoc } from "@/components/RefButton";
 import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ConcludeBar,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 type YN = "Y" | "N" | "";
 
@@ -108,6 +110,7 @@ function num(v: string): number { const n = parseFloat((v || "").replace(/[^0-9.
 
 export function Audit655Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
 
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
@@ -218,6 +221,13 @@ export function Audit655Worksheet() {
  objective="Assist in forming an overall conclusion on whether the F/S are consistent with our understanding of the entity, and corroborate the conclusions formed on individual components."
  standard={`${ctx.standardPrefix} 520.6`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  <WorksheetSection title="Performance materiality">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>
  </WorksheetSection>

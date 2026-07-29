@@ -13,6 +13,8 @@ import { formatCurrency } from "@/lib/engagementContext";
 import {
  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ConcludeBar, type SignOffData,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ─── Sample-plan calculator (mirrors the spreadsheet on pages 1-3 of the source workbook) ──
 type Method = "statistical" | "non-statistical";
@@ -85,6 +87,7 @@ function buildDefault(initialPM: number): Data610 {
 
 export function Audit610Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
  const overall = useMemo(() => overallRisk520(risks), [risks]);
@@ -156,6 +159,13 @@ export function Audit610Worksheet() {
  objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
  standard={`${ctx.standardPrefix} 530`}
  >
+ {isDemoEngagement && (
+  <LukaStatusBar
+    isActive={true}
+    message="Luka is populating information from prior file and connected data sources…"
+    actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+  />
+ )}
  <WorksheetHeader
  ctx={ctx}
  formNo="610"

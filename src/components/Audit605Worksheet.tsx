@@ -8,6 +8,8 @@ import {
  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow, type SignOffData,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 interface Data605 {
  fsLevelControlWeaknesses: string;
@@ -81,6 +83,7 @@ function buildDefault(overallRisk: "High" | "Moderate" | "Low"): Data605 {
 
 export function Audit605Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
  const overall = useMemo(() => overallRisk520(risks), [risks]);
@@ -115,6 +118,13 @@ export function Audit605Worksheet() {
  objective="Design overall responses to address risks of material misstatement at the financial-statement level. Responses are based on the assessment of risk recorded"
  standard={`${ctx.standardPrefix} 330.5`}
  >
+ {isDemoEngagement && (
+  <LukaStatusBar
+    isActive={true}
+    message="Luka is populating information from prior file and connected data sources…"
+    actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+  />
+ )}
  <WorksheetHeader
  ctx={ctx}
  formNo="605"
