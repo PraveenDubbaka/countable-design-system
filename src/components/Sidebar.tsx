@@ -2329,7 +2329,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {
  id: "aud-pr-lta", label: "Long-term assets", icon: "folder",
  children: [
- { id: "aud-wp-k", code: "K", label: "Long-term investments", icon: "book", route: "procedure/aud-wp-k" },
+ { id: "aud-wp-f", code: "F", label: "Intangibles and goodwill", icon: "book", route: "procedure/aud-wp-f" },
+         { id: "aud-wp-k", code: "K", label: "Long-term investments", icon: "book", route: "procedure/aud-wp-k" },
  ]
  },
  ]
