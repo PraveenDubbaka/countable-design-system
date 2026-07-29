@@ -14,6 +14,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 interface ConfirmRow {
  id: string;
@@ -83,6 +86,14 @@ export function Audit630Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const upd = (id: string, field: keyof ConfirmRow, value: string) =>
  setData(d => ({...d, rows: d.rows.map(r => r.id === id ? {...r, [field]: value } : r) }));
 
@@ -108,7 +119,33 @@ export function Audit630Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           {
+             scrollRef: firstFillRef,
+             set: () => {
+               setData(d => ({ ...d, rows: d.rows.map((r, i) => i === 0
+                 ? { ...r, type: 'Positive' as const, nature: 'Bank confirmation for operating account', itemsSent: '1', itemsReceived: '1', amountConfirmed: '485,230', exceptions: 'None', psc: 'Y' as const }
+                 : r
+               )}));
+               markLukaFilled('confirm-0');
+             }
+           },
+           {
+             set: () => {
+               setData(d => ({ ...d, rows: d.rows.map((r, i) => i === 1
+                 ? { ...r, type: 'Positive' as const, nature: 'Accounts receivable — top 20 customers by balance', itemsSent: '20', itemsReceived: '17', amountConfirmed: '1,245,800', exceptions: '3 non-responses; alternative procedures applied (subsequent cash receipts confirmed)' }
+                 : r
+               )}));
+               markLukaFilled('confirm-1');
+             }
+           },
+           {
+             set: () => {
+               setData(d => ({ ...d, overallConclusion: 'Confirmation procedures performed. Bank balance confirmed without exception. AR sample of 20 confirmations: 17 positive responses received; 3 non-responses resolved via subsequent cash receipts testing. No material exceptions identified.' }));
+               markLukaFilled('conclusion');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -129,7 +166,7 @@ export function Audit630Worksheet() {
  locked={locked}
  />
 
- <div className={CARD}>
+ <div className={CARD} ref={firstFillRef}>
  <div className="px-6 py-3.5 border-b border-border flex items-center justify-between">
  <h3 className="text-sm font-semibold">Confirmation register</h3>
  {!locked && (
@@ -154,8 +191,8 @@ export function Audit630Worksheet() {
  {!locked && <th className="border-b border-border w-[44px]"></th>}
  </tr></thead>
  <tbody>
- {data.rows.map(r => (
- <tr key={r.id} className="hover:bg-muted/20">
+ {data.rows.map((r, rowIndex) => (
+ <tr key={r.id} className={`hover:bg-muted/20${isDemoEngagement && (rowIndex === 0 ? lukaHighlightFields.has('confirm-0') : rowIndex === 1 ? lukaHighlightFields.has('confirm-1') : false) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className={td}><Input disabled={locked} value={r.area} onChange={e => upd(r.id, "area", e.target.value)} className="h-8 text-sm" /></td>
  <td className={td}><Input disabled={locked} value={r.wpRef} onChange={e => upd(r.id, "wpRef", e.target.value)} className="h-8 text-sm font-mono" placeholder="—" /></td>
  <td className={td}>
@@ -167,7 +204,17 @@ export function Audit630Worksheet() {
  </SelectContent>
  </Select>
  </td>
- <td className={td}><Textarea disabled={locked} value={r.nature} onChange={e => upd(r.id, "nature", e.target.value)} className="min-h-[56px] text-sm resize-none" placeholder="e.g. top 15 customers by balance" /></td>
+ <td className={td}>
+ <LukaTypingRow filled={isDemoEngagement && (rowIndex === 0 ? lukaFilledFields.has('confirm-0') : rowIndex === 1 ? lukaFilledFields.has('confirm-1') : false)}>
+   <Textarea disabled={locked} value={r.nature} onChange={e => upd(r.id, "nature", e.target.value)} className="min-h-[56px] text-sm resize-none" placeholder="e.g. top 15 customers by balance" />
+ </LukaTypingRow>
+ {isDemoEngagement && rowIndex === 0 && lukaFilledFields.has('confirm-0') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
+ {isDemoEngagement && rowIndex === 1 && lukaFilledFields.has('confirm-1') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
+ </td>
  <td className={td}><Input disabled={locked} value={r.itemsSent} onChange={e => upd(r.id, "itemsSent", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
  <td className={td}><Input disabled={locked} value={r.itemsReceived} onChange={e => upd(r.id, "itemsReceived", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
  <td className={td}><Input disabled={locked} value={r.amountConfirmed} onChange={e => upd(r.id, "amountConfirmed", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
@@ -205,8 +252,13 @@ export function Audit630Worksheet() {
 
  <div className={CARD}>
  <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Overall conclusion</h3></div>
- <div className="p-6">
- <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({...d, overallConclusion: e.target.value }))} className="text-sm min-h-[88px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
+ <div className={`p-6${isDemoEngagement && lukaHighlightFields.has('conclusion') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('conclusion')}>
+   <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({...d, overallConclusion: e.target.value }))} className="text-sm min-h-[88px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('conclusion') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
 

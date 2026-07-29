@@ -15,6 +15,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ─── Sample-plan calculator (mirrors the spreadsheet on pages 1-3 of the source workbook) ──
 type Method = "statistical" | "non-statistical";
@@ -115,6 +118,14 @@ export function Audit610Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const p = data.plan;
 
  // Derived calculations (matches the source spreadsheet)
@@ -173,7 +184,27 @@ export function Audit610Worksheet() {
       ...a,
       onTrigger: () => {
         setLukaState('loading');
-        setTimeout(() => setLukaState('done'), 2200);
+        lukaSequentialFill([
+          {
+            scrollRef: firstFillRef,
+            set: () => {
+              setData(d => ({ ...d, plan: { ...d.plan, fsArea: 'Accounts Receivable', assertions: 'Existence, Valuation, Cut-off', purpose: 'Verify that accounts receivable balances exist and are properly stated at period end.' } }));
+              markLukaFilled('plan-fsArea');
+            }
+          },
+          {
+            set: () => {
+              setData(d => ({ ...d, plan: { ...d.plan, populationDesc: 'All A/R invoice items outstanding as at December 31, 2025 with a balance > $500. Total population: $2,847,650 (412 items).', controlsTested: 'Invoice authorization controls reviewed — no material exceptions noted.' } }));
+              markLukaFilled('plan-population');
+            }
+          },
+          {
+            set: () => {
+              setData(d => ({ ...d, documentation: 'Sample selection performed using Audit Command Language (ACL). Random sample of 25 items selected from stratified population. All items traced to supporting invoices, shipping documents, and subsequent cash receipts.' }));
+              markLukaFilled('documentation');
+            }
+          },
+        ], () => setLukaState('done'));
       },
     }))}
   />
@@ -194,10 +225,26 @@ export function Audit610Worksheet() {
  <div className="rounded-lg border border-border bg-card overflow-hidden">
  <div className="px-4 py-3 border-b border-border bg-muted/30"><h3 className="text-sm font-semibold text-foreground">1 · Sample design</h3></div>
  <div className="p-4 grid grid-cols-2 gap-4">
- <div><Label>Financial-statement area</Label><Input disabled={locked} value={p.fsArea} onChange={e => upd("fsArea", e.target.value)} className="h-8 text-sm" placeholder="e.g. Accounts Receivable" /></div>
+ <div ref={firstFillRef} className={isDemoEngagement && lukaHighlightFields.has('plan-fsArea') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}>
+ <Label>Financial-statement area</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('plan-fsArea')}>
+   <Input disabled={locked} value={p.fsArea} onChange={e => upd("fsArea", e.target.value)} className="h-8 text-sm" placeholder="e.g. Accounts Receivable" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('plan-fsArea') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
+ </div>
  <div><Label>Assertion(s) addressed</Label><Input disabled={locked} value={p.assertions} onChange={e => upd("assertions", e.target.value)} className="h-8 text-sm" placeholder="e.g. C, AV, E" /></div>
  <div className="col-span-2"><Label>Purpose of the audit procedure</Label><AttributedComment value={p.purpose} onChange={v => upd("purpose", v)} storageKey={`610-${engagementId ?? "def"}-purpose`} placeholder="Describe what the test is intended to detect or substantiate" disabled={locked} className="text-sm min-h-[60px]" /></div>
- <div className="col-span-2"><Label>Population characteristics</Label><Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" /></div>
+ <div className={`col-span-2${isDemoEngagement && lukaHighlightFields.has('plan-population') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
+ <Label>Population characteristics</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('plan-population')}>
+   <Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('plan-population') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
+ </div>
  <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><AttributedComment value={p.controlsTested} onChange={v => upd("controlsTested", v)} storageKey={`610-${engagementId ?? "def"}-controlsTested`} placeholder="None / describe and reference WP" disabled={locked} className="text-sm min-h-[48px]" /></div>
  <div>
  <Label>Assessed RMM</Label>
@@ -251,7 +298,15 @@ export function Audit610Worksheet() {
  {!locked && <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setData(d => ({...d, results: [...d.results, newRow()] }))}><Plus className="h-3.5 w-3.5" /> Add item</Button>}
  </div>
  <div className="p-4 grid grid-cols-1 gap-4">
- <div><Label>Documentation of items selected (W/P cross-reference)</Label><Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({...d, documentation: e.target.value }))} className="text-sm min-h-[56px]" /></div>
+ <div className={isDemoEngagement && lukaHighlightFields.has('documentation') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}>
+ <Label>Documentation of items selected (W/P cross-reference)</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('documentation')}>
+   <Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({...d, documentation: e.target.value }))} className="text-sm min-h-[56px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('documentation') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
+ </div>
  <div className="grid grid-cols-2 gap-4">
  <div><Label>Replacements (count and reason)</Label><Textarea disabled={locked} value={data.replacements} onChange={e => setData(d => ({...d, replacements: e.target.value }))} className="text-sm min-h-[48px]" /></div>
  <div><Label>Anomalies identified</Label><Textarea disabled={locked} value={data.anomalies} onChange={e => setData(d => ({...d, anomalies: e.target.value }))} className="text-sm min-h-[48px]" /></div>

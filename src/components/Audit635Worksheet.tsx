@@ -15,6 +15,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -256,6 +259,14 @@ export function Audit635Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const linkedRisk = useMemo(
  () => estimateRisks.find(r => r.ref === data.selectedRiskRef),
  [estimateRisks, data.selectedRiskRef],
@@ -328,7 +339,27 @@ export function Audit635Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           {
+             scrollRef: firstFillRef,
+             set: () => {
+               setData(d => ({ ...d, estimateName: 'Allowance for Doubtful Accounts', estimateAmount: '84,500' }));
+               markLukaFilled('estimate-name');
+             }
+           },
+           {
+             set: () => {
+               setData(d => ({ ...d, managementMethod: 'Management applied an aging schedule analysis using historical write-off rates by aging bucket. Accounts over 90 days past due: estimated at 50% uncollectible; 61–90 days: 20%; 31–60 days: 5%. Historical average write-off rate over 3 years: 2.1% of gross receivables.' }));
+               markLukaFilled('estimate-method');
+             }
+           },
+           {
+             set: () => {
+               setData(d => ({ ...d, evidenceRationale: 'Reviewed aging analysis, applied independent recalculation using historical write-off rates, and tested reasonableness against subsequent cash receipts. Estimate falls within the range of reasonable outcomes under ASPE/IFRS. No material exceptions identified.' }));
+               markLukaFilled('evidence-rationale');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -382,25 +413,35 @@ export function Audit635Worksheet() {
  inputMode="decimal"
  />
  </div>
- <div className="md:col-span-3">
+ <div ref={firstFillRef} className={`md:col-span-3${isDemoEngagement && lukaHighlightFields.has('estimate-name') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
  <Label>Estimate name / description</Label>
- <Input
- disabled={locked}
- value={data.estimateName}
- onChange={e => setData(d => ({...d, estimateName: e.target.value }))}
- className="h-9 text-sm"
- placeholder="e.g. Allowance for doubtful accounts"
- />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('estimate-name')}>
+   <Input
+   disabled={locked}
+   value={data.estimateName}
+   onChange={e => setData(d => ({...d, estimateName: e.target.value }))}
+   className="h-9 text-sm"
+   placeholder="e.g. Allowance for doubtful accounts"
+   />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('estimate-name') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
- <div className="md:col-span-3">
+ <div className={`md:col-span-3${isDemoEngagement && lukaHighlightFields.has('estimate-method') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
  <Label>Method used by management to prepare the estimate</Label>
- <Textarea
- disabled={locked}
- value={data.managementMethod}
- onChange={e => setData(d => ({...d, managementMethod: e.target.value }))}
- className="text-sm min-h-[72px]"
- placeholder="Describe the method, key assumptions, data sources and any model or expert used."
- />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('estimate-method')}>
+   <Textarea
+   disabled={locked}
+   value={data.managementMethod}
+   onChange={e => setData(d => ({...d, managementMethod: e.target.value }))}
+   className="text-sm min-h-[72px]"
+   placeholder="Describe the method, key assumptions, data sources and any model or expert used."
+   />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('estimate-method') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>
@@ -612,15 +653,20 @@ export function Audit635Worksheet() {
  onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))}
  />
  </div>
- <div>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidence-rationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}>
  <Label>Rationale</Label>
- <Textarea
- disabled={locked}
- value={data.evidenceRationale}
- onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
- className="text-sm min-h-[72px]"
- placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the RMM related to this estimate to an acceptably low level."
- />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidence-rationale')}>
+   <Textarea
+   disabled={locked}
+   value={data.evidenceRationale}
+   onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
+   className="text-sm min-h-[72px]"
+   placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the RMM related to this estimate to an acceptably low level."
+   />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidence-rationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>

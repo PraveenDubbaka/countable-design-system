@@ -17,6 +17,8 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -251,6 +253,14 @@ export function Audit625Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const recommended = recommendImplication(data);
 
  // ── Procedure-row updaters ─────────────────────────────────────────────────
@@ -321,7 +331,27 @@ export function Audit625Worksheet() {
      ...a,
      onTrigger: () => {
        setLukaState('loading');
-       setTimeout(() => setLukaState('done'), 2200);
+       lukaSequentialFill([
+         {
+           scrollRef: firstFillRef,
+           set: () => {
+             setData(d => ({ ...d, conclusionRationale: 'No material uncertainty identified. Entity has demonstrated ability to meet obligations as they fall due for at least 12 months from December 31, 2025. Going-concern basis of accounting is appropriate.' }));
+             markLukaFilled('conclusion-rationale');
+           }
+         },
+         {
+           set: () => {
+             setData(d => ({ ...d, materialUncertainty: 'N', goingConcernBasisAppropriate: 'Y' }));
+             markLukaFilled('gc-assessment');
+           }
+         },
+         {
+           set: () => {
+             setData(d => ({ ...d, evidenceRationale: 'Reviewed management cash flow forecast, confirmed covenant compliance (DSCR 1.42×), and verified availability of $1.2M revolving credit facility. Procedures are sufficient and appropriate to support the going-concern conclusion.' }));
+             markLukaFilled('evidence-rationale');
+           }
+         },
+       ], () => setLukaState('done'));
      },
    }))}
   />
@@ -457,15 +487,20 @@ export function Audit625Worksheet() {
  <YNSelect value={data.goingConcernBasisAppropriate} onChange={(v) => setData(d => ({...d, goingConcernBasisAppropriate: v as YN }))} />
  </div>
  </div>
- <div className="mt-4">
+ <div ref={firstFillRef} className={`mt-4${isDemoEngagement && lukaHighlightFields.has('conclusion-rationale') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
  <Label>Rationale supporting the conclusion</Label>
- <Textarea
- disabled={locked}
- value={data.conclusionRationale}
- onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
- className="text-sm min-h-[80px]"
- placeholder="Summarise the evidence and judgment supporting the conclusions above."
- />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('conclusion-rationale')}>
+   <Textarea
+   disabled={locked}
+   value={data.conclusionRationale}
+   onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
+   className="text-sm min-h-[80px]"
+   placeholder="Summarise the evidence and judgment supporting the conclusions above."
+   />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('conclusion-rationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </WorksheetSection>
 
@@ -622,15 +657,20 @@ export function Audit625Worksheet() {
  <Label>Evidence sufficient &amp; appropriate?</Label>
  <YNSelect value={data.evidenceSufficient} onChange={(v) => setData(d => ({...d, evidenceSufficient: v as YN }))} />
  </div>
- <div>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidence-rationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}>
  <Label>Rationale</Label>
- <Textarea
- disabled={locked}
- value={data.evidenceRationale}
- onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
- className="text-sm min-h-[64px]"
- placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement related to going concern to an acceptably low level."
- />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidence-rationale')}>
+   <Textarea
+   disabled={locked}
+   value={data.evidenceRationale}
+   onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
+   className="text-sm min-h-[64px]"
+   placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement related to going concern to an acceptably low level."
+   />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidence-rationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>
