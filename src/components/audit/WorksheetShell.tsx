@@ -73,12 +73,14 @@ export function WorksheetLayout({
  children,
  heading: _heading,
  onAdd,
+ lukaButton,
 }: {
  objective?: string;
  standard?: string;
  children: ReactNode;
  heading?: string;
  onAdd?: () => void;
+ lukaButton?: ReactNode;
 }) {
  return (
  <div className="flex flex-col h-full">
@@ -88,6 +90,7 @@ export function WorksheetLayout({
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-base text-muted-foreground flex-1 leading-relaxed">{objective}</p>
+ {lukaButton}
  </div>
  )}
  <div className="p-6 space-y-4">{children}</div>

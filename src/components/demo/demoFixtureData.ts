@@ -75,3 +75,22 @@ export const DEMO_PROVENANCE = {
     confidence: 'Medium' as const,
   },
 };
+
+export const DEMO_LUKA_ACTIONS = {
+  riskAssessment: [
+    { label: "Populate risks from prior file", description: "Carry forward identified risks from 2024 review file" },
+    { label: "Flag significant risks", description: "Auto-mark risks above High inherent threshold" },
+    { label: "Cross-reference to 520", description: "Link identified risks to risk register" },
+  ],
+  procedures: [
+    { label: "Load procedures from engagement scope", description: "Pull 590 procedure library into this worksheet" },
+    { label: "Mark automatable procedures", description: "Flag procedures Luka can initiate work papers for" },
+  ],
+  completion: [
+    { label: "Populate from signed-off sections", description: "Pull conclusions from completed risk and procedure worksheets" },
+    { label: "Flag open items", description: "Identify sections still requiring auditor judgment" },
+  ],
+  generic: [
+    { label: "Auto-populate from prior file", description: "Carry forward and flag for re-evaluation" },
+  ],
+};

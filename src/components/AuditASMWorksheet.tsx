@@ -9,7 +9,8 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
-import { DEMO_ENGAGEMENT_ID, DEMO_TEAM } from "@/components/demo/demoFixtureData";
+import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
+import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -351,6 +352,13 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
 
  {/* ── Card header ── */}
  <div className="px-6 py-4 border-b border-border bg-card">
+ {isDemoEngagement && (
+   <div className="flex justify-end mb-2">
+     <LukaSuggestButton
+       actions={DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+     />
+   </div>
+ )}
  <div className="grid grid-cols-2 gap-x-8 gap-y-3 mb-3">
  <div className="flex items-center gap-3">
  <span className="text-xs font-semibold text-muted-foreground w-24 shrink-0">Entity:</span>
