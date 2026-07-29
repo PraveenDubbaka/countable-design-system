@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { LukaTypingRow } from "@/components/demo/LukaTypingRow";
 
 interface Data605 {
  fsLevelControlWeaknesses: string;
@@ -93,8 +94,12 @@ export function Audit605Worksheet() {
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
  function markLukaFilled(id: string) {
    setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
  }
 
  const storageKey = `audit-605-data-${engagementId ?? "default"}`;
@@ -140,7 +145,7 @@ export function Audit605Worksheet() {
        onTrigger: () => {
          setLukaState('loading');
          lukaSequentialFill([
-           { set: () => {
+           { scrollRef: firstFillRef as React.RefObject<HTMLElement>, set: () => {
                setData(d => ({ ...d, fsLevelControlWeaknesses: 'No material weaknesses identified in prior year review. IT general controls over financial reporting system (QuickBooks) assessed as adequate for engagement scope.' }));
                markLukaFilled('fsLevelControlWeaknesses');
              }
@@ -199,18 +204,25 @@ export function Audit605Worksheet() {
 
  <LinkedRisksCard overallRisk={overall} risks={fsRisks} storageKey={`audit-605-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="No FS-level or significant risks have been flagged in" />
 
- <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+ <div
+   ref={firstFillRef}
+   className={`bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden${
+     isDemoEngagement && lukaHighlightFields.has('fsLevelControlWeaknesses') ? ' border-l-4 border-l-violet-400 bg-violet-50/40' : ''
+   }`}
+ >
  <div className="px-6 py-3.5 border-b border-border">
  <h3 className="text-sm font-semibold">A · Control weaknesses at the financial-statement level</h3>
  </div>
  <div className="p-6">
- <Textarea
- disabled={locked}
- value={data.fsLevelControlWeaknesses}
- onChange={e => setData(d => ({...d, fsLevelControlWeaknesses: e.target.value }))}
- className="text-sm min-h-[88px]"
- placeholder="Summarise any control weaknesses at the financial-statement level identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…"
- />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('fsLevelControlWeaknesses')}>
+   <Textarea
+   disabled={locked}
+   value={data.fsLevelControlWeaknesses}
+   onChange={e => setData(d => ({...d, fsLevelControlWeaknesses: e.target.value }))}
+   className="text-sm min-h-[88px]"
+   placeholder="Summarise any control weaknesses at the financial-statement level identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…"
+   />
+ </LukaTypingRow>
  {isDemoEngagement && lukaFilledFields.has('fsLevelControlWeaknesses') && (
    <div className="mt-1">
      <AutomationStateChip state="luka-drafted" />
