@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,6 +14,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -241,8 +242,12 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstPlanRef = useRef<HTMLTableRowElement>(null);
  function markLukaFilled(id: string) {
   setLukaFilledFields(prev => new Set(prev).add(id));
+  setLukaHighlightFields(prev => new Set(prev).add(id));
+  setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
  }
 
  const firstRender = useRef(true);
@@ -310,7 +315,7 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
       onTrigger: () => {
         setLukaState('loading');
         lukaSequentialFill([
-          { set: () => {
+          { scrollRef: firstPlanRef as React.RefObject<HTMLElement>, set: () => {
               setPlan('pl-1', { checked: true, psc: 'C', response: 'CFO and Controller identified as primary contacts for risk identification discussions.' });
               markLukaFilled('pl-1');
             }
@@ -360,7 +365,13 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  {PLANNING.map(proc => {
  const row = data.planning[proc.id];
  return (
- <tr key={proc.id} className="hover:bg-muted/50 transition-colors">
+ <tr
+ key={proc.id}
+ ref={proc.id === 'pl-1' ? firstPlanRef : undefined}
+ className={`hover:bg-muted/50 transition-colors${
+   isDemoEngagement && lukaHighlightFields.has(proc.id) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''
+ }`}
+ >
  <td className="px-4 py-3 text-center align-top">
  <Checkbox checked={row.checked} onCheckedChange={v => setPlan(proc.id, { checked: !!v })} disabled={locked} />
  </td>
@@ -384,7 +395,9 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </td>
  <td className="px-6 py-3 align-top">
- <AttributedComment value={row.response} onChange={v => setPlan(proc.id, { response: v })} storageKey={`505-${engagementId}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
+   <AttributedComment value={row.response} onChange={v => setPlan(proc.id, { response: v })} storageKey={`505-${engagementId}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
+ </LukaTypingRow>
  {isDemoEngagement && lukaFilledFields.has(proc.id) && (
    <div className="mt-1">
      <AutomationStateChip state="luka-drafted" />
