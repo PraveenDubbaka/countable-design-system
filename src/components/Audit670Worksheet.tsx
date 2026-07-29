@@ -174,8 +174,7 @@ export function Audit670Worksheet() {
  heading="Canada > Worksheets"
  objective="Determine whether material misstatements (fraud or error) have occurred from inappropriate, fictitious, or unauthorized journal entries (responding to the presumed management-override risk)."
  standard={`${ctx.standardPrefix} 240.32`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -193,7 +192,8 @@ export function Audit670Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  <WorksheetSection title="Performance materiality">
  <div className="flex items-center gap-6">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>

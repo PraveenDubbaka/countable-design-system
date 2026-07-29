@@ -208,8 +208,7 @@ export function Audit650Worksheet() {
  heading="Canada > Worksheets"
  objective="Obtain evidence about events between the F/S date and the auditor's report date that require adjustment or disclosure, and respond to facts discovered after the auditor's report date."
  standard={`${ctx.standardPrefix} 560`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -227,7 +226,8 @@ export function Audit650Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  {/* Key dates */}
  <WorksheetSection title="Key dates" right={<span className="text-[11px] text-muted-foreground">Auditor's report ≥ F/S approval date</span>}>
  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

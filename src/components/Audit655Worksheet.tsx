@@ -221,8 +221,7 @@ export function Audit655Worksheet() {
  heading="Canada > Worksheets"
  objective="Assist in forming an overall conclusion on whether the F/S are consistent with our understanding of the entity, and corroborate the conclusions formed on individual components."
  standard={`${ctx.standardPrefix} 520.6`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -240,7 +239,8 @@ export function Audit655Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  <WorksheetSection title="Performance materiality">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>
  </WorksheetSection>

@@ -179,8 +179,7 @@ export function Audit666Worksheet() {
  heading="Canada > Worksheets"
  objective="Obtain evidence that related-party relationships and transactions have been identified, accounted for, and disclosed in the F/S in accordance with the AFRF."
  standard={`${ctx.standardPrefix} 550`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -198,7 +197,8 @@ export function Audit666Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  <WorksheetSection title="Performance materiality">
  <div className="flex items-center gap-6">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>

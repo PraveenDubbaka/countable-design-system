@@ -285,8 +285,7 @@ export function Audit680Worksheet() {
  heading="Canada > Worksheets"
  objective="Document supplementary audit procedures for ASPE areas: first-time adoption (Section 1500), financial instruments (Section 3856) and employee future benefits (Section 3462)."
  standard="CPA Canada Handbook — Part II"
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -304,7 +303,8 @@ export function Audit680Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  {!isAspe && (
  <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
  Engagement framework: <span className="font-medium">{ctx.framework}</span>. This form is designed for ASPE engagements — these procedures may not apply. Toggle the applicable sections below.
