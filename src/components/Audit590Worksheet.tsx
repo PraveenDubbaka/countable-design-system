@@ -14,7 +14,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
+import { getLsInfo, ALL_PROCEDURE_NODES, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -400,21 +400,12 @@ export function Audit590Worksheet() {
  });
  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
- // Sync active procedure IDs (mapped to aud-wp-*) to localStorage so Sidebar can filter
+ // Sync wpProcMap to localStorage so Sidebar can show procedure children under lead-sheets
  useEffect(() => {
  if (!engagementId) return;
- // Track exact plannedProcedureId per row so any add/remove/change triggers an update
  const serialized = data.rows.map(r => r.plannedProcedureId || "").join("|");
  if (serialized === prevActiveProcIdsRef.current) return;
  prevActiveProcIdsRef.current = serialized;
- const activeIds = [...new Set(
- data.rows
- .map(r => r.plannedProcedureId)
- .filter(Boolean)
- .map(gcaId => getAudWpIdForProc(gcaId))
- .filter(Boolean)
- )];
- setActiveProcedureIds(engagementId, activeIds);
  setWpProcMap(engagementId, data.rows);
  }, [data.rows, engagementId]);
 

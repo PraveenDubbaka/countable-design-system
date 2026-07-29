@@ -901,31 +901,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [renameValue, setRenameValue] = useState("");
  const [selectedMoveFolder, setSelectedMoveFolder] = useState("");
 
- // Active procedure IDs synced from the 590 worksheet via localStorage
- const [activeProcedureIds, setActiveProcedureIds] = useState<string[]>(() => {
-  const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
-  if (!id) return [];
-  try {
-   const raw = localStorage.getItem(`audit-590-active-procs-${id}`);
-   return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
- });
- useEffect(() => {
-  const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
-  if (!id) return;
-  const key = `audit-590-active-procs-${id}`;
-  const read = () => {
-   try {
-    const raw = localStorage.getItem(key);
-    setActiveProcedureIds(raw ? JSON.parse(raw) : []);
-   } catch { setActiveProcedureIds([]); }
-  };
-  read();
-  const onStorage = (e: StorageEvent) => { if (e.key === key) read(); };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
- }, [location.pathname]);
-
  // Map of aud-wp-* → selected gca-ws-proc-* IDs, synced from 590 worksheet
  const [wpProcMap, setWpProcMapState] = useState<Record<string, string[]>>(() => {
   const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
@@ -950,6 +925,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   window.addEventListener("storage", onStorage);
   return () => window.removeEventListener("storage", onStorage);
  }, [location.pathname]);
+
+ // Derive activeProcedureIds from wpProcMap — single source of truth, no race condition
+ const activeProcedureIds = Object.keys(wpProcMap).filter(id => (wpProcMap[id]?.length ?? 0) > 0);
 
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
