@@ -13,6 +13,9 @@ import { cn } from "@/lib/utils";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -438,23 +441,33 @@ function buildDefault(isUS = false): Data510 {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function FieldRow({ label, sublabel, field, locked, onChange, storageKey }: {
+function FieldRow({ label, sublabel, field, locked, onChange, storageKey, lukaFilled, lukaHighlight, lukaRef }: {
  label: string; sublabel?: string;
  field: SimpleField; locked: boolean;
  onChange: (f: SimpleField) => void;
  storageKey?: string;
+ lukaFilled?: boolean;
+ lukaHighlight?: boolean;
+ lukaRef?: { current: HTMLElement | null };
 }) {
  return (
- <tr className="group hover:bg-muted/30 transition-colors align-top">
+ <tr ref={lukaRef as any} className={`group hover:bg-muted/30 transition-colors align-top${lukaHighlight ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-5 py-3 text-sm text-foreground w-[38%]">
  <span>{label}</span>
  {sublabel && <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{sublabel}</p>}
  </td>
  <td className="px-4 py-3">
+ <LukaTypingRow filled={lukaFilled ?? false}>
  {storageKey ? (
  <AttributedComment value={field.response} onChange={v => onChange({...field, response: v})} storageKey={storageKey} placeholder="Enter response…" disabled={locked} className="min-h-[56px] text-sm bg-background resize-none" />
  ) : (
  <Textarea disabled={locked} value={field.response} onChange={e => onChange({...field, response: e.target.value })} placeholder="Enter response…" className="min-h-[56px] text-sm bg-background resize-none" />
+ )}
+ </LukaTypingRow>
+ {lukaFilled && (
+ <div className="mt-1">
+   <AutomationStateChip state="luka-drafted" />
+ </div>
  )}
  </td>
  <td className="px-4 py-3 text-center w-[100px]">
@@ -608,6 +621,9 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  const storageKey = `audit-510-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
  const [data, setData] = useState<Data510>(() => {
  const saved = readJsonFromLocalStorage<Data510 | null>(storageKey, null);
  if (!saved) return buildDefault(isUS);
@@ -623,6 +639,12 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  }, [data, storageKey]);
 
  const locked = data.concluded;
+
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  function setField<K extends keyof Data510>(key: K, val: Data510[K]) {
  setData(d => ({...d, [key]: val }));
@@ -660,9 +682,9 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
  const SectionA = (
  <div className="space-y-5">
  <SectionCard title="A. Nature of Business">
- <FieldRow label="Type of entity" sublabel="E.g., public, private, public interest entity, etc. If public, indicate where shares/debt are listed." {...sf("entityType")} />
- <FieldRow label="What the entity does and the industry in which it operates." {...sf("entityActivity")} />
- <FieldRow label="Sources of revenues." sublabel="Complete the table below." {...sf("revenues")} />
+ <FieldRow label="Type of entity" sublabel="E.g., public, private, public interest entity, etc. If public, indicate where shares/debt are listed." {...sf("entityType")} lukaFilled={isDemoEngagement && lukaFilledFields.has('entityType')} lukaHighlight={isDemoEngagement && lukaHighlightFields.has('entityType')} lukaRef={firstFillRef} />
+ <FieldRow label="What the entity does and the industry in which it operates." {...sf("entityActivity")} lukaFilled={isDemoEngagement && lukaFilledFields.has('entityActivity')} lukaHighlight={isDemoEngagement && lukaHighlightFields.has('entityActivity')} />
+ <FieldRow label="Sources of revenues." sublabel="Complete the table below." {...sf("revenues")} lukaFilled={isDemoEngagement && lukaFilledFields.has('revenues')} lukaHighlight={isDemoEngagement && lukaHighlightFields.has('revenues')} />
  </SectionCard>
 
  <TableCard title="Revenue sources" onAdd={() => addRow("revenueRows", emptyRevenueRow)}>
@@ -1252,7 +1274,27 @@ export function Audit510Worksheet({ isUS = false }: { isUS?: boolean }) {
       ...a,
       onTrigger: () => {
         setLukaState('loading');
-        setTimeout(() => setLukaState('done'), 2200);
+        lukaSequentialFill([
+          {
+            scrollRef: firstFillRef,
+            set: () => {
+              setData(d => ({ ...d, entityType: { ...d.entityType, response: isUS ? 'Privately-held Delaware LLC, taxed as a C-corporation. Not SEC-registered.' : 'Private Canadian corporation incorporated under the CBCA. Not publicly listed; primary banking facility with RBC Commercial Banking.' } }));
+              markLukaFilled('entityType');
+            },
+          },
+          {
+            set: () => {
+              setData(d => ({ ...d, entityActivity: { ...d.entityActivity, response: isUS ? 'Harbor Freight LLC operates a US Pacific-coast short-sea shipping and port-drayage business. NAICS 483113.' : 'Shipping Line Inc. operates a coastal and trans-Pacific freight shipping line serving the Port of Vancouver, Seattle and select Asia-Pacific ports. Industry: marine freight transportation (NAICS 483115).' } }));
+              markLukaFilled('entityActivity');
+            },
+          },
+          {
+            set: () => {
+              setData(d => ({ ...d, revenues: { ...d.revenues, response: isUS ? 'Container drayage (≈55%), short-sea voyages (≈30%), warehousing & 3PL (≈15%). See revenue table below.' : 'Three primary revenue streams: container freight (≈68%), bulk cargo (≈22%) and chartered vessel services (≈10%). See revenue table below.' } }));
+              markLukaFilled('revenues');
+            },
+          },
+        ], () => setLukaState('done'));
       },
     }))}
   />

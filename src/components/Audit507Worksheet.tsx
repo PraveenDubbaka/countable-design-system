@@ -14,6 +14,9 @@ import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog"
 import { toast } from "sonner";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -180,6 +183,9 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
  const [data, setData] = useState<Data507>(() => {
  const saved = readJsonFromLocalStorage<Data507 | null>(storageKey, null);
  if (!saved) return buildDefault();
@@ -192,6 +198,12 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  partC: saved.partC?.length ? saved.partC : def.partC,
  };
  });
+
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  const firstRender = useRef(true);
  useEffect(() => {
@@ -279,7 +291,11 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  const row = getRow(proc.id);
  const isA6 = proc.id === 'a6';
  return (
- <tr key={proc.id} className="hover:bg-muted/50 transition-colors">
+ <tr
+   key={proc.id}
+   ref={isDemoEngagement && proc.id === 'a1' ? (firstFillRef as any) : undefined}
+   className={`hover:bg-muted/50 transition-colors${isDemoEngagement && lukaHighlightFields.has(proc.id) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}
+ >
  <td className="px-4 py-3 text-center align-top text-sm font-semibold font-mono text-foreground">{proc.num}</td>
  <td className="w-[38%] px-6 py-3 align-top text-sm text-foreground">
  {'showSection' in proc && proc.showSection && (
@@ -319,14 +335,21 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
  </td>
  <td className="px-4 py-3 align-top">
- <AttributedComment
- value={row.comments}
- onChange={v => setRow(proc.id, { comments: v })}
- storageKey={`507-${engagementId}-${proc.id}`}
- placeholder="Enter comments…"
- disabled={locked}
- className="min-h-[56px] text-sm bg-background resize-none"
- />
+   <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
+     <AttributedComment
+       value={row.comments}
+       onChange={v => setRow(proc.id, { comments: v })}
+       storageKey={`507-${engagementId}-${proc.id}`}
+       placeholder="Enter comments…"
+       disabled={locked}
+       className="min-h-[56px] text-sm bg-background resize-none"
+     />
+   </LukaTypingRow>
+   {isDemoEngagement && lukaFilledFields.has(proc.id) && (
+     <div className="mt-1">
+       <AutomationStateChip state="luka-drafted" />
+     </div>
+   )}
  </td>
  <td className="w-[100px] px-4 py-3 align-top text-center" style={{ minWidth: 100 }}>
  <RefButton
@@ -361,7 +384,27 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
       ...a,
       onTrigger: () => {
         setLukaState('loading');
-        setTimeout(() => setLukaState('done'), 2200);
+        lukaSequentialFill([
+          {
+            scrollRef: firstFillRef,
+            set: () => {
+              setData(d => ({ ...d, partA: { ...d.partA, a1: { ...d.partA.a1, comments: 'Minutes available for: Board of Directors (3 meetings), Audit Committee (2 meetings). Minutes dated and signed by Corporate Secretary.' } } }));
+              markLukaFilled('a1');
+            },
+          },
+          {
+            set: () => {
+              setData(d => ({ ...d, partA: { ...d.partA, a2: { ...d.partA.a2, comments: 'Relevant extracts copied to working paper A-507-Ex-1. Full set of minutes filed in permanent file binder.' } } }));
+              markLukaFilled('a2');
+            },
+          },
+          {
+            set: () => {
+              setData(d => ({ ...d, conclusion: 'No matters noted in the minutes that would require amendment to the overall audit plan or additional risk assessment procedures.' }));
+              markLukaFilled('conclusion');
+            },
+          },
+        ], () => setLukaState('done'));
       },
     }))}
   />
@@ -513,6 +556,29 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Button>
  </div>
  )}
+ </div>
+
+ {/* Conclusion */}
+ <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+   <div className="px-6 py-3.5 border-b border-border">
+     <span className="text-sm font-semibold text-foreground">Conclusion</span>
+   </div>
+   <div className="px-6 py-5">
+     <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('conclusion')}>
+       <Textarea
+         disabled={locked}
+         value={data.conclusion}
+         onChange={e => setData(d => ({...d, conclusion: e.target.value}))}
+         placeholder="Document your overall conclusion on the governance minutes review…"
+         className="min-h-[80px] text-sm bg-background resize-none"
+       />
+     </LukaTypingRow>
+     {isDemoEngagement && lukaFilledFields.has('conclusion') && (
+       <div className="mt-1">
+         <AutomationStateChip state="luka-drafted" />
+       </div>
+     )}
+   </div>
  </div>
 
  {/* Sign-off */}

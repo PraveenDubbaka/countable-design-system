@@ -12,6 +12,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -126,6 +129,9 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
 
   const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+  const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+  const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+  const firstFillRef = useRef<HTMLElement>(null);
   const [data, setData] = useState<Data506>(() => {
     const saved = readJsonFromLocalStorage<Data506 | null>(storageKey, null);
     if (!saved) return buildDefault();
@@ -149,6 +155,12 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
   }, [data, storageKey]);
 
   const locked = data.concluded;
+
+  function markLukaFilled(id: string) {
+    setLukaFilledFields(prev => new Set(prev).add(id));
+    setLukaHighlightFields(prev => new Set(prev).add(id));
+    setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+  }
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -271,7 +283,11 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
         {items.map(proc => {
           const row = store[proc.id] ?? emptyProc();
           return (
-            <tr key={proc.id} className="hover:bg-muted/50 transition-colors">
+            <tr
+              key={proc.id}
+              ref={isDemoEngagement && proc.id === 'm1' ? (firstFillRef as any) : undefined}
+              className={`hover:bg-muted/50 transition-colors${isDemoEngagement && lukaHighlightFields.has(proc.id) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}
+            >
               <td className="px-4 py-3 text-center align-top">
                 <Checkbox checked={row.checked} onCheckedChange={v => setFn(proc.id, { checked: !!v })} disabled={locked} />
               </td>
@@ -288,9 +304,16 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
                 </Select>
               </td>
               <td className="px-6 py-3 align-top">
-                <AttributedComment value={row.response} onChange={v => setFn(proc.id, { response: v })}
-                  storageKey={`506-${isUS ? 'us' : 'ca'}-${prefix}-${proc.id}`}
-                  placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
+                <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
+                  <AttributedComment value={row.response} onChange={v => setFn(proc.id, { response: v })}
+                    storageKey={`506-${isUS ? 'us' : 'ca'}-${prefix}-${proc.id}`}
+                    placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
+                </LukaTypingRow>
+                {isDemoEngagement && lukaFilledFields.has(proc.id) && (
+                  <div className="mt-1">
+                    <AutomationStateChip state="luka-drafted" />
+                  </div>
+                )}
               </td>
               <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
                 <RefButton reference={row.wpRef}
@@ -323,7 +346,27 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
             ...a,
             onTrigger: () => {
               setLukaState('loading');
-              setTimeout(() => setLukaState('done'), 2200);
+              lukaSequentialFill([
+                {
+                  scrollRef: firstFillRef,
+                  set: () => {
+                    setData(d => ({ ...d, mgmt: { ...d.mgmt, m1: { ...d.mgmt.m1, checked: true, psc: 'Y', response: 'Management confirmed no material fraud risks identified. No change in fraud risk environment from prior year.' } } }));
+                    markLukaFilled('m1');
+                  },
+                },
+                {
+                  set: () => {
+                    setData(d => ({ ...d, mgmt: { ...d.mgmt, m2: { ...d.mgmt.m2, checked: true, psc: 'Y', response: 'No actual, suspected or alleged fraud affecting the entity. Management aware of whistleblower policy; no reports received.' } } }));
+                    markLukaFilled('m2');
+                  },
+                },
+                {
+                  set: () => {
+                    setData(d => ({ ...d, partB: { ...d.partB, b4: { ...d.partB.b4, checked: true, psc: 'Y', response: 'Risk of management override assessed as moderate. Journal entry testing scoped to capture unusual entries near period end.' } } }));
+                    markLukaFilled('b4');
+                  },
+                },
+              ], () => setLukaState('done'));
             },
           }))}
         />

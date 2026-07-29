@@ -14,6 +14,9 @@ import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -221,11 +224,13 @@ function PartHeader({ letter, title, description }: { letter: string; title: str
  );
 }
 
-function ControlRow({ label, question, value, locked, onChange }: {
+function ControlRow({ label, question, value, locked, onChange, lukaFilled, lukaHighlight }: {
  label: string; question: string; value: string; locked: boolean; onChange: (v: string) => void;
+ lukaFilled?: boolean;
+ lukaHighlight?: boolean;
 }) {
  return (
- <div className="py-3.5 border-b border-border/60 last:border-0">
+ <div className={`py-3.5 border-b border-border/60 last:border-0${lukaHighlight ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-3 -ml-3' : ''}`}>
  <div className="flex items-start gap-3 mb-2">
  <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-muted text-muted-foreground text-[10px] font-bold shrink-0 mt-0.5">
  {label}
@@ -233,6 +238,7 @@ function ControlRow({ label, question, value, locked, onChange }: {
  <p className="text-sm text-foreground leading-relaxed">{question}</p>
  </div>
  <div className="pl-8">
+ <LukaTypingRow filled={lukaFilled ?? false}>
  <Textarea
  disabled={locked}
  value={value}
@@ -240,6 +246,12 @@ function ControlRow({ label, question, value, locked, onChange }: {
  placeholder="Enter response…"
  className="min-h-[64px] text-sm resize-none bg-background"
  />
+ </LukaTypingRow>
+ {lukaFilled && (
+ <div className="mt-1">
+   <AutomationStateChip state="luka-drafted" />
+ </div>
+ )}
  </div>
  </div>
  );
@@ -255,6 +267,9 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  const storageKey = `audit-513-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
  const [data, setData] = useState<Data513>(() => {
  const saved = readJsonFromLocalStorage<Data513 | null>(storageKey, null);
  const def = buildDefault(isUS);
@@ -305,6 +320,12 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  }, [matKey]);
 
 
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
+
  function patch<K extends keyof Data513>(key: K, val: Data513[K]) {
  setData(d => ({...d, [key]: val }));
  }
@@ -345,7 +366,27 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
    ...a,
    onTrigger: () => {
      setLukaState('loading');
-     setTimeout(() => setLukaState('done'), 2200);
+     lukaSequentialFill([
+       {
+         scrollRef: firstFillRef,
+         set: () => {
+           setData(d => ({ ...d, partAResponse: isUS ? "Estimates identified through review of Harbor Freight LLC's operations (vessel-asset intensive, voyages crossing the period-end, USD-denominated bunker hedges, ASC 606 over-time recognition), inquiries of the CFO and Controller, and review of US GAAP disclosure requirements. All estimates expected in the F/S are tabled below." : "Estimates identified through review of Shipping Line Inc.'s operations (vessel-asset intensive, voyages crossing the period-end, ASPE measurement bases), inquiries of the CFO and Controller, and review of ASPE disclosure requirements. All estimates expected in the F/S are tabled below." }));
+           markLukaFilled('partAResponse');
+         },
+       },
+       {
+         set: () => {
+           setData(d => ({ ...d, partBDeficiencies: "Management's process for preparing estimates is largely informal — estimates prepared by the Controller and reviewed by the CFO without a documented estimation policy. No periodic look-back of prior estimate outcomes is performed. Audit implication: increased reliance on substantive procedures over key estimates; consider control deficiency report to TCWG." }));
+           markLukaFilled('partBDeficiencies');
+         },
+       },
+       {
+         set: () => {
+           setData(d => ({ ...d, controlEnvironment: isUS ? 'The Audit Committee (3 independent directors) reviews estimates quarterly. Oversight is appropriate at the entity level but the CFO prepares and reviews most estimates — segregation of duties is limited.' : 'TCWG (owner-managed board, 2 external advisors) reviews estimates quarterly. Oversight is appropriate at the entity level but the CFO prepares and reviews most estimates — segregation of duties is limited.' }));
+           markLukaFilled('controlEnvironment');
+         },
+       },
+     ], () => setLukaState('done'));
    },
  }))}
  />
@@ -394,7 +435,10 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
- <tr className="hover:bg-muted/30 transition-colors align-top">
+ <tr
+   ref={firstFillRef as any}
+   className={`hover:bg-muted/30 transition-colors align-top${isDemoEngagement && lukaHighlightFields.has('partAResponse') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}
+ >
  <td className="px-5 py-3 text-sm text-foreground">
  <span className="font-medium">Identify and describe accounting estimates and related disclosures expected to be in the F/S by:</span>
  <ul className="mt-1.5 space-y-0.5 list-disc list-inside">
@@ -415,6 +459,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </Select>
  </td>
  <td className="px-4 py-3">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('partAResponse')}>
  <Textarea
  disabled={locked}
  value={data.partAResponse}
@@ -422,6 +467,12 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  placeholder="Document how estimates were identified…"
  className="min-h-[72px] text-sm bg-background resize-none"
  />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('partAResponse') && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ )}
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -588,7 +639,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
- <tr className="hover:bg-muted/30 transition-colors align-top">
+ <tr className={`hover:bg-muted/30 transition-colors align-top${isDemoEngagement && lukaHighlightFields.has('partBDeficiencies') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-5 py-3 text-sm text-foreground">
  <p className="font-medium mb-1">Understand estimate preparation</p>
  <p className="text-sm text-muted-foreground">Understand management's process for preparing estimates and making F/S disclosures. Consider responses to entity-level risks and controls</p>
@@ -604,6 +655,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </Select>
  </td>
  <td className="px-4 py-3">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('partBDeficiencies')}>
  <Textarea
  disabled={locked}
  value={data.partBDeficiencies}
@@ -611,6 +663,12 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  placeholder="Describe any control deficiencies and audit implications…"
  className="min-h-[72px] text-sm bg-background resize-none"
  />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('partBDeficiencies') && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ )}
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -635,6 +693,8 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  value={data.controlEnvironment}
  locked={locked}
  onChange={v => patch("controlEnvironment", v)}
+ lukaFilled={isDemoEngagement && lukaFilledFields.has('controlEnvironment')}
+ lukaHighlight={isDemoEngagement && lukaHighlightFields.has('controlEnvironment')}
  />
  <ControlRow
  label="RA"

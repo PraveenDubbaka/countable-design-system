@@ -13,6 +13,9 @@ import { cn } from "@/lib/utils";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -222,7 +225,7 @@ function PartHeader({ letter, title, description }: { letter: string; title: str
  );
 }
 
-function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChange }: {
+function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChange, lukaFilled, lukaHighlight, lukaRef }: {
  label: string;
  bullets?: string[];
  value: string;
@@ -230,9 +233,12 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  locked: boolean;
  onChange: (v: string) => void;
  onWpChange: (r: RefField) => void;
+ lukaFilled?: boolean;
+ lukaHighlight?: boolean;
+ lukaRef?: { current: HTMLElement | null };
 }) {
  return (
- <tr className="group hover:bg-muted/30 transition-colors align-top">
+ <tr ref={lukaRef as any} className={`group hover:bg-muted/30 transition-colors align-top${lukaHighlight ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-5 py-3 text-sm text-foreground w-[38%]">
  <span className="font-medium">{label}</span>
  {bullets && (
@@ -242,6 +248,7 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  )}
  </td>
  <td className="px-4 py-3">
+ <LukaTypingRow filled={lukaFilled ?? false}>
  <Textarea
  disabled={locked}
  value={value}
@@ -249,6 +256,12 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  placeholder="Enter response…"
  className="min-h-[72px] text-sm bg-background resize-none"
  />
+ </LukaTypingRow>
+ {lukaFilled && (
+ <div className="mt-1">
+   <AutomationStateChip state="luka-drafted" />
+ </div>
+ )}
  </td>
  <td className="px-4 py-3 text-center w-[100px]">
  <RefButton
@@ -262,10 +275,12 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  );
 }
 
-function ProcessTable({ rows, locked, onChange }: {
+function ProcessTable({ rows, locked, onChange, lukaFilledFields, lukaHighlightFields }: {
  rows: { id: string; label: string; bullets?: string[]; row: ProcessRow }[];
  locked: boolean;
  onChange: (id: string, patch: Partial<ProcessRow>) => void;
+ lukaFilledFields?: Set<string>;
+ lukaHighlightFields?: Set<string>;
 }) {
  return (
  <div className="overflow-x-auto">
@@ -280,7 +295,7 @@ function ProcessTable({ rows, locked, onChange }: {
  </thead>
  <tbody className="divide-y divide-border">
  {rows.map(({ id, label, bullets, row }) => (
- <tr key={id} className="group hover:bg-muted/30 transition-colors align-top">
+ <tr key={id} className={`group hover:bg-muted/30 transition-colors align-top${lukaHighlightFields?.has(id) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-5 py-3 text-sm text-foreground">
  <span className="font-medium">{label}</span>
  {bullets && (
@@ -300,6 +315,7 @@ function ProcessTable({ rows, locked, onChange }: {
  </Select>
  </td>
  <td className="px-4 py-3">
+ <LukaTypingRow filled={lukaFilledFields?.has(id) ?? false}>
  <Textarea
  disabled={locked}
  value={row.response}
@@ -307,6 +323,12 @@ function ProcessTable({ rows, locked, onChange }: {
  placeholder="Enter response…"
  className="min-h-[64px] text-sm bg-background resize-none"
  />
+ </LukaTypingRow>
+ {lukaFilledFields?.has(id) && (
+ <div className="mt-1">
+   <AutomationStateChip state="luka-drafted" />
+ </div>
+ )}
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -424,6 +446,9 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  const storageKey = `audit-511-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
  const [data, setData] = useState<Data511>(() => {
  const saved = readJsonFromLocalStorage<Data511 | null>(storageKey, null);
  if (!saved) return buildDefault(isUS);
@@ -439,6 +464,12 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  }, [data, storageKey]);
 
  const locked = data.concluded;
+
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  function patch<K extends keyof Data511>(key: K, val: Data511[K]) {
  setData(d => ({...d, [key]: val }));
@@ -604,7 +635,27 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
    ...a,
    onTrigger: () => {
      setLukaState('loading');
-     setTimeout(() => setLukaState('done'), 2200);
+     lukaSequentialFill([
+       {
+         scrollRef: firstFillRef,
+         set: () => {
+           setData(d => ({ ...d, aGovernance: isUS ? 'Board-approved 3-year IT strategic plan (2024–2026). Director of IT reports to the CFO. IT risks tracked in a quarterly IT risk register. Formal policies in place: Information Security, Acceptable Use, Change Management, Backup & Recovery, Incident Response and Data Privacy (CCPA-aligned).' : 'Board-approved 3-year IT strategic plan (2024–2026). IT Manager reports to the CFO; reviewed by Audit Committee semi-annually. IT risks tracked in a formal IT risk register refreshed quarterly. Policies in place: Information Security, Acceptable Use, Change Management, Backup & Recovery, Incident Response and PIPEDA Privacy Policy.' }));
+           markLukaFilled('aGovernance');
+         },
+       },
+       {
+         set: () => {
+           setData(d => ({ ...d, aOrgStructure: isUS ? 'Small in-house IT team (Director of IT + 2 analysts). Infrastructure and helpdesk co-sourced to NorthPoint Managed IT (SOC 2 Type II). All key financial applications are cloud SaaS managed by the vendor.' : 'Lean in-house IT team (IT Manager + 1 analyst). Infrastructure and helpdesk co-sourced to PacificEdge IT Services (CSAE 3416 / SOC 2 Type II). All key financial applications are cloud SaaS managed by the vendor.' }));
+           markLukaFilled('aOrgStructure');
+         },
+       },
+       {
+         set: () => {
+           setData(d => ({ ...d, cSecurity: { ...d.cSecurity, response: 'Unique user IDs and complex passwords enforced through Azure AD / Entra ID SSO with MFA required for all cloud apps. Joiner-mover-leaver process driven by HR ticket. Privileged access restricted to IT Manager and one MSP engineer; reviewed monthly. Physical: head office uses keycard access and CCTV. Monitoring: managed firewall, EDR (CrowdStrike) and centralized log alerts via MSP 24/7 SOC.' } }));
+           markLukaFilled('cSecurity');
+         },
+       },
+     ], () => setLukaState('done'));
    },
  }))}
  />
@@ -652,6 +703,9 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  locked={locked}
  onChange={v => patch("aGovernance", v)}
  onWpChange={r => patch("aGovernanceWp", r)}
+ lukaFilled={isDemoEngagement && lukaFilledFields.has('aGovernance')}
+ lukaHighlight={isDemoEngagement && lukaHighlightFields.has('aGovernance')}
+ lukaRef={firstFillRef}
  />
  <NarrativeRow
  label="2. IT organizational structure"
@@ -665,6 +719,8 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  locked={locked}
  onChange={v => patch("aOrgStructure", v)}
  onWpChange={r => patch("aOrgStructureWp", r)}
+ lukaFilled={isDemoEngagement && lukaFilledFields.has('aOrgStructure')}
+ lukaHighlight={isDemoEngagement && lukaHighlightFields.has('aOrgStructure')}
  />
  <NarrativeRow
  label="Laws and regulations"
@@ -830,6 +886,8 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  rows={partCRows}
  locked={locked}
  onChange={patchPartC}
+ lukaFilledFields={isDemoEngagement ? lukaFilledFields : undefined}
+ lukaHighlightFields={isDemoEngagement ? lukaHighlightFields : undefined}
  />
  </SectionCard>
 
