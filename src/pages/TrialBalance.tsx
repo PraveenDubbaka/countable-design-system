@@ -291,7 +291,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent className="p-0 gap-0 max-w-3xl overflow-hidden [&>button.absolute]:hidden">
+      <DialogContent className="p-0 gap-0 max-w-4xl overflow-hidden [&>button.absolute]:hidden">
         {/* Dark header bar */}
         <div className="flex items-center justify-between px-5 py-2.5 text-white text-sm" style={{ background: "#0d2240" }}>
           <span className="font-semibold">{engId}</span>
@@ -311,7 +311,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entry Date</span>
               <div className="relative">
-                <Input value={entryDate} onChange={e => setEntryDate(e.target.value)} className="h-8 pr-8 w-[126px]" />
+                <Input value={entryDate} onChange={e => setEntryDate(e.target.value)} className="h-8 pr-8 w-[148px]" />
                 <Calendar className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               </div>
             </div>
