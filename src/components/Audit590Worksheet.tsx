@@ -13,6 +13,8 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { getLsInfo, ALL_PROCEDURE_NODES, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
 
@@ -376,6 +378,16 @@ export function Audit590Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+
+ function markLukaFilled(id: string) {
+  setLukaFilledFields(prev => new Set(prev).add(id));
+  setLukaHighlightFields(prev => new Set(prev).add(id));
+  setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
+
  const [editingProcsId, setEditingProcsId] = useState<string | null>(null);
  const [mapProcsRowId, setMapProcsRowId] = useState<string | null>(null);
  const [procPanelTab, setProcPanelTab] = useState<"my" | "global">("global");
@@ -527,7 +539,30 @@ export function Audit590Worksheet() {
           ...a,
           onTrigger: () => {
             setLukaState('loading');
-            setTimeout(() => setLukaState('done'), 2200);
+            const r0 = data.rows[0];
+            const r1 = data.rows[1];
+            const r2 = data.rows[2];
+            lukaSequentialFill([
+              {
+                scrollRef: firstFillRef,
+                set: () => {
+                  if (r0) patchRow(r0.id, { auditResponse: 'Substantive analytical procedures on revenue by stream and period; transaction testing on a sample of 25 invoice/contract matches; cut-off testing last 10 business days of year.' });
+                  markLukaFilled('590-row0');
+                },
+              },
+              {
+                set: () => {
+                  if (r1) patchRow(r1.id, { auditResponse: 'Detailed test of cost transactions: trace sample of 20 COGS entries to purchase orders, vendor invoices, and receiving records; gross margin analysis vs. prior year.' });
+                  markLukaFilled('590-row1');
+                },
+              },
+              {
+                set: () => {
+                  if (r2) patchRow(r2.id, { auditResponse: 'Analytical review of OpEx by category vs. prior year and budget; test a sample of 15 expense items to supporting invoices and authorization evidence; prepaid cut-off review.' });
+                  markLukaFilled('590-row2');
+                },
+              },
+            ], () => setLukaState('done'));
           },
         }))}
       />
@@ -664,8 +699,11 @@ export function Audit590Worksheet() {
    return (ai === -1 ? order.length : ai) - (bi === -1 ? order.length : bi);
  }).map((r, i) => {
  const cls = classifyRow(r);
+ const fillKey = r.id === data.rows[0]?.id ? '590-row0' : r.id === data.rows[1]?.id ? '590-row1' : r.id === data.rows[2]?.id ? '590-row2' : '';
  return (
- <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ <tr key={r.id}
+  ref={r.id === data.rows[0]?.id && isDemoEngagement ? firstFillRef as any : undefined}
+  className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${isDemoEngagement && fillKey && lukaHighlightFields.has(fillKey) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-3 py-2 text-center">
  <Input disabled value={r.lsCode || "—"} className="h-7 w-14 text-center font-mono text-sm" />
  </td>
@@ -802,10 +840,15 @@ export function Audit590Worksheet() {
       </div>
      </td>
      <td className="px-3 py-2">
-      <Textarea disabled={locked} value={r.auditResponse}
-      onChange={e => patchRow(r.id, { auditResponse: e.target.value })}
-      placeholder="Summarise the audit response or cross-reference the detailed plan…"
-      className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+      <LukaTypingRow filled={isDemoEngagement && !!fillKey && lukaFilledFields.has(fillKey)}>
+       <Textarea disabled={locked} value={r.auditResponse}
+       onChange={e => patchRow(r.id, { auditResponse: e.target.value })}
+       placeholder="Summarise the audit response or cross-reference the detailed plan…"
+       className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+      </LukaTypingRow>
+      {isDemoEngagement && fillKey && lukaFilledFields.has(fillKey) && (
+       <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+      )}
      </td>
  <td className="px-3 py-2 text-center">
  <span className={`inline-block px-2 py-0.5 rounded-md border text-[11px] font-medium ${cls.tone}`}>

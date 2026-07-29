@@ -12,6 +12,9 @@ import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext"
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -209,6 +212,15 @@ export function Audit580Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+
+ function markLukaFilled(id: string) {
+  setLukaFilledFields(prev => new Set(prev).add(id));
+  setLukaHighlightFields(prev => new Set(prev).add(id));
+  setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  // ── Stream mutators ─────────────────────────────────────────────────────────
  function patchStream(id: string, patch: Partial<RevenueStream>) {
@@ -264,7 +276,28 @@ export function Audit580Worksheet() {
       ...a,
       onTrigger: () => {
         setLukaState('loading');
-        setTimeout(() => setLukaState('done'), 2200);
+        const [p0, p1, p2] = data.procedures;
+        lukaSequentialFill([
+          {
+            scrollRef: firstFillRef,
+            set: () => {
+              patchProcedure(p0.id, { psc: 'Y' as YN, exceptions: 'Revenue streams confirmed: product sales (primary), service revenue (secondary). No changes to revenue types from prior year.' });
+              markLukaFilled('580-proc0');
+            },
+          },
+          {
+            set: () => {
+              patchProcedure(p1.id, { psc: 'Y' as YN, exceptions: 'Fraud risk assessed for each stream. Product sales — moderate likelihood / moderate magnitude. Service revenue — low likelihood / low magnitude. Presumption not rebutted.' });
+              markLukaFilled('580-proc1');
+            },
+          },
+          {
+            set: () => {
+              patchProcedure(p2.id, { psc: 'Y' as YN, exceptions: 'Product sales identified as significant risk and treated as SCOTABD. Inherent risk assessed as High — fraud risk recorded and cross-referenced in Form 590.' });
+              markLukaFilled('580-proc2');
+            },
+          },
+        ], () => setLukaState('done'));
       },
     }))}
   />
@@ -487,8 +520,12 @@ export function Audit580Worksheet() {
  </tr>
  </thead>
  <tbody>
- {data.procedures.map((p) => (
- <tr key={p.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ {data.procedures.map((p, pi) => {
+ const procFillKey = pi === 0 ? '580-proc0' : pi === 1 ? '580-proc1' : pi === 2 ? '580-proc2' : '';
+ return (
+ <tr key={p.id}
+  ref={pi === 0 && isDemoEngagement ? firstFillRef as any : undefined}
+  className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${isDemoEngagement && procFillKey && lukaHighlightFields.has(procFillKey) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-4 py-3">
  <p className="text-sm font-semibold text-foreground mb-0.5">{p.title}</p>
  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.guidance}</p>
@@ -510,10 +547,15 @@ export function Audit580Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-3">
- <Textarea disabled={locked} value={p.exceptions}
- onChange={e => patchProcedure(p.id, { exceptions: e.target.value })}
- placeholder="Summarize exceptions or difficulties encountered…"
- className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ <LukaTypingRow filled={isDemoEngagement && !!procFillKey && lukaFilledFields.has(procFillKey)}>
+  <Textarea disabled={locked} value={p.exceptions}
+  onChange={e => patchProcedure(p.id, { exceptions: e.target.value })}
+  placeholder="Summarize exceptions or difficulties encountered…"
+  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && procFillKey && lukaFilledFields.has(procFillKey) && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-3 py-3 text-center">
  <RefButton
@@ -523,7 +565,8 @@ export function Audit580Worksheet() {
  />
  </td>
  </tr>
- ))}
+ );
+ })}
  </tbody>
  </table>
  </div>

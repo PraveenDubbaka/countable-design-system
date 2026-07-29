@@ -10,6 +10,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -185,6 +188,15 @@ export function Audit551Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+
+ function markLukaFilled(id: string) {
+  setLukaFilledFields(prev => new Set(prev).add(id));
+  setLukaHighlightFields(prev => new Set(prev).add(id));
+  setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  // ── RAFUIT mutators ─────────────────────────────────────────────────────────
  function setRafuit(id: string, patch: Partial<RafuitRow>) {
@@ -305,18 +317,27 @@ export function Audit551Worksheet() {
  </tr>
  </thead>
  <tbody>
- {sec.rows.map((r) => (
- <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ {sec.rows.map((r, ri) => {
+ const gitcFillKey = (isDemoEngagement && target === 'common' && sec.key === 'access' && ri === 0) ? '551-access0'
+  : (isDemoEngagement && target === 'common' && sec.key === 'change' && ri === 0) ? '551-change0'
+  : '';
+ return (
+ <tr key={r.id} className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${gitcFillKey && lukaHighlightFields.has(gitcFillKey) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-2 py-2 text-center" style={{ width: 72, minWidth: 72 }}>
  <Input disabled={locked} value={r.ref}
  onChange={e => patchGitcRow(target, sec.key, r.id, { ref: e.target.value })}
  className="h-8 min-w-12 px-1 text-sm text-center font-mono" />
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.description}
- onChange={e => patchGitcRow(target, sec.key, r.id, { description: e.target.value })}
- placeholder="Describe the GITC and how it operates…"
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ <LukaTypingRow filled={!!gitcFillKey && lukaFilledFields.has(gitcFillKey)}>
+  <Textarea disabled={locked} value={r.description}
+  onChange={e => patchGitcRow(target, sec.key, r.id, { description: e.target.value })}
+  placeholder="Describe the GITC and how it operates…"
+  className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {gitcFillKey && lukaFilledFields.has(gitcFillKey) && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itLayer}
@@ -405,7 +426,8 @@ export function Audit551Worksheet() {
  </td>
  )}
  </tr>
- ))}
+ );
+ })}
  </tbody>
  </table>
  </div>
@@ -433,7 +455,42 @@ export function Audit551Worksheet() {
           ...a,
           onTrigger: () => {
             setLukaState('loading');
-            setTimeout(() => setLukaState('done'), 2200);
+            const rafuit0 = data.rafuit[0];
+            const accessSec = data.commonGitc.sections.find(s => s.key === 'access')!;
+            const changeSec = data.commonGitc.sections.find(s => s.key === 'change')!;
+            const accessRow0 = accessSec.rows[0];
+            const changeRow0 = changeSec.rows[0];
+            lukaSequentialFill([
+              {
+                scrollRef: firstFillRef,
+                set: () => {
+                  setRafuit(rafuit0.id, {
+                    automatedControl: 'Automated posting of journal entries via ERP (SAP) — vendor payment processing module',
+                    itLayer: 'Application',
+                    rafuit: 'Unauthorized access to the payment processing module could result in fraudulent vendor payments being posted without detection.',
+                    itProcess: 'IT Security',
+                    gitcRefs: 'C1, C2',
+                  });
+                  markLukaFilled('551-rafuit0');
+                },
+              },
+              {
+                set: () => {
+                  patchGitcRow('common', 'access', accessRow0.id, {
+                    description: 'User access to financial systems is reviewed quarterly by the IT Security Manager. Logical access is provisioned through role-based access control (RBAC); requests require line-manager approval and are documented in the ticketing system.',
+                  });
+                  markLukaFilled('551-access0');
+                },
+              },
+              {
+                set: () => {
+                  patchGitcRow('common', 'change', changeRow0.id, {
+                    description: 'All program changes are documented in the change management system, tested in a QA environment, and require approval from the IT Manager and business owner before migration to production.',
+                  });
+                  markLukaFilled('551-change0');
+                },
+              },
+            ], () => setLukaState('done'));
           },
         }))}
       />
@@ -498,7 +555,9 @@ export function Audit551Worksheet() {
  </thead>
  <tbody>
  {data.rafuit.map((r, i) => (
- <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ <tr key={r.id}
+  ref={i === 0 && isDemoEngagement ? firstFillRef as any : undefined}
+  className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${isDemoEngagement && i === 0 && lukaHighlightFields.has('551-rafuit0') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
  <Textarea disabled={locked} value={r.automatedControl}
@@ -516,10 +575,15 @@ export function Audit551Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.rafuit}
- onChange={e => setRafuit(r.id, { rafuit: e.target.value })}
- placeholder="Describe the RAFUIT (Appendix 1)…"
- className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ <LukaTypingRow filled={isDemoEngagement && i === 0 && lukaFilledFields.has('551-rafuit0')}>
+  <Textarea disabled={locked} value={r.rafuit}
+  onChange={e => setRafuit(r.id, { rafuit: e.target.value })}
+  placeholder="Describe the RAFUIT (Appendix 1)…"
+  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && i === 0 && lukaFilledFields.has('551-rafuit0') && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itProcess}

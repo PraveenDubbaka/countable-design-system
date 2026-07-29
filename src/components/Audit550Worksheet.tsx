@@ -10,6 +10,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -162,6 +165,15 @@ export function Audit550Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+
+ function markLukaFilled(id: string) {
+  setLukaFilledFields(prev => new Set(prev).add(id));
+  setLukaHighlightFields(prev => new Set(prev).add(id));
+  setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  // ── Mutators ────────────────────────────────────────────────────────────────
  function patchCategory(key: CategoryKey, mut: (c: CategoryBlock) => CategoryBlock) {
@@ -230,7 +242,44 @@ export function Audit550Worksheet() {
           ...a,
           onTrigger: () => {
             setLukaState('loading');
-            setTimeout(() => setLukaState('done'), 2200);
+            const jecat = data.categories.find(c => c.key === 'journalEntries')!;
+            const risk0 = jecat.risks[0];
+            const ctrl0 = risk0.controls[0];
+            lukaSequentialFill([
+              {
+                scrollRef: firstFillRef,
+                set: () => {
+                  setRisk('journalEntries', risk0.id, {
+                    description: 'Risk of material misstatement in journal entries — management override and unauthorized entries could be posted to the GL without detection or timely review.',
+                  });
+                  markLukaFilled('550-risk0');
+                },
+              },
+              {
+                set: () => {
+                  setControl('journalEntries', risk0.id, ctrl0.id, {
+                    description: 'Authorization and approval control: All non-standard and manual journal entries require dual approval (preparer + CFO sign-off) with supporting documentation before posting in the ERP system.',
+                    inherentRisk: 'H',
+                    controlType: 'Authorization / Approval',
+                    automated: 'Manual',
+                    prevDet: 'Preventive',
+                    designEffective: 'Y',
+                    implemented: 'Y',
+                  });
+                  markLukaFilled('550-ctrl0');
+                },
+              },
+              {
+                set: () => {
+                  setData(d => ({
+                    ...d,
+                    overallConclusion: 'Y' as YSN,
+                    overallRationale: 'Controls over journal entries are suitably designed and have been implemented — control risk assessed as Low for the JE cycle.',
+                  }));
+                  markLukaFilled('550-overall');
+                },
+              },
+            ], () => setLukaState('done'));
           },
         }))}
       />
@@ -270,18 +319,27 @@ export function Audit550Worksheet() {
  </div>
 
  <div className="divide-y divide-border">
- {cat.risks.map((risk, rIdx) => (
- <div key={risk.id} className="p-5 space-y-3">
+ {cat.risks.map((risk, rIdx) => {
+ const isFirstJeRisk = isDemoEngagement && cat.key === 'journalEntries' && rIdx === 0;
+ return (
+ <div key={risk.id}
+  ref={isFirstJeRisk ? firstFillRef as any : undefined}
+  className={`p-5 space-y-3${isFirstJeRisk && lukaHighlightFields.has('550-risk0') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <div className="flex items-start gap-3">
  <span className="text-xs font-mono text-muted-foreground mt-2 shrink-0 w-6">{rIdx + 1}.</span>
  <div className="flex-1 space-y-1">
  <label className="text-sm font-semibold text-foreground uppercase tracking-wider">
  Description of risk
  </label>
- <Textarea disabled={locked} value={risk.description}
- onChange={e => setRisk(cat.key, risk.id, { description: e.target.value })}
- placeholder="Describe the risk of material misstatement (link / 535 where applicable)…"
- className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ <LukaTypingRow filled={isFirstJeRisk && lukaFilledFields.has('550-risk0')}>
+  <Textarea disabled={locked} value={risk.description}
+  onChange={e => setRisk(cat.key, risk.id, { description: e.target.value })}
+  placeholder="Describe the risk of material misstatement (link / 535 where applicable)…"
+  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isFirstJeRisk && lukaFilledFields.has('550-risk0') && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  {!locked && cat.risks.length > 1 && (
  <button onClick={() => removeRisk(cat.key, risk.id)}
@@ -314,15 +372,22 @@ export function Audit550Worksheet() {
  </tr>
  </thead>
  <tbody>
- {risk.controls.map((ct, i) => (
- <tr key={ct.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ {risk.controls.map((ct, i) => {
+ const isFirstJeCtrl = isDemoEngagement && cat.key === 'journalEntries' && rIdx === 0 && i === 0;
+ return (
+ <tr key={ct.id} className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${isFirstJeCtrl && lukaHighlightFields.has('550-ctrl0') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
 
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={ct.description}
- onChange={e => setControl(cat.key, risk.id, ct.id, { description: e.target.value })}
- placeholder="Describe the control activity, owner, and how it operates…"
- className="min-h-[64px] text-sm resize-none rounded-[10px]" />
+ <LukaTypingRow filled={isFirstJeCtrl && lukaFilledFields.has('550-ctrl0')}>
+  <Textarea disabled={locked} value={ct.description}
+  onChange={e => setControl(cat.key, risk.id, ct.id, { description: e.target.value })}
+  placeholder="Describe the control activity, owner, and how it operates…"
+  className="min-h-[64px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isFirstJeCtrl && lukaFilledFields.has('550-ctrl0') && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.inherentRisk}
@@ -464,7 +529,8 @@ export function Audit550Worksheet() {
  </td>
  )}
  </tr>
- ))}
+ );
+ })}
  </tbody>
  </table>
  </div>
@@ -478,7 +544,8 @@ export function Audit550Worksheet() {
  </div>
  )}
  </div>
- ))}
+ );
+ })}
  </div>
  </div>
  ))}
@@ -515,10 +582,15 @@ export function Audit550Worksheet() {
  </div>
  <div className="col-span-2 space-y-1">
  <label className="text-sm font-medium text-muted-foreground">Supporting rationale</label>
- <Input disabled={locked} value={data.overallRationale}
- onChange={e => setData(d => ({...d, overallRationale: e.target.value }))}
- placeholder="Briefly support the overall conclusion."
- className="h-8 text-sm" />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('550-overall')}>
+  <Input disabled={locked} value={data.overallRationale}
+  onChange={e => setData(d => ({...d, overallRationale: e.target.value }))}
+  placeholder="Briefly support the overall conclusion."
+  className="h-8 text-sm" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('550-overall') && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </div>

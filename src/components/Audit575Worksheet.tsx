@@ -10,6 +10,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -110,6 +113,15 @@ export function Audit575Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+
+ function markLukaFilled(id: string) {
+  setLukaFilledFields(prev => new Set(prev).add(id));
+  setLukaHighlightFields(prev => new Set(prev).add(id));
+  setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  function patchRow(id: string, patch: Partial<DeficiencyRow>) {
  setData(d => ({...d, rows: d.rows.map(r => r.id === id ? {...r,...patch } : r) }));
@@ -149,7 +161,50 @@ export function Audit575Worksheet() {
       ...a,
       onTrigger: () => {
         setLukaState('loading');
-        setTimeout(() => setLukaState('done'), 2200);
+        const row0 = data.rows[0];
+        const row1Id = data.rows[1]?.id ?? uid();
+        if (!data.rows[1]) {
+          setData(d => ({ ...d, rows: [...d.rows, { ...emptyRow(), id: row1Id }] }));
+        }
+        lukaSequentialFill([
+          {
+            scrollRef: firstFillRef,
+            set: () => {
+              patchRow(row0.id, {
+                description: 'Segregation of duties gap in accounts payable: the same individual can create vendors, process invoices, and approve payments without independent review.',
+                source: 'Form 550',
+                area: 'Accounts Payable',
+                classification: 'Significant deficiency' as Classification,
+                potentialImpact: 'Unauthorized payments or fraudulent vendor creation could go undetected — affects completeness and existence of AP balances.',
+                rootCause: 'Insufficient staffing in the finance function; no compensating controls in place.',
+              });
+              markLukaFilled('575-row0');
+            },
+          },
+          {
+            set: () => {
+              patchRow(row1Id, {
+                description: 'Lack of formal IT change management process: program changes are implemented directly to production without documented testing or independent approval.',
+                source: 'Form 551',
+                area: 'IT General Controls',
+                classification: 'Significant deficiency' as Classification,
+                potentialImpact: 'Unauthorized or untested changes could affect accuracy of automated financial calculations and ERP reporting outputs.',
+                rootCause: 'No formal change management policy exists; IT team operates without documented change procedures.',
+              });
+              markLukaFilled('575-row1');
+            },
+          },
+          {
+            set: () => {
+              setData(d => ({
+                ...d,
+                overallConclusion: 'S' as YSN,
+                conclusionRationale: 'Two significant deficiencies identified — no material weaknesses. Management responses obtained; additional substantive procedures applied to affected areas.',
+              }));
+              markLukaFilled('575-conclusion');
+            },
+          },
+        ], () => setLukaState('done'));
       },
     }))}
   />
@@ -251,14 +306,23 @@ export function Audit575Worksheet() {
  </tr>
  </thead>
  <tbody>
- {data.rows.map((r, i) => (
- <tr key={r.id} className="hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0">
+ {data.rows.map((r, i) => {
+ const rowFillKey = i === 0 ? '575-row0' : i === 1 ? '575-row1' : '';
+ return (
+ <tr key={r.id}
+  ref={i === 0 && isDemoEngagement ? firstFillRef as any : undefined}
+  className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${isDemoEngagement && rowFillKey && lukaHighlightFields.has(rowFillKey) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.description}
- onChange={e => patchRow(r.id, { description: e.target.value })}
- placeholder="Describe the deficiency…"
- className="min-h-[72px] text-sm resize-none rounded-[10px]" />
+ <LukaTypingRow filled={isDemoEngagement && !!rowFillKey && lukaFilledFields.has(rowFillKey)}>
+  <Textarea disabled={locked} value={r.description}
+  onChange={e => patchRow(r.id, { description: e.target.value })}
+  placeholder="Describe the deficiency…"
+  className="min-h-[72px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && rowFillKey && lukaFilledFields.has(rowFillKey) && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.source} onValueChange={v => patchRow(r.id, { source: v })}>
@@ -344,7 +408,8 @@ export function Audit575Worksheet() {
  </td>
  )}
  </tr>
- ))}
+ );
+ })}
  </tbody>
  </table>
  </div>
@@ -384,10 +449,15 @@ export function Audit575Worksheet() {
  </div>
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">Rationale</label>
- <Input disabled={locked} value={data.conclusionRationale}
- onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
- placeholder="Briefly support the conclusion."
- className="h-8 text-sm" />
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('575-conclusion')}>
+  <Input disabled={locked} value={data.conclusionRationale}
+  onChange={e => setData(d => ({...d, conclusionRationale: e.target.value }))}
+  placeholder="Briefly support the conclusion."
+  className="h-8 text-sm" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('575-conclusion') && (
+  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </div>
