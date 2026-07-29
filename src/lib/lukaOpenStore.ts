@@ -48,15 +48,3 @@ export function subscribeLukaConfig(fn: (c: LukaOpenConfig | null) => void): () 
  };
 }
 
-// ── Suggest / work-paper initiation ──────────────────────────────────────
-
-export interface LukaSuggestConfig {
- label: string;
- sources: string[];
- engagementLabel: string;
- worksheetKey?: string;
-}
-
-export function dispatchLukaSuggest(config: LukaSuggestConfig) {
- window.dispatchEvent(new CustomEvent('luka-suggest-initiate', { detail: config }));
-}
