@@ -304,12 +304,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
           <div className="flex items-end gap-3 flex-wrap">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entity Name 1</span>
-              <Select disabled value={clientName}>
-                <SelectTrigger className="h-8 min-w-[100px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={clientName}>{clientName}</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input value={clientName} disabled className="h-8 min-w-[100px]" />
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entry Date</span>
@@ -333,12 +328,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
                 <Button variant="secondary" size="icon-sm" type="button" onClick={() => setEntryCounter(c => Math.max(1, c - 1))}>
                   <ChevronLeft className="h-3.5 w-3.5" />
                 </Button>
-                <Select disabled value={entryNo}>
-                  <SelectTrigger className="h-8 min-w-[72px]"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={entryNo}>{entryNo}</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input value={entryNo} readOnly className="h-8 min-w-[72px] text-center" />
                 <Button variant="secondary" size="icon-sm" type="button" onClick={() => setEntryCounter(c => c + 1)}>
                   <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
