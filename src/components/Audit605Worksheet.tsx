@@ -125,68 +125,70 @@ export function Audit605Worksheet() {
  heading="Canada > Worksheets"
  objective="Design overall responses to address risks of material misstatement at the financial-statement level. Responses are based on the assessment of risk recorded"
  standard={`${ctx.standardPrefix} 330.5`}
+ banner={isDemoEngagement ? (
+   <LukaStatusBar
+     isActive={isDemoEngagement}
+     message={
+       lukaState === 'loading'
+         ? "Luka is populating fields from prior file and connected sources…"
+         : lukaState === 'done'
+         ? "Luka has reviewed this section — fields flagged for your review."
+         : "Luka is populating information from Xero and prior file…"
+     }
+     actions={lukaState === 'idle' ? DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
+       ...a,
+       onTrigger: () => {
+         setLukaState('loading');
+         lukaSequentialFill([
+           { set: () => {
+               setData(d => ({ ...d, fsLevelControlWeaknesses: 'No material weaknesses identified in prior year review. IT general controls over financial reporting system (QuickBooks) assessed as adequate for engagement scope.' }));
+               markLukaFilled('fsLevelControlWeaknesses');
+             }
+           },
+           { set: () => {
+               setData(d => ({
+                 ...d,
+                 sections: d.sections.map((s, si) =>
+                   si === 0 ? {
+                     ...s,
+                     rows: s.rows.map((r, ri) =>
+                       ri === 0 ? {
+                         ...r,
+                         comments: 'Yes — D. Okonkwo (senior) assigned with manufacturing sector experience. R. Chandra (partner) to provide additional oversight on revenue and inventory risk areas.',
+                         psc: 'Y' as const,
+                       } : r
+                     ),
+                   } : s
+                 ),
+               }));
+               markLukaFilled('s0-r0');
+             }
+           },
+           { set: () => {
+               setData(d => ({
+                 ...d,
+                 sections: d.sections.map((s, si) =>
+                   si === 0 ? {
+                     ...s,
+                     rows: s.rows.map((r, ri) =>
+                       ri === 1 ? {
+                         ...r,
+                         comments: 'Yes — additional supervision planned for inventory count and revenue cut-off procedures given first-year audit status.',
+                         psc: 'Y' as const,
+                       } : r
+                     ),
+                   } : s
+                 ),
+               }));
+               markLukaFilled('s0-r1');
+             }
+           },
+         ], () => setLukaState('done'));
+       },
+     })) : []}
+   />
+ ) : undefined}
  >
- <LukaStatusBar
-   isActive={isDemoEngagement}
-   message={
-     lukaState === 'loading'
-       ? "Luka is populating fields from prior file and connected sources…"
-       : lukaState === 'done'
-       ? "Luka has reviewed this section — fields flagged for your review."
-       : "Luka is populating information from Xero and prior file…"
-   }
-   actions={lukaState === 'idle' ? DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
-     ...a,
-     onTrigger: () => {
-       setLukaState('loading');
-       lukaSequentialFill([
-         { set: () => {
-             setData(d => ({ ...d, fsLevelControlWeaknesses: 'No material weaknesses identified in prior year review. IT general controls over financial reporting system (QuickBooks) assessed as adequate for engagement scope.' }));
-             markLukaFilled('fsLevelControlWeaknesses');
-           }
-         },
-         { set: () => {
-             setData(d => ({
-               ...d,
-               sections: d.sections.map((s, si) =>
-                 si === 0 ? {
-                   ...s,
-                   rows: s.rows.map((r, ri) =>
-                     ri === 0 ? {
-                       ...r,
-                       comments: 'Yes — D. Okonkwo (senior) assigned with manufacturing sector experience. R. Chandra (partner) to provide additional oversight on revenue and inventory risk areas.',
-                       psc: 'Y' as const,
-                     } : r
-                   ),
-                 } : s
-               ),
-             }));
-             markLukaFilled('s0-r0');
-           }
-         },
-         { set: () => {
-             setData(d => ({
-               ...d,
-               sections: d.sections.map((s, si) =>
-                 si === 0 ? {
-                   ...s,
-                   rows: s.rows.map((r, ri) =>
-                     ri === 1 ? {
-                       ...r,
-                       comments: 'Yes — additional supervision planned for inventory count and revenue cut-off procedures given first-year audit status.',
-                       psc: 'Y' as const,
-                     } : r
-                   ),
-                 } : s
-               ),
-             }));
-             markLukaFilled('s0-r1');
-           }
-         },
-       ], () => setLukaState('done'));
-     },
-   })) : []}
- />
  <WorksheetHeader
  ctx={ctx}
  formNo="605"

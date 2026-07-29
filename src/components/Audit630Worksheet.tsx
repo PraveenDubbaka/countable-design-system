@@ -94,8 +94,7 @@ export function Audit630Worksheet() {
  heading="Canada > Worksheets"
  objective="Summarise the use of external confirmation procedures, the nature and number of items confirmed, and any exceptions or difficulties encountered."
  standard={`${ctx.standardPrefix} 505`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -113,7 +112,8 @@ export function Audit630Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  <WorksheetHeader
  ctx={ctx}
  formNo="630"

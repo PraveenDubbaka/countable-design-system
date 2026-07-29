@@ -159,8 +159,7 @@ export function Audit610Worksheet() {
  heading="Canada > Worksheets"
  objective="Use statistical or non-statistical (judgmental) sampling to provide a reasonable basis for conclusions about the population from which the sample is selected."
  standard={`${ctx.standardPrefix} 530`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
   <LukaStatusBar
     isActive={true}
     message={
@@ -178,7 +177,8 @@ export function Audit610Worksheet() {
       },
     }))}
   />
- )}
+ ) : undefined}
+ >
  <WorksheetHeader
  ctx={ctx}
  formNo="610"

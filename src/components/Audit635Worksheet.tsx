@@ -314,8 +314,7 @@ export function Audit635Worksheet() {
  heading="Canada > Worksheets"
  objective="Document the further audit procedures to obtain evidence about the reasonableness of an accounting estimate (including fair value) and the adequacy of related disclosures. Use this form for ONE estimate at a time."
  standard={`${ctx.standardPrefix} 540`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -333,7 +332,8 @@ export function Audit635Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  {/* Linked 520 estimate-risks */}
  <LinkedRisksCard
  overallRisk={overall}

@@ -307,8 +307,7 @@ export function Audit625Worksheet() {
  heading="Canada > Worksheets"
  objective={`Evaluate management's plan of action to address identified events or conditions that cast doubt on the entity's ability to continue as a going concern (Part 2 — Part 1 is).`}
  standard={`${ctx.standardPrefix} 570`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
   <LukaStatusBar
    isActive={true}
    message={
@@ -326,7 +325,8 @@ export function Audit625Worksheet() {
      },
    }))}
   />
- )}
+ ) : undefined}
+ >
  {/* Linked 520 going-concern risks (with FS-level chip) */}
  <LinkedRisksCard overallRisk={overall} risks={gcRisks} storageKey={`audit-625-risks-${engagementId ?? "default"}`} locked={locked} emptyHint="No going-concern related risks tagged in Add or tag risks in to auto-populate this evaluation." />
 

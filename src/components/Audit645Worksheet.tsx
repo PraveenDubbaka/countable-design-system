@@ -251,8 +251,7 @@ export function Audit645Worksheet() {
  heading="Canada > Worksheets"
  objective="Identify and respond appropriately to litigation, claims and instances of non-compliance with laws and regulations that may be material to the financial statements."
  standard={`${ctx.standardPrefix} 250 / ${ctx.standardPrefix} 501`}
- >
- {isDemoEngagement && (
+ banner={isDemoEngagement ? (
    <LukaStatusBar
      isActive={true}
      message={
@@ -270,7 +269,8 @@ export function Audit645Worksheet() {
        },
      }))}
    />
- )}
+ ) : undefined}
+ >
  {/* Performance materiality */}
  <WorksheetSection title="Performance materiality">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>
