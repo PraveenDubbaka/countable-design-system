@@ -76,6 +76,24 @@ export const DEMO_PROVENANCE = {
   },
 };
 
+export const DEMO_LUKA_PROC_ACTIONS: Record<string, { label: string; description: string }[]> = {
+  "gca-ws-proc-cash": [
+    { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
+    { label: "Cash count sheet", description: "Generate count sheet from petty cash balance in TB" },
+  ],
+  "gca-ws-proc-cash-bank": [
+    { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
+  ],
+  "gca-ws-proc-ar": [
+    { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
+    { label: "Aged AR schedule", description: "Pull aging buckets from Xero AR report" },
+    { label: "Subsequent receipts testing", description: "Match post year-end receipts against year-end AR balance" },
+  ],
+  "gca-ws-proc-ar-conf": [
+    { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
+  ],
+};
+
 export const DEMO_LUKA_ACTIONS = {
   riskAssessment: [
     { label: "Populate risks from prior file", description: "Carry forward identified risks from 2024 review file" },

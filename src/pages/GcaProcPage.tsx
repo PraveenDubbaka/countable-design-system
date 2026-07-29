@@ -5,6 +5,8 @@ import { Layout } from "@/components/Layout";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LukaIcon } from "@/components/LukaIcon";
+import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
+import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { AuditCashWorksheet, AuditCashBankRecWorksheet, AuditCashCountWorksheet } from "@/components/AuditCashWorksheet";
 import { AuditARWorksheet, AuditARConfirmationWorksheet } from "@/components/AuditARWorksheet";
 
@@ -35,6 +37,7 @@ function getWorksheetComponent(id: string): React.ReactNode | null {
 
 export function GcaProcPage() {
   const { worksheetId, engagementId } = useParams<{ worksheetId: string; engagementId: string }>();
+  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const component = worksheetId ? getWorksheetComponent(worksheetId) : null;
   const title = worksheetId ? WORKSHEET_TITLES[worksheetId] : undefined;
 
@@ -131,6 +134,27 @@ export function GcaProcPage() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+          </div>
+        )}
+        {isDemoEngagement && worksheetId && DEMO_LUKA_PROC_ACTIONS[worksheetId] && (
+          <div className="flex items-center justify-between px-4 py-2.5 bg-violet-50 border-b border-violet-200">
+            <div className="flex items-center gap-2">
+              <LukaIcon size={13} bare inverted className="shrink-0 text-violet-700" />
+              <span className="text-xs font-medium text-violet-700">
+                Luka can initiate{" "}
+                <span className="font-semibold">
+                  {DEMO_LUKA_PROC_ACTIONS[worksheetId].length} work paper
+                  {DEMO_LUKA_PROC_ACTIONS[worksheetId].length !== 1 ? "s" : ""}
+                </span>{" "}
+                for this procedure
+              </span>
+            </div>
+            <LukaSuggestButton
+              actions={DEMO_LUKA_PROC_ACTIONS[worksheetId].map(a => ({
+                ...a,
+                onTrigger: () => toast(`Luka is spinning up: ${a.label}`),
+              }))}
+            />
           </div>
         )}
         <div className="flex-1 overflow-auto bg-card">
