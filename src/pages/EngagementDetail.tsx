@@ -81,7 +81,7 @@ import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
 import { AssignmentDialog } from "@/components/AssignmentDialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { exportWorksheetAsPDF, exportWorksheetAsWord } from "@/lib/worksheetExport";
-import { openLukaWithConfig } from "@/lib/lukaOpenStore";
+import { openLukaWithConfig, type LukaSuggestConfig } from "@/lib/lukaOpenStore";
 import { clearPBCNotifications, getPBCNotificationCount } from "@/lib/pbcRequestStore";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
@@ -1091,6 +1091,16 @@ export default function EngagementDetail() {
  window.addEventListener('pap501-generate', handler);
  return () => window.removeEventListener('pap501-generate', handler);
  }, [engagementId]);
+
+ useEffect(() => {
+ const handleLukaSuggest = (e: Event) => {
+ const config = (e as CustomEvent<LukaSuggestConfig>).detail;
+ setLukaAutoFillConfig({ label: config.label, sources: config.sources, engagementLabel: config.engagementLabel });
+ setLukaOpen(true);
+ };
+ window.addEventListener('luka-suggest-initiate', handleLukaSuggest);
+ return () => window.removeEventListener('luka-suggest-initiate', handleLukaSuggest);
+ }, []);
 
  useEffect(() => {
  const handler = (e: Event) => {

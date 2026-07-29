@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { LukaIcon } from "@/components/LukaIcon";
 import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 import { AuditCashWorksheet, AuditCashBankRecWorksheet, AuditCashCountWorksheet } from "@/components/AuditCashWorksheet";
 import { AuditARWorksheet, AuditARConfirmationWorksheet } from "@/components/AuditARWorksheet";
 
@@ -143,16 +144,21 @@ export function GcaProcPage() {
               <span className="text-xs font-medium text-violet-700">
                 Luka can initiate{" "}
                 <span className="font-semibold">
-                  {DEMO_LUKA_PROC_ACTIONS[worksheetId].length} work paper
-                  {DEMO_LUKA_PROC_ACTIONS[worksheetId].length !== 1 ? "s" : ""}
+                  {DEMO_LUKA_PROC_ACTIONS[worksheetId].actions.length} work paper
+                  {DEMO_LUKA_PROC_ACTIONS[worksheetId].actions.length !== 1 ? "s" : ""}
                 </span>{" "}
                 for this procedure
               </span>
             </div>
             <LukaSuggestButton
-              actions={DEMO_LUKA_PROC_ACTIONS[worksheetId].map(a => ({
+              actions={DEMO_LUKA_PROC_ACTIONS[worksheetId].actions.map(a => ({
                 ...a,
-                onTrigger: () => toast(`Luka is spinning up: ${a.label}`),
+                onTrigger: () => dispatchLukaSuggest({
+                  label: a.label,
+                  sources: DEMO_LUKA_PROC_ACTIONS[worksheetId].sources,
+                  engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+                  worksheetKey: worksheetId,
+                }),
               }))}
             />
           </div>

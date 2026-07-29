@@ -15,6 +15,7 @@ import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { getLsInfo, ALL_PROCEDURE_NODES, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -516,7 +517,15 @@ export function Audit590Worksheet() {
       <LukaStatusBar
         isActive={true}
         message="Luka is pulling performance materiality from Form 420 and populating engagement scope…"
-        actions={DEMO_LUKA_ACTIONS.procedures.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+        actions={DEMO_LUKA_ACTIONS.procedures.actions.map(a => ({
+          ...a,
+          onTrigger: () => dispatchLukaSuggest({
+            label: a.label,
+            sources: DEMO_LUKA_ACTIONS.procedures.sources,
+            engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+            worksheetKey: "590",
+          }),
+        }))}
       />
     )}
  <div className="flex-1 overflow-y-auto space-y-5">

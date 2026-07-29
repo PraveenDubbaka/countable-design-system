@@ -76,39 +76,63 @@ export const DEMO_PROVENANCE = {
   },
 };
 
-export const DEMO_LUKA_PROC_ACTIONS: Record<string, { label: string; description: string }[]> = {
-  "gca-ws-proc-cash": [
-    { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
-    { label: "Cash count sheet", description: "Generate count sheet from petty cash balance in TB" },
-  ],
-  "gca-ws-proc-cash-bank": [
-    { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
-  ],
-  "gca-ws-proc-ar": [
-    { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
-    { label: "Aged AR schedule", description: "Pull aging buckets from Xero AR report" },
-    { label: "Subsequent receipts testing", description: "Match post year-end receipts against year-end AR balance" },
-  ],
-  "gca-ws-proc-ar-conf": [
-    { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
-  ],
+export const DEMO_LUKA_PROC_ACTIONS: Record<string, { sources: string[]; actions: { label: string; description: string }[] }> = {
+  "gca-ws-proc-cash": {
+    sources: ["Xero bank feed", "TB cash accounts"],
+    actions: [
+      { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
+      { label: "Cash count sheet", description: "Generate count sheet from petty cash balance in TB" },
+    ],
+  },
+  "gca-ws-proc-cash-bank": {
+    sources: ["Xero bank feed", "TB cash accounts"],
+    actions: [
+      { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
+    ],
+  },
+  "gca-ws-proc-ar": {
+    sources: ["Xero AR subledger", "Post year-end receipts"],
+    actions: [
+      { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
+      { label: "Aged AR schedule", description: "Pull aging buckets from Xero AR report" },
+      { label: "Subsequent receipts testing", description: "Match post year-end receipts against year-end AR balance" },
+    ],
+  },
+  "gca-ws-proc-ar-conf": {
+    sources: ["Xero AR subledger"],
+    actions: [
+      { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
+    ],
+  },
 };
 
 export const DEMO_LUKA_ACTIONS = {
-  riskAssessment: [
-    { label: "Populate risks from prior file", description: "Carry forward identified risks from 2024 review file" },
-    { label: "Flag significant risks", description: "Auto-mark risks above High inherent threshold" },
-    { label: "Cross-reference to 520", description: "Link identified risks to risk register" },
-  ],
-  procedures: [
-    { label: "Load procedures from engagement scope", description: "Pull 590 procedure library into this worksheet" },
-    { label: "Mark automatable procedures", description: "Flag procedures Luka can initiate work papers for" },
-  ],
-  completion: [
-    { label: "Populate from signed-off sections", description: "Pull conclusions from completed risk and procedure worksheets" },
-    { label: "Flag open items", description: "Identify sections still requiring auditor judgment" },
-  ],
-  generic: [
-    { label: "Auto-populate from prior file", description: "Carry forward and flag for re-evaluation" },
-  ],
+  riskAssessment: {
+    sources: ["Prior file (2024 Review)", "Xero GL", "Risk library"],
+    actions: [
+      { label: "Populate risks from prior file", description: "Carry forward identified risks from 2024 review file" },
+      { label: "Flag significant risks", description: "Auto-mark risks above High inherent threshold" },
+      { label: "Cross-reference to 520", description: "Link identified risks to risk register" },
+    ],
+  },
+  procedures: {
+    sources: ["Engagement scope", "590 procedure library"],
+    actions: [
+      { label: "Load procedures from engagement scope", description: "Pull 590 procedure library into this worksheet" },
+      { label: "Mark automatable procedures", description: "Flag procedures Luka can initiate work papers for" },
+    ],
+  },
+  completion: {
+    sources: ["Signed-off worksheets", "Prior file"],
+    actions: [
+      { label: "Populate from signed-off sections", description: "Pull conclusions from completed risk and procedure worksheets" },
+      { label: "Flag open items", description: "Identify sections still requiring auditor judgment" },
+    ],
+  },
+  generic: {
+    sources: ["Prior file", "Xero GL"],
+    actions: [
+      { label: "Auto-populate from prior file", description: "Carry forward and flag for re-evaluation" },
+    ],
+  },
 };
