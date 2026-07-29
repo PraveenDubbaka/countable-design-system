@@ -14,7 +14,6 @@ import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog"
 import { toast } from "sonner";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -180,6 +179,7 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  const { engagementId = '' } = useParams<{ engagementId: string }>();
  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
 
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [data, setData] = useState<Data507>(() => {
  const saved = readJsonFromLocalStorage<Data507 | null>(storageKey, null);
  if (!saved) return buildDefault();
@@ -350,15 +350,19 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  {isDemoEngagement && (
   <LukaStatusBar
     isActive={true}
-    message="Luka is populating information from prior file and connected data sources…"
-    actions={DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
+    message={
+      lukaState === 'loading'
+        ? "Luka is populating fields from prior file and connected sources…"
+        : lukaState === 'done'
+        ? "Luka has reviewed this section — fields flagged for your review."
+        : "Luka is populating information from Xero and prior file…"
+    }
+    actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
       ...a,
-      onTrigger: () => dispatchLukaSuggest({
-        label: a.label,
-        sources: DEMO_LUKA_ACTIONS.riskAssessment.sources,
-        engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-        worksheetKey: "507",
-      }),
+      onTrigger: () => {
+        setLukaState('loading');
+        setTimeout(() => setLukaState('done'), 2200);
+      },
     }))}
   />
  )}

@@ -10,7 +10,8 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
+import { lukaSequentialFill } from "@/lib/lukaInlineFill";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 
 interface Data605 {
  fsLevelControlWeaknesses: string;
@@ -90,6 +91,12 @@ export function Audit605Worksheet() {
  const overall = useMemo(() => overallRisk520(risks), [risks]);
  const fsRisks = useMemo(() => risks.filter(r => r.source === "A" || r.fraudRisk === "Y" || r.significantRisk === "Y"), [risks]);
 
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+ }
+
  const storageKey = `audit-605-data-${engagementId ?? "default"}`;
  const [data, setData] = useState<Data605>(() => {
  const saved = readJsonFromLocalStorage<Data605>(storageKey, buildDefault(overall));
@@ -119,21 +126,67 @@ export function Audit605Worksheet() {
  objective="Design overall responses to address risks of material misstatement at the financial-statement level. Responses are based on the assessment of risk recorded"
  standard={`${ctx.standardPrefix} 330.5`}
  >
- {isDemoEngagement && (
-  <LukaStatusBar
-    isActive={true}
-    message="Luka is populating information from prior file and connected data sources…"
-    actions={DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
-      ...a,
-      onTrigger: () => dispatchLukaSuggest({
-        label: a.label,
-        sources: DEMO_LUKA_ACTIONS.completion.sources,
-        engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-        worksheetKey: "605",
-      }),
-    }))}
-  />
- )}
+ <LukaStatusBar
+   isActive={isDemoEngagement}
+   message={
+     lukaState === 'loading'
+       ? "Luka is populating fields from prior file and connected sources…"
+       : lukaState === 'done'
+       ? "Luka has reviewed this section — fields flagged for your review."
+       : "Luka is populating information from Xero and prior file…"
+   }
+   actions={lukaState === 'idle' ? DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
+     ...a,
+     onTrigger: () => {
+       setLukaState('loading');
+       lukaSequentialFill([
+         { set: () => {
+             setData(d => ({ ...d, fsLevelControlWeaknesses: 'No material weaknesses identified in prior year review. IT general controls over financial reporting system (QuickBooks) assessed as adequate for engagement scope.' }));
+             markLukaFilled('fsLevelControlWeaknesses');
+           }
+         },
+         { set: () => {
+             setData(d => ({
+               ...d,
+               sections: d.sections.map((s, si) =>
+                 si === 0 ? {
+                   ...s,
+                   rows: s.rows.map((r, ri) =>
+                     ri === 0 ? {
+                       ...r,
+                       comments: 'Yes — D. Okonkwo (senior) assigned with manufacturing sector experience. R. Chandra (partner) to provide additional oversight on revenue and inventory risk areas.',
+                       psc: 'Y' as const,
+                     } : r
+                   ),
+                 } : s
+               ),
+             }));
+             markLukaFilled('s0-r0');
+           }
+         },
+         { set: () => {
+             setData(d => ({
+               ...d,
+               sections: d.sections.map((s, si) =>
+                 si === 0 ? {
+                   ...s,
+                   rows: s.rows.map((r, ri) =>
+                     ri === 1 ? {
+                       ...r,
+                       comments: 'Yes — additional supervision planned for inventory count and revenue cut-off procedures given first-year audit status.',
+                       psc: 'Y' as const,
+                     } : r
+                   ),
+                 } : s
+               ),
+             }));
+             markLukaFilled('s0-r1');
+           }
+         },
+       ], () => setLukaState('done'));
+     },
+   })) : []}
+ />
  <WorksheetHeader
  ctx={ctx}
  formNo="605"
@@ -156,10 +209,28 @@ export function Audit605Worksheet() {
  className="text-sm min-h-[88px]"
  placeholder="Summarise any control weaknesses at the financial-statement level identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…"
  />
+ {isDemoEngagement && lukaFilledFields.has('fsLevelControlWeaknesses') && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ )}
  </div>
  </div>
 
- <ProcedureTable sections={data.sections} locked={locked} onChange={updateRow} showPsa={false} showNumbers={false} />
+ <ProcedureTable
+   sections={data.sections}
+   locked={locked}
+   onChange={updateRow}
+   showPsa={false}
+   showNumbers={false}
+   renderRowBadge={(si, ri) =>
+     isDemoEngagement && lukaFilledFields.has(`s${si}-r${ri}`) ? (
+       <div className="mt-1">
+         <AutomationStateChip state="luka-drafted" />
+       </div>
+     ) : null
+   }
+ />
 
  <ConcludeBar
  worksheetKey="audit-605"

@@ -393,12 +393,14 @@ export function ProcedureTable({
  onChange,
  showPsa = true,
  showNumbers = true,
+ renderRowBadge,
 }: {
  sections: { title: string; rows: ProcRow[] }[];
  locked: boolean;
  onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
  showPsa?: boolean;
  showNumbers?: boolean;
+ renderRowBadge?: (sectionIdx: number, rowIdx: number) => ReactNode;
 }) {
  const td = "border-b border-border px-3 py-2.5 text-sm align-top";
  const colCount = (showNumbers ? 1 : 0) + (showPsa ? 1 : 0) + 4;
@@ -417,7 +419,7 @@ export function ProcedureTable({
  </thead>
  <tbody>
  {sections.map((s, si) => (
- <FragmentRows key={si} title={s.title} rows={s.rows} sectionIdx={si} td={td} locked={locked} onChange={onChange} showPsa={showPsa} showNumbers={showNumbers} colCount={colCount} />
+ <FragmentRows key={si} title={s.title} rows={s.rows} sectionIdx={si} td={td} locked={locked} onChange={onChange} showPsa={showPsa} showNumbers={showNumbers} colCount={colCount} renderRowBadge={renderRowBadge} />
  ))}
  </tbody>
  </table>
@@ -426,10 +428,11 @@ export function ProcedureTable({
 }
 
 
-function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, showNumbers, colCount }: {
+function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, showNumbers, colCount, renderRowBadge }: {
  title: string; rows: ProcRow[]; sectionIdx: number; td: string; locked: boolean;
  onChange: (sectionIdx: number, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) => void;
  showPsa: boolean; showNumbers: boolean; colCount: number;
+ renderRowBadge?: (sectionIdx: number, rowIdx: number) => ReactNode;
 }) {
  let n = 0;
  return (
@@ -437,7 +440,7 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, 
  <tr className="bg-primary/[0.06]">
  <td colSpan={colCount} className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-primary border-b border-border">{title}</td>
  </tr>
- {rows.map(r => {
+ {rows.map((r, rowIdx) => {
  n += 1;
  return (
  <tr key={r.id} className="hover:bg-muted/20">
@@ -457,6 +460,7 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, 
  <td className={td}>
  <Textarea disabled={locked} value={r.comments} onChange={e => onChange(sectionIdx, r.id, "comments", e.target.value)}
  className="min-h-[56px] text-sm resize-none" placeholder="—" />
+ {renderRowBadge?.(sectionIdx, rowIdx)}
  </td>
  <td className={`${td} text-center`}>
  <RefButton

@@ -14,7 +14,6 @@ import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -255,6 +254,7 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  const isUS = isUSProp ?? ctx.isUS;
  const storageKey = `audit-513-data-v2-${engagementId ?? (isUS ? "us" : "ca")}`;
 
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [data, setData] = useState<Data513>(() => {
  const saved = readJsonFromLocalStorage<Data513 | null>(storageKey, null);
  const def = buildDefault(isUS);
@@ -334,15 +334,19 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  {isDemoEngagement && (
  <LukaStatusBar
  isActive={true}
- message="Luka is populating information from prior file and connected data sources…"
- actions={DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
+ message={
+   lukaState === 'loading'
+     ? "Luka is populating fields from prior file and connected sources…"
+     : lukaState === 'done'
+     ? "Luka has reviewed this section — fields flagged for your review."
+     : "Luka is populating information from Xero and prior file…"
+ }
+ actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
    ...a,
-   onTrigger: () => dispatchLukaSuggest({
-     label: a.label,
-     sources: DEMO_LUKA_ACTIONS.riskAssessment.sources,
-     engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-     worksheetKey: "513",
-   }),
+   onTrigger: () => {
+     setLukaState('loading');
+     setTimeout(() => setLukaState('done'), 2200);
+   },
  }))}
  />
  )}
