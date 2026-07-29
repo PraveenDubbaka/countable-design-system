@@ -14,7 +14,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
+import { getLsInfo, ALL_PROCEDURE_NODES, setActiveProcedureIds, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -414,6 +414,7 @@ export function Audit590Worksheet() {
  if (serialized === prevActiveProcIdsRef.current) return;
  prevActiveProcIdsRef.current = serialized;
  setActiveProcedureIds(engagementId, activeIds);
+ setWpProcMap(engagementId, data.rows);
  }, [data.rows, engagementId]);
 
  function closeProcPanel() {

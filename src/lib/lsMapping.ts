@@ -127,6 +127,24 @@ export function getLsInfo(fsaName: string): LsInfo | null {
 }
 
 const procStorageKey = (engId: string) => `audit-590-active-procs-${engId}`;
+const wpProcMapKey = (engId: string) => `audit-590-wp-proc-map-${engId}`;
+
+/** Store a map of aud-wp-* ID → selected gca-ws-proc-* IDs so the sidebar can show children. */
+export function setWpProcMap(engagementId: string, rows: Array<{ plannedProcedureId: string }>): void {
+  const map: Record<string, string[]> = {};
+  for (const row of rows) {
+    if (!row.plannedProcedureId) continue;
+    const audWpId = getAudWpIdForProc(row.plannedProcedureId);
+    if (!audWpId) continue;
+    if (!map[audWpId]) map[audWpId] = [];
+    if (!map[audWpId].includes(row.plannedProcedureId)) map[audWpId].push(row.plannedProcedureId);
+  }
+  try {
+    const key = wpProcMapKey(engagementId);
+    localStorage.setItem(key, JSON.stringify(map));
+    window.dispatchEvent(new StorageEvent("storage", { key, storageArea: localStorage }));
+  } catch { /* ignore */ }
+}
 
 export function getActiveProcedureIds(engagementId: string): string[] {
   try {

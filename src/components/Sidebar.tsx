@@ -926,6 +926,31 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   return () => window.removeEventListener("storage", onStorage);
  }, [location.pathname]);
 
+ // Map of aud-wp-* → selected gca-ws-proc-* IDs, synced from 590 worksheet
+ const [wpProcMap, setWpProcMapState] = useState<Record<string, string[]>>(() => {
+  const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
+  if (!id) return {};
+  try {
+   const raw = localStorage.getItem(`audit-590-wp-proc-map-${id}`);
+   return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+ });
+ useEffect(() => {
+  const id = location.pathname.split("/engagements/")[1]?.split("/")[0];
+  if (!id) return;
+  const key = `audit-590-wp-proc-map-${id}`;
+  const read = () => {
+   try {
+    const raw = localStorage.getItem(key);
+    setWpProcMapState(raw ? JSON.parse(raw) : {});
+   } catch { setWpProcMapState({}); }
+  };
+  read();
+  const onStorage = (e: StorageEvent) => { if (e.key === key) read(); };
+  window.addEventListener("storage", onStorage);
+  return () => window.removeEventListener("storage", onStorage);
+ }, [location.pathname]);
+
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
  const seedDefaultCompilationChecklists = (): SavedChecklist[] => {
@@ -1523,6 +1548,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  } catch {}
  }, [expandedSections]);
 
+ // Auto-expand aud-wp-* nodes that have mapped procedure worksheet children
+ useEffect(() => {
+  const nodesWithChildren = Object.keys(wpProcMap).filter(id => (wpProcMap[id]?.length ?? 0) > 0);
+  if (nodesWithChildren.length === 0) return;
+  setExpandedSections(prev => {
+   const next = new Set(prev);
+   for (const id of nodesWithChildren) next.add(id);
+   return next;
+  });
+ }, [wpProcMap]);
+
  // Load hidden-children state per engagement
  useEffect(() => {
  const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
@@ -1934,13 +1970,48 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const isAuditEngagement = sidebarType === 'audit-ca' || sidebarType === 'audit-us';
  const engFirstYear = engMeta?.firstYearAudit === true;
 
- // Filter aud-wp-* leaf nodes to only those planned in the 590 worksheet
- const filterProcTree = (nodes: SectionNode[], activeIds: string[]): SectionNode[] =>
+ // Find a node by ID within a GlobalTemplate tree (used for building procedure children)
+ const findInGlobalTemplates = (nodes: GlobalTemplate[], id: string): GlobalTemplate | null => {
+  for (const node of nodes) {
+   if (node.id === id) return node;
+   if (node.children) { const f = findInGlobalTemplates(node.children, id); if (f) return f; }
+  }
+  return null;
+ };
+
+ // Build sidebar child nodes for an aud-wp-* node from its mapped gca-ws-proc-* items
+ const buildWpChildren = (audWpId: string, map: Record<string, string[]>): SectionNode[] => {
+  const gcaIds = map[audWpId] ?? [];
+  const seen = new Set<string>();
+  const result: SectionNode[] = [];
+  for (const gcaId of gcaIds) {
+   const node = findInGlobalTemplates(initialGlobalWorksheets, gcaId);
+   if (!node) continue;
+   if (node.type === "folder" && node.children) {
+    for (const child of node.children) {
+     if (!seen.has(child.id)) {
+      seen.add(child.id);
+      result.push({ id: child.id, label: child.name, icon: "doc", route: `gca-proc/${child.id}` });
+     }
+    }
+   } else if (!seen.has(node.id)) {
+    seen.add(node.id);
+    result.push({ id: node.id, label: node.name, icon: "doc", route: `gca-proc/${node.id}` });
+   }
+  }
+  return result;
+ };
+
+ // Filter aud-wp-* leaf nodes to only those planned in the 590 worksheet; attach their procedure children
+ const filterProcTree = (nodes: SectionNode[], activeIds: string[], procMap: Record<string, string[]>): SectionNode[] =>
   nodes.reduce<SectionNode[]>((acc, node) => {
    if (node.id.startsWith("aud-wp-")) {
-    if (activeIds.includes(node.id)) acc.push(node);
+    if (activeIds.includes(node.id)) {
+     const children = buildWpChildren(node.id, procMap);
+     acc.push(children.length > 0 ? { ...node, children } : node);
+    }
    } else if (node.children) {
-    const kids = filterProcTree(node.children, activeIds);
+    const kids = filterProcTree(node.children, activeIds, procMap);
     if (kids.length > 0) acc.push({ ...node, children: kids });
    } else {
     acc.push(node);
@@ -3070,7 +3141,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const caTree = isAuditEngagement && !isUSAuditEngagement && activeProcedureIds.length > 0
   ? auditEngagementTree.map(section =>
    section.id === "aud-pr" && section.children
-    ? { ...section, children: filterProcTree(section.children, activeProcedureIds) }
+    ? { ...section, children: filterProcTree(section.children, activeProcedureIds, wpProcMap) }
     : section
   )
   : auditEngagementTree;
