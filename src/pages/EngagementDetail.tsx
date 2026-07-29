@@ -2586,13 +2586,6 @@ export default function EngagementDetail() {
  </div>
  </div>
 
- {/* Demo mode banner */}
- {engagementId === 'AUD-NPM-Dec312025' && (
- <div className="bg-[#0A3159] text-white text-xs px-4 py-1.5 flex items-center gap-2 shrink-0">
- <span>🎬 Demo mode — Northline Precision Manufacturing Inc. · Dec 31, 2025</span>
- </div>
- )}
-
  {/* Content Area */}
  <div className="flex-1 overflow-auto bg-card" id={checklistKey && WORKSHEET_KEYS.has(checklistKey) ? 'worksheet-export-content' : undefined}>
  {/* Auto-fill progress indicator */}
