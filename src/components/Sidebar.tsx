@@ -1991,12 +1991,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     for (const child of node.children) {
      if (!seen.has(child.id)) {
       seen.add(child.id);
-      result.push({ id: child.id, label: child.name, icon: "doc", route: `gca-proc/${child.id}` });
+      result.push({ id: child.id, label: child.name, icon: "worksheet", route: `gca-proc/${child.id}` });
      }
     }
    } else if (!seen.has(node.id)) {
     seen.add(node.id);
-    result.push({ id: node.id, label: node.name, icon: "doc", route: `gca-proc/${node.id}` });
+    result.push({ id: node.id, label: node.name, icon: "worksheet", route: `gca-proc/${node.id}` });
    }
   }
   return result;
