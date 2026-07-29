@@ -4,14 +4,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Plus, Trash2, Info, Download, TrendingUp, X } from "lucide-react";
+import { Plus, Trash2, Info, Download, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency } from "@/lib/engagementContext";
 import { WorksheetLayout, WorksheetHeader, ConcludeBar, type SignOffData } from "@/components/audit/WorksheetShell";
+import { NewAdjEntryModal, type AdjLine, type AdjEntryMeta, tbAccounts } from "@/components/NewAdjEntryModal";
 
 type RefField = RefDoc[];
 type YN = "Y" | "N" | "";
@@ -127,13 +127,11 @@ const CAS450_EVAL = [
 interface EvalItem { psc: "Y" | "N" | "NA" | ""; response: string; wpRef: RefField; }
 function blankEval(): EvalItem { return { psc: "", response: "", wpRef: [] }; }
 
-interface StoredAdjEntry { lines: { accNo: string; description: string; debit: string; credit: string }[]; meta: { entryNo: string; entryType: string; entryDate: string; notes: string }; clientName: string; engId: string; }
-
 export function AuditAIMWorksheet() {
   const { engagementId } = useParams<{ engagementId: string }>();
   const ctx = useEngagementContext();
   const storageKey = `audit-aim-data-${engagementId ?? "default"}`;
-  const [viewEntry, setViewEntry] = useState<{ open: boolean; entry: StoredAdjEntry | null }>({ open: false, entry: null });
+  const [viewEntry, setViewEntry] = useState<{ open: boolean; prefillLines: AdjLine[]; prefillMeta: AdjEntryMeta | null; storedClientName: string; entryId: string }>({ open: false, prefillLines: [], prefillMeta: null, storedClientName: "", entryId: "" });
 
   const [data, setData] = useState<DataAIM & { eval1: EvalItem; eval2: EvalItem; eval3: EvalItem; eval4: EvalItem }>(() => {
     const saved = readJsonFromLocalStorage<Partial<DataAIM & { eval1: EvalItem; eval2: EvalItem; eval3: EvalItem; eval4: EvalItem }>>(storageKey, null);
@@ -263,8 +261,12 @@ export function AuditAIMWorksheet() {
                         className="text-link text-xs font-semibold hover:underline focus:outline-none"
                         onClick={() => {
                           const entryId = row.refNo.replace(/[^a-zA-Z0-9]/g, "-");
-                          const stored = readJsonFromLocalStorage<StoredAdjEntry>(`adj-entry-${engagementId ?? "default"}-${entryId}`, null as unknown as StoredAdjEntry);
-                          setViewEntry({ open: true, entry: stored });
+                          const stored = readJsonFromLocalStorage<{ lines: AdjLine[]; meta: AdjEntryMeta; clientName: string; engId: string }>(
+                            `adj-entry-${engagementId ?? "default"}-${entryId}`,
+                            null as unknown as { lines: AdjLine[]; meta: AdjEntryMeta; clientName: string; engId: string }
+                          );
+                          if (!stored) return;
+                          setViewEntry({ open: true, prefillLines: stored.lines, prefillMeta: stored.meta, storedClientName: stored.clientName, entryId });
                         }}
                       >
                         {row.refNo}
@@ -536,67 +538,48 @@ export function AuditAIMWorksheet() {
         }}
       />
 
-      {/* Adj Entry view modal */}
-      <Dialog open={viewEntry.open} onOpenChange={open => !open && setViewEntry({ open: false, entry: null })}>
-        <DialogContent className="p-0 gap-0 max-w-2xl overflow-hidden [&>button.absolute]:hidden">
-          {viewEntry.entry ? (() => {
-            const { meta, lines, clientName: cn } = viewEntry.entry;
-            return (
-              <>
-                <div className="flex items-center justify-between px-5 py-2.5 text-white text-sm" style={{ background: "rgb(13,34,64)" }}>
-                  <span className="font-semibold">{viewEntry.entry.engId}</span>
-                  <span className="font-semibold">{cn}</span>
-                  <div className="flex items-center gap-3">
-                    <span>Year End Date: {meta.entryDate}</span>
-                    <button onClick={() => setViewEntry({ open: false, entry: null })} className="text-white/70 hover:text-white"><X className="h-4 w-4" /></button>
-                  </div>
-                </div>
-                <div className="px-5 pt-4 pb-5 space-y-4">
-                  <p className="text-base font-bold text-foreground">Adjusting Entry</p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-                    <span><span className="font-medium text-foreground">Entry Type:</span> {meta.entryType}</span>
-                    <span><span className="font-medium text-foreground">Entry No:</span> {meta.entryNo}</span>
-                    <span><span className="font-medium text-foreground">Date:</span> {meta.entryDate}</span>
-                  </div>
-                  <table className="w-full text-sm border-collapse">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="text-left px-3 py-2 text-xs font-semibold text-foreground">Acc No.</th>
-                        <th className="text-left px-3 py-2 text-xs font-semibold text-foreground">Description</th>
-                        <th className="text-right px-3 py-2 text-xs font-semibold text-foreground">Debit</th>
-                        <th className="text-right px-3 py-2 text-xs font-semibold text-foreground">Credit</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {lines.map((l, i) => (
-                        <tr key={i} className="border-b border-border">
-                          <td className="px-3 py-2 text-foreground">{l.accNo}</td>
-                          <td className="px-3 py-2 text-foreground">{l.description}</td>
-                          <td className="px-3 py-2 text-right text-foreground">{l.debit || "—"}</td>
-                          <td className="px-3 py-2 text-right text-foreground">{l.credit || "—"}</td>
-                        </tr>
-                      ))}
-                      <tr className="bg-muted font-semibold">
-                        <td colSpan={2} className="px-3 py-2 text-xs text-right">Total</td>
-                        <td className="px-3 py-2 text-xs text-right">{lines.reduce((s, l) => s + (parseFloat(l.debit) || 0), 0).toFixed(2)}</td>
-                        <td className="px-3 py-2 text-xs text-right">{lines.reduce((s, l) => s + (parseFloat(l.credit) || 0), 0).toFixed(2)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  {meta.notes && (
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-foreground">Notes</p>
-                      <p className="text-sm text-foreground bg-muted/50 rounded-md px-3 py-2">{meta.notes}</p>
-                    </div>
-                  )}
-                </div>
-              </>
-            );
-          })() : (
-            <div className="px-5 py-8 text-sm text-muted-foreground text-center">Entry details not available.</div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <NewAdjEntryModal
+        open={viewEntry.open}
+        onClose={() => setViewEntry(v => ({ ...v, open: false }))}
+        onSave={(savedLines, meta) => {
+          writeJsonToLocalStorage(`adj-entry-${engagementId ?? "default"}-${viewEntry.entryId}`, {
+            lines: savedLines, meta, clientName: viewEntry.storedClientName, engId: engagementId,
+          });
+          let assets = 0, liabilities = 0, pretaxIncome = 0, equity = 0;
+          savedLines.forEach(l => {
+            const acc = tbAccounts.find(a => a.accNo === l.accNo);
+            const net = (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
+            const g = (acc?.grouping ?? "").toLowerCase();
+            if (g.includes("asset")) assets += net;
+            else if (g.includes("liabilit")) liabilities += -net;
+            else if (g.includes("equity")) equity += -net;
+            else pretaxIncome += -net;
+          });
+          const origRefNo = viewEntry.prefillMeta?.entryNo ?? "";
+          setData(d => ({
+            ...d,
+            sectionA: d.sectionA.map(r =>
+              r.refNo === origRefNo
+                ? {
+                    ...r,
+                    refNo: meta.entryNo,
+                    description: meta.notes || r.description,
+                    assets: assets !== 0 ? String(assets) : "",
+                    liabilities: liabilities !== 0 ? String(liabilities) : "",
+                    pretaxIncome: pretaxIncome !== 0 ? String(pretaxIncome) : "",
+                    equity: equity !== 0 ? String(equity) : "",
+                  }
+                : r
+            ),
+          }));
+          setViewEntry({ open: false, prefillLines: [], prefillMeta: null, storedClientName: "", entryId: "" });
+        }}
+        engId={engagementId ?? ""}
+        clientName={viewEntry.storedClientName}
+        yearEnd={ctx.periodEndDisplay}
+        prefillLines={viewEntry.prefillLines}
+        prefillMeta={viewEntry.prefillMeta ?? undefined}
+      />
     </WorksheetLayout>
   );
 }
