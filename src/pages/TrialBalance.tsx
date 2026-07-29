@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/tooltip";
 import { StyledCard } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
  ChevronDown,
  ChevronLeft,
@@ -191,85 +193,70 @@ function parseYearEndToDate(yearEnd: string): string {
 }
 
 function AccSearch({ value, onChange }: { value: string; onChange: (accNo: string, desc: string) => void }) {
-  const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, [open]);
   const filtered = baseTrialBalanceData.filter(a =>
     !q || a.accNo.toLowerCase().includes(q.toLowerCase()) || a.description.toLowerCase().includes(q.toLowerCase())
   );
   return (
-    <div ref={ref} className="relative">
-      <button type="button" onClick={() => { setOpen(o => !o); setQ(""); }}
-        className="flex items-center w-full h-8 px-2 border border-border rounded bg-background text-sm gap-1 text-left hover:border-primary/50">
-        {value ? <span className="flex-1 truncate">{value}</span> : <span className="flex-1 text-muted-foreground">Select</span>}
-        <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
-      </button>
-      {open && (
-        <div className="absolute z-[200] top-full left-0 mt-0.5 w-64 bg-popover border border-border rounded-md shadow-lg">
-          <div className="p-1.5 border-b border-border">
-            <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search..." className="h-7 text-xs" autoFocus />
-          </div>
-          <div className="max-h-44 overflow-y-auto py-0.5">
-            {filtered.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No results</p>}
-            {filtered.map(a => (
-              <button key={a.id} type="button"
-                className="w-full text-left px-3 py-1.5 text-xs hover:bg-muted flex gap-2 items-center"
-                onMouseDown={e => { e.preventDefault(); onChange(a.accNo, a.description); setOpen(false); }}>
-                <span className="font-mono shrink-0 w-12 text-muted-foreground">{a.accNo}</span>
-                <span className="truncate">{a.description}</span>
-              </button>
-            ))}
-          </div>
+    <DropdownMenu onOpenChange={open => { if (!open) setQ(""); }}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="secondary" size="sm" className="w-full justify-between font-normal h-8">
+          {value ? <span className="truncate">{value}</span> : <span className="text-muted-foreground">Select</span>}
+          <ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-0 w-64" align="start">
+        <div className="p-1.5" onMouseDown={e => e.stopPropagation()}>
+          <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search..." className="h-7 text-xs" autoFocus />
         </div>
-      )}
-    </div>
+        <DropdownMenuSeparator />
+        <div className="max-h-44 overflow-y-auto">
+          {filtered.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No results</p>}
+          {filtered.map(a => (
+            <DropdownMenuItem key={a.id} onSelect={() => onChange(a.accNo, a.description)}>
+              <span className="font-mono shrink-0 w-12 text-muted-foreground text-xs">{a.accNo}</span>
+              <span className="truncate text-xs">{a.description}</span>
+            </DropdownMenuItem>
+          ))}
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
 function DescSearch({ value, onChange }: { value: string; onChange: (desc: string, accNo: string) => void }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(value);
-  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { setQ(value); }, [value]);
-  useEffect(() => {
-    if (!open) return;
-    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, [open]);
   const filtered = baseTrialBalanceData.filter(a =>
     !q || a.description.toLowerCase().includes(q.toLowerCase()) || a.accNo.toLowerCase().includes(q.toLowerCase())
   );
   return (
-    <div ref={ref} className="relative">
-      <div className="flex items-center h-8 px-2 border border-border rounded bg-background gap-1 hover:border-primary/50">
-        <input value={q} onChange={e => { setQ(e.target.value); setOpen(true); }}
-          onFocus={() => setOpen(true)} placeholder="Type here to search"
-          className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground min-w-0" />
-        <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
-      </div>
-      {open && (
-        <div className="absolute z-[200] top-full left-0 mt-0.5 w-full min-w-[220px] bg-popover border border-border rounded-md shadow-lg">
-          <div className="max-h-44 overflow-y-auto py-0.5">
-            {filtered.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No results</p>}
-            {filtered.map(a => (
-              <button key={a.id} type="button"
-                className="w-full text-left px-3 py-1.5 text-xs hover:bg-muted flex gap-2 items-center"
-                onMouseDown={e => { e.preventDefault(); onChange(a.description, a.accNo); setQ(a.description); setOpen(false); }}>
-                <span className="font-mono shrink-0 w-12 text-muted-foreground">{a.accNo}</span>
-                <span className="truncate">{a.description}</span>
-              </button>
-            ))}
-          </div>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <div>
+          <Input
+            value={q}
+            onChange={e => { setQ(e.target.value); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            onClick={e => e.stopPropagation()}
+            placeholder="Type here to search"
+            className="h-8"
+          />
         </div>
-      )}
-    </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-0 min-w-[200px]" align="start" onInteractOutside={() => setOpen(false)}>
+        <div className="max-h-44 overflow-y-auto">
+          {filtered.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No results</p>}
+          {filtered.map(a => (
+            <DropdownMenuItem key={a.id} onSelect={() => { onChange(a.description, a.accNo); setQ(a.description); }}>
+              <span className="font-mono shrink-0 w-12 text-muted-foreground text-xs">{a.accNo}</span>
+              <span className="truncate text-xs">{a.description}</span>
+            </DropdownMenuItem>
+          ))}
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -317,51 +304,51 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
           <div className="flex items-end gap-3 flex-wrap">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entity Name 1</span>
-              <div className="flex items-center h-8 px-2 border border-border rounded bg-muted/30 text-sm min-w-[100px] gap-1 cursor-default select-none">
-                <span className="flex-1 truncate">{clientName}</span>
-                <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
-              </div>
+              <Select disabled value={clientName}>
+                <SelectTrigger className="h-8 min-w-[100px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={clientName}>{clientName}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entry Date</span>
-              <div className="flex items-center h-8 px-2 border border-border rounded bg-background gap-1 min-w-[120px]">
-                <input value={entryDate} onChange={e => setEntryDate(e.target.value)}
-                  className="bg-transparent outline-none text-sm flex-1 min-w-0" />
-                <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <div className="relative min-w-[120px]">
+                <Input value={entryDate} onChange={e => setEntryDate(e.target.value)} className="h-8 pr-8" />
+                <Calendar className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               </div>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entry Type <span className="text-destructive">*</span></span>
-              <div className="relative">
-                <select value={entryType} onChange={e => setEntryType(e.target.value)}
-                  className="h-8 pl-2 pr-6 border border-border rounded bg-background text-sm min-w-[110px] outline-none appearance-none cursor-pointer">
-                  {ENTRY_TYPES.map(t => <option key={t}>{t}</option>)}
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none" />
-              </div>
+              <Select value={entryType} onValueChange={setEntryType}>
+                <SelectTrigger className="h-8 min-w-[110px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {ENTRY_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entry No <span className="text-destructive">*</span></span>
               <div className="flex items-center gap-0.5">
-                <button type="button" onClick={() => setEntryCounter(c => Math.max(1, c - 1))}
-                  className="h-8 w-7 flex items-center justify-center border border-border rounded text-muted-foreground hover:text-foreground bg-background">
+                <Button variant="secondary" size="icon-sm" type="button" onClick={() => setEntryCounter(c => Math.max(1, c - 1))}>
                   <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
-                <div className="flex items-center h-8 px-2 border border-border rounded bg-background gap-1 min-w-[72px]">
-                  <span className="flex-1 text-center text-sm">{entryNo}</span>
-                  <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
-                </div>
-                <button type="button" onClick={() => setEntryCounter(c => c + 1)}
-                  className="h-8 w-7 flex items-center justify-center border border-border rounded text-muted-foreground hover:text-foreground bg-background">
+                </Button>
+                <Select disabled value={entryNo}>
+                  <SelectTrigger className="h-8 min-w-[72px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={entryNo}>{entryNo}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="secondary" size="icon-sm" type="button" onClick={() => setEntryCounter(c => c + 1)}>
                   <ChevronRight className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Reference</span>
-              <button type="button" className="h-8 px-3 border border-border rounded bg-background text-sm flex items-center gap-1 hover:bg-muted transition-colors">
+              <Button variant="secondary" size="sm" type="button">
                 <Plus className="h-3.5 w-3.5" /> Ref
-              </button>
+              </Button>
             </div>
             <div className="flex flex-col gap-1 items-center">
               <span className="text-xs text-foreground">Recurring</span>
@@ -371,9 +358,9 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
             </div>
             <div className="flex flex-col gap-1 items-center">
               <span className="text-xs text-foreground">Delete</span>
-              <button type="button" className="h-8 w-8 flex items-center justify-center border-2 border-destructive rounded text-destructive hover:bg-destructive/10 transition-colors">
+              <Button variant="destructive" size="icon-sm" type="button">
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -399,29 +386,28 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
                       <DescSearch value={line.description} onChange={(d, a) => setLineAccDesc(line.id, a, d)} />
                     </td>
                     <td className="px-2 py-1.5">
-                      <input type="number" value={line.debit} min="0" step="0.01" placeholder="0.00"
+                      <Input type="number" value={line.debit} min="0" step="0.01" placeholder="0.00"
                         onChange={e => updateLine(line.id, "debit", e.target.value)}
-                        onFocus={e => e.target.select()}
-                        className="w-full text-right h-8 px-2 border border-border rounded bg-background text-sm outline-none focus:border-primary/60" />
+                        onFocus={e => (e.target as HTMLInputElement).select()}
+                        className="h-8 text-right" />
                     </td>
                     <td className="px-2 py-1.5">
-                      <input type="number" value={line.credit} min="0" step="0.01" placeholder="0.00"
+                      <Input type="number" value={line.credit} min="0" step="0.01" placeholder="0.00"
                         onChange={e => updateLine(line.id, "credit", e.target.value)}
-                        onFocus={e => e.target.select()}
-                        className="w-full text-right h-8 px-2 border border-border rounded bg-background text-sm outline-none focus:border-primary/60" />
+                        onFocus={e => (e.target as HTMLInputElement).select()}
+                        className="h-8 text-right" />
                     </td>
                     <td className="px-2 py-1.5 text-center">
                       <div className="flex items-center justify-center gap-0.5">
-                        <button type="button"
-                          onClick={() => setLines(prev => prev.length > 1 ? prev.filter(l => l.id !== line.id) : prev)}
-                          className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+                        <Button variant="ghost" size="icon-sm" type="button"
+                          onClick={() => setLines(prev => prev.length > 1 ? prev.filter(l => l.id !== line.id) : prev)}>
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                         {idx === lines.length - 1 && (
-                          <button type="button" onClick={() => setLines(prev => [...prev, mkAdjLine()])}
-                            className="p-1.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                          <Button variant="ghost" size="icon-sm" type="button"
+                            onClick={() => setLines(prev => [...prev, mkAdjLine()])}>
                             <Plus className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </td>
@@ -450,9 +436,9 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
           {/* Notes */}
           <div>
             <p className="text-sm font-medium text-foreground mb-1.5">Notes</p>
-            <textarea value={notes} onChange={e => setNotes(e.target.value)}
+            <Textarea value={notes} onChange={e => setNotes(e.target.value)}
               placeholder="Add your notes here..."
-              className="w-full h-20 px-3 py-2 border border-border rounded bg-background text-sm resize-none outline-none focus:border-primary/60" />
+              className="h-20 resize-none" />
           </div>
         </div>
 
