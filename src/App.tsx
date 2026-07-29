@@ -17,6 +17,7 @@ import ClientDetail from "./pages/ClientDetail";
 import TrialBalance from "./pages/TrialBalance";
 import Workbook from "./pages/Workbook";
 import ProcedureDetail from "./pages/ProcedureDetail";
+import { GcaProcPage } from "./pages/GcaProcPage";
 import Teams from "./pages/Teams";
 import DesignSystem from "./pages/DesignSystem";
 import EngagementTemplates from "./pages/EngagementTemplates";
@@ -49,6 +50,7 @@ const App = () => (
  <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
  <Route path="/engagements/:engagementId/workbook" element={<Workbook />} />
  <Route path="/engagements/:engagementId/procedure/:procedureId" element={<ProcedureDetail />} />
+ <Route path="/engagements/:engagementId/gca-proc/:worksheetId" element={<GcaProcPage />} />
  <Route path="/engagements/:engagementId/dependency-register" element={<AuditDependencyRegister />} />
  <Route path="/create" element={<CreationDashboard />} />
  <Route path="/builder" element={<Index />} />
