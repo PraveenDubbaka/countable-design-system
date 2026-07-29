@@ -518,8 +518,9 @@ export function Audit590Worksheet() {
         message="Luka is pulling performance materiality from Form 420 and populating engagement scope…"
       />
     )}
+ <div className="flex-1 overflow-y-auto space-y-5">
  {/* Objective banner */}
- <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
+ <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
  <p className="text-base text-muted-foreground flex-1 leading-relaxed">
@@ -528,8 +529,7 @@ export function Audit590Worksheet() {
  response, and complete a stand-back assessment to ensure all risks have been identified.
  </p>
  </div>
-
- <div className="flex-1 overflow-y-auto p-6 space-y-5">
+ <div className="px-6 space-y-5">
 
  {/* Materiality */}
  <div className="bg-card border border-border rounded-md p-5 grid grid-cols-2 gap-4">
@@ -937,6 +937,7 @@ export function Audit590Worksheet() {
  )}
  </div>
 
+ </div>
  </div>
 
  {/* Select Procedures Drawer */}
