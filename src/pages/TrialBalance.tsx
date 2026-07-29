@@ -28,6 +28,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RefButton, RefDoc } from "@/components/RefButton";
+import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import {
  ChevronDown,
  ChevronLeft,
@@ -262,8 +263,10 @@ function DescSearch({ value, onChange }: { value: string; onChange: (desc: strin
   );
 }
 
+interface AdjEntryMeta { entryNo: string; entryType: string; entryDate: string; }
+
 function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yearEnd, prefillRow }: {
-  open: boolean; onClose: () => void; onSave: (lines: AdjLine[]) => void;
+  open: boolean; onClose: () => void; onSave: (lines: AdjLine[], meta: AdjEntryMeta) => void;
   engId: string; clientName: string; yearEnd: string;
   prefillRow?: { accNo: string; description: string };
 }) {
@@ -449,7 +452,7 @@ function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yearEnd, p
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
-                <Button onClick={() => { if (canSave) { onSave(lines); toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
+                <Button onClick={() => { if (canSave) { onSave(lines, { entryNo, entryType, entryDate }); toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
                   Save
                 </Button>
               </span>
@@ -1127,16 +1130,48 @@ export default function TrialBalance() {
    key={adjModalOpen ? "open" : "closed"}
    open={adjModalOpen}
    onClose={() => setAdjModalOpen(false)}
-   onSave={(savedLines) => {
-     setTrialBalanceData(prev => prev.map(row => {
-       const net = savedLines.reduce((sum, l) => {
-         if (l.accNo !== row.accNo) return sum;
-         return sum + (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
-       }, 0);
-       if (net === 0) return row;
-       const newAdj = row.adj + net;
-       return { ...row, adj: newAdj, final: row.original + newAdj };
-     }));
+   onSave={(savedLines, meta) => {
+     setTrialBalanceData(prev => {
+       const updated = prev.map(row => {
+         const net = savedLines.reduce((sum, l) => {
+           if (l.accNo !== row.accNo) return sum;
+           return sum + (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
+         }, 0);
+         if (net === 0) return row;
+         const newAdj = row.adj + net;
+         return { ...row, adj: newAdj, final: row.original + newAdj };
+       });
+
+       // Write a record to AIM sectionA in localStorage
+       const aimKey = `audit-aim-data-${engagementId ?? "default"}`;
+       const existing = readJsonFromLocalStorage<{ sectionA?: unknown[]; sectionB?: unknown[] }>(aimKey, { sectionA: [], sectionB: [] });
+       let assets = 0, liabilities = 0, pretaxIncome = 0, equity = 0;
+       savedLines.forEach(l => {
+         const tbRow = updated.find(r => r.accNo === l.accNo);
+         const net = (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
+         const g = (tbRow?.grouping ?? "").toLowerCase();
+         if (g.includes("asset")) assets += net;
+         else if (g.includes("liabilit")) liabilities += -net;
+         else if (g.includes("equity")) equity += -net;
+         else pretaxIncome += -net;
+       });
+       const desc = savedLines.filter(l => l.description).map(l => l.description).join("; ") || savedLines.filter(l => l.accNo).map(l => l.accNo).join("; ");
+       const newRow = {
+         id: `tb-${meta.entryNo}-${Date.now()}`,
+         refNo: meta.entryNo,
+         description: desc,
+         entryType: "Known",
+         corrected: "",
+         assets: assets !== 0 ? String(assets) : "",
+         liabilities: liabilities !== 0 ? String(liabilities) : "",
+         pretaxIncome: pretaxIncome !== 0 ? String(pretaxIncome) : "",
+         equity: equity !== 0 ? String(equity) : "",
+         disclosures: "",
+         wpRef: [],
+       };
+       writeJsonToLocalStorage(aimKey, { ...existing, sectionA: [...(existing.sectionA ?? []), newRow] });
+       return updated;
+     });
    }}
    engId={engagementId ?? ""}
    clientName={clientName}
