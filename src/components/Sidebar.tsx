@@ -2190,7 +2190,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {
  id: "aud-us-so", code: "SO", label: "Completion & Signoffs", icon: "folder",
  children: [
- { id: "aud-us-so-aim", code: "AIM", label: "Misstatements", icon: "checklist", route: "checklist/aud-us-so-aim" },
+ { id: "aud-us-so-aim", code: "AIM", label: "Misstatements", icon: "worksheet", route: "checklist/aud-us-so-aim" },
  { id: "aud-us-so-far", code: "FAR", label: "Final Analytical Review", icon: "checklist", route: "checklist/aud-us-so-far" },
  { id: "aud-us-subseq", code: "SE", label: "Subsequent Events", icon: "checklist", route: "checklist/aud-us-subseq" },
  { id: "aud-us-wgc-final", code: "GC", label: "Going Concern (Final Assessment)", icon: "checklist", route: "checklist/aud-us-wgc-final" },
