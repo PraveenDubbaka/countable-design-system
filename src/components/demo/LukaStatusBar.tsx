@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LukaIcon } from '@/components/LukaIcon';
+import { LukaSuggestButton, type LukaAction } from '@/components/demo/LukaSuggestButton';
 
 interface LukaStatusBarProps {
   message?: string;
+  actions?: LukaAction[];
   isActive?: boolean;
   className?: string;
 }
 
 export function LukaStatusBar({
   message = 'Luka is populating information from Xero and prior file…',
+  actions,
   isActive = true,
   className,
 }: LukaStatusBarProps) {
@@ -24,6 +27,9 @@ export function LukaStatusBar({
     )}>
       <LukaIcon size={13} bare inverted className="shrink-0" />
       <span className="flex-1 font-medium">{message}</span>
+      {actions && actions.length > 0 && (
+        <LukaSuggestButton actions={actions} inBanner />
+      )}
       <button
         onClick={() => setDismissed(true)}
         className="text-violet-400 hover:text-violet-700 transition-colors"

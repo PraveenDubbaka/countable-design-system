@@ -14,7 +14,6 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 import { getLsInfo, ALL_PROCEDURE_NODES, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -517,6 +516,7 @@ export function Audit590Worksheet() {
       <LukaStatusBar
         isActive={true}
         message="Luka is pulling performance materiality from Form 420 and populating engagement scope…"
+        actions={DEMO_LUKA_ACTIONS.procedures.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
       />
     )}
  <div className="flex-1 overflow-y-auto space-y-5">
@@ -529,11 +529,6 @@ export function Audit590Worksheet() {
  Identify SCOTABDs and material-only COTABDs, assess RMM at the assertion level, summarise the audit
  response, and complete a stand-back assessment to ensure all risks have been identified.
  </p>
- {isDemoEngagement && (
-   <LukaSuggestButton
-     actions={DEMO_LUKA_ACTIONS.procedures.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
-   />
- )}
  </div>
  <div className="px-6 space-y-5">
 

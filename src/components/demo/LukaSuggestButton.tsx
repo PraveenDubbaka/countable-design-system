@@ -13,10 +13,12 @@ export interface LukaAction {
 interface LukaSuggestButtonProps {
   actions: LukaAction[];
   isActive?: boolean;
+  /** When true, renders as a compact rectangular button for use inside the LukaStatusBar banner */
+  inBanner?: boolean;
   className?: string;
 }
 
-export function LukaSuggestButton({ actions, isActive = true, className }: LukaSuggestButtonProps) {
+export function LukaSuggestButton({ actions, isActive = true, inBanner = false, className }: LukaSuggestButtonProps) {
   const [open, setOpen] = useState(false);
 
   if (!isActive || actions.length === 0) return null;
@@ -24,19 +26,32 @@ export function LukaSuggestButton({ actions, isActive = true, className }: LukaS
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            'bg-violet-50 border border-violet-200 text-violet-700 text-xs rounded-full px-2.5 py-1 inline-flex items-center gap-1.5 hover:bg-violet-100 transition-colors shrink-0',
-            className
-          )}
-        >
-          <LukaIcon size={13} bare inverted />
-          <span className="font-medium">Luka</span>
-          <span className="bg-violet-600 text-white text-[10px] font-semibold rounded-full px-1.5 py-0 min-w-[18px] text-center leading-[18px]">
-            {actions.length}
-          </span>
-        </button>
+        {inBanner ? (
+          <button
+            type="button"
+            className={cn(
+              'bg-white border border-violet-300 text-violet-700 text-[11px] font-medium rounded px-2.5 py-0.5 inline-flex items-center gap-1.5 hover:bg-violet-50 transition-colors shrink-0',
+              className
+            )}
+          >
+            <LukaIcon size={12} bare inverted />
+            <span>{actions.length} suggestion{actions.length !== 1 ? 's' : ''}</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={cn(
+              'bg-violet-50 border border-violet-200 text-violet-700 text-xs rounded-full px-2.5 py-1 inline-flex items-center gap-1.5 hover:bg-violet-100 transition-colors shrink-0',
+              className
+            )}
+          >
+            <LukaIcon size={13} bare inverted />
+            <span className="font-medium">Luka</span>
+            <span className="bg-violet-600 text-white text-[10px] font-semibold rounded-full px-1.5 py-0 min-w-[18px] text-center leading-[18px]">
+              {actions.length}
+            </span>
+          </button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0" align="end" sideOffset={6}>
         {/* Header */}

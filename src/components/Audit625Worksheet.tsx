@@ -17,7 +17,6 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -307,16 +306,12 @@ export function Audit625Worksheet() {
  heading="Canada > Worksheets"
  objective={`Evaluate management's plan of action to address identified events or conditions that cast doubt on the entity's ability to continue as a going concern (Part 2 — Part 1 is).`}
  standard={`${ctx.standardPrefix} 570`}
- lukaButton={isDemoEngagement ? (
-   <LukaSuggestButton
-     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
-   />
- ) : undefined}
  >
  {isDemoEngagement && (
   <LukaStatusBar
    isActive={true}
    message="Luka is populating going concern analysis from Xero data and term loan agreement…"
+   actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
   />
  )}
  {/* Linked 520 going-concern risks (with FS-level chip) */}

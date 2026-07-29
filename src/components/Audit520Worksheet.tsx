@@ -10,7 +10,6 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
@@ -531,11 +530,12 @@ export function Audit520Worksheet() {
       <LukaStatusBar
         isActive={true}
         message="Luka is populating risk register from connected Xero data, prior file, and risk library…"
+        actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
       />
     )}
 
  {/* ── Objective bar ─────────────────────────────────────────────── */}
- 
+
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
@@ -543,11 +543,6 @@ export function Audit520Worksheet() {
  <span className="font-semibold text-primary">Objective: </span>
  To document and assess identified risks of material misstatement at the financial statement level and assess inherent risk(s) at the assertion level, including significant risks, to be used as a basis for designing and implementing the appropriate audit response.
  </p>
- {isDemoEngagement && (
-   <LukaSuggestButton
-     actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
-   />
- )}
  </div>
  <div className="p-6 space-y-6">
 

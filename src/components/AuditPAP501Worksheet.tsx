@@ -15,7 +15,6 @@ import { loadEngagements } from "@/store/engagementsStore";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 
@@ -646,6 +645,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   <LukaStatusBar
    isActive={true}
    message="Luka is populating preliminary analytics from Xero trial balance and engagement data…"
+   actions={DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
   />
  )}
 
@@ -660,11 +660,6 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  Compare the entity&apos;s most recent financial results to expectations (budget, prior period, industry trends);
  document matters requiring an audit response; conclude on fraud risk indicators.
  </p>
- {isDemoEngagement && (
-   <LukaSuggestButton
-     actions={DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
-   />
- )}
  </div>
  )}
  <div className="p-6 space-y-4">

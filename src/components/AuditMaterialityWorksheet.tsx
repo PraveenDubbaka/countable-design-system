@@ -14,7 +14,6 @@ import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
@@ -376,7 +375,11 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  return (
  <div className="flex flex-col h-full">
 
- <LukaStatusBar isActive={isDemoEngagement} message="Luka is populating information from Xero and prior file…" />
+ <LukaStatusBar
+   isActive={isDemoEngagement}
+   message="Luka is populating information from Xero and prior file…"
+   actions={isDemoEngagement ? DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) })) : undefined}
+ />
 
  {/* Objective bar */}
 
@@ -388,11 +391,6 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  Establish overall materiality, performance materiality, and the clearly trivial threshold for the audit
  and document the rationale for each determination.
  </p>
- {isDemoEngagement && (
-   <LukaSuggestButton
-     actions={DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
-   />
- )}
  </div>
  <div className="p-6 space-y-4">
 
