@@ -1119,7 +1119,7 @@ export default function TrialBalance() {
    open={adjModalOpen}
    onClose={() => setAdjModalOpen(false)}
    engId={engagementId ?? ""}
-   clientName={staticEng?.client ?? ""}
+   clientName={clientName}
    yearEnd={staticEng?.yearEnd ?? "Dec 31, 2024"}
  />
  {/* Right Panel */}
