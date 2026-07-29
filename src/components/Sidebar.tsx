@@ -2838,6 +2838,24 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  }
  }}
  >
+ {/* +/- toggle for nodes with both a route and children (e.g. aud-wp-* with mapped procedure children) */}
+ {hasChildren && node.route && (
+ <button
+ className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+ style={{ left: '10px', width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
+ onClick={e => {
+ e.stopPropagation();
+ setExpandedSections(prev => {
+ const next = new Set(prev);
+ if (next.has(node.id)) next.delete(node.id);
+ else next.add(node.id);
+ return next;
+ });
+ }}
+ >
+ {isOpen ? '−' : '+'}
+ </button>
+ )}
  {/* +/- toggle: absolutely positioned in the indent space, zero flex impact */}
  {/* Suppressed for leaf folder nodes with docs — the icon itself handles toggling */}
  {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id) || (isLeaf && customSections.some(s => s.parentId === node.id))) && !(isLeaf && node.icon === "folder" && ((nodeDocuments[node.id]?.length ?? 0) > 0 || customSections.some(s => s.parentId === node.id))) && (
@@ -2879,6 +2897,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  ) : (
  <>{renderIcon(node.icon)}</>
  )
+ ) : node.icon && node.icon !== "folder" ? (
+ <>{renderIcon(node.icon)}</>
  ) : (
  <span className="relative flex-shrink-0 w-4 h-4 flex items-center justify-center">
  {isOpen
