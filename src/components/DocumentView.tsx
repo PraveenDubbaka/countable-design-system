@@ -1169,6 +1169,14 @@ function QuestionInlineColumns({
  const resizingRef = useRef<{ colIdx: number; startX: number; startWidths: number[] } | null>(null);
  const expAttr = useAttribution(`dv-exp-${question.id}`);
 
+ // Auto-stamp when explanation content exists but attribution was never stored
+ useEffect(() => {
+   if (isEngagementMode && question.explanation && !expAttr.attr) {
+     expAttr.stamp();
+   }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [question.id, question.explanation, isEngagementMode]);
+
  const showResponse = (question as any).showResponse !== false;
  const showExplanation = (question as any).showExplanation !== false;
  const showReference = (question as any).showReference !== false;
