@@ -82,21 +82,14 @@ export function WorksheetLayout({
  onAdd?: () => void;
  lukaButton?: ReactNode;
 }) {
- const crumbs = heading ? heading.split('>').map(s => s.trim()) : [];
  return (
  <div className="flex flex-col h-full">
  <div className="flex-1 overflow-y-auto bg-muted/30">
  {heading && (
- <div className="px-6 py-2 border-b border-border bg-background flex items-center gap-1.5">
- {crumbs.map((crumb, i) => (
- <span key={i} className="flex items-center gap-1.5">
- {i > 0 && <span className="text-muted-foreground/50 text-xs">›</span>}
- <span className={i === crumbs.length - 1
- ? "text-xs font-semibold text-foreground"
- : "text-xs text-muted-foreground"
- }>{crumb}</span>
- </span>
- ))}
+ <div className="sticky top-0 z-10 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
+ <div className="flex items-center px-4 py-1.5">
+ <h1 className="font-semibold text-foreground truncate text-lg">{heading}</h1>
+ </div>
  </div>
  )}
  {objective && (
