@@ -27,6 +27,7 @@ import { StyledCard } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { RefButton, RefDoc } from "@/components/RefButton";
 import {
  ChevronDown,
  ChevronLeft,
@@ -269,6 +270,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
   const [recurring, setRecurring] = useState(false);
   const [notes, setNotes] = useState("");
   const [lines, setLines] = useState<AdjLine[]>([mkAdjLine(), mkAdjLine()]);
+  const [refDocs, setRefDocs] = useState<RefDoc[]>([]);
 
   const prefix = ENTRY_PREFIX[entryType] ?? "JE";
   const entryNo = `${prefix}-${entryCounter}`;
@@ -308,8 +310,8 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Entry Date</span>
-              <div className="relative min-w-[120px]">
-                <Input value={entryDate} onChange={e => setEntryDate(e.target.value)} className="h-8 pr-8" />
+              <div className="relative">
+                <Input value={entryDate} onChange={e => setEntryDate(e.target.value)} className="h-8 pr-8 w-[126px]" />
                 <Calendar className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               </div>
             </div>
@@ -328,7 +330,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
                 <Button variant="secondary" size="icon-sm" type="button" onClick={() => setEntryCounter(c => Math.max(1, c - 1))}>
                   <ChevronLeft className="h-3.5 w-3.5" />
                 </Button>
-                <Input value={entryNo} readOnly className="h-8 min-w-[72px] text-center" />
+                <Input value={entryNo} readOnly className="h-8 w-[64px] text-center" />
                 <Button variant="secondary" size="icon-sm" type="button" onClick={() => setEntryCounter(c => c + 1)}>
                   <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
@@ -336,9 +338,11 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs text-foreground">Reference</span>
-              <Button variant="secondary" size="sm" type="button">
-                <Plus className="h-3.5 w-3.5" /> Ref
-              </Button>
+              <RefButton
+                reference={refDocs}
+                onAttach={doc => setRefDocs(prev => [...prev, doc])}
+                onRemove={idx => { if (typeof idx === "number") setRefDocs(prev => prev.filter((_, i) => i !== idx)); }}
+              />
             </div>
             <div className="flex flex-col gap-1 items-center">
               <span className="text-xs text-foreground">Recurring</span>
