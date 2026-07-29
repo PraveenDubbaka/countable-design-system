@@ -20,7 +20,7 @@ import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
+import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -259,6 +259,12 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  "I am satisfied that the engagement planning adequately addresses the areas in the financial statements where material misstatements are likely to arise"
  );
 
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ function markLukaFilled(fieldId: string) {
+   setLukaFilledFields(prev => new Set(prev).add(fieldId));
+ }
+
  // ── Derived ──────────────────────────────────────────────────────────────────
 
  const updateEntityRow = useCallback(
@@ -378,16 +384,42 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
 
  <LukaStatusBar
    isActive={isDemoEngagement}
-   message="Luka is populating information from Xero and prior file…"
-   actions={isDemoEngagement ? DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
+   message={
+     lukaState === 'loading'
+       ? "Luka is populating materiality fields from Xero GL and prior file…"
+       : lukaState === 'done'
+       ? "Luka has populated 3 fields — review and confirm."
+       : "Luka is populating information from Xero and prior file…"
+   }
+   actions={lukaState === 'idle' ? DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
      ...a,
-     onTrigger: () => dispatchLukaSuggest({
-       label: a.label,
-       sources: DEMO_LUKA_ACTIONS.generic.sources,
-       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-       worksheetKey: "materiality",
-     }),
-   })) : undefined}
+     onTrigger: () => {
+       setLukaState('loading');
+       lukaSequentialFill([
+         { set: () => {
+             setEntityRows(prev => prev.map((r, i) => i === 0
+               ? { ...r, periodAmount: '14,200,000.00', extrapolatedPeriod: '14,200,000.00', materialityCY: '142,000.00' }
+               : r));
+             markLukaFilled('mat-row-0-amount');
+           }
+         },
+         { set: () => {
+             setEntityRows(prev => prev.map((r, i) => i === 0
+               ? { ...r, materialityPY: '138,000.00' }
+               : r));
+             markLukaFilled('mat-row-0-py');
+           }
+         },
+         { set: () => {
+             setEntityRows(prev => prev.map((r, i) => i === 0
+               ? { ...r, comments: 'Revenue benchmark selected — manufacturing entity with volatile earnings; primary users are lender and shareholder (CAS 320.08).' }
+               : r));
+             markLukaFilled('mat-row-0-comments');
+           }
+         },
+       ], () => setLukaState('done'));
+     },
+   })) : []}
  />
 
  {/* Objective bar */}
@@ -466,7 +498,7 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
- {entityRows.map((row) => {
+ {entityRows.map((row, rowIdx) => {
  const isSelected = row.id === selectedRowId;
  return (
  <tr key={row.id} className={`transition-colors ${isSelected ? "bg-primary/[0.04]" : "hover:bg-muted/50"}`}>
@@ -496,12 +528,19 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
      </ProvenancePopover>
    </div>
  ) : (
+ <div className="relative">
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
  onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
  placeholder="e.g. 12,500,000.00"
  className="tabular-nums text-right"
  />
+ </div>
+ )}
+ {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-amount') && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
  )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
@@ -528,19 +567,33 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  />
  </td>
  <td className="px-4 py-2.5 align-top min-w-[165px] text-right">
+ <div className="relative">
  <TdInput
  value={row.materialityPY ? formatDisplay(row.materialityPY) : ""}
  onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
  placeholder="—"
  className="tabular-nums text-right"
  />
+ {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-py') && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ )}
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[160px]">
+ <div className="relative">
  <TdInput
  value={row.comments}
  onChange={(v) => updateEntityRow(row.id, "comments", v)}
  placeholder="Comments…"
  />
+ {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-comments') && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ )}
+ </div>
  </td>
  <td className="px-2 py-2.5 align-top text-center">
  <button
