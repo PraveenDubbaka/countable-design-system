@@ -9,6 +9,8 @@ import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -165,6 +167,7 @@ function buildDefault(): Data535 {
 
 export function Audit535Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const storageKey = `audit-535-data-${engagementId ?? 'default'}`;
  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
  const isFirstRender = useRef(true);
@@ -267,6 +270,13 @@ export function Audit535Worksheet() {
 
  return (
  <div className="flex flex-col h-full">
+    {isDemoEngagement && (
+      <LukaStatusBar
+        isActive={true}
+        message="Luka is populating information from prior file and connected data sources…"
+        actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+      />
+    )}
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
