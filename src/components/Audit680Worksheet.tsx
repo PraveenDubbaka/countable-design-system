@@ -16,6 +16,7 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 type YN = "Y" | "N" | "";
 
@@ -289,7 +290,15 @@ export function Audit680Worksheet() {
    <LukaStatusBar
      isActive={true}
      message="Luka is populating information from prior file and connected data sources…"
-     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+     actions={DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
+       ...a,
+       onTrigger: () => dispatchLukaSuggest({
+         label: a.label,
+         sources: DEMO_LUKA_ACTIONS.completion.sources,
+         engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+         worksheetKey: "680",
+       }),
+     }))}
    />
  )}
  {!isAspe && (

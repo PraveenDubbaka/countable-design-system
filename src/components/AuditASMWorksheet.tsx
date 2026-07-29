@@ -10,6 +10,7 @@ import { AttributedComment } from "@/components/ui/AttributedComment";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -339,7 +340,15 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
   <LukaStatusBar
    isActive={true}
    message="Luka is cascading materiality and risk findings into the overall audit strategy…"
-   actions={DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   actions={DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
+     ...a,
+     onTrigger: () => dispatchLukaSuggest({
+       label: a.label,
+       sources: DEMO_LUKA_ACTIONS.generic.sources,
+       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+       worksheetKey: "asm",
+     }),
+   }))}
   />
  )}
 

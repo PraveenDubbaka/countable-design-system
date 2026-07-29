@@ -20,6 +20,7 @@ import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -378,7 +379,15 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <LukaStatusBar
    isActive={isDemoEngagement}
    message="Luka is populating information from Xero and prior file…"
-   actions={isDemoEngagement ? DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) })) : undefined}
+   actions={isDemoEngagement ? DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
+     ...a,
+     onTrigger: () => dispatchLukaSuggest({
+       label: a.label,
+       sources: DEMO_LUKA_ACTIONS.generic.sources,
+       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+       worksheetKey: "materiality",
+     }),
+   })) : undefined}
  />
 
  {/* Objective bar */}

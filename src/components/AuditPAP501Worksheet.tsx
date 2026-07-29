@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
@@ -645,7 +646,15 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
   <LukaStatusBar
    isActive={true}
    message="Luka is populating preliminary analytics from Xero trial balance and engagement data…"
-   actions={DEMO_LUKA_ACTIONS.generic.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   actions={DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
+     ...a,
+     onTrigger: () => dispatchLukaSuggest({
+       label: a.label,
+       sources: DEMO_LUKA_ACTIONS.generic.sources,
+       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
+       worksheetKey: "pap501",
+     }),
+   }))}
   />
  )}
 
