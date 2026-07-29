@@ -15,7 +15,6 @@ import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_PROVENANCE, DEMO_ENGAGEMENT_ID, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { getLsInfo, ALL_PROCEDURE_NODES, setWpProcMap, CA_GLOBAL_PROC_NODES, getGcaProcIdForWp, getAudWpIdForProc, getGlobalProcedureItems, findGlobalProcedureNode } from "@/lib/lsMapping";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -376,6 +375,7 @@ export function Audit590Worksheet() {
  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
  const locked = data.concluded;
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [editingProcsId, setEditingProcsId] = useState<string | null>(null);
  const [mapProcsRowId, setMapProcsRowId] = useState<string | null>(null);
  const [procPanelTab, setProcPanelTab] = useState<"my" | "global">("global");
@@ -516,15 +516,19 @@ export function Audit590Worksheet() {
     {isDemoEngagement && (
       <LukaStatusBar
         isActive={true}
-        message="Luka is pulling performance materiality from Form 420 and populating engagement scope…"
-        actions={DEMO_LUKA_ACTIONS.procedures.actions.map(a => ({
+        message={
+          lukaState === 'loading'
+            ? "Luka is populating fields from prior file and connected sources…"
+            : lukaState === 'done'
+            ? "Luka has reviewed this section — fields flagged for your review."
+            : "Luka is populating information from Xero and prior file…"
+        }
+        actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.procedures.actions.map(a => ({
           ...a,
-          onTrigger: () => dispatchLukaSuggest({
-            label: a.label,
-            sources: DEMO_LUKA_ACTIONS.procedures.sources,
-            engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-            worksheetKey: "590",
-          }),
+          onTrigger: () => {
+            setLukaState('loading');
+            setTimeout(() => setLukaState('done'), 2200);
+          },
         }))}
       />
     )}

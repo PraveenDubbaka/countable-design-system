@@ -17,7 +17,6 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -251,6 +250,7 @@ export function Audit625Worksheet() {
  }, [data, storageKey]);
 
  const locked = data.concluded;
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const recommended = recommendImplication(data);
 
  // ── Procedure-row updaters ─────────────────────────────────────────────────
@@ -311,15 +311,19 @@ export function Audit625Worksheet() {
  {isDemoEngagement && (
   <LukaStatusBar
    isActive={true}
-   message="Luka is populating going concern analysis from Xero data and term loan agreement…"
-   actions={DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
+   message={
+     lukaState === 'loading'
+       ? "Luka is populating fields from prior file and connected sources…"
+       : lukaState === 'done'
+       ? "Luka has reviewed this section — fields flagged for your review."
+       : "Luka is populating information from Xero and prior file…"
+   }
+   actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
      ...a,
-     onTrigger: () => dispatchLukaSuggest({
-       label: a.label,
-       sources: DEMO_LUKA_ACTIONS.completion.sources,
-       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-       worksheetKey: "625",
-     }),
+     onTrigger: () => {
+       setLukaState('loading');
+       setTimeout(() => setLukaState('done'), 2200);
+     },
    }))}
   />
  )}
