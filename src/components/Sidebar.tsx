@@ -2841,8 +2841,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {/* +/- toggle for nodes with both a route and children (e.g. aud-wp-* with mapped procedure children) */}
  {hasChildren && node.route && (
  <button
- className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
- style={{ left: '10px', width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
+ className="flex-shrink-0 flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+ style={{ width: '14px', height: '14px' }}
  onClick={e => {
  e.stopPropagation();
  setExpandedSections(prev => {
