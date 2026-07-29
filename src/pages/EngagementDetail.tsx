@@ -784,6 +784,7 @@ const WORKSHEET_KEYS = new Set([
  'aud-ra-575', 'aud-ra-580', 'aud-ra-590',
  'aud-rp-605', 'aud-rp-610', 'aud-rp-625', 'aud-rp-630', 'aud-rp-635',
  'aud-rp-645', 'aud-rp-650', 'aud-rp-655', 'aud-rp-666', 'aud-rp-670', 'aud-rp-680',
+ 'aud-so-311', 'aud-so-320', 'aud-so-325', 'aud-so-330', 'aud-so-335', 'aud-so-340', 'aud-so-370', 'aud-so-375', 'aud-so-aim',
  'aud-so-sign', 'aud-so-fr',
 ]);
 
@@ -2977,7 +2978,7 @@ export default function EngagementDetail() {
  </div>
 
  {/* Floating Action Bar for Preview Mode - Inside content area */}
- {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && checklistKey in CUSTOM_WORKSHEET_TITLES) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} onBulkClear={handleBulkClear} onBulkRestore={handleBulkRestore} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
+ {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && (checklistKey in CUSTOM_WORKSHEET_TITLES || WORKSHEET_KEYS.has(checklistKey))) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} onBulkClear={handleBulkClear} onBulkRestore={handleBulkRestore} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
  </div>
 
  {/* Right Panel or Add Checklist Sheet */}

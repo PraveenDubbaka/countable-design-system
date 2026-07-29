@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, Info, Download, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RefButton, type RefDoc } from "@/components/RefButton";
@@ -16,7 +17,7 @@ import { NewAdjEntryModal, type AdjLine, type AdjEntryMeta, tbAccounts } from "@
 type RefField = RefDoc[];
 type YN = "Y" | "N" | "";
 
-type EntryType = "Known" | "Projected" | "Judgmental" | "";
+type EntryType = "Known" | "Projected" | "Judgmental" | "Journal" | "Adjusting" | "Reclassification" | "";
 
 interface MisstatementRow {
   id: string;
@@ -99,7 +100,7 @@ const TH = "px-3 py-2.5 text-left text-xs font-semibold text-foreground uppercas
 const TD = "px-3 py-2 text-sm text-foreground border-b border-border align-top";
 const TOTAL_ROW = "bg-muted/60 font-semibold text-sm";
 
-const ENTRY_TYPES: EntryType[] = ["Known", "Projected", "Judgmental"];
+const ENTRY_TYPES: EntryType[] = ["Known", "Projected", "Judgmental", "Journal", "Adjusting", "Reclassification"];
 
 const CAS450_EVAL = [
   {
@@ -287,13 +288,12 @@ export function AuditAIMWorksheet() {
                     </Select>
                   </td>
                   <td className={TD + " w-16 text-center"}>
-                    <Select disabled={locked} value={row.corrected} onValueChange={v => updRow(section, row.id, { corrected: v as YN })}>
-                      <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Y/N" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Y" className="text-xs text-green-700">Y</SelectItem>
-                        <SelectItem value="N" className="text-xs text-amber-700">N</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Checkbox
+                      disabled={locked}
+                      checked={row.corrected === "Y"}
+                      onCheckedChange={checked => updRow(section, row.id, { corrected: checked ? "Y" : "" })}
+                      className="mx-auto"
+                    />
                   </td>
                   {(["assets", "liabilities", "pretaxIncome", "equity"] as const).map(col => (
                     <td key={col} className={TD + " w-28"}>
@@ -563,6 +563,7 @@ export function AuditAIMWorksheet() {
                 ? {
                     ...r,
                     refNo: meta.entryNo,
+                    entryType: meta.entryType as EntryType,
                     description: meta.notes || r.description,
                     assets: assets !== 0 ? String(assets) : "",
                     liabilities: liabilities !== 0 ? String(liabilities) : "",

@@ -859,7 +859,7 @@ export default function TrialBalance() {
          id: `tb-${entryId}-${Date.now()}`,
          refNo: meta.entryNo,
          description: meta.notes || fallbackDesc,
-         entryType: "Known",
+         entryType: meta.entryType,
          corrected: "",
          assets: assets !== 0 ? String(assets) : "",
          liabilities: liabilities !== 0 ? String(liabilities) : "",
