@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { getEngagementContext } from "@/lib/engagementContext";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { WorksheetLayout, WorksheetSection, ConcludeBar } from "@/components/audit/WorksheetShell";
 
@@ -276,7 +277,13 @@ function useARStore() {
  setData(d => ({...d, concluded: false, concludedOn: "" }));
  }
 
- return { data, locked: data.concluded, engagementId, handleRowField, addRow, conclude, reopen };
+ const ctx = getEngagementContext(engagementId);
+ const fmtAmt = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+ const arFsa = ctx.fsas.find(f => f.fsa === "Accounts Receivable");
+ const lsAccountBalance = arFsa ? fmtAmt(arFsa.amount) : "";
+ const materiality = ctx.overallMateriality ? fmtAmt(ctx.overallMateriality) : "";
+
+ return { data, locked: data.concluded, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality };
 }
 
 const INFO_CARD = "bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6";
@@ -287,20 +294,20 @@ function ARInfoBlock() {
  <div className="grid grid-cols-3 gap-4">
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
- <Select disabled value="Accounts Receivable">
+ <Select disabled value="B Accounts Receivable">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Accounts Receivable" className="text-sm">Accounts Receivable</SelectItem>
+ <SelectItem value="B Accounts Receivable" className="text-sm">B Accounts Receivable</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={lsAccountBalance} className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={materiality} className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
  </div>
@@ -308,7 +315,7 @@ function ARInfoBlock() {
 }
 
 export function AuditARWorksheet() {
- const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useARStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality } = useARStore();
  return (
  <WorksheetLayout
  heading="B Accounts Receivable > Audit Procedures"
@@ -327,7 +334,7 @@ export function AuditARWorksheet() {
 }
 
 export function AuditARConfirmationWorksheet() {
- const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useARStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality } = useARStore();
  return (
  <WorksheetLayout
  heading="B Accounts Receivable > Confirmation Procedures"

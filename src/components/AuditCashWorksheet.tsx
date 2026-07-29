@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { getEngagementContext } from "@/lib/engagementContext";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { WorksheetLayout, WorksheetSection, ConcludeBar } from "@/components/audit/WorksheetShell";
 
@@ -324,11 +325,17 @@ function useCashStore() {
  setData(d => ({...d, concluded: false, concludedOn: "" }));
  }
 
- return { data, locked: data.concluded, engagementId, setHeader, handleRowField, addRow, conclude, reopen };
+ const ctx = getEngagementContext(engagementId);
+ const fmtAmt = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+ const cashFsa = ctx.fsas.find(f => f.fsa === "Cash & Bank");
+ const lsAccountBalance = cashFsa ? fmtAmt(cashFsa.amount) : "";
+ const materiality = ctx.overallMateriality ? fmtAmt(ctx.overallMateriality) : "";
+
+ return { data, locked: data.concluded, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality };
 }
 
 export function AuditCashWorksheet() {
- const { data, locked, engagementId, setHeader, handleRowField, addRow, conclude, reopen } = useCashStore();
+ const { data, locked, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Audit Procedures"
@@ -339,20 +346,20 @@ export function AuditCashWorksheet() {
  <div className="grid grid-cols-3 gap-4">
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
- <Select disabled value="Cash">
+ <Select disabled value="A Cash">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Cash" className="text-sm">Cash</SelectItem>
+ <SelectItem value="A Cash" className="text-sm">A Cash</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={lsAccountBalance} className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={materiality} className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
  </div>
@@ -367,7 +374,7 @@ export function AuditCashWorksheet() {
 }
 
 export function AuditCashBankRecWorksheet() {
- const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useCashStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Bank Reconciliation"
@@ -378,20 +385,20 @@ export function AuditCashBankRecWorksheet() {
  <div className="grid grid-cols-3 gap-4">
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
- <Select disabled value="Cash">
+ <Select disabled value="A Cash">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Cash" className="text-sm">Cash</SelectItem>
+ <SelectItem value="A Cash" className="text-sm">A Cash</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={lsAccountBalance} className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={materiality} className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
  </div>
@@ -406,7 +413,7 @@ export function AuditCashBankRecWorksheet() {
 }
 
 export function AuditCashCountWorksheet() {
- const { data, locked, engagementId, handleRowField, addRow, conclude, reopen } = useCashStore();
+ const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality } = useCashStore();
  return (
  <WorksheetLayout
  heading="A Cash > Cash Count"
@@ -417,20 +424,20 @@ export function AuditCashCountWorksheet() {
  <div className="grid grid-cols-3 gap-4">
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Name</label>
- <Select disabled value="Cash">
+ <Select disabled value="A Cash">
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="Cash" className="text-sm">Cash</SelectItem>
+ <SelectItem value="A Cash" className="text-sm">A Cash</SelectItem>
  </SelectContent>
  </Select>
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">LS Account Balance</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={lsAccountBalance} className="h-8 text-sm" placeholder="Automated" />
  </div>
  <div>
  <label className="text-sm font-medium text-muted-foreground mb-1 block">Materiality</label>
- <Input disabled value="" className="h-8 text-sm" placeholder="Automated" />
+ <Input disabled value={materiality} className="h-8 text-sm" placeholder="Automated" />
  </div>
  </div>
  </div>
