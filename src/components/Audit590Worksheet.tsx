@@ -767,10 +767,10 @@ export function Audit590Worksheet() {
         const node = findGlobalProcedureNode(r.plannedProcedureId);
         if (!node) return null;
         return (
-         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-medium text-primary max-w-[150px]">
-          <span className="truncate">{node.name}</span>
+         <span className="inline-flex items-center justify-between px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-medium text-primary w-full">
+          <span className="truncate flex-1">{node.name}</span>
           {!locked && (
-           <button type="button" onClick={() => selectPlannedProc(r.id, "")} className="hover:text-destructive ml-0.5 shrink-0">
+           <button type="button" onClick={() => selectPlannedProc(r.id, "")} className="hover:text-destructive ml-1 shrink-0">
             <X className="h-2.5 w-2.5" />
            </button>
           )}
