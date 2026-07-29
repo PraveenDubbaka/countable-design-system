@@ -168,6 +168,21 @@ const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2
 
 const TB_LOADED_KEY = (id: string) => `tb-loaded-${id}`;
 
+function computeAdjFromStorage(engId: string): Record<string, number> {
+  const prefix = `adj-entry-${engId}-`;
+  const accAdj: Record<string, number> = {};
+  Object.keys(localStorage).filter(k => k.startsWith(prefix)).forEach(key => {
+    try {
+      const entry = JSON.parse(localStorage.getItem(key) ?? "{}") as { lines?: AdjLine[] };
+      (entry.lines ?? []).forEach(l => {
+        const net = (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
+        if (net !== 0) accAdj[l.accNo] = (accAdj[l.accNo] ?? 0) + net;
+      });
+    } catch {}
+  });
+  return accAdj;
+}
+
 export default function TrialBalance() {
  const navigate = useNavigate();
  const { engagementId } = useParams();
@@ -180,6 +195,19 @@ export default function TrialBalance() {
  const [trialBalanceData, setTrialBalanceData] = useState([...baseTrialBalanceData]);
  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
+
+ // Restore adj amounts from saved AJE entries on mount
+ useEffect(() => {
+   if (!engagementId) return;
+   const accAdj = computeAdjFromStorage(engagementId);
+   if (Object.keys(accAdj).length === 0) return;
+   setTrialBalanceData(prev =>
+     prev.map(row => {
+       const adj = accAdj[row.accNo] ?? 0;
+       return { ...row, adj, final: row.original + adj };
+     })
+   );
+ }, [engagementId]);
 
  // TB load state — persisted per engagement
  const [tbLoaded, setTbLoaded] = useState(() =>
@@ -828,49 +856,55 @@ export default function TrialBalance() {
    open={adjModalOpen}
    onClose={() => setAdjModalOpen(false)}
    onSave={(savedLines, meta) => {
-     setTrialBalanceData(prev => {
-       const updated = prev.map(row => {
-         const net = savedLines.reduce((sum, l) => {
-           if (l.accNo !== row.accNo) return sum;
-           return sum + (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
-         }, 0);
-         if (net === 0) return row;
-         const newAdj = row.adj + net;
-         return { ...row, adj: newAdj, final: row.original + newAdj };
-       });
+     const entryId = meta.entryNo.replace(/[^a-zA-Z0-9]/g, "-");
+     const engId = engagementId ?? "default";
 
-       // Write a record to AIM sectionA in localStorage
-       const aimKey = `audit-aim-data-${engagementId ?? "default"}`;
-       const existing = readJsonFromLocalStorage<{ sectionA?: unknown[]; sectionB?: unknown[] }>(aimKey, { sectionA: [], sectionB: [] });
-       let assets = 0, liabilities = 0, pretaxIncome = 0, equity = 0;
-       savedLines.forEach(l => {
-         const tbRow = updated.find(r => r.accNo === l.accNo);
-         const net = (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
-         const g = (tbRow?.grouping ?? "").toLowerCase();
-         if (g.includes("asset")) assets += net;
-         else if (g.includes("liabilit")) liabilities += -net;
-         else if (g.includes("equity")) equity += -net;
-         else pretaxIncome += -net;
-       });
-       const fallbackDesc = savedLines.filter(l => l.description).map(l => l.description).join("; ") || savedLines.filter(l => l.accNo).map(l => l.accNo).join("; ");
-       const entryId = meta.entryNo.replace(/[^a-zA-Z0-9]/g, "-");
-       writeJsonToLocalStorage(`adj-entry-${engagementId ?? "default"}-${entryId}`, { lines: savedLines, meta, clientName, engId: engagementId });
-       const newRow = {
-         id: `tb-${entryId}-${Date.now()}`,
-         refNo: meta.entryNo,
-         description: meta.notes || fallbackDesc,
-         entryType: meta.entryType,
-         corrected: "",
-         assets: assets !== 0 ? String(assets) : "",
-         liabilities: liabilities !== 0 ? String(liabilities) : "",
-         pretaxIncome: pretaxIncome !== 0 ? String(pretaxIncome) : "",
-         equity: equity !== 0 ? String(equity) : "",
-         disclosures: "",
-         wpRef: [],
-       };
-       writeJsonToLocalStorage(aimKey, { ...existing, sectionA: [...(existing.sectionA ?? []), newRow] });
-       return updated;
+     // 1. Persist the adj entry
+     writeJsonToLocalStorage(`adj-entry-${engId}-${entryId}`, { lines: savedLines, meta, clientName, engId: engagementId });
+
+     // 2. Recompute ALL adj from storage (avoids double-counting on re-save)
+     const accAdj = computeAdjFromStorage(engId);
+     setTrialBalanceData(prev =>
+       prev.map(row => {
+         const adj = accAdj[row.accNo] ?? 0;
+         return { ...row, adj, final: row.original + adj };
+       })
+     );
+
+     // 3. Write/update the AIM sectionA row
+     const aimKey = `audit-aim-data-${engId}`;
+     const existing = readJsonFromLocalStorage<{ sectionA?: unknown[]; sectionB?: unknown[] }>(aimKey, { sectionA: [], sectionB: [] });
+     let assets = 0, liabilities = 0, pretaxIncome = 0, equity = 0;
+     savedLines.forEach(l => {
+       const tbRow = baseTrialBalanceData.find(r => r.accNo === l.accNo);
+       const net = (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
+       const g = (tbRow?.grouping ?? "").toLowerCase();
+       if (g.includes("asset")) assets += net;
+       else if (g.includes("liabilit")) liabilities += -net;
+       else if (g.includes("equity")) equity += -net;
+       else pretaxIncome += -net;
      });
+     const fallbackDesc = savedLines.filter(l => l.description).map(l => l.description).join("; ") || savedLines.filter(l => l.accNo).map(l => l.accNo).join("; ");
+     const newRow = {
+       id: `tb-${entryId}-${Date.now()}`,
+       refNo: meta.entryNo,
+       description: meta.notes || fallbackDesc,
+       entryType: meta.entryType,
+       corrected: "",
+       assets: assets !== 0 ? String(assets) : "",
+       liabilities: liabilities !== 0 ? String(liabilities) : "",
+       pretaxIncome: pretaxIncome !== 0 ? String(pretaxIncome) : "",
+       equity: equity !== 0 ? String(equity) : "",
+       disclosures: "",
+       wpRef: [],
+     };
+     // Update existing AIM row if same entryNo, otherwise append
+     const prevRows = (existing.sectionA ?? []) as typeof newRow[];
+     const aimRows = prevRows.some(r => r.refNo === meta.entryNo)
+       ? prevRows.map(r => r.refNo === meta.entryNo ? { ...newRow, id: r.id } : r)
+       : [...prevRows, newRow];
+     writeJsonToLocalStorage(aimKey, { ...existing, sectionA: aimRows });
+
      toast.success("Adjusting entry saved");
    }}
    engId={engagementId ?? ""}
