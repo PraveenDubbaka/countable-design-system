@@ -12,7 +12,6 @@ import { formatCurrency, type RevenueStreamSeed } from "@/lib/engagementContext"
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -209,6 +208,7 @@ export function Audit580Worksheet() {
  }, [data, storageKey]);
 
  const locked = data.concluded;
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
 
  // ── Stream mutators ─────────────────────────────────────────────────────────
  function patchStream(id: string, patch: Partial<RevenueStream>) {
@@ -253,15 +253,19 @@ export function Audit580Worksheet() {
  {isDemoEngagement && (
   <LukaStatusBar
     isActive={true}
-    message="Luka is populating information from prior file and connected data sources…"
-    actions={DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
+    message={
+      lukaState === 'loading'
+        ? "Luka is populating fields from prior file and connected sources…"
+        : lukaState === 'done'
+        ? "Luka has reviewed this section — fields flagged for your review."
+        : "Luka is populating information from Xero and prior file…"
+    }
+    actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
       ...a,
-      onTrigger: () => dispatchLukaSuggest({
-        label: a.label,
-        sources: DEMO_LUKA_ACTIONS.riskAssessment.sources,
-        engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-        worksheetKey: "580",
-      }),
+      onTrigger: () => {
+        setLukaState('loading');
+        setTimeout(() => setLukaState('done'), 2200);
+      },
     }))}
   />
  )}

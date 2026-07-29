@@ -10,7 +10,6 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
@@ -487,6 +486,7 @@ export function Audit520Worksheet() {
  const [showLibraryPicker, setShowLibraryPicker] = useState(false);
  const [editingProcsRowId, setEditingProcsRowId] = useState<string | null>(null);
  const [pickerForRowId, setPickerForRowId] = useState<string | null>(null);
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
 
  function loadLibraryForRow(rowId: string, entry: RiskLibraryEntry) {
  setData(d => ({...d, partBRows: d.partBRows.map(r =>
@@ -530,15 +530,19 @@ export function Audit520Worksheet() {
     {isDemoEngagement && (
       <LukaStatusBar
         isActive={true}
-        message="Luka is populating risk register from connected Xero data, prior file, and risk library…"
-        actions={DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
+        message={
+          lukaState === 'loading'
+            ? "Luka is populating fields from prior file and connected sources…"
+            : lukaState === 'done'
+            ? "Luka has reviewed this section — fields flagged for your review."
+            : "Luka is populating information from Xero and prior file…"
+        }
+        actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
           ...a,
-          onTrigger: () => dispatchLukaSuggest({
-            label: a.label,
-            sources: DEMO_LUKA_ACTIONS.riskAssessment.sources,
-            engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-            worksheetKey: "520",
-          }),
+          onTrigger: () => {
+            setLukaState('loading');
+            setTimeout(() => setLukaState('done'), 2200);
+          },
         }))}
       />
     )}
