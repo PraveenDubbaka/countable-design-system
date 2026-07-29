@@ -262,15 +262,20 @@ function DescSearch({ value, onChange }: { value: string; onChange: (desc: strin
   );
 }
 
-function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
+function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd, prefillRow }: {
   open: boolean; onClose: () => void; engId: string; clientName: string; yearEnd: string;
+  prefillRow?: { accNo: string; description: string };
 }) {
   const [entryDate, setEntryDate] = useState(() => parseYearEndToDate(yearEnd));
   const [entryType, setEntryType] = useState("Journal");
   const [entryCounter, setEntryCounter] = useState(1);
   const [recurring, setRecurring] = useState(false);
   const [notes, setNotes] = useState("");
-  const [lines, setLines] = useState<AdjLine[]>([mkAdjLine(), mkAdjLine()]);
+  const [lines, setLines] = useState<AdjLine[]>(() => {
+    const first = mkAdjLine();
+    if (prefillRow) { first.accNo = prefillRow.accNo; first.description = prefillRow.description; }
+    return [first, mkAdjLine()];
+  });
   const [refDocs, setRefDocs] = useState<RefDoc[]>([]);
 
   const prefix = ENTRY_PREFIX[entryType] ?? "JE";
@@ -470,6 +475,7 @@ export default function TrialBalance() {
  const zeroAccCount = 0;
  const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
  const [adjModalOpen, setAdjModalOpen] = useState(false);
+ const [selectedAdjRow, setSelectedAdjRow] = useState<{ accNo: string; description: string } | null>(null);
  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
 
@@ -1056,7 +1062,7 @@ export default function TrialBalance() {
  <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.description}</td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
  <td className="px-6 py-2 text-right whitespace-nowrap">
- <button onClick={() => setAdjModalOpen(true)} className="text-link font-medium hover:underline focus:outline-none">
+ <button onClick={() => { setSelectedAdjRow({ accNo: row.accNo, description: row.description }); setAdjModalOpen(true); }} className="text-link font-medium hover:underline focus:outline-none">
    {formatNumber(row.adj)}
  </button>
  </td>
@@ -1122,6 +1128,7 @@ export default function TrialBalance() {
    engId={engagementId ?? ""}
    clientName={clientName}
    yearEnd={staticEng?.yearEnd ?? "Dec 31, 2024"}
+   prefillRow={selectedAdjRow ?? undefined}
  />
  {/* Right Panel */}
  <EngagementRightPanel />
