@@ -19,6 +19,8 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -173,6 +175,7 @@ function makeMatter(seed?: Partial<LcncMatter>): LcncMatter {
 
 export function Audit645Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
 
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
@@ -248,6 +251,13 @@ export function Audit645Worksheet() {
  objective="Identify and respond appropriately to litigation, claims and instances of non-compliance with laws and regulations that may be material to the financial statements."
  standard={`${ctx.standardPrefix} 250 / ${ctx.standardPrefix} 501`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  {/* Performance materiality */}
  <WorksheetSection title="Performance materiality">
  <div className="text-sm font-mono">{formatCurrency(ctx.performanceMateriality)}</div>

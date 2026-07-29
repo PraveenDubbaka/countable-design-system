@@ -13,6 +13,8 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -207,6 +209,7 @@ function YNSelectImpl({ value, onChange, withNA = false, locked }: { value: stri
 
 export function Audit635Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
 
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
@@ -311,6 +314,13 @@ export function Audit635Worksheet() {
  objective="Document the further audit procedures to obtain evidence about the reasonableness of an accounting estimate (including fair value) and the adequacy of related disclosures. Use this form for ONE estimate at a time."
  standard={`${ctx.standardPrefix} 540`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  {/* Linked 520 estimate-risks */}
  <LinkedRisksCard
  overallRisk={overall}

@@ -16,6 +16,8 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 type YN = "Y" | "N" | "";
 type YNNA = YN | "N/A";
@@ -146,6 +148,7 @@ const SUBSEQ_KEYWORDS = [
 
 export function Audit650Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
 
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
@@ -205,6 +208,13 @@ export function Audit650Worksheet() {
  objective="Obtain evidence about events between the F/S date and the auditor's report date that require adjustment or disclosure, and respond to facts discovered after the auditor's report date."
  standard={`${ctx.standardPrefix} 560`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  {/* Key dates */}
  <WorksheetSection title="Key dates" right={<span className="text-[11px] text-muted-foreground">Auditor's report ≥ F/S approval date</span>}>
  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

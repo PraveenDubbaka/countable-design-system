@@ -12,6 +12,8 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
 import { toast } from "sonner";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -175,6 +177,7 @@ function groupedPartA() {
 export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
  const storageKey = `audit-507-data-${isUS ? 'us' : 'ca'}`;
  const { engagementId = '' } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
 
  const [data, setData] = useState<Data507>(() => {
  const saved = readJsonFromLocalStorage<Data507 | null>(storageKey, null);
@@ -343,6 +346,13 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  return (
  <div className="flex flex-col h-full">
+ {isDemoEngagement && (
+  <LukaStatusBar
+    isActive={true}
+    message="Luka is populating information from prior file and connected data sources…"
+    actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+  />
+ )}
 
  <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
  <ImportNotesDialog open={importPartCOpen} onOpenChange={setImportPartCOpen} onImport={applyPartCImport} />

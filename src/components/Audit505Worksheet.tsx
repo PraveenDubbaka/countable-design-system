@@ -10,6 +10,8 @@ import { Info, Plus, Trash2 } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -220,6 +222,7 @@ function InqColHeaders() {
 export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  const storageKey = `audit-505-data-${isUS ? 'us' : 'ca'}`;
  const { engagementId = 'default' } = useParams<{ engagementId?: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
 
  const [data, setData] = useState<Data505>(() => {
  const saved = readJsonFromLocalStorage<Data505 | null>(storageKey, null);
@@ -284,6 +287,13 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  return (
  <div className="flex flex-col h-full">
+ {isDemoEngagement && (
+  <LukaStatusBar
+    isActive={true}
+    message="Luka is populating information from prior file and connected data sources…"
+    actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+  />
+ )}
 
  {/* Objective bar */}
  

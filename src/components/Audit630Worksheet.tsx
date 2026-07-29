@@ -12,6 +12,8 @@ import { loadRisks520, overallRisk520 } from "@/lib/audit520Bridge";
 import {
  WorksheetLayout, WorksheetHeader, LinkedRisksCard, ConcludeBar, type SignOffData,
 } from "@/components/audit/WorksheetShell";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 interface ConfirmRow {
  id: string;
@@ -63,6 +65,7 @@ function buildDefault(): Data630 {
 
 export function Audit630Worksheet() {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
  const risks = useMemo(() => loadRisks520(engagementId), [engagementId]);
  const overall = useMemo(() => overallRisk520(risks), [risks]);
@@ -91,6 +94,13 @@ export function Audit630Worksheet() {
  objective="Summarise the use of external confirmation procedures, the nature and number of items confirmed, and any exceptions or difficulties encountered."
  standard={`${ctx.standardPrefix} 505`}
  >
+ {isDemoEngagement && (
+   <LukaStatusBar
+     isActive={true}
+     message="Luka is populating information from prior file and connected data sources…"
+     actions={DEMO_LUKA_ACTIONS.completion.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+   />
+ )}
  <WorksheetHeader
  ctx={ctx}
  formNo="630"
