@@ -21,6 +21,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -209,6 +212,14 @@ export function Audit645Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  // Ready-to-conclude when every active procedure has been addressed
  const allProcsAddressed = useMemo(() => {
@@ -265,7 +276,23 @@ export function Audit645Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           { scrollRef: firstFillRef as React.RefObject<HTMLElement>, set: () => {
+               setData(d => ({ ...d, tcwgCommunicationLog: 'Discussed litigation, claims and non-compliance procedures with TCWG (board minutes reviewed). No items of concern communicated — management confirmed no pending, threatened or actual litigation, claims or regulatory non-compliance at balance sheet date.' }));
+               markLukaFilled('tcwgCommunicationLog');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, disclosureNotes: 'Reviewed financial statement note disclosures — no contingent liabilities, provisions or non-compliance disclosures required for the current period. Financial statements present all required disclosures in accordance with the applicable financial reporting framework.' }));
+               markLukaFilled('disclosureNotes');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, evidenceRationale: 'Procedures performed in accordance with CAS 250 and CAS 501. Inquiries of management and review of correspondence, minutes and legal expense accounts identified no material litigation, claims or instances of non-compliance. Legal letter not required — no indicators of material litigation identified. Evidence is sufficient and appropriate.' }));
+               markLukaFilled('evidenceRationale');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -476,10 +503,15 @@ export function Audit645Worksheet() {
  <Label>External reporting responsibility?</Label>
  <YNSelect value={data.externalReportingRequired} onChange={v => setData(d => ({...d, externalReportingRequired: v as YN }))} />
  </div>
- <div className="md:col-span-2">
+ <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={`md:col-span-2${isDemoEngagement && lukaHighlightFields.has('tcwgCommunicationLog') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}`}>
  <Label>TCWG communication log</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('tcwgCommunicationLog')}>
  <Textarea disabled={locked} value={data.tcwgCommunicationLog} onChange={e => setData(d => ({...d, tcwgCommunicationLog: e.target.value }))}
  className="text-sm min-h-[80px]" placeholder="Summarise what was communicated, to whom, and on what date. Where intentional management non-compliance is suspected, communicate directly with TCWG." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('tcwgCommunicationLog') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  {data.externalReportingRequired === "Y" && (
  <div className="md:col-span-2">
@@ -498,10 +530,15 @@ export function Audit645Worksheet() {
  <Label>Disclosures adequate (AFRF)?</Label>
  <YNSelect value={data.disclosuresAdequate} onChange={v => setData(d => ({...d, disclosuresAdequate: v as YNNA }))} withNA />
  </div>
- <div>
+ <div className={isDemoEngagement && lukaHighlightFields.has('disclosureNotes') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Disclosure notes</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
  <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))}
  className="text-sm min-h-[72px]" placeholder="Confirm notes to the F/S include all required disclosures (provisions, contingent liabilities, non-compliance impacts) and that overall presentation is not obscured." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('disclosureNotes') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>
@@ -528,11 +565,16 @@ export function Audit645Worksheet() {
  <Label>Evidence sufficient & appropriate?</Label>
  <YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} />
  </div>
- <div>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
  className="text-sm min-h-[72px]"
  placeholder="The audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement from litigation, claims and non-compliance to an acceptably low level." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>

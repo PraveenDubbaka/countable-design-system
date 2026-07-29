@@ -18,6 +18,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
 
@@ -142,6 +145,14 @@ export function Audit655Worksheet() {
  });
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const first = useRef(true);
  useEffect(() => {
@@ -193,16 +204,24 @@ export function Audit655Worksheet() {
  <th className="px-3 py-2.5 border-b border-border w-[40px]" />
  </tr></thead>
  <tbody>
- {rows.map(r => {
+ {rows.map((r, ri) => {
  const v = variance(r);
+ const fillId = `rows-${ri}-varianceExplain`;
+ const isHighlighted = isDemoEngagement && lukaHighlightFields.has(fillId);
+ const isFilled = isDemoEngagement && lukaFilledFields.has(fillId);
  return (
- <tr key={r.id} className="hover:bg-muted/20 align-top">
+ <tr key={r.id} className={`hover:bg-muted/20 align-top${isHighlighted ? ' bg-violet-50/40' : ''}`}>
  <td className="border-b border-border p-2"><Input disabled={locked} value={r.caption} onChange={e => updRow(which, r.id, { caption: e.target.value })} className="h-8 text-sm" /></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={r.preliminary} onChange={e => updRow(which, r.id, { preliminary: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={r.finalAmount} onChange={e => updRow(which, r.id, { finalAmount: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={r.priorYear} onChange={e => updRow(which, r.id, { priorYear: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
  <td className={`border-b border-border p-2 text-right font-mono text-sm ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Explain variance / unexpected relationship" /></td>
+ <td className={`border-b border-border p-2${isHighlighted ? ' border-l-2 border-l-violet-400' : ''}`}>
+ <LukaTypingRow filled={isFilled}>
+ <Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Explain variance / unexpected relationship" />
+ </LukaTypingRow>
+ {isFilled && <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>}
+ </td>
  <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
  <td className="border-b border-border p-2"><RefButton reference={r.wpRef} disabled={locked} onAttach={(doc) => updRow(which, r.id, { wpRef: [...r.wpRef, doc] })} onRemove={(idx) => updRow(which, r.id, { wpRef: typeof idx === "number" ? r.wpRef.filter((_, i) => i !== idx) : [] })} /></td>
  <td className="border-b border-border p-2 text-center"><Button size="icon" variant="ghost" className="h-7 w-7" disabled={locked} onClick={() => delRow(which, r.id)}><Trash2 className="h-3.5 w-3.5 text-muted-foreground" /></Button></td>
@@ -235,7 +254,23 @@ export function Audit655Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           { scrollRef: firstFillRef as React.RefObject<HTMLElement>, set: () => {
+               setData(d => ({ ...d, rows: d.rows.map((r, i) => i === 0 ? { ...r, varianceExplain: 'Revenue consistent with prior year within expectations. Organic growth of 4.2% reflects new customer additions in Q3/Q4. Variance within acceptable range — no further procedures required.' } : r) }));
+               markLukaFilled('rows-0-varianceExplain');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, rows: d.rows.map((r, i) => i === 3 ? { ...r, varianceExplain: 'Gross margin percentage consistent with prior year. Minor 0.3pp decline explained by freight cost increases passed through to COGS. Management confirmed no changes to pricing strategy.' } : r) }));
+               markLukaFilled('rows-3-varianceExplain');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, evidenceRationale: 'Final analytical procedures performed over all significant statement of operations and financial position line items and key ratios. Results consistent with our understanding of the entity and audit evidence obtained. No unexpected relationships identified requiring additional investigation.' }));
+               markLukaFilled('evidenceRationale');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -249,7 +284,9 @@ export function Audit655Worksheet() {
  emptyHint="No risks loaded Identified risks help frame which variances warrant additional inquiry."
  storageKey={`audit-655-risks-${engagementId ?? "default"}`} locked={locked} />
 
+ <div ref={firstFillRef as React.RefObject<HTMLDivElement>}>
  <RowsTable which="rows" title="Statement of operations & financial position" rows={data.rows} />
+ </div>
  <RowsTable which="ratios" title="Key ratios" rows={data.ratios} />
 
  <WorksheetSection title="Overall evaluation">
@@ -282,8 +319,14 @@ export function Audit655Worksheet() {
  >
  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
  <div><Label>Final analytics support audit conclusions?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
- <div><Label>Rationale</Label>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <Label>Rationale</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The final analytical procedures corroborate the conclusions formed during the audit and no unidentified RMM was identified." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>

@@ -18,6 +18,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
 
@@ -143,6 +146,14 @@ export function Audit670Worksheet() {
  });
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const first = useRef(true);
  useEffect(() => {
@@ -188,7 +199,23 @@ export function Audit670Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           { scrollRef: firstFillRef as React.RefObject<HTMLElement>, set: () => {
+               setData(d => ({ ...d, totalEntriesPopulation: '184', selectionRationale: 'Journal entries selected based on the following attributes: (1) entries posted by atypical preparers (system administrator, owner); (2) post-period-end entries with limited descriptions; (3) round dollar amounts ≥ $50,000; (4) entries to seldom-used or suspense accounts; (5) entries reversing prior period accruals. Population of 184 entries reviewed — 25 selected for detailed testing.' }));
+               markLukaFilled('selectionRationale');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, managementOverrideIndicated: 'N' }));
+               markLukaFilled('managementOverrideIndicated');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, evidenceRationale: '25 journal entries tested across the 30-day pre and post period-end window. All entries reviewed for preparer authorization, supporting documentation and business rationale. No unusual, unauthorized or fictitious entries identified. Management override risk addressed — evidence is sufficient and appropriate.' }));
+               markLukaFilled('evidenceRationale');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -214,9 +241,15 @@ export function Audit670Worksheet() {
  <div><Label>Days before period end</Label><Input disabled={locked} value={data.scopeBefore} onChange={e => setData(d => ({...d, scopeBefore: e.target.value }))} className="h-8 text-sm" placeholder="e.g. 30 days" /></div>
  <div><Label>Days after period end</Label><Input disabled={locked} value={data.scopeAfter} onChange={e => setData(d => ({...d, scopeAfter: e.target.value }))} className="h-8 text-sm" placeholder="e.g. 30 days" /></div>
  <div><Label>JE population size</Label><Input disabled={locked} value={data.totalEntriesPopulation} onChange={e => setData(d => ({...d, totalEntriesPopulation: e.target.value }))} className="h-8 text-sm" placeholder="# of entries" /></div>
- <div className="md:col-span-4"><Label>Selection rationale / attributes used</Label>
+ <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={`md:col-span-4${isDemoEngagement && lukaHighlightFields.has('selectionRationale') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}`}>
+ <Label>Selection rationale / attributes used</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('selectionRationale')}>
  <Textarea disabled={locked} value={data.selectionRationale} onChange={e => setData(d => ({...d, selectionRationale: e.target.value }))} className="text-sm min-h-[72px]"
  placeholder="Document selection attributes: unusual preparers, seldom-used accounts, post-closing entries with limited descriptions, round numbers, accounts with estimates / reconciliation issues / intercompany, identified fraud-risk accounts." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('selectionRationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>
@@ -323,9 +356,15 @@ export function Audit670Worksheet() {
  >
  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
- <div><Label>Rationale</Label>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <Label>Rationale</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]"
  placeholder="JE testing performed addresses the presumed management-override fraud risk; evidence is sufficient and appropriate to reduce RMM to an acceptably low level." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>

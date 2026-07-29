@@ -18,6 +18,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
 type YNNA = YN | "N/A";
@@ -181,6 +184,14 @@ export function Audit650Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  function updateProcRow(section: SectionKey, rowId: string, field: keyof ProcRow, value: string | RefDoc[]) {
  setData(d => ({...d, [section]: (d[section] as ProcRow[]).map(r => r.id === rowId ? {...r, [field]: value } : r) }));
@@ -222,7 +233,23 @@ export function Audit650Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           { scrollRef: firstFillRef as React.RefObject<HTMLElement>, set: () => {
+               setData(d => ({ ...d, disclosureNotes: 'Reviewed final financial statements — no adjusting or non-adjusting subsequent events require disclosure. Written representations obtained from management confirming all subsequent events have been appropriately considered.' }));
+               markLukaFilled('disclosureNotes');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, otherProcedures: 'Reviewed news media and public sources for any adverse events affecting the entity subsequent to period end. No material items identified.' }));
+               markLukaFilled('otherProcedures');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, evidenceRationale: 'Review of post-period bank statements, board minutes, management inquiries and interim financial information identified no events requiring adjustment or disclosure. Auditor\'s report date confirmed as the date on which sufficient appropriate evidence was obtained. Evidence is sufficient and appropriate.' }));
+               markLukaFilled('evidenceRationale');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -351,14 +378,27 @@ export function Audit650Worksheet() {
  <WorksheetSection title="Disclosures — overall">
  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
  <div><Label>Disclosures adequate (AFRF)?</Label><YNSelect value={data.disclosuresAdequate} onChange={v => setData(d => ({...d, disclosuresAdequate: v as YNNA }))} withNA locked={locked} /></div>
- <div><Label>Disclosure notes</Label>
+ <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={isDemoEngagement && lukaHighlightFields.has('disclosureNotes') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <Label>Disclosure notes</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
  <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Confirm that adjusting / non-adjusting subsequent events are reflected in accordance with the AFRF." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('disclosureNotes') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>
 
  <WorksheetSection title="Other procedures (specify)">
+ <div className={isDemoEngagement && lukaHighlightFields.has('otherProcedures') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('otherProcedures')}>
  <AttributedComment value={data.otherProcedures} onChange={v => setData(d => ({...d, otherProcedures: v }))} storageKey={`650-${engagementId ?? "def"}-otherProcs`} placeholder="Add any additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('otherProcedures') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
+ </div>
  </WorksheetSection>
 
  <WorksheetSection
@@ -369,9 +409,15 @@ export function Audit650Worksheet() {
  >
  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4 items-start">
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
- <div><Label>Rationale</Label>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <Label>Rationale</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]"
  placeholder="The audit evidence obtained over subsequent events is sufficient and appropriate to reduce risk of material misstatement to an acceptably low level." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>

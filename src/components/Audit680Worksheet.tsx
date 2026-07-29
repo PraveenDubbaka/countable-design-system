@@ -16,6 +16,9 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
 
@@ -231,6 +234,14 @@ export function Audit680Worksheet() {
  const isAspe = /ASPE|Section 3856|Part II/i.test(ctx.framework);
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const first = useRef(true);
  useEffect(() => {
@@ -299,7 +310,23 @@ export function Audit680Worksheet() {
        ...a,
        onTrigger: () => {
          setLukaState('loading');
-         setTimeout(() => setLukaState('done'), 2200);
+         lukaSequentialFill([
+           { scrollRef: firstFillRef as React.RefObject<HTMLElement>, set: () => {
+               setData(d => ({ ...d, proc3856_Understanding: d.proc3856_Understanding.map((r, i) => i === 0 ? { ...r, psc: 'Y' as const, comments: 'Identified all financial instruments: accounts receivable (AR), accounts payable (AP), operating line of credit, shareholder loan, and term debt. All meet the definition of financial assets/liabilities under Section 3856.' } : r) }));
+               markLukaFilled('proc3856-understanding-0');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, proc3856_General: d.proc3856_General.map((r, i) => i === 0 ? { ...r, psc: 'Y' as const, comments: 'Financial instruments accounting policy note reviewed — instruments appropriately carried at amortised cost. Fair value disclosures for related-party instruments reviewed. No instruments held at fair value through net income.' } : r) }));
+               markLukaFilled('proc3856-general-0');
+             }
+           },
+           { set: () => {
+               setData(d => ({ ...d, evidenceRationale: 'ASPE supplementary procedures performed for applicable sections (Section 3856 — Financial Instruments). All financial instruments identified, initial recognition reviewed, and Section 3856 measurement requirements confirmed. Evidence is sufficient and appropriate.' }));
+               markLukaFilled('evidenceRationale');
+             }
+           },
+         ], () => setLukaState('done'));
        },
      }))}
    />
@@ -391,7 +418,11 @@ export function Audit680Worksheet() {
  {data.apply3856 && (
  <>
  <WorksheetSection title="Financial instruments (Section 3856) — understanding" bodyClassName="p-0">
- <ProcedureTable sections={[{ title: "Identification of FA / FL", rows: data.proc3856_Understanding }]} locked={locked} onChange={handler("proc3856_Understanding")} />
+ <div ref={firstFillRef as React.RefObject<HTMLDivElement>}>
+ <ProcedureTable sections={[{ title: "Identification of FA / FL", rows: data.proc3856_Understanding }]} locked={locked} onChange={handler("proc3856_Understanding")}
+   renderRowBadge={(_si, ri) => isDemoEngagement && lukaFilledFields.has(`proc3856-understanding-${ri}`) ? <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div> : null}
+ />
+ </div>
  </WorksheetSection>
  <WorksheetSection title="FI — general & initial recognition" bodyClassName="p-0">
  <ProcedureTable sections={[
@@ -403,7 +434,9 @@ export function Audit680Worksheet() {
  ]} locked={locked} onChange={(si, rowId, f, v) => {
  const map: ProcKey[] = ["proc3856_General","proc3856_InitArms","proc3856_InitRP","proc3856_Forgiveness","proc3856_RPImpair"];
  updProc(map[si], rowId, f, v);
- }} />
+ }}
+ renderRowBadge={(si, ri) => si === 0 && isDemoEngagement && lukaFilledFields.has(`proc3856-general-${ri}`) ? <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div> : null}
+ />
  </WorksheetSection>
  <WorksheetSection title="FI — specific instruments" bodyClassName="p-0">
  <ProcedureTable sections={[
@@ -454,8 +487,14 @@ export function Audit680Worksheet() {
  >
  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-4">
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
- <div><Label>Rationale</Label>
+ <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <Label>Rationale</Label>
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The audit evidence obtained for applicable ASPE supplementary areas is sufficient and appropriate to reduce RMM to an acceptably low level." />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
+   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </div>
  </div>
  </WorksheetSection>
