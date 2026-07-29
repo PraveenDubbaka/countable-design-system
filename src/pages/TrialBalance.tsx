@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { toast } from "sonner";
@@ -24,8 +24,10 @@ import {
  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { StyledCard } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
  ChevronDown,
+ ChevronLeft,
  ChevronRight,
  ChevronUp,
  Landmark,
@@ -161,6 +163,322 @@ const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
 
 
+// ─── Adjusting Entry Modal ────────────────────────────────────────────────────
+
+interface AdjLine {
+  id: string;
+  accNo: string;
+  description: string;
+  debit: string;
+  credit: string;
+}
+
+function mkAdjLine(): AdjLine {
+  return { id: Math.random().toString(36).slice(2, 9), accNo: "", description: "", debit: "", credit: "" };
+}
+
+const ENTRY_TYPES = ["Journal", "Adjusting", "Reclassification"] as const;
+const ENTRY_PREFIX: Record<string, string> = { Journal: "JE", Adjusting: "AJE", Reclassification: "RE" };
+
+function parseYearEndToDate(yearEnd: string): string {
+  const months: Record<string, string> = {
+    Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+    Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12",
+  };
+  const m = yearEnd.match(/^(\w{3})\s+(\d{1,2}),?\s+(\d{4})$/);
+  if (!m) return yearEnd;
+  return `${months[m[1]] ?? "12"}/${m[2].padStart(2, "0")}/${m[3]}`;
+}
+
+function AccSearch({ value, onChange }: { value: string; onChange: (accNo: string, desc: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, [open]);
+  const filtered = baseTrialBalanceData.filter(a =>
+    !q || a.accNo.toLowerCase().includes(q.toLowerCase()) || a.description.toLowerCase().includes(q.toLowerCase())
+  );
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => { setOpen(o => !o); setQ(""); }}
+        className="flex items-center w-full h-8 px-2 border border-border rounded bg-background text-sm gap-1 text-left hover:border-primary/50">
+        {value ? <span className="flex-1 truncate">{value}</span> : <span className="flex-1 text-muted-foreground">Select</span>}
+        <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
+      </button>
+      {open && (
+        <div className="absolute z-[200] top-full left-0 mt-0.5 w-64 bg-popover border border-border rounded-md shadow-lg">
+          <div className="p-1.5 border-b border-border">
+            <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search..." className="h-7 text-xs" autoFocus />
+          </div>
+          <div className="max-h-44 overflow-y-auto py-0.5">
+            {filtered.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No results</p>}
+            {filtered.map(a => (
+              <button key={a.id} type="button"
+                className="w-full text-left px-3 py-1.5 text-xs hover:bg-muted flex gap-2 items-center"
+                onMouseDown={e => { e.preventDefault(); onChange(a.accNo, a.description); setOpen(false); }}>
+                <span className="font-mono shrink-0 w-12 text-muted-foreground">{a.accNo}</span>
+                <span className="truncate">{a.description}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DescSearch({ value, onChange }: { value: string; onChange: (desc: string, accNo: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState(value);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => { setQ(value); }, [value]);
+  useEffect(() => {
+    if (!open) return;
+    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, [open]);
+  const filtered = baseTrialBalanceData.filter(a =>
+    !q || a.description.toLowerCase().includes(q.toLowerCase()) || a.accNo.toLowerCase().includes(q.toLowerCase())
+  );
+  return (
+    <div ref={ref} className="relative">
+      <div className="flex items-center h-8 px-2 border border-border rounded bg-background gap-1 hover:border-primary/50">
+        <input value={q} onChange={e => { setQ(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)} placeholder="Type here to search"
+          className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground min-w-0" />
+        <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
+      </div>
+      {open && (
+        <div className="absolute z-[200] top-full left-0 mt-0.5 w-full min-w-[220px] bg-popover border border-border rounded-md shadow-lg">
+          <div className="max-h-44 overflow-y-auto py-0.5">
+            {filtered.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No results</p>}
+            {filtered.map(a => (
+              <button key={a.id} type="button"
+                className="w-full text-left px-3 py-1.5 text-xs hover:bg-muted flex gap-2 items-center"
+                onMouseDown={e => { e.preventDefault(); onChange(a.description, a.accNo); setQ(a.description); setOpen(false); }}>
+                <span className="font-mono shrink-0 w-12 text-muted-foreground">{a.accNo}</span>
+                <span className="truncate">{a.description}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
+  open: boolean; onClose: () => void; engId: string; clientName: string; yearEnd: string;
+}) {
+  const [entryDate, setEntryDate] = useState(() => parseYearEndToDate(yearEnd));
+  const [entryType, setEntryType] = useState("Journal");
+  const [entryCounter, setEntryCounter] = useState(1);
+  const [recurring, setRecurring] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [lines, setLines] = useState<AdjLine[]>([mkAdjLine(), mkAdjLine()]);
+
+  const prefix = ENTRY_PREFIX[entryType] ?? "JE";
+  const entryNo = `${prefix}-${entryCounter}`;
+  const totalDebit = lines.reduce((s, l) => s + (parseFloat(l.debit) || 0), 0);
+  const totalCredit = lines.reduce((s, l) => s + (parseFloat(l.credit) || 0), 0);
+  const diff = totalDebit - totalCredit;
+  const balanced = Math.abs(diff) < 0.001;
+  const hasActivity = totalDebit > 0 || totalCredit > 0;
+  const hasUnselectedAcc = lines.some(l => (parseFloat(l.debit) > 0 || parseFloat(l.credit) > 0) && !l.accNo);
+  const canSave = balanced && !hasUnselectedAcc && hasActivity;
+
+  function updateLine(id: string, field: keyof AdjLine, val: string) {
+    setLines(prev => prev.map(l => l.id === id ? { ...l, [field]: val } : l));
+  }
+  function setLineAccDesc(id: string, accNo: string, description: string) {
+    setLines(prev => prev.map(l => l.id === id ? { ...l, accNo, description } : l));
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={v => !v && onClose()}>
+      <DialogContent className="p-0 gap-0 max-w-3xl overflow-hidden [&>button.absolute]:hidden">
+        {/* Dark header bar */}
+        <div className="flex items-center justify-between px-5 py-2.5 text-white text-sm" style={{ background: "#0d2240" }}>
+          <span className="font-semibold">{engId}</span>
+          <span className="font-semibold">{clientName}</span>
+          <span>Year End Date: {yearEnd}</span>
+        </div>
+
+        <div className="px-5 pt-4 pb-3 space-y-4">
+          <p className="text-base font-bold text-foreground">New Adjusting Entry</p>
+
+          {/* Fields row */}
+          <div className="flex items-end gap-3 flex-wrap">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-foreground">Entity Name 1</span>
+              <div className="flex items-center h-8 px-2 border border-border rounded bg-muted/30 text-sm min-w-[100px] gap-1 cursor-default select-none">
+                <span className="flex-1 truncate">{clientName}</span>
+                <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-foreground">Entry Date</span>
+              <div className="flex items-center h-8 px-2 border border-border rounded bg-background gap-1 min-w-[120px]">
+                <input value={entryDate} onChange={e => setEntryDate(e.target.value)}
+                  className="bg-transparent outline-none text-sm flex-1 min-w-0" />
+                <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-foreground">Entry Type <span className="text-destructive">*</span></span>
+              <div className="relative">
+                <select value={entryType} onChange={e => setEntryType(e.target.value)}
+                  className="h-8 pl-2 pr-6 border border-border rounded bg-background text-sm min-w-[110px] outline-none appearance-none cursor-pointer">
+                  {ENTRY_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-foreground">Entry No <span className="text-destructive">*</span></span>
+              <div className="flex items-center gap-0.5">
+                <button type="button" onClick={() => setEntryCounter(c => Math.max(1, c - 1))}
+                  className="h-8 w-7 flex items-center justify-center border border-border rounded text-muted-foreground hover:text-foreground bg-background">
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </button>
+                <div className="flex items-center h-8 px-2 border border-border rounded bg-background gap-1 min-w-[72px]">
+                  <span className="flex-1 text-center text-sm">{entryNo}</span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
+                </div>
+                <button type="button" onClick={() => setEntryCounter(c => c + 1)}
+                  className="h-8 w-7 flex items-center justify-center border border-border rounded text-muted-foreground hover:text-foreground bg-background">
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-foreground">Reference</span>
+              <button type="button" className="h-8 px-3 border border-border rounded bg-background text-sm flex items-center gap-1 hover:bg-muted transition-colors">
+                <Plus className="h-3.5 w-3.5" /> Ref
+              </button>
+            </div>
+            <div className="flex flex-col gap-1 items-center">
+              <span className="text-xs text-foreground">Recurring</span>
+              <div className="h-8 flex items-center">
+                <Checkbox checked={recurring} onCheckedChange={v => setRecurring(!!v)} className="rounded" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1 items-center">
+              <span className="text-xs text-foreground">Delete</span>
+              <button type="button" className="h-8 w-8 flex items-center justify-center border-2 border-destructive rounded text-destructive hover:bg-destructive/10 transition-colors">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Lines table */}
+          <div className="border border-border rounded overflow-visible">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="bg-muted border-b border-border">
+                  <th className="text-left px-3 py-2 text-xs font-semibold text-foreground w-[130px]">Acc No.</th>
+                  <th className="text-left px-3 py-2 text-xs font-semibold text-foreground">Description</th>
+                  <th className="text-right px-3 py-2 text-xs font-semibold text-foreground w-[130px]">Debit</th>
+                  <th className="text-right px-3 py-2 text-xs font-semibold text-foreground w-[130px]">Credit</th>
+                  <th className="px-3 py-2 text-xs font-semibold text-foreground w-[72px] text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lines.map((line, idx) => (
+                  <tr key={line.id} className="border-b border-border/50">
+                    <td className="px-2 py-1.5">
+                      <AccSearch value={line.accNo} onChange={(a, d) => setLineAccDesc(line.id, a, d)} />
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <DescSearch value={line.description} onChange={(d, a) => setLineAccDesc(line.id, a, d)} />
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <input type="number" value={line.debit} min="0" step="0.01" placeholder="0.00"
+                        onChange={e => updateLine(line.id, "debit", e.target.value)}
+                        onFocus={e => e.target.select()}
+                        className="w-full text-right h-8 px-2 border border-border rounded bg-background text-sm outline-none focus:border-primary/60" />
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <input type="number" value={line.credit} min="0" step="0.01" placeholder="0.00"
+                        onChange={e => updateLine(line.id, "credit", e.target.value)}
+                        onFocus={e => e.target.select()}
+                        className="w-full text-right h-8 px-2 border border-border rounded bg-background text-sm outline-none focus:border-primary/60" />
+                    </td>
+                    <td className="px-2 py-1.5 text-center">
+                      <div className="flex items-center justify-center gap-0.5">
+                        <button type="button"
+                          onClick={() => setLines(prev => prev.length > 1 ? prev.filter(l => l.id !== line.id) : prev)}
+                          className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                        {idx === lines.length - 1 && (
+                          <button type="button" onClick={() => setLines(prev => [...prev, mkAdjLine()])}
+                            className="p-1.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                            <Plus className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="bg-muted border-t border-border">
+                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-bold text-foreground">Total</td>
+                  <td className="px-3 py-2 text-right text-sm font-bold text-foreground">{totalDebit.toFixed(2)}</td>
+                  <td className="px-3 py-2 text-right text-sm font-bold text-foreground">{totalCredit.toFixed(2)}</td>
+                  <td />
+                </tr>
+                {!balanced && hasActivity && (
+                  <tr className="border-t border-border/50">
+                    <td colSpan={2} className="px-3 py-2 text-right text-xs font-bold text-foreground">Difference</td>
+                    <td />
+                    <td className="px-3 py-2 text-right text-sm font-bold text-destructive">({Math.abs(diff).toFixed(2)})</td>
+                    <td />
+                  </tr>
+                )}
+              </tfoot>
+            </table>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <p className="text-sm font-medium text-foreground mb-1.5">Notes</p>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)}
+              placeholder="Add your notes here..."
+              className="w-full h-20 px-3 py-2 border border-border rounded bg-background text-sm resize-none outline-none focus:border-primary/60" />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-2 px-5 py-3 border-t border-border">
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button onClick={() => { if (canSave) { toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
+                  Save
+                </Button>
+              </span>
+            </TooltipTrigger>
+            {!canSave && (
+              <TooltipContent side="top">
+                {hasUnselectedAcc ? "Please select account" : !balanced ? "Debits must equal credits" : "Add at least one amount"}
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 const TB_LOADED_KEY = (id: string) => `tb-loaded-${id}`;
 
 export default function TrialBalance() {
@@ -170,6 +488,7 @@ export default function TrialBalance() {
  const [hideZeroAcc, setHideZeroAcc] = useState(false);
  const zeroAccCount = 0;
  const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
+ const [adjModalOpen, setAdjModalOpen] = useState(false);
  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
 
@@ -756,7 +1075,9 @@ export default function TrialBalance() {
  <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.description}</td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
  <td className="px-6 py-2 text-right whitespace-nowrap">
- <span className="text-link font-medium">{formatNumber(row.adj)}</span>
+ <button onClick={() => setAdjModalOpen(true)} className="text-link font-medium hover:underline focus:outline-none">
+   {formatNumber(row.adj)}
+ </button>
  </td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
@@ -813,6 +1134,14 @@ export default function TrialBalance() {
  </StyledCard>
  </div>
 
+ <NewAdjEntryModal
+   key={adjModalOpen ? "open" : "closed"}
+   open={adjModalOpen}
+   onClose={() => setAdjModalOpen(false)}
+   engId={engagementId ?? ""}
+   clientName={staticEng?.client ?? ""}
+   yearEnd={staticEng?.yearEnd ?? "Dec 31, 2024"}
+ />
  {/* Right Panel */}
  <EngagementRightPanel />
  </div>
