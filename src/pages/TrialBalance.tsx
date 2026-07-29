@@ -397,8 +397,8 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd }: {
                         onFocus={e => (e.target as HTMLInputElement).select()}
                         className="h-8 text-right" />
                     </td>
-                    <td className="px-2 py-1.5 text-center">
-                      <div className="flex items-center justify-center gap-0.5">
+                    <td className="px-2 py-1.5">
+                      <div className="flex items-center justify-start gap-0.5">
                         <Button variant="ghost" size="icon-sm" type="button"
                           onClick={() => setLines(prev => prev.length > 1 ? prev.filter(l => l.id !== line.id) : prev)}>
                           <Trash2 className="h-3.5 w-3.5" />
