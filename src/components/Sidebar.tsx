@@ -2006,9 +2006,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const filterProcTree = (nodes: SectionNode[], activeIds: string[], procMap: Record<string, string[]>): SectionNode[] =>
   nodes.reduce<SectionNode[]>((acc, node) => {
    if (node.id.startsWith("aud-wp-")) {
+    // Always show all lead-sheet nodes; only inject procedure children for active ones
     if (activeIds.includes(node.id)) {
      const children = buildWpChildren(node.id, procMap);
      acc.push(children.length > 0 ? { ...node, children } : node);
+    } else {
+     acc.push(node);
     }
    } else if (node.children) {
     const kids = filterProcTree(node.children, activeIds, procMap);
