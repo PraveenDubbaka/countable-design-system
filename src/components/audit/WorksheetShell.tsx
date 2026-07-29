@@ -74,6 +74,7 @@ export function WorksheetLayout({
  heading,
  onAdd,
  lukaButton,
+ banner,
 }: {
  objective?: string;
  standard?: string;
@@ -81,9 +82,11 @@ export function WorksheetLayout({
  heading?: string;
  onAdd?: () => void;
  lukaButton?: ReactNode;
+ banner?: ReactNode;
 }) {
  return (
  <div className="flex flex-col h-full">
+ {banner}
  <div className="flex-1 overflow-y-auto bg-muted/30">
  {objective && (
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
