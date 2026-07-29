@@ -263,7 +263,7 @@ function DescSearch({ value, onChange }: { value: string; onChange: (desc: strin
   );
 }
 
-interface AdjEntryMeta { entryNo: string; entryType: string; entryDate: string; }
+interface AdjEntryMeta { entryNo: string; entryType: string; entryDate: string; notes: string; }
 
 function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yearEnd, prefillRow }: {
   open: boolean; onClose: () => void; onSave: (lines: AdjLine[], meta: AdjEntryMeta) => void;
@@ -452,7 +452,7 @@ function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yearEnd, p
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
-                <Button onClick={() => { if (canSave) { onSave(lines, { entryNo, entryType, entryDate }); toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
+                <Button onClick={() => { if (canSave) { onSave(lines, { entryNo, entryType, entryDate, notes }); toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
                   Save
                 </Button>
               </span>
@@ -1155,11 +1155,13 @@ export default function TrialBalance() {
          else if (g.includes("equity")) equity += -net;
          else pretaxIncome += -net;
        });
-       const desc = savedLines.filter(l => l.description).map(l => l.description).join("; ") || savedLines.filter(l => l.accNo).map(l => l.accNo).join("; ");
+       const fallbackDesc = savedLines.filter(l => l.description).map(l => l.description).join("; ") || savedLines.filter(l => l.accNo).map(l => l.accNo).join("; ");
+       const entryId = meta.entryNo.replace(/[^a-zA-Z0-9]/g, "-");
+       writeJsonToLocalStorage(`adj-entry-${engagementId ?? "default"}-${entryId}`, { lines: savedLines, meta, clientName, engId: engagementId });
        const newRow = {
-         id: `tb-${meta.entryNo}-${Date.now()}`,
+         id: `tb-${entryId}-${Date.now()}`,
          refNo: meta.entryNo,
-         description: desc,
+         description: meta.notes || fallbackDesc,
          entryType: "Known",
          corrected: "",
          assets: assets !== 0 ? String(assets) : "",
