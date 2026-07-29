@@ -9,6 +9,8 @@ import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -271,6 +273,7 @@ function ProcedureTable({
 
 export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  const { engagementId } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const ctx = useEngagementContext();
  const isUS = isUSProp ?? ctx.isUS;
  const storageKey = `audit-515-data-v1-${engagementId ?? (isUS ? "us" : "ca")}`;
@@ -312,6 +315,13 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
 
  return (
  <div className="flex flex-col h-full">
+ {isDemoEngagement && (
+ <LukaStatusBar
+ isActive={true}
+ message="Luka is populating information from prior file and connected data sources…"
+ actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+ />
+ )}
  {/* Objective bar */}
  
  <div className="flex-1 overflow-y-auto bg-muted/30">

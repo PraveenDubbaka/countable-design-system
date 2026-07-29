@@ -8,6 +8,8 @@ import { Plus, Trash2, Info, AlertTriangle } from "lucide-react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { cn } from "@/lib/utils";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
+import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -152,6 +154,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  }, [data, storageKey]);
 
  const { engagementId = "default" } = useParams<{ engagementId: string }>();
+ const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
  const locked = data.concluded;
 
  function updateRow(id: string, field: keyof EstimateRow, val: string) {
@@ -171,6 +174,13 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  return (
  <div className="flex flex-col h-full">
+ {isDemoEngagement && (
+ <LukaStatusBar
+ isActive={true}
+ message="Luka is populating information from prior file and connected data sources…"
+ actions={DEMO_LUKA_ACTIONS.riskAssessment.map(a => ({ ...a, onTrigger: () => console.log("Luka action triggered: ", a.label) }))}
+ />
+ )}
 
  {/* ── Objective bar ─────────────────────────────────────────────────── */}
  
