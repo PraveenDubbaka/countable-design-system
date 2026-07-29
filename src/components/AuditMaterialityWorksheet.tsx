@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { writeJsonToLocalStorage } from "@/lib/safeJson";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
@@ -261,8 +262,12 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const matFillRef = useRef<HTMLTableRowElement>(null);
  function markLukaFilled(fieldId: string) {
    setLukaFilledFields(prev => new Set(prev).add(fieldId));
+   setLukaHighlightFields(prev => new Set(prev).add(fieldId));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(fieldId); return n; }), 2000);
  }
 
  // ── Derived ──────────────────────────────────────────────────────────────────
@@ -396,7 +401,7 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
      onTrigger: () => {
        setLukaState('loading');
        lukaSequentialFill([
-         { set: () => {
+         { scrollRef: matFillRef as React.RefObject<HTMLElement>, set: () => {
              setEntityRows(prev => prev.map((r, i) => i === 0
                ? { ...r, periodAmount: '14,200,000.00', extrapolatedPeriod: '14,200,000.00', materialityCY: '142,000.00' }
                : r));
@@ -501,7 +506,15 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  {entityRows.map((row, rowIdx) => {
  const isSelected = row.id === selectedRowId;
  return (
- <tr key={row.id} className={`transition-colors ${isSelected ? "bg-primary/[0.04]" : "hover:bg-muted/50"}`}>
+ <tr
+ key={row.id}
+ ref={rowIdx === 0 ? matFillRef : undefined}
+ className={`transition-colors ${isSelected ? "bg-primary/[0.04]" : "hover:bg-muted/50"}${
+   isDemoEngagement && rowIdx === 0 && lukaHighlightFields.has('mat-row-0-amount')
+     ? ' border-l-2 border-violet-400 bg-violet-50/40'
+     : ''
+ }`}
+ >
  <td className="px-3 py-2.5 align-middle text-center">
  <input
  type="radio"
@@ -529,12 +542,14 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
    </div>
  ) : (
  <div className="relative">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-amount')}>
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
  onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
  placeholder="e.g. 12,500,000.00"
  className="tabular-nums text-right"
  />
+ </LukaTypingRow>
  </div>
  )}
  {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-amount') && (
@@ -568,12 +583,14 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  </td>
  <td className="px-4 py-2.5 align-top min-w-[165px] text-right">
  <div className="relative">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
  <TdInput
  value={row.materialityPY ? formatDisplay(row.materialityPY) : ""}
  onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
  placeholder="—"
  className="tabular-nums text-right"
  />
+ </LukaTypingRow>
  {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-py') && (
    <div className="mt-1">
      <AutomationStateChip state="luka-drafted" />
@@ -583,11 +600,13 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  </td>
  <td className="px-4 py-2.5 align-top min-w-[160px]">
  <div className="relative">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-comments')}>
  <TdInput
  value={row.comments}
  onChange={(v) => updateEntityRow(row.id, "comments", v)}
  placeholder="Comments…"
  />
+ </LukaTypingRow>
  {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-comments') && (
    <div className="mt-1">
      <AutomationStateChip state="luka-drafted" />
