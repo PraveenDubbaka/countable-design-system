@@ -10,7 +10,6 @@ import { AttributedComment } from "@/components/ui/AttributedComment";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -172,6 +171,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  // ── Import flow ───────────────────────────────────────────────────────────────
  const [imported, setImported] = useState(false);
  const [importStep, setImportStep] = useState(0); // 0=closed,1=calendar,2=ai,3=preview,4=review
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
 
  const handleOpenImport = () => setImportStep(1);
 
@@ -339,15 +339,19 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {isDemoEngagement && (
   <LukaStatusBar
    isActive={true}
-   message="Luka is cascading materiality and risk findings into the overall audit strategy…"
-   actions={DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
+   message={
+     lukaState === 'loading'
+       ? "Luka is populating fields from prior file and connected sources…"
+       : lukaState === 'done'
+       ? "Luka has reviewed this section — fields flagged for your review."
+       : "Luka is populating information from Xero and prior file…"
+   }
+   actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
      ...a,
-     onTrigger: () => dispatchLukaSuggest({
-       label: a.label,
-       sources: DEMO_LUKA_ACTIONS.generic.sources,
-       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-       worksheetKey: "asm",
-     }),
+     onTrigger: () => {
+       setLukaState('loading');
+       setTimeout(() => setLukaState('done'), 2200);
+     },
    }))}
   />
  )}

@@ -17,7 +17,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
@@ -329,6 +328,7 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  
 
  const [connectedSource, setConnectedSource] = useState<string | null>(null);
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  useEffect(() => {
  const connectors = readJsonFromLocalStorage<string[]>(`connectors-${engagementId}`, ['xero']);
  setConnectedSource(connectors[0] ?? null);
@@ -645,15 +645,19 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  {isDemoEngagement && (
   <LukaStatusBar
    isActive={true}
-   message="Luka is populating preliminary analytics from Xero trial balance and engagement data…"
-   actions={DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
+   message={
+     lukaState === 'loading'
+       ? "Luka is populating fields from prior file and connected sources…"
+       : lukaState === 'done'
+       ? "Luka has reviewed this section — fields flagged for your review."
+       : "Luka is populating information from Xero and prior file…"
+   }
+   actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.generic.actions.map(a => ({
      ...a,
-     onTrigger: () => dispatchLukaSuggest({
-       label: a.label,
-       sources: DEMO_LUKA_ACTIONS.generic.sources,
-       engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-       worksheetKey: "pap501",
-     }),
+     onTrigger: () => {
+       setLukaState('loading');
+       setTimeout(() => setLukaState('done'), 2200);
+     },
    }))}
   />
  )}

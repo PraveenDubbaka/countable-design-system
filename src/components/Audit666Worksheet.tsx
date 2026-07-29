@@ -19,7 +19,6 @@ import {
 } from "@/components/audit/WorksheetShell";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
 
 type YN = "Y" | "N" | "";
 type YNNA = YN | "N/A";
@@ -146,6 +145,7 @@ export function Audit666Worksheet() {
  return merged;
  });
 
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const first = useRef(true);
  useEffect(() => {
@@ -183,16 +183,20 @@ export function Audit666Worksheet() {
  {isDemoEngagement && (
    <LukaStatusBar
      isActive={true}
-     message="Luka is populating information from prior file and connected data sources…"
-     actions={DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
-      ...a,
-      onTrigger: () => dispatchLukaSuggest({
-        label: a.label,
-        sources: DEMO_LUKA_ACTIONS.completion.sources,
-        engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-        worksheetKey: "666",
-      }),
-    }))}
+     message={
+       lukaState === 'loading'
+         ? "Luka is populating fields from prior file and connected sources…"
+         : lukaState === 'done'
+         ? "Luka has reviewed this section — fields flagged for your review."
+         : "Luka is populating information from Xero and prior file…"
+     }
+     actions={lukaState === 'loading' ? [] : DEMO_LUKA_ACTIONS.completion.actions.map(a => ({
+       ...a,
+       onTrigger: () => {
+         setLukaState('loading');
+         setTimeout(() => setLukaState('done'), 2200);
+       },
+     }))}
    />
  )}
  <WorksheetSection title="Performance materiality">
