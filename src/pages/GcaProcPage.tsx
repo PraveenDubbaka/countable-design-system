@@ -40,7 +40,7 @@ export function GcaProcPage() {
 
   return (
     <Layout title="Engagements">
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+      <div className="h-full flex flex-col min-w-0 overflow-hidden">
         {title && (
           <div className="sticky top-0 z-10 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
             {/* First row: title + action buttons */}

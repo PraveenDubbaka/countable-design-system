@@ -281,8 +281,46 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
     ? sections[refModal.sectionIdx]?.rows.find(r => r.id === refModal.rowId) ?? null
     : null;
 
+  function hideSelected() {
+    const targets = new Map<string, number>();
+    sections.forEach((s, si) => {
+      s.rows.forEach(r => {
+        if (!r.hidden && selectedRows.has(r.id)) targets.set(r.id, si);
+      });
+    });
+    targets.forEach((si, rowId) => onToggleHidden(docKey, si, rowId));
+    setSelectedRows(new Set());
+  }
+
+  function deleteSelected() {
+    const targets = new Map<string, number>();
+    sections.forEach((s, si) => {
+      s.rows.forEach(r => {
+        if (!r.hidden && selectedRows.has(r.id)) targets.set(r.id, si);
+      });
+    });
+    targets.forEach((si, rowId) => onDeleteRow(docKey, si, rowId));
+    setSelectedRows(new Set());
+  }
+
   return (
     <>
+      {selectedRows.size > 0 && (
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-primary/20 bg-primary/[0.05] text-sm">
+          <span className="font-medium">{selectedRows.size} row{selectedRows.size !== 1 ? "s" : ""} selected</span>
+          <div className="ml-auto flex items-center gap-1">
+            <button onClick={hideSelected} className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted border border-border transition-colors">
+              <EyeOff className="h-3.5 w-3.5" /> Hide
+            </button>
+            <button onClick={deleteSelected} className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium text-destructive hover:bg-destructive/10 border border-destructive/30 transition-colors">
+              <Trash2 className="h-3.5 w-3.5" /> Delete
+            </button>
+            <button onClick={() => setSelectedRows(new Set())} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Clear selection">
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
@@ -407,6 +445,16 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
             <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Hidden Rows ({hiddenRows.length})
             </span>
+            <div className="ml-auto flex items-center gap-1">
+              <button onClick={() => hiddenRows.forEach(({ row, sectionIdx }) => onToggleHidden(docKey, sectionIdx, row.id))}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-muted border border-border transition-colors">
+                <RotateCcw className="h-3 w-3" /> Restore All
+              </button>
+              <button onClick={() => hiddenRows.forEach(({ row, sectionIdx }) => onDeleteRow(docKey, sectionIdx, row.id))}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-destructive hover:bg-destructive/10 border border-destructive/30 transition-colors">
+                <Trash2 className="h-3 w-3" /> Delete All
+              </button>
+            </div>
           </div>
           <table className="w-full text-sm border-collapse">
             <tbody>
