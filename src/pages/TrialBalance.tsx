@@ -161,7 +161,7 @@ const formatNumber = (val: number | string) => {
  return val.toFixed(2);
 };
 
-const trialBalanceData = [...baseTrialBalanceData];
+// trialBalanceData is managed as state inside the TrialBalance component
 
 const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
@@ -262,8 +262,9 @@ function DescSearch({ value, onChange }: { value: string; onChange: (desc: strin
   );
 }
 
-function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd, prefillRow }: {
-  open: boolean; onClose: () => void; engId: string; clientName: string; yearEnd: string;
+function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yearEnd, prefillRow }: {
+  open: boolean; onClose: () => void; onSave: (lines: AdjLine[]) => void;
+  engId: string; clientName: string; yearEnd: string;
   prefillRow?: { accNo: string; description: string };
 }) {
   const [entryDate, setEntryDate] = useState(() => parseYearEndToDate(yearEnd));
@@ -448,7 +449,7 @@ function NewAdjEntryModal({ open, onClose, engId, clientName, yearEnd, prefillRo
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
-                <Button onClick={() => { if (canSave) { toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
+                <Button onClick={() => { if (canSave) { onSave(lines); toast.success("Adjusting entry saved"); onClose(); } }} disabled={!canSave}>
                   Save
                 </Button>
               </span>
@@ -476,6 +477,7 @@ export default function TrialBalance() {
  const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
  const [adjModalOpen, setAdjModalOpen] = useState(false);
  const [selectedAdjRow, setSelectedAdjRow] = useState<{ accNo: string; description: string } | null>(null);
+ const [trialBalanceData, setTrialBalanceData] = useState([...baseTrialBalanceData]);
  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
 
@@ -1125,6 +1127,17 @@ export default function TrialBalance() {
    key={adjModalOpen ? "open" : "closed"}
    open={adjModalOpen}
    onClose={() => setAdjModalOpen(false)}
+   onSave={(savedLines) => {
+     setTrialBalanceData(prev => prev.map(row => {
+       const net = savedLines.reduce((sum, l) => {
+         if (l.accNo !== row.accNo) return sum;
+         return sum + (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
+       }, 0);
+       if (net === 0) return row;
+       const newAdj = row.adj + net;
+       return { ...row, adj: newAdj, final: row.original + newAdj };
+     }));
+   }}
    engId={engagementId ?? ""}
    clientName={clientName}
    yearEnd={staticEng?.yearEnd ?? "Dec 31, 2024"}
