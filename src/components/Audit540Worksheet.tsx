@@ -10,6 +10,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -153,6 +156,14 @@ export function Audit540Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  // ── Mutators ────────────────────────────────────────────────────────────────
  function patchCycle(cid: string, patch: Partial<CycleBlock>) {
@@ -246,7 +257,58 @@ export function Audit540Worksheet() {
           ...a,
           onTrigger: () => {
             setLukaState('loading');
-            setTimeout(() => setLukaState('done'), 2200);
+            const c0id = data.cycles[0]?.id;
+            const rf0Id = data.cycles[0]?.riskFactors[0]?.id;
+            const ctl0Id = data.cycles[0]?.controls[0]?.id;
+            lukaSequentialFill([
+              {
+                scrollRef: firstFillRef as unknown as import('react').RefObject<HTMLElement>,
+                set: () => {
+                  if (c0id) {
+                    setData(d => ({...d, cycles: d.cycles.map(c => c.id !== c0id ? c : {
+                      ...c,
+                      cycle: "Revenue, receivables and receipts",
+                    })}));
+                  }
+                },
+              },
+              {
+                set: () => {
+                  if (c0id && rf0Id) {
+                    setData(d => ({...d, cycles: d.cycles.map(c => c.id !== c0id ? c : {
+                      ...c,
+                      riskFactors: c.riskFactors.map(r => r.id !== rf0Id ? r : {
+                        ...r,
+                        description: "Sales/services are recorded in the wrong accounting period",
+                        assertions: ["C", "E", "AV"] as Assertion[],
+                        isSignificantRisk: "N" as YN,
+                      }),
+                    })}));
+                    markLukaFilled(`rf-${rf0Id}`);
+                  }
+                },
+              },
+              {
+                set: () => {
+                  if (c0id && ctl0Id) {
+                    setData(d => ({...d, cycles: d.cycles.map(c => c.id !== c0id ? c : {
+                      ...c,
+                      controls: c.controls.map(ct => ct.id !== ctl0Id ? ct : {
+                        ...ct,
+                        description: "Controller reviews and approves all sales invoices before posting in Xero. Invoices are traced to delivery confirmations or service completion records. Unauthorized postings require CFO secondary approval.",
+                        controlType: "Preventive — Manual",
+                        frequency: "Per transaction",
+                        designEffective: "Y" as YSN,
+                        implemented: "Y" as YN,
+                        relyOnControl: "N" as YN,
+                        comments: "Walkthrough performed — observed Controller reviewing three sample invoices. Control appears consistently applied.",
+                      }),
+                    })}));
+                    markLukaFilled(`ctl-${ctl0Id}`);
+                  }
+                },
+              },
+            ], () => setLukaState('done'));
           },
         }))}
       />
@@ -270,6 +332,7 @@ export function Audit540Worksheet() {
  <div className="flex-1 overflow-y-auto p-6 space-y-5">
 
  {/* Cycles */}
+ {isDemoEngagement && <div ref={firstFillRef} />}
  {data.cycles.map((cycle, cIdx) => (
  <div key={cycle.id} className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between gap-4">
@@ -325,13 +388,18 @@ export function Audit540Worksheet() {
  </thead>
  <tbody className="divide-y divide-border">
  {cycle.riskFactors.map((r, i) => (
- <tr key={r.id} className="hover:bg-muted/30 align-top">
+ <tr key={r.id} className={`hover:bg-muted/30 align-top${isDemoEngagement && lukaHighlightFields.has(`rf-${r.id}`) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-4 py-2 text-center font-mono text-foreground">{i + 1}</td>
  <td className="px-4 py-2">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(`rf-${r.id}`)}>
  <Textarea disabled={locked} value={r.description}
  onChange={e => setRiskFactor(cycle.id, r.id, { description: e.target.value })}
  placeholder="Describe what can go wrong…"
  className="min-h-[52px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has(`rf-${r.id}`) && (
+ <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-4 py-2">
  <div className="flex flex-wrap gap-1 justify-center">
@@ -411,7 +479,7 @@ export function Audit540Worksheet() {
  </thead>
  <tbody className="divide-y divide-border">
  {cycle.controls.map((ct, i) => (
- <tr key={ct.id} className="hover:bg-muted/30 align-top">
+ <tr key={ct.id} className={`hover:bg-muted/30 align-top${isDemoEngagement && lukaHighlightFields.has(`ctl-${ct.id}`) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.riskFactorId || "all"}
@@ -428,10 +496,15 @@ export function Audit540Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-2">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(`ctl-${ct.id}`)}>
  <Textarea disabled={locked} value={ct.description}
  onChange={e => setControl(cycle.id, ct.id, { description: e.target.value })}
  placeholder="Describe the control activity and who performs it…"
  className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has(`ctl-${ct.id}`) && (
+ <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.controlType}

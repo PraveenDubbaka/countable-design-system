@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -141,6 +144,9 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  const storageKey = `audit-514-data-${isUS ? "us" : "ca"}`;
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
  const [data, setData] = useState<Data514>(() => {
  const saved = readJsonFromLocalStorage<Data514 | null>(storageKey, null);
  if (!saved) return buildDefault();
@@ -163,6 +169,11 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  }
  function addRow() { setData(d => ({...d, rows: [...d.rows, newRow()] })); }
  function removeRow(id: string) { setData(d => ({...d, rows: d.rows.filter(r => r.id !== id) })); }
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  const calcMap = useMemo(() => {
  const m: Record<string, { diff: number | null; pct: number | null }> = {};
@@ -189,7 +200,60 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
    ...a,
    onTrigger: () => {
      setLukaState('loading');
-     setTimeout(() => setLukaState('done'), 2200);
+     const r0 = data.rows[0]?.id;
+     const r1 = data.rows[1]?.id;
+     const r2 = data.rows[2]?.id;
+     lukaSequentialFill([
+       {
+         scrollRef: firstFillRef as unknown as import('react').RefObject<HTMLElement>,
+         set: () => {
+           if (r0) {
+             setData(d => ({...d, rows: d.rows.map(r => r.id !== r0 ? r : {
+               ...r,
+               estimateType: "Allowance for Doubtful Accounts",
+               priorAmt: "245000",
+               actualAmt: "218000",
+               explanationVariance: "Actual write-offs lower than estimated; improved collections performance and proactive AR follow-up.",
+               bias: "No" as BiasAnswer,
+               implications: "Management estimate is conservative. Consider adjusting the current-year allowance methodology.",
+             })}));
+             markLukaFilled(r0);
+           }
+         },
+       },
+       {
+         set: () => {
+           if (r1) {
+             setData(d => ({...d, rows: d.rows.map(r => r.id !== r1 ? r : {
+               ...r,
+               estimateType: "Inventory Obsolescence Reserve",
+               priorAmt: "88000",
+               actualAmt: "112000",
+               explanationVariance: "Actual obsolescence exceeded estimate; new product lines accelerated turnover of legacy SKUs.",
+               bias: "Yes" as BiasAnswer,
+               implications: "Possible underestimation bias. Obtain updated methodology and test current-year reserve.",
+             })}));
+             markLukaFilled(r1);
+           }
+         },
+       },
+       {
+         set: () => {
+           if (r2) {
+             setData(d => ({...d, rows: d.rows.map(r => r.id !== r2 ? r : {
+               ...r,
+               estimateType: "Accrued Warranty Provision",
+               priorAmt: "156000",
+               actualAmt: "149000",
+               explanationVariance: "Slight overstatement; fewer warranty claims than anticipated, consistent with improved product quality controls.",
+               bias: "No" as BiasAnswer,
+               implications: "Immaterial difference. No change to audit approach required.",
+             })}));
+             markLukaFilled(r2);
+           }
+         },
+       },
+     ], () => setLukaState('done'));
    },
  }))}
  />
@@ -218,6 +282,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
 
  {/* ── Estimates table ───────────────────────────────────────────── */}
+ {isDemoEngagement && <div ref={firstFillRef} />}
  <SectionCard title="Prior Period Estimates — Outcome Analysis">
  <div className="overflow-x-auto">
  <table className="w-full">
@@ -242,7 +307,8 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  return (
  <tr key={row.id} className={cn(
  "transition-colors",
- hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50"
+ hasBias ? "bg-amber-50/60 dark:bg-amber-950/10 hover:bg-amber-50 dark:hover:bg-amber-950/20" : "hover:bg-muted/50",
+ isDemoEngagement && lukaHighlightFields.has(row.id) ? "border-l-2 border-violet-400 bg-violet-50/40" : ""
  )}>
  <td className="px-4 py-2.5 align-top min-w-[220px]">
  <Select
@@ -289,6 +355,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  </span>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[200px]">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(row.id)}>
  <Input
  disabled={locked}
  value={row.explanationVariance}
@@ -296,6 +363,10 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  placeholder="Reason for variance…"
  className="h-8 text-sm"
  />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has(row.id) && (
+ <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-4 py-2.5 align-top w-36">
  <Select

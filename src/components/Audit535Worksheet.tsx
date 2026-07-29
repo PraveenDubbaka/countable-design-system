@@ -11,6 +11,9 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -192,6 +195,14 @@ export function Audit535Worksheet() {
 
  const locked = data.concluded;
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  function setRow(id: string, patch: Partial<ProcedureRow>) {
  setData(d => ({...d, rows: {...d.rows, [id]: {...d.rows[id],...patch } } }));
@@ -224,7 +235,7 @@ export function Audit535Worksheet() {
  {items.map(item => {
  const row = data.rows[item.id] ?? emptyRow();
  return (
- <tr key={item.id} className="hover:bg-muted/50 transition-colors align-top">
+ <tr key={item.id} className={`hover:bg-muted/50 transition-colors align-top${isDemoEngagement && lukaHighlightFields.has(item.id) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-4 py-3 text-center text-sm font-semibold font-mono text-foreground">{item.num}</td>
  <td className="px-6 py-3 text-sm text-foreground">
  <div className="font-semibold">{item.title}</div>
@@ -251,7 +262,12 @@ export function Audit535Worksheet() {
  </Select>
  </td>
  <td className="px-6 py-3">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(item.id)}>
  <Textarea disabled={locked} value={row.comments} onChange={e => setRow(item.id, { comments: e.target.value })} placeholder="Document procedure performed and findings…" className="min-h-[72px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has(item.id) && (
+ <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-4 py-3 text-center">
  <RefButton
@@ -285,7 +301,36 @@ export function Audit535Worksheet() {
           ...a,
           onTrigger: () => {
             setLukaState('loading');
-            setTimeout(() => setLukaState('done'), 2200);
+            lukaSequentialFill([
+              {
+                scrollRef: firstFillRef as unknown as import('react').RefObject<HTMLElement>,
+                set: () => {
+                  setRow('a1', {
+                    psc: 'Y',
+                    comments: "Financial statements prepared by the Controller using Xero (cloud-based). Source data flows from bank feeds, AR sub-ledger (Xero), AP module, and payroll system. Controller generates trial balance; CFO reviews and approves before year-end close. Management team of 5 staff; no dedicated IT department. Inquired of Controller and CFO; reviewed Xero user permissions.",
+                  });
+                  markLukaFilled('a1');
+                },
+              },
+              {
+                set: () => {
+                  setRow('a2', {
+                    psc: 'Y',
+                    comments: "Month-end close completed by the 10th business day. Standard recurring entries (depreciation, prepayments) are automated in Xero. Manual adjusting entries require CFO sign-off via email approval trail. Year-end working paper package compiled in Excel from Xero trial balance export. No formal written close checklist; process is consistent year-over-year per CFO inquiry.",
+                  });
+                  markLukaFilled('a2');
+                },
+              },
+              {
+                set: () => {
+                  setRow('a3', {
+                    psc: 'NA',
+                    comments: "N/A — entity is a single reporting unit with no subsidiaries or components requiring consolidation.",
+                  });
+                  markLukaFilled('a3');
+                },
+              },
+            ], () => setLukaState('done'));
           },
         }))}
       />
@@ -306,6 +351,7 @@ export function Audit535Worksheet() {
  <div className="flex-1 overflow-y-auto p-6 space-y-5">
 
  {/* Procedure parts */}
+ {isDemoEngagement && <div ref={firstFillRef} />}
  {ALL_PARTS.map(part => (
  <div key={part.title}>{renderPart(part.title, part.items)}</div>
  ))}

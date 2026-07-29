@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Trash2, Info, BookOpen, X } from "lucide-react";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -487,6 +489,15 @@ export function Audit520Worksheet() {
  const [editingProcsRowId, setEditingProcsRowId] = useState<string | null>(null);
  const [pickerForRowId, setPickerForRowId] = useState<string | null>(null);
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
+
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  function loadLibraryForRow(rowId: string, entry: RiskLibraryEntry) {
  setData(d => ({...d, partBRows: d.partBRows.map(r =>
@@ -541,7 +552,72 @@ export function Audit520Worksheet() {
           ...a,
           onTrigger: () => {
             setLukaState('loading');
-            setTimeout(() => setLukaState('done'), 2200);
+            const b0 = data.partBRows[0]?.id;
+            const b1 = data.partBRows[1]?.id;
+            const b2 = data.partBRows[2]?.id;
+            lukaSequentialFill([
+              {
+                scrollRef: firstFillRef as unknown as import('react').RefObject<HTMLElement>,
+                set: () => {
+                  if (b0) {
+                    setData(d => ({...d, partBRows: d.partBRows.map(r => r.id !== b0 ? r : {
+                      ...r,
+                      rmmIdentified: "Inventory value could be overstated due to inadequate obsolescence provision",
+                      scotabd: "Inventories",
+                      assertions: ["AV"],
+                      irFactors: "Inventory provision for obsolescence is subject to moderate estimate uncertainty and complexity. Management judgment is required in assessing slow-moving and obsolete stock. No automated controls over provision calculation.",
+                      fraudRisk: "N" as YN,
+                      irLikelihood: "M" as HML,
+                      irMagnitude: "M" as HML,
+                      inherentRisk: "M" as HML,
+                      significantRisk: "N" as YN,
+                      substantiveSufficient: "Y" as YN,
+                    })}));
+                    markLukaFilled(b0);
+                  }
+                },
+              },
+              {
+                set: () => {
+                  if (b1) {
+                    setData(d => ({...d, partBRows: d.partBRows.map(r => r.id !== b1 ? r : {
+                      ...r,
+                      rmmIdentified: "Revenue recognition may be misstated due to incorrect cut-off of charter agreements at year-end",
+                      scotabd: "Revenue",
+                      assertions: ["C", "AV"],
+                      irFactors: "Charter revenue is recognised over the contract period; cut-off risk exists at year-end for contracts spanning the period boundary. Low complexity but requires consistent application of revenue recognition policy.",
+                      fraudRisk: "N" as YN,
+                      irLikelihood: "M" as HML,
+                      irMagnitude: "M" as HML,
+                      inherentRisk: "M" as HML,
+                      significantRisk: "N" as YN,
+                      substantiveSufficient: "Y" as YN,
+                    })}));
+                    markLukaFilled(b1);
+                  }
+                },
+              },
+              {
+                set: () => {
+                  if (b2) {
+                    setData(d => ({...d, partBRows: d.partBRows.map(r => r.id !== b2 ? r : {
+                      ...r,
+                      rmmIdentified: "Related-party transactions may be incomplete or not disclosed on arm's length terms",
+                      scotabd: "Related-party transactions",
+                      assertions: ["C", "AV"],
+                      irFactors: "Owner-managed entity — risk of undisclosed related-party transactions or non-arm's-length pricing. Moderate subjectivity in management's determination of market rates.",
+                      fraudRisk: "Y" as YN,
+                      irLikelihood: "M" as HML,
+                      irMagnitude: "H" as HML,
+                      inherentRisk: "H" as HML,
+                      significantRisk: "Y" as YN,
+                      substantiveSufficient: "N" as YN,
+                    })}));
+                    markLukaFilled(b2);
+                  }
+                },
+              },
+            ], () => setLukaState('done'));
           },
         }))}
       />
@@ -652,6 +728,7 @@ export function Audit520Worksheet() {
  </SectionCard>
 
  {/* ── Part B ────────────────────────────────────────────────── */}
+ {isDemoEngagement && <div ref={firstFillRef} />}
  <SectionCard title="Part B — Identify RMMs and Assess Inherent Risk at the Assertion Level">
  <div className="px-6 py-2 border-b border-border bg-muted/20">
  <p className="text-sm text-muted-foreground">
@@ -680,7 +757,7 @@ export function Audit520Worksheet() {
  </thead>
  <tbody className="divide-y divide-border">
  {data.partBRows.map(row => (
- <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50")}>
+ <tr key={row.id} className={cn("transition-colors", row.significantRisk === "Y" ? "bg-amber-50/40 dark:bg-amber-950/10 hover:bg-amber-50/60" : "hover:bg-muted/50", isDemoEngagement && lukaHighlightFields.has(row.id) ? "border-l-2 border-violet-400 bg-violet-50/40" : "")}>
  <td className="px-4 py-2.5 align-top min-w-[260px]">
  {(() => {
  const procs = row.procedures ?? [];
@@ -808,7 +885,12 @@ export function Audit520Worksheet() {
  )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[180px]">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(row.id)}>
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has(row.id) && (
+ <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[140px]">
  <Select value={row.scotabd} onValueChange={v => updatePartB(row.id, "scotabd", v)} disabled={locked}>

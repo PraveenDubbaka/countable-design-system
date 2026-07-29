@@ -11,6 +11,9 @@ import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { lukaSequentialFill } from '@/lib/lukaInlineFill';
+import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
+import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -279,6 +282,9 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  const storageKey = `audit-515-data-v1-${engagementId ?? (isUS ? "us" : "ca")}`;
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
+ const firstFillRef = useRef<HTMLDivElement>(null);
  const [data, setData] = useState<Data515>(() => {
  const saved = readJsonFromLocalStorage<Data515 | null>(storageKey, null);
  const def = buildDefault(isUS);
@@ -313,6 +319,11 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  function deleteParty(id: string) {
  setData(d => ({...d, parties: d.parties.filter(p => p.id !== id) }));
  }
+ function markLukaFilled(id: string) {
+   setLukaFilledFields(prev => new Set(prev).add(id));
+   setLukaHighlightFields(prev => new Set(prev).add(id));
+   setTimeout(() => setLukaHighlightFields(prev => { const n = new Set(prev); n.delete(id); return n; }), 2000);
+ }
 
  return (
  <div className="flex flex-col h-full">
@@ -330,7 +341,54 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
    ...a,
    onTrigger: () => {
      setLukaState('loading');
-     setTimeout(() => setLukaState('done'), 2200);
+     const p0 = data.parties[0]?.id;
+     const p1 = data.parties[1]?.id;
+     const p2 = data.parties[2]?.id;
+     lukaSequentialFill([
+       {
+         scrollRef: firstFillRef as unknown as import('react').RefObject<HTMLElement>,
+         set: () => {
+           if (p0) {
+             setData(d => ({...d, parties: d.parties.map(p => p.id !== p0 ? p : {
+               ...p,
+               name: isUS ? "J. Halvorsen (CEO & 62% shareholder)" : "M. Chen (CEO & 62% shareholder)",
+               relationship: "Key management / Controlling shareholder",
+               value: "Salary $385,000; dividend $180,000",
+               reasons: "Employment contract and declared dividend — in normal course; approved by board. Salary benchmarked to industry comparables for private-company CEO. Dividend declared per shareholder resolution.",
+             })}));
+             markLukaFilled(p0);
+           }
+         },
+       },
+       {
+         set: () => {
+           if (p1) {
+             setData(d => ({...d, parties: d.parties.map(p => p.id !== p1 ? p : {
+               ...p,
+               name: isUS ? "Halvorsen Holdings Inc." : "Chen Marine Holdings Ltd.",
+               relationship: "Parent — 62% shareholder",
+               value: "Management fee $240,000",
+               reasons: "Head-office services (finance, IT, HR) — arm's-length benchmark rate confirmed via independent comparables. Monthly billing per intercompany agreement dated January 2023.",
+             })}));
+             markLukaFilled(p1);
+           }
+         },
+       },
+       {
+         set: () => {
+           if (p2) {
+             setData(d => ({...d, parties: d.parties.map(p => p.id !== p2 ? p : {
+               ...p,
+               name: isUS ? "Coastal Bunker LLC" : "Pacific Bunker Ltd.",
+               relationship: "Common control (CEO 100% owner)",
+               value: "Fuel purchases $1,420,000",
+               reasons: "Bunker fuel supply — rates benchmarked to Platts index (within 1.2% of market). Largest vendor by spend. Approved by board resolution; invoices reviewed by CFO prior to payment.",
+             })}));
+             markLukaFilled(p2);
+           }
+         },
+       },
+     ], () => setLukaState('done'));
    },
  }))}
  />
@@ -465,6 +523,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </SectionCard>
 
  {/* Related parties register */}
+ {isDemoEngagement && <div ref={firstFillRef} />}
  <SectionCard
  title="Related Parties Register"
  subtitle="List related parties below or cross-reference to other relevant working papers (e.g.,)."
@@ -492,7 +551,7 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </tr>
  )}
  {data.parties.map((p, idx) => (
- <tr key={p.id} className="group hover:bg-muted/30 transition-colors align-top">
+ <tr key={p.id} className={`group hover:bg-muted/30 transition-colors align-top${isDemoEngagement && lukaHighlightFields.has(p.id) ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-4 py-2.5 text-center text-xs text-muted-foreground font-mono">{idx + 1}</td>
  <td className="px-4 py-2.5">
  <Input
@@ -519,12 +578,17 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  />
  </td>
  <td className="px-4 py-2.5">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(p.id)}>
  <Textarea
  disabled={locked} value={p.reasons}
  onChange={e => updateParty(p.id, { reasons: e.target.value })}
  placeholder="Reasons for transaction; whether in normal course; terms…"
  className="min-h-[44px] text-sm bg-background resize-none"
  />
+ </LukaTypingRow>
+ {isDemoEngagement && lukaFilledFields.has(p.id) && (
+ <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
+ )}
  </td>
  <td className="px-4 py-2.5 text-center w-24">
  <RefButton
