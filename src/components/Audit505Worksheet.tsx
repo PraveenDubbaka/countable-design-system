@@ -12,7 +12,8 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
-import { dispatchLukaSuggest } from "@/lib/lukaOpenStore";
+import { lukaSequentialFill } from "@/lib/lukaInlineFill";
+import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -238,6 +239,12 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  };
  });
 
+ const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
+ const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ function markLukaFilled(id: string) {
+  setLukaFilledFields(prev => new Set(prev).add(id));
+ }
+
  const firstRender = useRef(true);
  useEffect(() => {
  if (firstRender.current) { firstRender.current = false; return; }
@@ -290,17 +297,37 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="flex flex-col h-full">
  {isDemoEngagement && (
   <LukaStatusBar
-    isActive={true}
-    message="Luka is populating information from prior file and connected data sources…"
-    actions={DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
+    isActive={isDemoEngagement}
+    message={
+      lukaState === 'loading'
+        ? "Luka is populating fields from prior file and connected sources…"
+        : lukaState === 'done'
+        ? "Luka has reviewed this section — fields flagged for your review."
+        : "Luka is populating information from Xero and prior file…"
+    }
+    actions={lukaState === 'idle' ? DEMO_LUKA_ACTIONS.riskAssessment.actions.map(a => ({
       ...a,
-      onTrigger: () => dispatchLukaSuggest({
-        label: a.label,
-        sources: DEMO_LUKA_ACTIONS.riskAssessment.sources,
-        engagementLabel: "Northline Precision Manufacturing — Dec 31, 2025",
-        worksheetKey: "505",
-      }),
-    }))}
+      onTrigger: () => {
+        setLukaState('loading');
+        lukaSequentialFill([
+          { set: () => {
+              setPlan('pl-1', { checked: true, psc: 'C', response: 'CFO and Controller identified as primary contacts for risk identification discussions.' });
+              markLukaFilled('pl-1');
+            }
+          },
+          { set: () => {
+              setPlan('pl-2', { checked: true, psc: 'C', response: 'Plant manager (Mississauga), warehouse supervisor (Barrie), and accounting manager selected for inquiry.' });
+              markLukaFilled('pl-2');
+            }
+          },
+          { set: () => {
+              setPlan('pl-3', { checked: true, psc: 'C', response: 'Interviews scheduled for week of January 12, 2026. Names and roles documented in engagement binder.' });
+              markLukaFilled('pl-3');
+            }
+          },
+        ], () => setLukaState('done'));
+      },
+    })) : []}
   />
  )}
 
@@ -358,6 +385,11 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  </td>
  <td className="px-6 py-3 align-top">
  <AttributedComment value={row.response} onChange={v => setPlan(proc.id, { response: v })} storageKey={`505-${engagementId}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
+ {isDemoEngagement && lukaFilledFields.has(proc.id) && (
+   <div className="mt-1">
+     <AutomationStateChip state="luka-drafted" />
+   </div>
+ )}
  </td>
  <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
  <RefButton
