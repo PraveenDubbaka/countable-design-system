@@ -1982,6 +1982,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Build sidebar child nodes for an aud-wp-* node from its mapped gca-ws-proc-* items
  const buildWpChildren = (audWpId: string, map: Record<string, string[]>): SectionNode[] => {
   const gcaIds = map[audWpId] ?? [];
+  const lsCode = audWpId.replace("aud-wp-", "").toUpperCase();
   const seen = new Set<string>();
   const result: SectionNode[] = [];
   for (const gcaId of gcaIds) {
@@ -1991,12 +1992,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     for (const child of node.children) {
      if (!seen.has(child.id)) {
       seen.add(child.id);
-      result.push({ id: child.id, label: child.name, icon: "worksheet", route: `gca-proc/${child.id}` });
+      const seq = result.length + 1;
+      result.push({ id: child.id, code: `${lsCode}-${seq}`, label: child.name, icon: "worksheet", route: `gca-proc/${child.id}` });
      }
     }
    } else if (!seen.has(node.id)) {
     seen.add(node.id);
-    result.push({ id: node.id, label: node.name, icon: "worksheet", route: `gca-proc/${node.id}` });
+    const seq = result.length + 1;
+    result.push({ id: node.id, code: `${lsCode}-${seq}`, label: node.name, icon: "worksheet", route: `gca-proc/${node.id}` });
    }
   }
   return result;
