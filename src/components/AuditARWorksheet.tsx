@@ -309,15 +309,15 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
         <div className="flex items-center gap-2 px-3 py-2 border-b border-primary/20 bg-primary/[0.05] text-sm">
           <span className="font-medium">{selectedRows.size} row{selectedRows.size !== 1 ? "s" : ""} selected</span>
           <div className="ml-auto flex items-center gap-1">
-            <button onClick={hideSelected} className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted border border-border transition-colors">
+            <Button variant="secondary" size="sm" onClick={hideSelected}>
               <EyeOff className="h-3.5 w-3.5" /> Hide
-            </button>
-            <button onClick={deleteSelected} className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium text-destructive hover:bg-destructive/10 border border-destructive/30 transition-colors">
+            </Button>
+            <Button variant="secondary" size="sm" onClick={deleteSelected} className="text-destructive border-destructive/40 hover:bg-destructive/10 hover:border-destructive/60 hover:text-destructive">
               <Trash2 className="h-3.5 w-3.5" /> Delete
-            </button>
-            <button onClick={() => setSelectedRows(new Set())} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors" title="Clear selection">
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setSelectedRows(new Set())} title="Clear selection" className="px-2">
               <X className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
