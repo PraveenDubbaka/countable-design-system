@@ -403,16 +403,17 @@ export function Audit590Worksheet() {
  // Sync active procedure IDs (mapped to aud-wp-*) to localStorage so Sidebar can filter
  useEffect(() => {
  if (!engagementId) return;
+ // Track exact plannedProcedureId per row so any add/remove/change triggers an update
+ const serialized = data.rows.map(r => r.plannedProcedureId || "").join("|");
+ if (serialized === prevActiveProcIdsRef.current) return;
+ prevActiveProcIdsRef.current = serialized;
  const activeIds = [...new Set(
  data.rows
  .map(r => r.plannedProcedureId)
  .filter(Boolean)
  .map(gcaId => getAudWpIdForProc(gcaId))
  .filter(Boolean)
- )].sort();
- const serialized = activeIds.join(",");
- if (serialized === prevActiveProcIdsRef.current) return;
- prevActiveProcIdsRef.current = serialized;
+ )];
  setActiveProcedureIds(engagementId, activeIds);
  setWpProcMap(engagementId, data.rows);
  }, [data.rows, engagementId]);
