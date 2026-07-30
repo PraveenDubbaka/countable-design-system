@@ -4,7 +4,7 @@ import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
 import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UserPlus, Sparkles } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -1095,7 +1095,7 @@ export default function CreateEngagement() {
  headerRight={
  <div className="flex items-center gap-2">
  <Button variant="outline" onClick={addRecommendedTeam} className="h-9 px-3 gap-1.5 text-sm">
- <Sparkles className="h-4 w-4" />Add Recommended
+ Add Recommended
  </Button>
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
