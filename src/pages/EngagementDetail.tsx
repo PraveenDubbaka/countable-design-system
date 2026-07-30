@@ -2342,21 +2342,17 @@ export default function EngagementDetail() {
  setHasUsedLuka(true);
  localStorage.setItem(`luka-used-${engagementId}`, '1');
  }
- setLukaInitialTab("workspace");
- setLukaInitialWorkspaceEngagement({
- name: engagement?.client || engagementId,
- code: engagementId,
- source: "xero",
- });
+ setLukaInitialTab("threads");
+ setLukaQuery(`What would you like to do in the "${checklist?.title ?? checklistKey}" workpaper? I can help you understand requirements, fill in fields, review responses, or answer questions about this section.`);
  setLukaOpen(true);
  }}
  className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
  >
- <LukaIcon size={20} bare animated />
- Workspace
+ <MessageSquare className="h-3.5 w-3.5" />
+ Thread
  </button>
  </TooltipTrigger>
- <TooltipContent side="bottom"><p>Run on workspace</p></TooltipContent>
+ <TooltipContent side="bottom"><p>Start a Luka thread for this workpaper</p></TooltipContent>
  </Tooltip>
  {hasUsedLuka && (
  <button
@@ -3181,7 +3177,7 @@ export default function EngagementDetail() {
  onOpenChange={(o) => {
  setLukaOpen(o);
  if (!o) {
- setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); setLukaPap501Config(null);
+ setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); setLukaPap501Config(null); setLukaQuery("");
  }
  }}
  initialQuery={lukaQuery}
