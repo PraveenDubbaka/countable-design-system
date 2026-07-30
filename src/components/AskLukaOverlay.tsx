@@ -2333,14 +2333,14 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  initial={{ opacity: 0, y: 8 }}
  animate={{ opacity: 1, y: 0 }}
  transition={{ delay: 0.15, duration: 0.3 }}
- className="flex items-start gap-2.5"
+ className="flex items-start gap-4"
  >
- <div className="shrink-0 mt-1 w-5 h-5 flex items-center justify-center">
- <LukaHeaderIcon size={18} bare animated />
+ <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
+ <LukaHeaderIcon size={32} bare inverted animated />
  </div>
- <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-foreground max-w-[85%] leading-relaxed">
+ <p className="flex-1 text-[15px] leading-relaxed whitespace-pre-wrap" style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
  {initialAiMessage}
- </div>
+ </p>
  </motion.div>
  <div className="flex flex-wrap gap-2 pl-9">
  {(initialAiMessagePrompts ?? quickPrompts).map((prompt) => (
