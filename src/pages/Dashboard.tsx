@@ -249,7 +249,7 @@ const IntegrationBadge = ({
 export default function Dashboard() {
  const navigate = useNavigate();
  const { engagements: allEngagementsRaw } = useEngagements();
- const allEngagements = allEngagementsRaw.filter(e => e.type === 'Audit (AUD)');
+ const allEngagements = allEngagementsRaw.filter(e => e.type === 'Audit (AUD)' && e.id !== 'AUD-SL-Mar312024');
  const [searchQuery, setSearchQuery] = useState("");
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;

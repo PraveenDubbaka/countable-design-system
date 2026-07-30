@@ -97,7 +97,7 @@ const filterPeriodOptions = [
 export default function Engagements() {
  const navigate = useNavigate();
  const { engagements: engagementListRaw, deleteEngagement } = useEngagements();
- const engagementList = engagementListRaw.filter(e => e.type === 'Audit (AUD)');
+ const engagementList = engagementListRaw.filter(e => e.type === 'Audit (AUD)' && e.id !== 'AUD-SL-Mar312024');
  const [searchQuery, setSearchQuery] = useState("");
  const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
 
