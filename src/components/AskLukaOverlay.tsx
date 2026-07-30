@@ -618,6 +618,10 @@ export function AskLukaOverlay({
  const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
  const [inputValue, setInputValue] = useState("");
  const [threadSearch, setThreadSearch] = useState("");
+ const [aiConversation, setAiConversation] = useState<{ role: "luka" | "user"; text: string }[]>([]);
+ const [aiConversationTyping, setAiConversationTyping] = useState(false);
+ const [aiChipsHidden, setAiChipsHidden] = useState(false);
+ const aiConvBottomRef = useRef<HTMLDivElement>(null);
  const [isFullscreen, setIsFullscreen] = useState(false);
  const [threadsSidebarCollapsed, setThreadsSidebarCollapsed] = useState(true);
  const [workspaceSidebarCollapsed, setWorkspaceSidebarCollapsed] = useState(false);
@@ -633,6 +637,24 @@ export function AskLukaOverlay({
  useEffect(() => {
  if (open && initialQuery) setInputValue(initialQuery);
  }, [open, initialQuery]);
+
+ useEffect(() => {
+ if (open && initialAiMessage) {
+ setAiConversation([{ role: "luka", text: initialAiMessage }]);
+ setAiConversationTyping(false);
+ setAiChipsHidden(false);
+ } else if (!open) {
+ setAiConversation([]);
+ setAiConversationTyping(false);
+ setAiChipsHidden(false);
+ }
+ }, [open, initialAiMessage]);
+
+ useEffect(() => {
+ if (aiConvBottomRef.current) {
+ aiConvBottomRef.current.scrollIntoView({ behavior: "smooth" });
+ }
+ }, [aiConversation, aiConversationTyping]);
 
  useEffect(() => {
  if (open && autoFillMode) {
@@ -998,6 +1020,30 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  
  setIsActivityProcessing(status === "processing");
  }, []);
+
+ const handleInitialAiChip = (prompt: string) => {
+ const label = prompt.replace(/^\//, "");
+ setAiChipsHidden(true);
+ setAiConversation(prev => [...prev, { role: "user", text: label }]);
+ setAiConversationTyping(true);
+ const workpaperTitle = initialAiMessage?.match(/"([^"]+)"/)?.[1] ?? "this workpaper";
+ let response = "";
+ if (label.toLowerCase().includes("explain")) {
+ response = `The ${workpaperTitle} workpaper documents your engagement's acceptance and continuance assessment.\n\nKey requirements:\n• Confirm the applicable reporting framework (ASPE or IFRS)\n• Document management's acknowledgement of their responsibilities\n• Record any scope limitations or changes from prior year\n• Confirm auditor independence and ethical requirements\n\nWould you like me to walk through each field step by step?`;
+ } else if (label.toLowerCase().includes("auto-fill")) {
+ response = `I'll analyze your connected source data and prior responses to pre-fill ${workpaperTitle}.\n\nI can auto-populate:\n• Entity details and reporting framework\n• Engagement period and year-end date\n• Standard risk assessment fields from prior year\n\nShall I start? I'll flag anything that needs your review before saving.`;
+ } else if (label.toLowerCase().includes("review")) {
+ response = `I've scanned your current responses in ${workpaperTitle}:\n\n• Engagement risk assessment — answered\n• Independence evaluation — incomplete (2 fields missing)\n• Prior period comparison — not started\n\n2 sections need attention before this can be signed off. Want me to jump to the first incomplete field?`;
+ } else if (label.toLowerCase().includes("risk")) {
+ response = `Key risks identified for this section:\n\n• Revenue recognition — first-year audit with no prior comparatives; requires additional procedures\n• Related parties — shareholder agreements reference intercompany transactions not yet documented\n• Going concern — stable operations, no immediate indicators; standard procedures apply\n\nThese are reflected in workpaper 530 (Pervasive Risks). Want to open it?`;
+ } else {
+ response = `I'm reviewing the ${workpaperTitle} workpaper now. What specific aspect would you like to explore?`;
+ }
+ window.setTimeout(() => {
+ setAiConversationTyping(false);
+ setAiConversation(prev => [...prev, { role: "luka", text: response }]);
+ }, 1400);
+ };
 
  const handlePromptSelect = (item: PromptItem) => {
  if (item.kind === "form") {
@@ -2329,32 +2375,77 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </div>
  ) : initialAiMessage ? (
  <div className="flex-1 flex flex-col luka-chat-body p-4 gap-4 overflow-y-auto">
+ {aiConversation.map((msg, i) =>
+ msg.role === "luka" ? (
  <motion.div
+ key={i}
  initial={{ opacity: 0, y: 8 }}
  animate={{ opacity: 1, y: 0 }}
- transition={{ delay: 0.15, duration: 0.3 }}
- className="flex items-start gap-4"
+ transition={{ delay: i === 0 ? 0.15 : 0, duration: 0.3 }}
+ className="flex items-start gap-3"
  >
  <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
  <LukaHeaderIcon size={32} bare inverted animated />
  </div>
  <p className="flex-1 text-[15px] leading-relaxed whitespace-pre-wrap" style={{ color: "hsl(222 35% 16%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
- {initialAiMessage}
+ {msg.text}
  </p>
  </motion.div>
- <div className="flex flex-wrap gap-2 pl-9">
+ ) : (
+ <motion.div
+ key={i}
+ initial={{ opacity: 0, x: 12 }}
+ animate={{ opacity: 1, x: 0 }}
+ transition={{ duration: 0.25 }}
+ className="flex justify-end"
+ >
+ <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-primary text-primary-foreground px-3.5 py-2 text-sm leading-relaxed" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+ {msg.text}
+ </div>
+ </motion.div>
+ )
+ )}
+ {aiConversationTyping && (
+ <motion.div
+ initial={{ opacity: 0, y: 6 }}
+ animate={{ opacity: 1, y: 0 }}
+ exit={{ opacity: 0 }}
+ className="flex items-start gap-3"
+ >
+ <div className="shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center">
+ <LukaHeaderIcon size={32} bare inverted />
+ </div>
+ <div className="flex items-center gap-1 pt-1">
+ {[0, 1, 2].map(dot => (
+ <motion.span
+ key={dot}
+ className="w-2 h-2 rounded-full bg-muted-foreground/50"
+ animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
+ transition={{ duration: 0.9, delay: dot * 0.2, repeat: Infinity }}
+ />
+ ))}
+ </div>
+ </motion.div>
+ )}
+ {!aiChipsHidden && (
+ <div className="flex flex-wrap gap-2 pl-11">
  {(initialAiMessagePrompts ?? quickPrompts).map((prompt) => (
  <motion.button
  key={prompt}
+ initial={{ opacity: 0, y: 4 }}
+ animate={{ opacity: 1, y: 0 }}
+ transition={{ delay: 0.4 }}
  whileHover={{ scale: 1.04, y: -1 }}
  whileTap={{ scale: 0.97 }}
  className="luka-prompt-chip"
- onClick={() => handlePromptSelect({ kind: "generic", label: prompt.replace(/^\//, "") })}
+ onClick={() => handleInitialAiChip(prompt)}
  >
  <span style={{ color: "hsl(207 71% 38%)", fontWeight: 700 }}>/</span>{prompt.replace(/^\//, "")}
  </motion.button>
  ))}
  </div>
+ )}
+ <div ref={aiConvBottomRef} />
  </div>
  ) : (
  <div className="flex-1 flex flex-col items-center justify-center luka-chat-body">
