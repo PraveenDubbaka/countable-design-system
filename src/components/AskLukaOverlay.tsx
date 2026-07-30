@@ -699,7 +699,8 @@ export function AskLukaOverlay({
  }, [open]);
 
  useEffect(() => {
- if (open && initialTab === "workspace") {
+ if (!open) return;
+ if (initialTab === "workspace") {
  setActiveTab("workspace");
  setIsFullscreen(true);
  setThreadsSidebarCollapsed(true);
@@ -707,6 +708,8 @@ export function AskLukaOverlay({
  setWorkspaceEngagement(initialWorkspaceEngagement);
  setHasWorkspaceEngagement(true);
  }
+ } else {
+ setActiveTab("threads");
  }
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [open, initialTab]);
@@ -1542,18 +1545,24 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  onClick={(e) => { e.stopPropagation(); setShowEngagementTray((v) => !v); }}
  className="flex items-center gap-2 px-2 py-1 rounded-lg cursor-pointer transition-colors"
  >
- <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center">
+ {(() => {
+ const src = [...(autoFillSources ?? []), ...(pap501Sources ?? [])].join(" ").toLowerCase();
+ const connRaw = selectedEngagement ? (() => { try { return localStorage.getItem(`connectors-${selectedEngagement.id}`); } catch { return null; } })() : null;
+ const connApps: string[] = connRaw ? JSON.parse(connRaw) : [];
+ const connStr = connApps.join(" ").toLowerCase();
+ const isXero = src.includes("xero") || connStr.includes("xero");
+ const isQBO = src.includes("quickbooks") || src.includes("qbo") || connStr.includes("quickbooks") || connStr.includes("qbo");
+ if (isXero) return <img src={xeroLogo} alt="Xero" className="h-[20px] w-auto object-contain shrink-0" />;
+ if (isQBO) return <img src={quickbooksLogo} alt="QuickBooks" className="h-[22px] w-auto object-contain shrink-0" />;
+ return (
+ <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center shrink-0">
  <Inbox size={14} className="text-muted-foreground" />
  </div>
+ );
+ })()}
  <span className="text-sm font-medium text-foreground">
  {selectedEngagement ? selectedEngagement.id : "Select Engagement"}
  </span>
- {selectedEngagement && (() => {
- const src = [...(autoFillSources ?? []),...(pap501Sources ?? [])].join(" ").toLowerCase();
- if (src.includes("xero")) return <img src={xeroLogo} alt="Xero" className="h-[20px] w-auto object-contain" />;
- if (src.includes("quickbooks") || src.includes("qbo")) return <img src={quickbooksLogo} alt="QuickBooks" className="h-[24px] w-auto object-contain" />;
- return null;
- })()}
  <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showEngagementTray ? "rotate-180" : ""}`} />
  </motion.button>
  
@@ -2327,8 +2336,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  transition={{ delay: 0.15, duration: 0.3 }}
  className="flex items-start gap-2.5"
  >
- <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] flex items-center justify-center shrink-0 mt-0.5">
- <LukaHeaderIcon size={14} bare animated />
+ <div className="shrink-0 mt-1 w-5 h-5 flex items-center justify-center">
+ <LukaHeaderIcon size={18} bare animated />
  </div>
  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-foreground max-w-[85%] leading-relaxed">
  {initialAiMessage}
