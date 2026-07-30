@@ -3,10 +3,9 @@ import { setLukaOpen, subscribeLukaConfig } from "@/lib/lukaOpenStore";
 import { loadEngagements } from "@/store/engagementsStore";
 
 import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
-import { LukaIcon } from "@/components/LukaIcon";
+import { LukaIcon as LukaHeaderIcon } from "@/components/LukaIcon";
 import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
 import xeroLogo from "@/assets/xero-logo.png";
-import lukaAiIcon from "@/assets/luka-ai-icon.svg";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import {
  Tooltip,
@@ -2328,8 +2327,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  transition={{ delay: 0.15, duration: 0.3 }}
  className="flex items-start gap-2.5"
  >
- <div className="w-7 h-7 rounded-full bg-white border border-border flex items-center justify-center shrink-0 mt-0.5 overflow-hidden">
- <img src={lukaAiIcon} alt="Luka" className="w-4 h-4 object-contain" />
+ <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] flex items-center justify-center shrink-0 mt-0.5">
+ <LukaHeaderIcon size={14} bare animated />
  </div>
  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-foreground max-w-[85%] leading-relaxed">
  {initialAiMessage}
