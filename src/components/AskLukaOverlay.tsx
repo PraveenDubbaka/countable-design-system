@@ -1545,6 +1545,14 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  onClick={(e) => { e.stopPropagation(); setShowEngagementTray((v) => !v); }}
  className="flex items-center gap-2 px-2 py-1 rounded-lg cursor-pointer transition-colors"
  >
+ <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center shrink-0">
+ <Inbox size={14} className="text-muted-foreground" />
+ </div>
+ <span className="text-sm font-medium text-foreground">
+ {selectedEngagement ? selectedEngagement.id : "Select Engagement"}
+ </span>
+ <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showEngagementTray ? "rotate-180" : ""}`} />
+ </motion.button>
  {(() => {
  const src = [...(autoFillSources ?? []), ...(pap501Sources ?? [])].join(" ").toLowerCase();
  const connRaw = selectedEngagement ? (() => { try { return localStorage.getItem(`connectors-${selectedEngagement.id}`); } catch { return null; } })() : null;
@@ -1552,19 +1560,10 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  const connStr = connApps.join(" ").toLowerCase();
  const isXero = src.includes("xero") || connStr.includes("xero");
  const isQBO = src.includes("quickbooks") || src.includes("qbo") || connStr.includes("quickbooks") || connStr.includes("qbo");
- if (isXero) return <img src={xeroLogo} alt="Xero" className="h-[20px] w-auto object-contain shrink-0" />;
- if (isQBO) return <img src={quickbooksLogo} alt="QuickBooks" className="h-[22px] w-auto object-contain shrink-0" />;
- return (
- <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center shrink-0">
- <Inbox size={14} className="text-muted-foreground" />
- </div>
- );
+ if (isXero) return <img src={xeroLogo} alt="Xero" className="h-[18px] w-auto object-contain shrink-0" />;
+ if (isQBO) return <img src={quickbooksLogo} alt="QuickBooks" className="h-[20px] w-auto object-contain shrink-0" />;
+ return null;
  })()}
- <span className="text-sm font-medium text-foreground">
- {selectedEngagement ? selectedEngagement.id : "Select Engagement"}
- </span>
- <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showEngagementTray ? "rotate-180" : ""}`} />
- </motion.button>
  
  {/* Minimized activity badge */}
  {(activeFlow === "account-reconciliation" || activeFlow === "tax-payable") && activityMinimized && (
