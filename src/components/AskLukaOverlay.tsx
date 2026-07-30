@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo, Fragment } from "react";
 import { setLukaOpen, subscribeLukaConfig } from "@/lib/lukaOpenStore";
 import { loadEngagements } from "@/store/engagementsStore";
 
@@ -618,9 +618,8 @@ export function AskLukaOverlay({
  const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
  const [inputValue, setInputValue] = useState("");
  const [threadSearch, setThreadSearch] = useState("");
- const [aiConversation, setAiConversation] = useState<{ role: "luka" | "user"; text: string }[]>([]);
+ const [aiConversation, setAiConversation] = useState<{ role: "luka" | "user"; text: string; chips?: string[] }[]>([]);
  const [aiConversationTyping, setAiConversationTyping] = useState(false);
- const [aiChipsHidden, setAiChipsHidden] = useState(false);
  const aiConvBottomRef = useRef<HTMLDivElement>(null);
  const [isFullscreen, setIsFullscreen] = useState(false);
  const [threadsSidebarCollapsed, setThreadsSidebarCollapsed] = useState(true);
@@ -640,13 +639,11 @@ export function AskLukaOverlay({
 
  useEffect(() => {
  if (open && initialAiMessage) {
- setAiConversation([{ role: "luka", text: initialAiMessage }]);
+ setAiConversation([{ role: "luka", text: initialAiMessage, chips: initialAiMessagePrompts ?? quickPrompts }]);
  setAiConversationTyping(false);
- setAiChipsHidden(false);
  } else if (!open) {
  setAiConversation([]);
  setAiConversationTyping(false);
- setAiChipsHidden(false);
  }
  }, [open, initialAiMessage]);
 
@@ -1023,25 +1020,43 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
 
  const handleInitialAiChip = (prompt: string) => {
  const label = prompt.replace(/^\//, "");
- setAiChipsHidden(true);
  setAiConversation(prev => [...prev, { role: "user", text: label }]);
  setAiConversationTyping(true);
  const workpaperTitle = initialAiMessage?.match(/"([^"]+)"/)?.[1] ?? "this workpaper";
+ const l = label.toLowerCase();
  let response = "";
- if (label.toLowerCase().includes("explain")) {
+ let followUpChips: string[] = [];
+ if (l.includes("explain")) {
  response = `The ${workpaperTitle} workpaper documents your engagement's acceptance and continuance assessment.\n\nKey requirements:\n• Confirm the applicable reporting framework (ASPE or IFRS)\n• Document management's acknowledgement of their responsibilities\n• Record any scope limitations or changes from prior year\n• Confirm auditor independence and ethical requirements\n\nWould you like me to walk through each field step by step?`;
- } else if (label.toLowerCase().includes("auto-fill")) {
+ followUpChips = ["/Walk me through each field", "/What framework applies?", "/Show me an example"];
+ } else if (l.includes("auto-fill") || l.includes("fill")) {
  response = `I'll analyze your connected source data and prior responses to pre-fill ${workpaperTitle}.\n\nI can auto-populate:\n• Entity details and reporting framework\n• Engagement period and year-end date\n• Standard risk assessment fields from prior year\n\nShall I start? I'll flag anything that needs your review before saving.`;
- } else if (label.toLowerCase().includes("review")) {
+ followUpChips = ["/Yes, start auto-filling", "/What sources will you use?", "/Preview first"];
+ } else if (l.includes("review")) {
  response = `I've scanned your current responses in ${workpaperTitle}:\n\n• Engagement risk assessment — answered\n• Independence evaluation — incomplete (2 fields missing)\n• Prior period comparison — not started\n\n2 sections need attention before this can be signed off. Want me to jump to the first incomplete field?`;
- } else if (label.toLowerCase().includes("risk")) {
+ followUpChips = ["/Jump to first issue", "/Show all incomplete fields", "/Dismiss warnings"];
+ } else if (l.includes("risk")) {
  response = `Key risks identified for this section:\n\n• Revenue recognition — first-year audit with no prior comparatives; requires additional procedures\n• Related parties — shareholder agreements reference intercompany transactions not yet documented\n• Going concern — stable operations, no immediate indicators; standard procedures apply\n\nThese are reflected in workpaper 530 (Pervasive Risks). Want to open it?`;
+ followUpChips = ["/Open workpaper 530", "/How do I address these?", "/Add to risk register"];
+ } else if (l.includes("walk me through")) {
+ response = `Sure! Let's go field by field.\n\n1. Reporting Framework — select ASPE or IFRS based on the entity type. For private companies this is almost always ASPE.\n\n2. Management Responsibilities — confirm management has acknowledged their role in preparing the financial statements.\n\n3. Independence — document your independence declaration and any threats identified.\n\nReady to move to the next group of fields?`;
+ followUpChips = ["/Next group of fields", "/Flag a concern", "/Mark section complete"];
+ } else if (l.includes("yes, start") || l.includes("start auto")) {
+ response = `Starting auto-fill for ${workpaperTitle}.\n\nPulling from Xero: entity name, year-end date, prior year comparatives...\n\nAll 8 auto-fillable fields have been pre-populated. 3 fields require your judgment and are flagged in yellow.\n\nOpen the workpaper to review?`;
+ followUpChips = ["/Open the workpaper", "/Show flagged fields", "/Undo auto-fill"];
+ } else if (l.includes("jump to first")) {
+ response = `The first incomplete section is Independence Evaluation — question 3.2:\n\n"Describe any threats to independence identified and the safeguards applied."\n\nThis field is required before sign-off. Would you like me to suggest standard language based on the engagement profile?`;
+ followUpChips = ["/Suggest standard language", "/Mark as N/A", "/Assign to team member"];
+ } else if (l.includes("open workpaper 530")) {
+ response = `Opening Pervasive Risks (530)...\n\nThis workpaper already has 3 identified risks from your risk assessment. You can link the risks flagged here directly to procedures in the Risk Response section.\n\nWant me to link them automatically?`;
+ followUpChips = ["/Yes, link automatically", "/Show me the risks", "/Add a new risk"];
  } else {
- response = `I'm reviewing the ${workpaperTitle} workpaper now. What specific aspect would you like to explore?`;
+ response = `I'm looking into that for the ${workpaperTitle} workpaper. What else would you like to know?`;
+ followUpChips = ["/Explain requirements", "/Auto-fill this section", "/What are the risks?"];
  }
  window.setTimeout(() => {
  setAiConversationTyping(false);
- setAiConversation(prev => [...prev, { role: "luka", text: response }]);
+ setAiConversation(prev => [...prev, { role: "luka", text: response, chips: followUpChips }]);
  }, 1400);
  };
 
@@ -2375,10 +2390,12 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </div>
  ) : initialAiMessage ? (
  <div className="flex-1 flex flex-col luka-chat-body p-4 gap-4 overflow-y-auto">
- {aiConversation.map((msg, i) =>
- msg.role === "luka" ? (
+ {(() => {
+ const lastChipsIdx = aiConversation.reduce((acc, m, i) => m.role === "luka" && m.chips?.length ? i : acc, -1);
+ return aiConversation.map((msg, i) => (
+ <Fragment key={i}>
+ {msg.role === "luka" ? (
  <motion.div
- key={i}
  initial={{ opacity: 0, y: 8 }}
  animate={{ opacity: 1, y: 0 }}
  transition={{ delay: i === 0 ? 0.15 : 0, duration: 0.3 }}
@@ -2393,7 +2410,6 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </motion.div>
  ) : (
  <motion.div
- key={i}
  initial={{ opacity: 0, x: 12 }}
  animate={{ opacity: 1, x: 0 }}
  transition={{ duration: 0.25 }}
@@ -2403,8 +2419,28 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  {msg.text}
  </div>
  </motion.div>
- )
  )}
+ {msg.role === "luka" && msg.chips?.length && i === lastChipsIdx && !aiConversationTyping && (
+ <div className="flex flex-wrap gap-2 pl-11">
+ {msg.chips.map((prompt) => (
+ <motion.button
+ key={prompt}
+ initial={{ opacity: 0, y: 4 }}
+ animate={{ opacity: 1, y: 0 }}
+ transition={{ delay: i === 0 ? 0.4 : 0.1 }}
+ whileHover={{ scale: 1.04, y: -1 }}
+ whileTap={{ scale: 0.97 }}
+ className="luka-prompt-chip"
+ onClick={() => handleInitialAiChip(prompt)}
+ >
+ <span style={{ color: "hsl(207 71% 38%)", fontWeight: 700 }}>/</span>{prompt.replace(/^\//, "")}
+ </motion.button>
+ ))}
+ </div>
+ )}
+ </Fragment>
+ ));
+ })()}
  {aiConversationTyping && (
  <motion.div
  initial={{ opacity: 0, y: 6 }}
@@ -2426,24 +2462,6 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  ))}
  </div>
  </motion.div>
- )}
- {!aiChipsHidden && (
- <div className="flex flex-wrap gap-2 pl-11">
- {(initialAiMessagePrompts ?? quickPrompts).map((prompt) => (
- <motion.button
- key={prompt}
- initial={{ opacity: 0, y: 4 }}
- animate={{ opacity: 1, y: 0 }}
- transition={{ delay: 0.4 }}
- whileHover={{ scale: 1.04, y: -1 }}
- whileTap={{ scale: 0.97 }}
- className="luka-prompt-chip"
- onClick={() => handleInitialAiChip(prompt)}
- >
- <span style={{ color: "hsl(207 71% 38%)", fontWeight: 700 }}>/</span>{prompt.replace(/^\//, "")}
- </motion.button>
- ))}
- </div>
  )}
  <div ref={aiConvBottomRef} />
  </div>
