@@ -248,7 +248,8 @@ const IntegrationBadge = ({
 };
 export default function Dashboard() {
  const navigate = useNavigate();
- const { engagements: allEngagements } = useEngagements();
+ const { engagements: allEngagementsRaw } = useEngagements();
+ const allEngagements = allEngagementsRaw.filter(e => e.type === 'Audit (AUD)');
  const [searchQuery, setSearchQuery] = useState("");
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;

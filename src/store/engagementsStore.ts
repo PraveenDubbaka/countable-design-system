@@ -51,17 +51,13 @@ export function loadEngagements(): EngagementRecord[] {
  seedDemoEngagementMeta();
  try {
    const raw = localStorage.getItem(ENG_KEY);
-   if (raw) {
-     const stored: EngagementRecord[] = JSON.parse(raw);
-     const storedIds = new Set(stored.map(e => e.id));
-     const newSeeds = SEED_ENGAGEMENTS.filter(e => !storedIds.has(e.id));
-     if (newSeeds.length === 0) return stored;
-     const merged = [...stored, ...newSeeds];
-     saveEngagements(merged);
-     return merged;
-   }
+   if (raw) return JSON.parse(raw);
  } catch {}
  return SEED_ENGAGEMENTS;
+}
+
+export function loadAuditEngagements(): EngagementRecord[] {
+ return loadEngagements().filter(e => e.type === 'Audit (AUD)');
 }
 
 export function saveEngagements(list: EngagementRecord[]): void {
