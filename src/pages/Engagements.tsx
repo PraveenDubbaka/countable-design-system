@@ -20,7 +20,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, X } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, X, Mail, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
+
+type AssigneeEntry = { initials: string; name: string; role: string; email: string; phone: string; color: string };
+const ENGAGEMENT_ASSIGNEES: Record<string, { firmTeam: AssigneeEntry[]; clientTeam: AssigneeEntry[] }> = {
+ 'AUD-NPM-Dec312025': {
+   firmTeam: [
+     { initials: 'RC', name: 'R. Chandra', role: 'Engagement Partner', email: 'r.chandra@countable.co', phone: '(416) 555-0101', color: '#4C6EF5' },
+     { initials: 'SW', name: 'S. Whitfield', role: 'Manager', email: 's.whitfield@countable.co', phone: '(416) 555-0102', color: '#12B886' },
+     { initials: 'DO', name: 'D. Okonkwo', role: 'Senior Auditor', email: 'd.okonkwo@countable.co', phone: '(416) 555-0103', color: '#F76707' },
+   ],
+   clientTeam: [
+     { initials: 'NP', name: 'Northline Precision', role: 'Contact Person', email: 'finance@northlineprecision.com', phone: '(905) 555-0200', color: '#39ADAD' },
+   ],
+ },
+ 'AUD-US-Dec312024': {
+   firmTeam: [
+     { initials: 'KP', name: 'K. Patel', role: 'Engagement Partner', email: 'k.patel@countable.co', phone: '(416) 555-0104', color: '#4C6EF5' },
+   ],
+   clientTeam: [
+     { initials: 'HF', name: 'Harbor Freight Logistics', role: 'Contact Person', email: 'accounts@harborfreight.com', phone: '(312) 555-0300', color: '#F76707' },
+   ],
+ },
+};
 
 const ENGAGEMENT_TYPES = [
  { value: "Audit (AUD)", label: "Audit (AUD)" },
@@ -100,6 +122,7 @@ export default function Engagements() {
  const engagementList = engagementListRaw.filter(e => e.type === 'Audit (AUD)' && e.id !== 'AUD-SL-Mar312024');
  const [searchQuery, setSearchQuery] = useState("");
  const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
+ const [expandedId, setExpandedId] = useState<string | null>(null);
 
  // Create Engagement modal
  const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -248,12 +271,12 @@ export default function Engagements() {
  </td>
  </tr>
  )}
- {filteredEngagements.map((engagement) => (
- <tr 
- key={engagement.id} 
- className="hover:bg-muted/50 transition-colors group max-h-[50px]"
- style={{ maxHeight: '50px' }}
- >
+ {filteredEngagements.map((engagement) => {
+ const isExpanded = expandedId === engagement.id;
+ const assignees = ENGAGEMENT_ASSIGNEES[engagement.id];
+ return (
+ <React.Fragment key={engagement.id}>
+ <tr className="hover:bg-muted/50 transition-colors group">
  <td className="px-6 py-2 whitespace-nowrap">
  <span
  onClick={() => navigate(`/engagements/${engagement.id}`)}
@@ -273,9 +296,13 @@ export default function Engagements() {
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
  <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
  <td className="px-6 py-2 whitespace-nowrap">
- <span className="text-sm text-link cursor-pointer hover:underline">
+ <button
+ className="inline-flex items-center gap-1 text-sm text-link cursor-pointer hover:underline"
+ onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : engagement.id); }}
+ >
  {engagement.team}
- </span>
+ {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+ </button>
  </td>
  <td className="px-6 py-2 whitespace-nowrap">
  <StatusBadge status={engagement.status} hasRF={engagement.hasRF} />
@@ -300,7 +327,54 @@ export default function Engagements() {
  </div>
  </td>
  </tr>
+ {isExpanded && assignees && (
+ <tr className="bg-muted/30">
+ <td colSpan={8} className="px-6 py-4">
+ <div className="flex gap-10">
+ <div className="flex-1">
+ <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Firm Team</p>
+ <div className="flex flex-col gap-2.5">
+ {assignees.firmTeam.map((m, i) => (
+ <div key={i} className="flex items-center gap-3">
+ <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0" style={{ backgroundColor: m.color }}>{m.initials}</div>
+ <div className="min-w-0">
+ <p className="text-sm font-medium text-foreground leading-none">{m.name}</p>
+ <p className="text-xs text-muted-foreground mt-0.5">{m.role}</p>
+ </div>
+ <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground">
+ <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{m.email}</span>
+ <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{m.phone}</span>
+ </div>
+ </div>
  ))}
+ </div>
+ </div>
+ <div className="w-px bg-border self-stretch" />
+ <div className="flex-1">
+ <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Client Team</p>
+ <div className="flex flex-col gap-2.5">
+ {assignees.clientTeam.map((m, i) => (
+ <div key={i} className="flex items-center gap-3">
+ <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0" style={{ backgroundColor: m.color }}>{m.initials}</div>
+ <div className="min-w-0">
+ <p className="text-sm font-medium text-foreground leading-none">{m.name}</p>
+ <p className="text-xs text-muted-foreground mt-0.5">{m.role}</p>
+ </div>
+ <div className="ml-auto flex items-center gap-4 text-xs text-muted-foreground">
+ <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{m.email}</span>
+ <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{m.phone}</span>
+ </div>
+ </div>
+ ))}
+ </div>
+ </div>
+ </div>
+ </td>
+ </tr>
+ )}
+ </React.Fragment>
+ );
+ })}
  </tbody>
  </table>
  </div>
