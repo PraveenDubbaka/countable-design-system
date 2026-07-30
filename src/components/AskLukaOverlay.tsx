@@ -125,6 +125,7 @@ interface AskLukaOverlayProps {
  currentChecklistKey?: string;
  initialAiMessage?: string;
  initialAiMessagePrompts?: string[];
+ onAutoFillFromThread?: () => void;
 }
 
 const quickPrompts = [
@@ -614,6 +615,7 @@ export function AskLukaOverlay({
  currentChecklistKey,
  initialAiMessage,
  initialAiMessagePrompts,
+ onAutoFillFromThread,
 }: AskLukaOverlayProps) {
  const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
  const [inputValue, setInputValue] = useState("");
@@ -1030,8 +1032,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  response = `The ${workpaperTitle} workpaper documents your engagement's acceptance and continuance assessment.\n\nKey requirements:\n• Confirm the applicable reporting framework (ASPE or IFRS)\n• Document management's acknowledgement of their responsibilities\n• Record any scope limitations or changes from prior year\n• Confirm auditor independence and ethical requirements\n\nWould you like me to walk through each field step by step?`;
  followUpChips = ["/Walk me through each field", "/What framework applies?", "/Show me an example"];
  } else if (l.includes("auto-fill") || l.includes("fill")) {
- response = `I'll analyze your connected source data and prior responses to pre-fill ${workpaperTitle}.\n\nI can auto-populate:\n• Entity details and reporting framework\n• Engagement period and year-end date\n• Standard risk assessment fields from prior year\n\nShall I start? I'll flag anything that needs your review before saving.`;
- followUpChips = ["/Yes, start auto-filling", "/What sources will you use?", "/Preview first"];
+ response = `Starting auto-fill for ${workpaperTitle}. Analyzing your Xero connection and prior responses now...\n\nFields requiring judgment will be flagged for your review — everything else will be pre-populated.`;
+ followUpChips = [];
+ window.setTimeout(() => { onAutoFillFromThread?.(); }, 1500);
  } else if (l.includes("review")) {
  response = `I've scanned your current responses in ${workpaperTitle}:\n\n• Engagement risk assessment — answered\n• Independence evaluation — incomplete (2 fields missing)\n• Prior period comparison — not started\n\n2 sections need attention before this can be signed off. Want me to jump to the first incomplete field?`;
  followUpChips = ["/Jump to first issue", "/Show all incomplete fields", "/Dismiss warnings"];
@@ -1042,8 +1045,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  response = `Sure! Let's go field by field.\n\n1. Reporting Framework — select ASPE or IFRS based on the entity type. For private companies this is almost always ASPE.\n\n2. Management Responsibilities — confirm management has acknowledged their role in preparing the financial statements.\n\n3. Independence — document your independence declaration and any threats identified.\n\nReady to move to the next group of fields?`;
  followUpChips = ["/Next group of fields", "/Flag a concern", "/Mark section complete"];
  } else if (l.includes("yes, start") || l.includes("start auto")) {
- response = `Starting auto-fill for ${workpaperTitle}.\n\nPulling from Xero: entity name, year-end date, prior year comparatives...\n\nAll 8 auto-fillable fields have been pre-populated. 3 fields require your judgment and are flagged in yellow.\n\nOpen the workpaper to review?`;
- followUpChips = ["/Open the workpaper", "/Show flagged fields", "/Undo auto-fill"];
+ response = `Starting now. I'll fill in all eligible fields and flag anything that needs your review.`;
+ followUpChips = [];
+ window.setTimeout(() => { onAutoFillFromThread?.(); }, 1500);
  } else if (l.includes("jump to first")) {
  response = `The first incomplete section is Independence Evaluation — question 3.2:\n\n"Describe any threats to independence identified and the safeguards applied."\n\nThis field is required before sign-off. Would you like me to suggest standard language based on the engagement profile?`;
  followUpChips = ["/Suggest standard language", "/Mark as N/A", "/Assign to team member"];

@@ -1620,6 +1620,38 @@ export default function EngagementDetail() {
  if (checklist) startAutoFill(checklist);
  };
 
+ const handleAutoFillFromThread = () => {
+ if (!checklist) return;
+ setLukaOpen(false);
+ startAutoFill(checklist, (result) => {
+ const title = checklist.title;
+ const skipped = result.skippedItems;
+ const lines: string[] = [
+ `Auto-fill complete for ${title}.`,
+ ``,
+ `${result.filledCount} of ${result.totalCount} fields were populated from your Xero data.`,
+ ];
+ if (skipped.length > 0) {
+ lines.push(``, `${skipped.length} field${skipped.length === 1 ? '' : 's'} need your attention:`);
+ skipped.slice(0, 3).forEach(item => {
+ const q = item.questionText;
+ lines.push(`• ${q.length > 72 ? q.slice(0, 72) + '...' : q}`);
+ });
+ if (skipped.length > 3) lines.push(`• …and ${skipped.length - 3} more`);
+ } else {
+ lines.push(``, `All eligible fields have been filled successfully.`);
+ }
+ setLukaInitialAiMessage(lines.join('\n'));
+ setLukaInitialAiMessagePrompts(
+ skipped.length > 0
+ ? ["/Jump to first flagged field", "/Review all changes", "/Sign off this section"]
+ : ["/Review changes", "/Sign off this section", "/Go to next workpaper"]
+ );
+ setLukaInitialTab("threads");
+ setLukaOpen(true);
+ });
+ };
+
  const handleAutoFillAll = () => {
  if (isAutoFilling) return;
  setLukaEngagementOverviewMode(false);
@@ -3199,6 +3231,7 @@ export default function EngagementDetail() {
  }}
  onAutoFillConfirmed={handleAutoFillConfirmed}
  onAutoFillAll={handleAutoFillAll}
+ onAutoFillFromThread={handleAutoFillFromThread}
  summaryMode={!!lukaFillSummary}
  fillSummary={lukaFillSummary ?? undefined}
  allTemplateSummary={lukaAllTemplateSummary ?? undefined}
