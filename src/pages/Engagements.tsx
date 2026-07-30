@@ -300,7 +300,7 @@ export default function Engagements() {
  className="inline-flex items-center gap-1 text-sm text-link cursor-pointer hover:underline"
  onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : engagement.id); }}
  >
- {engagement.team}
+ View Assignees
  {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
  </button>
  </td>
