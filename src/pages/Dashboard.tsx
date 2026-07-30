@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
-import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Sparkles, Loader, CheckCircle2, Archive } from "lucide-react";
+import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -286,7 +286,7 @@ export default function Dashboard() {
  {stats.map((stat, index) => {
  const config = [
  { color: 'text-primary', bg: 'bg-primary/10', icon: Layers, animation: '' },
- { color: 'text-primary', bg: 'bg-primary/10', icon: Sparkles, animation: '' },
+ { color: 'text-primary', bg: 'bg-primary/10', icon: Briefcase, animation: '' },
  { color: 'text-primary', bg: 'bg-primary/10', icon: Loader, animation: '' },
  { color: 'text-primary', bg: 'bg-primary/10', icon: CheckCircle2, animation: '' },
  { color: 'text-primary', bg: 'bg-primary/10', icon: Archive, animation: '' },

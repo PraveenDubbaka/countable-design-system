@@ -1022,6 +1022,7 @@ export default function EngagementDetail() {
  !!localStorage.getItem(`luka-used-${engagementId}`)
  );
  const [lukaQuery, setLukaQuery] = useState("");
+ const [lukaInitialAiMessage, setLukaInitialAiMessage] = useState("");
  const [lukaAutoFillConfig, setLukaAutoFillConfig] = useState<{ label: string; sources: string[]; engagementLabel: string } | null>(null);
  const [lukaPap501Config, setLukaPap501Config] = useState<{ engLabel: string; sources: string[]; isRegenerate?: boolean } | null>(null);
  const [pap501Accepted, setPap501Accepted] = useState(() =>
@@ -2343,7 +2344,7 @@ export default function EngagementDetail() {
  localStorage.setItem(`luka-used-${engagementId}`, '1');
  }
  setLukaInitialTab("threads");
- setLukaQuery(`What would you like to do in the "${checklist?.title ?? checklistKey}" workpaper? I can help you understand requirements, fill in fields, review responses, or answer questions about this section.`);
+ setLukaInitialAiMessage(`What would you like to do in the "${checklist?.title ?? checklistKey}" workpaper? I can help you understand requirements, fill in fields, review responses, or answer questions about this section.`);
  setLukaOpen(true);
  }}
  className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
@@ -3164,10 +3165,11 @@ export default function EngagementDetail() {
  onOpenChange={(o) => {
  setLukaOpen(o);
  if (!o) {
- setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); setLukaPap501Config(null); setLukaQuery("");
+ setLukaAutoFillConfig(null); setLukaFillSummary(null); setLukaAllTemplateSummary(null); setLukaAutoFillProgress(null); setLukaEngagementOverviewMode(false); setLukaInitialTab("threads"); setLukaInitialWorkspaceEngagement(undefined); setLukaPap501Config(null); setLukaQuery(""); setLukaInitialAiMessage("");
  }
  }}
  initialQuery={lukaQuery}
+ initialAiMessage={lukaInitialAiMessage}
  autoFillMode={!!lukaAutoFillConfig}
  checklistLabel={lukaAutoFillConfig?.label}
  engagementLabel={lukaAutoFillConfig?.engagementLabel ?? lukaPap501Config?.engLabel}

@@ -123,6 +123,7 @@ interface AskLukaOverlayProps {
  onPap501Accept?: () => void;
  currentEngagementId?: string;
  currentChecklistKey?: string;
+ initialAiMessage?: string;
 }
 
 const quickPrompts = [
@@ -610,6 +611,7 @@ export function AskLukaOverlay({
  currentEngagementId,
  // eslint-disable-next-line @typescript-eslint/no-unused-vars
  currentChecklistKey,
+ initialAiMessage,
 }: AskLukaOverlayProps) {
  const [activeTab, setActiveTab] = useState<"threads" | "workspace">("threads");
  const [inputValue, setInputValue] = useState("");
@@ -2314,6 +2316,35 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  <p className="text-xs text-muted-foreground mt-3 text-center max-w-[300px]">Luka fills each field one by one with citations. Items requiring judgment stay flagged.</p>
  </>
  )}
+ </div>
+ ) : initialAiMessage ? (
+ <div className="flex-1 flex flex-col luka-chat-body p-4 gap-4 overflow-y-auto">
+ <motion.div
+ initial={{ opacity: 0, y: 8 }}
+ animate={{ opacity: 1, y: 0 }}
+ transition={{ delay: 0.15, duration: 0.3 }}
+ className="flex items-start gap-2.5"
+ >
+ <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4] flex items-center justify-center shrink-0 mt-0.5">
+ <LukaIcon size={14} bare />
+ </div>
+ <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-foreground max-w-[85%] leading-relaxed">
+ {initialAiMessage}
+ </div>
+ </motion.div>
+ <div className="flex flex-wrap gap-2 pl-9">
+ {quickPrompts.map((prompt) => (
+ <motion.button
+ key={prompt}
+ whileHover={{ scale: 1.04, y: -1 }}
+ whileTap={{ scale: 0.97 }}
+ className="luka-prompt-chip"
+ onClick={() => handlePromptSelect({ kind: "generic", label: prompt.replace(/^\//, "") })}
+ >
+ <span style={{ color: "hsl(207 71% 38%)", fontWeight: 700 }}>/</span>{prompt.replace(/^\//, "")}
+ </motion.button>
+ ))}
+ </div>
  </div>
  ) : (
  <div className="flex-1 flex flex-col items-center justify-center luka-chat-body">
