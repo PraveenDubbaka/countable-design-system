@@ -2354,20 +2354,7 @@ export default function EngagementDetail() {
  </TooltipTrigger>
  <TooltipContent side="bottom"><p>Start a Luka thread for this workpaper</p></TooltipContent>
  </Tooltip>
- {hasUsedLuka && (
- <button
- onClick={() => {
- const engLabel = [engagement?.client, engagementId].filter(Boolean).join(' · ');
- setLukaEngagementOverviewMode(true);
- setLukaAutoFillConfig({ label: 'Luka Engagement Plan', sources: ['Xero connection', 'Predecessor file'], engagementLabel: engLabel });
- setLukaOpen(true);
- }}
- className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold border border-border bg-background text-foreground hover:bg-muted transition-colors"
- >
- <Zap className="h-3 w-3 opacity-60" />
- LUKA status
- </button>
- )}
+
  <div className="w-px h-4 bg-border mx-0.5" />
  </>
  )}
