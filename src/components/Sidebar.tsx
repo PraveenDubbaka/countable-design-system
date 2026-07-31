@@ -3,6 +3,23 @@ import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react
 const SCROLL_KEY = 'sidebar-scroll';
 function getScroll(): number { try { return parseInt(sessionStorage.getItem(SCROLL_KEY) ?? '0', 10) || 0; } catch { return 0; } }
 function setScroll(v: number) { try { sessionStorage.setItem(SCROLL_KEY, String(v)); } catch {} }
+
+const DEFAULT_CA_SO_HIDDEN: Record<string, string[]> = {
+  "aud-so": [
+    "aud-fs-iar",  // 305 Auditor's Report
+    "aud-so-306",  // 306 Modified Opinion
+    "aud-so-310",  // 310 Audit Completion
+    "aud-so-311",  // 311 Withdrawal
+    "aud-so-312",  // 312 Engagement Partner
+    "aud-so-313",  // 313 Supplementary Info
+    "aud-so-320",  // 320 Significant Decisions
+    "aud-so-325",  // 325 Key Audit Matters
+    "aud-so-330",  // 330 Findings & Discussion
+    "aud-so-370",  // 370 Future Considerations
+    "aud-so-375",  // 375 Consultation
+    "aud-comp",    // CM Completion
+  ],
+};
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
@@ -1545,7 +1562,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  useEffect(() => {
  const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
  if (!engId) { setHiddenChildren({}); return; }
- setHiddenChildren(readJsonFromLocalStorage<Record<string, string[]>>(`sidebar-hidden-${engId}`, {}));
+ const engMetaRaw = localStorage.getItem(`engagement-meta-${engId}`);
+ const engMeta = engMetaRaw ? (() => { try { return JSON.parse(engMetaRaw); } catch { return null; } })() : null;
+ const sidebarType = engMeta?.templateId && TEMPLATE_CONFIG[engMeta.templateId]
+  ? TEMPLATE_CONFIG[engMeta.templateId].sidebarType
+  : engId.includes('-US-') ? 'audit-us' : engId.startsWith('AUD-') ? 'audit-ca' : 'review-comp';
+ const defaultHidden = sidebarType === 'audit-ca' ? DEFAULT_CA_SO_HIDDEN : {};
+ setHiddenChildren(readJsonFromLocalStorage<Record<string, string[]>>(`sidebar-hidden-${engId}`, defaultHidden));
  }, [location.pathname.split("/engagements/")[1]?.split("/")[0]]);
 
  // Load notes index for the current engagement
