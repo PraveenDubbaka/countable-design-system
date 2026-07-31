@@ -782,10 +782,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Resizable panel state
  const [panelWidth, setPanelWidth] = useState(() => {
- const stored = localStorage.getItem("sidebarPanelWidth");
+ const stored = localStorage.getItem("sidebarPanelWidth_v2");
  if (stored) {
  const parsed = parseInt(stored, 10);
- if (!isNaN(parsed) && parsed >= 200 && parsed <= 500) {
+ if (!isNaN(parsed) && parsed >= 200 && parsed <= 600) {
  return parsed;
  }
  }
@@ -798,7 +798,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Save panel width to localStorage
  useEffect(() => {
  if (!isTemplatesPanelCollapsed) {
- localStorage.setItem("sidebarPanelWidth", String(panelWidth));
+ localStorage.setItem("sidebarPanelWidth_v2", String(panelWidth));
  }
  }, [panelWidth, isTemplatesPanelCollapsed]);
 
