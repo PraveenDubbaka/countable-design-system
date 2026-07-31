@@ -1731,6 +1731,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const el = document.getElementById('sidebar-secondary-portal');
  setPortalTarget(el);
  }, []);
+
+ // Preserve sidebar scroll position across navigations
+ const sidebarScrollRef = useRef<HTMLDivElement>(null);
+ const savedScrollRef = useRef<number>(0);
+ useEffect(() => {
+ const el = sidebarScrollRef.current;
+ if (!el) return;
+ el.scrollTop = savedScrollRef.current;
+ const onScroll = () => { savedScrollRef.current = el.scrollTop; };
+ el.addEventListener('scroll', onScroll, { passive: true });
+ return () => el.removeEventListener('scroll', onScroll);
+ // Re-run when pathname changes so we restore after route-driven re-renders
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [location.pathname]);
  
  // Determine if a secondary panel is visible and expanded (for dark mode gradient)
  const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
@@ -1926,7 +1940,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </div>
  </div>
 
- <div className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${signoffsMode ? "pr-3" : ""} ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+ <div ref={sidebarScrollRef} className={`flex-1 overflow-y-auto scrollbar-hide p-2 pt-0 ${signoffsMode ? "pr-3" : ""} ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
  {/* Engagement Sections - recursive tree */}
  {(() => {
  type SectionNode = {

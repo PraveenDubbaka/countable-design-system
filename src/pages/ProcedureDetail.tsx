@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { loadEngagements } from "@/store/engagementsStore";
 import { Layout } from "@/components/Layout";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
@@ -32,28 +33,9 @@ import {
  Bookmark,
  Send,
 } from "lucide-react";
-import intuitLogo from "@/assets/intuit-quickbooks-logo.svg";
+import xeroLogo from "@/assets/xero-logo.png";
+import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
 import { getAccountsForProcedure } from "@/lib/tbGroups";
-
-// Engagement data for breadcrumb (shared)
-const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
- "COM-CON-Dec312024": { id: "COM-CON-Dec312024", client: "Shipping Line Inc.", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", status: "In Progress" },
- "COM-PSP-Dec312023": { id: "COM-PSP-Dec312023", client: "Source 40", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
- "COM-QB-Dec312025": { id: "COM-QB-Dec312025", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Dec 31, 2025", status: "In Progress" },
- "AUD-SL-Mar312024": { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", status: "In Progress" },
- "REV-SL-Jun302024": { id: "REV-SL-Jun302024", client: "Shipping Line Inc.", type: "Review (REV)", yearEnd: "Jun 30, 2024", status: "In Progress" },
- "COM-S40-Jun302024": { id: "COM-S40-Jun302024", client: "Source 40", type: "Compilation (COM)", yearEnd: "Jun 30, 2024", status: "In Progress" },
-};
-
-const getUniqueClients = () => {
- const clients = new Set<string>();
- Object.values(engagementsData).forEach(e => clients.add(e.client));
- return Array.from(clients);
-};
-
-const getEngagementsForClient = (clientName: string) => {
- return Object.values(engagementsData).filter(e => e.client === clientName);
-};
 
 
 // Custom TB Check icon
@@ -90,13 +72,25 @@ export default function ProcedureDetail() {
  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
  const [comment, setComment] = useState("");
 
- const engagement = engagementId ? engagementsData[engagementId] : null;
+ const allEngagements = useMemo(() => loadEngagements(), []);
+ const engagement = engagementId ? allEngagements.find(e => e.id === engagementId) ?? null : null;
  const clientName = engagement?.client || "Unknown Client";
  const displayId = engagementId || "Unknown";
  const status = engagement?.status || "In Progress";
 
- const uniqueClients = getUniqueClients();
- const clientEngagements = getEngagementsForClient(clientName);
+ const clientEngagements = allEngagements.filter(e => e.client === clientName);
+
+ const sourceIcon = useMemo(() => {
+ if (!engagementId) return null;
+ try {
+ const raw = localStorage.getItem(`connectors-${engagementId}`);
+ const apps: string[] = raw ? JSON.parse(raw) : [];
+ const joined = apps.join(" ").toLowerCase();
+ if (joined.includes("xero")) return <img src={xeroLogo} alt="Xero" className="h-5 w-auto object-contain ml-2 shrink-0" />;
+ if (joined.includes("quickbooks") || joined.includes("qbo")) return <img src={quickbooksLogo} alt="QuickBooks" className="h-6 w-auto object-contain ml-2 shrink-0" />;
+ } catch { /* ignore */ }
+ return null;
+ }, [engagementId]);
 
  const procedureInfo = procedureId ? getAccountsForProcedure(procedureId) : null;
  const accounts = procedureInfo?.rows || [];
@@ -161,8 +155,7 @@ export default function ProcedureDetail() {
  {status}
  </Badge>
 
- {/* QuickBooks Logo */}
- <img src={intuitLogo} alt="Intuit QuickBooks" className="h-6 ml-2" />
+ {sourceIcon}
  </div>
  );
 
