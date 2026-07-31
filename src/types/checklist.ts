@@ -62,6 +62,7 @@ export interface FormElement {
  options?: string[];
  buttonStyle?: 'icon-text' | 'text-only' | 'icon-only';
  icon?: string;
+ value?: string;
 }
 
 export interface FormLayout {

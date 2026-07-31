@@ -97,6 +97,7 @@ import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { AuditASMImportBanner } from "@/components/AuditASMImportBanner";
 import { Audit506ImportBanner } from "@/components/Audit506ImportBanner";
+import { Audit525ImportBanner } from "@/components/Audit525ImportBanner";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import {
  generateClientAcceptanceContinuanceChecklist,
@@ -2927,6 +2928,15 @@ export default function EngagementDetail() {
  {/* 506 Fraud import banner */}
  {checklistKey === 'aud-ra-506' && checklist && (
  <Audit506ImportBanner
+ checklist={checklist}
+ onUpdate={handleChecklistUpdate}
+ connectedApps={connectedApps}
+ onOpenConnectors={() => setConnectorsOpen(true)}
+ />
+ )}
+ {/* 525 Going Concern import banner */}
+ {checklistKey === 'aud-ra-525' && checklist && (
+ <Audit525ImportBanner
  checklist={checklist}
  onUpdate={handleChecklistUpdate}
  connectedApps={connectedApps}

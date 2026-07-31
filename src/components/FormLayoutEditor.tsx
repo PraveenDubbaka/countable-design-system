@@ -230,8 +230,14 @@ const LabeledDatePicker = ({
  );
 };
 
-const DatePickerPreview = () => {
- const [date, setDate] = useState<Date>();
+const DatePickerPreview = ({ value, onChange }: { value?: string; onChange?: (v: string) => void }) => {
+ const controlled = value ? new Date(value + 'T00:00:00') : undefined;
+ const [local, setLocal] = useState<Date | undefined>(controlled);
+ const date = onChange ? controlled : local;
+ const handleSelect = (d: Date | undefined) => {
+ const str = d ? format(d, 'yyyy-MM-dd') : '';
+ if (onChange) onChange(str); else setLocal(d);
+ };
  return (
  <Popover>
  <PopoverTrigger asChild>
@@ -244,7 +250,7 @@ const DatePickerPreview = () => {
  </button>
  </PopoverTrigger>
  <PopoverContent className="w-auto p-0 bg-card border shadow-lg z-50" align="start">
- <CalendarComponent mode="single" selected={date} onSelect={setDate} initialFocus className="p-3 pointer-events-auto" />
+ <CalendarComponent mode="single" selected={date} onSelect={handleSelect} initialFocus className="p-3 pointer-events-auto" />
  </PopoverContent>
  </Popover>
  );
@@ -293,7 +299,7 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
 
  const renderFormElement = (element: FormElement, index: number) => {
  if (isPreviewMode) {
- return renderPreviewElement(element);
+ return renderPreviewElement(element, index);
  }
 
  if (element.type === 'empty') {
@@ -516,52 +522,56 @@ export function FormLayoutEditor({ formLayout, onUpdate, isPreviewMode }: FormLa
  }
  };
 
- const renderPreviewElement = (element: FormElement) => {
+ const renderPreviewElement = (element: FormElement, index: number) => {
  const label = element.label;
- 
+ const val = element.value ?? '';
+ const setVal = (v: string) => handleUpdateElement(index, { value: v });
+
  switch (element.type) {
  case 'empty':
  return null;
- 
+
  case 'text-input':
  return (
  <input
  type="text"
  placeholder={label || element.placeholder}
+ value={val}
+ onChange={(e) => setVal(e.target.value)}
  className="w-full appearance-none border-2 border-transparent rounded-md bg-transparent p-1.5 text-sm placeholder:text-muted-foreground placeholder:italic focus:outline-none focus:border-primary/30"
  />
  );
- 
+
  case 'textarea':
  return (
  <LabeledTextarea
  label={label}
- value=""
- onChange={() => {}}
+ value={val}
+ onChange={setVal}
  placeholder={element.placeholder}
  />
  );
- 
+
  case 'select':
  return (
  <LabeledSelect
  label={label}
- value=""
- onChange={() => {}}
+ value={val}
+ onChange={setVal}
  options={element.options || []}
  />
  );
- 
+
  case 'checkbox':
  return (
  <div className="flex items-center gap-3 h-11">
- <Checkbox />
+ <Checkbox checked={val === 'true'} onCheckedChange={(c) => setVal(c ? 'true' : '')} />
  {label && <span className="text-sm text-foreground">{label}</span>}
  </div>
  );
- 
+
  case 'date':
- return <DatePickerPreview />;
+ return <DatePickerPreview value={val} onChange={setVal} />;
  
  case 'radio':
  return (
