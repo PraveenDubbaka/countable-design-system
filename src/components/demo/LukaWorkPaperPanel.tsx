@@ -3,13 +3,16 @@ import { cn } from "@/lib/utils";
 import { LukaIcon } from "@/components/LukaIcon";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Clock, Database } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronUp, Clock, Database } from "lucide-react";
+
+interface TargetRow { id: string; label: string; }
 
 interface WorkPaperAction {
   label: string;
   description: string;
   estimatedTime: string;
   source: string;
+  targetRows: TargetRow[];
 }
 
 interface ProcData {
@@ -24,7 +27,7 @@ interface LukaWorkPaperPanelProps {
   lukaState: "idle" | "loading" | "done";
   selectedIds: Set<number>;
   onSelectionChange: (ids: Set<number>) => void;
-  onInitiate: () => void;
+  onInitiate: (rowIds: string[]) => void;
 }
 
 export function LukaWorkPaperPanel({
@@ -35,7 +38,41 @@ export function LukaWorkPaperPanel({
   onInitiate,
 }: LukaWorkPaperPanelProps) {
   const [expanded, setExpanded] = useState(false);
+  const [selecting, setSelecting] = useState(false);
+  const [rowSelectIds, setRowSelectIds] = useState<Set<string>>(new Set());
+
   const allSelected = selectedIds.size === procData.actions.length;
+
+  function getTargetRows(): { actionLabel: string; row: TargetRow }[] {
+    const result: { actionLabel: string; row: TargetRow }[] = [];
+    selectedIds.forEach(idx => {
+      const action = procData.actions[idx];
+      if (action?.targetRows) {
+        action.targetRows.forEach(r => result.push({ actionLabel: action.label, row: r }));
+      }
+    });
+    return result;
+  }
+
+  function handleInitiateClick() {
+    const allTargetRows = getTargetRows();
+    setRowSelectIds(new Set(allTargetRows.map(t => t.row.id)));
+    setSelecting(true);
+    setExpanded(false);
+  }
+
+  function handleConfirm() {
+    setSelecting(false);
+    onInitiate(Array.from(rowSelectIds));
+  }
+
+  function toggleRowId(id: string) {
+    setRowSelectIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
 
   function toggleAll() {
     onSelectionChange(
@@ -54,7 +91,7 @@ export function LukaWorkPaperPanel({
       <div className="flex items-center gap-2 px-4 py-2.5 bg-violet-50 border-b border-violet-200 animate-pulse">
         <LukaIcon size={13} bare inverted className="text-violet-700 shrink-0" />
         <span className="text-xs font-medium text-violet-700">
-          Luka is preparing {selectedIds.size} work paper{selectedIds.size !== 1 ? "s" : ""} from connected sources…
+          Luka is preparing work papers from connected sources…
         </span>
       </div>
     );
@@ -65,11 +102,113 @@ export function LukaWorkPaperPanel({
       <div className="flex items-center gap-2 px-4 py-2.5 bg-violet-50 border-b border-violet-200">
         <LukaIcon size={13} bare inverted className="text-violet-700 shrink-0" />
         <span className="text-xs font-medium text-violet-700">
-          Luka has prepared {selectedIds.size} work paper{selectedIds.size !== 1 ? "s" : ""} — review before proceeding.
+          Luka has filled in {selectedIds.size} work paper{selectedIds.size !== 1 ? "s" : ""} — review before proceeding.
         </span>
         <span className="ml-auto text-[10px] text-violet-600 font-semibold bg-violet-100 px-2 py-0.5 rounded-full">
           ✓ Ready
         </span>
+      </div>
+    );
+  }
+
+  if (selecting) {
+    const allTargetRows = getTargetRows();
+    const allRowsSelected = allTargetRows.length > 0 && allTargetRows.every(t => rowSelectIds.has(t.row.id));
+    const someRowsSelected = allTargetRows.some(t => rowSelectIds.has(t.row.id));
+
+    const groups: Map<string, TargetRow[]> = new Map();
+    allTargetRows.forEach(({ actionLabel, row }) => {
+      if (!groups.has(actionLabel)) groups.set(actionLabel, []);
+      groups.get(actionLabel)!.push(row);
+    });
+
+    function toggleSelectAll() {
+      if (allRowsSelected) {
+        setRowSelectIds(new Set());
+      } else {
+        setRowSelectIds(new Set(allTargetRows.map(t => t.row.id)));
+      }
+    }
+
+    return (
+      <div className="bg-violet-50 border-b border-violet-200">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-violet-100">
+          <div className="flex items-center gap-2">
+            <LukaIcon size={13} bare inverted className="text-violet-700 shrink-0" />
+            <span className="text-xs font-semibold text-violet-700">Luka — Select Procedure Rows</span>
+            <span className="text-[10px] text-violet-400">· Choose which rows Luka will fill in</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 px-4 py-2 border-b border-violet-100">
+          <Checkbox
+            id="luka-row-select-all"
+            checked={allRowsSelected ? true : someRowsSelected ? "indeterminate" : false}
+            onCheckedChange={toggleSelectAll}
+            className="border-violet-300 data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
+          />
+          <label
+            htmlFor="luka-row-select-all"
+            className="text-[11px] font-medium text-violet-600 cursor-pointer select-none"
+          >
+            Select all ({allTargetRows.length} procedure row{allTargetRows.length !== 1 ? "s" : ""})
+          </label>
+        </div>
+
+        <div className="max-h-56 overflow-y-auto divide-y divide-violet-100">
+          {Array.from(groups.entries()).map(([groupLabel, rows]) => (
+            <div key={groupLabel}>
+              <div className="px-4 py-1.5 bg-violet-100/60">
+                <span className="text-[10px] font-semibold text-violet-600 uppercase tracking-wide">{groupLabel}</span>
+              </div>
+              {rows.map(row => (
+                <div
+                  key={row.id}
+                  onClick={() => toggleRowId(row.id)}
+                  className={cn(
+                    "flex items-start gap-2.5 px-4 py-2 cursor-pointer hover:bg-violet-100/60 transition-colors",
+                    rowSelectIds.has(row.id) && "bg-violet-100/40"
+                  )}
+                >
+                  <Checkbox
+                    id={`luka-row-${row.id}`}
+                    checked={rowSelectIds.has(row.id)}
+                    onCheckedChange={() => toggleRowId(row.id)}
+                    onClick={e => e.stopPropagation()}
+                    className="mt-0.5 shrink-0 border-violet-300 data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
+                  />
+                  <label
+                    htmlFor={`luka-row-${row.id}`}
+                    className="text-[11px] text-foreground leading-snug cursor-pointer select-none"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    {row.label}
+                  </label>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between px-4 py-2.5 border-t border-violet-200 bg-violet-50/80">
+          <button
+            type="button"
+            onClick={() => { setSelecting(false); setExpanded(true); }}
+            className="inline-flex items-center gap-1 text-[11px] text-violet-500 hover:text-violet-700 transition-colors"
+          >
+            <ChevronLeft className="h-3 w-3" />
+            Back to work papers
+          </button>
+          <Button
+            size="sm"
+            disabled={rowSelectIds.size === 0}
+            onClick={handleConfirm}
+            className="h-7 px-3 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white disabled:opacity-40"
+          >
+            <LukaIcon size={11} bare className="mr-1.5 text-white" />
+            Confirm & initiate ({rowSelectIds.size})
+          </Button>
+        </div>
       </div>
     );
   }
@@ -189,7 +328,7 @@ export function LukaWorkPaperPanel({
         <Button
           size="sm"
           disabled={selectedIds.size === 0}
-          onClick={() => { setExpanded(false); onInitiate(); }}
+          onClick={handleInitiateClick}
           className="h-7 px-3 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white disabled:opacity-40"
         >
           <LukaIcon size={11} bare className="mr-1.5 text-white" />

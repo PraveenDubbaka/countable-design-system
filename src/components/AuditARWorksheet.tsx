@@ -576,7 +576,160 @@ function useARStore() {
   const lsAccountBalance = arFsa ? fmtAmt(arFsa.amount) : "";
   const materiality = ctx.overallMateriality ? fmtAmt(ctx.overallMateriality) : "";
 
-  return { data, locked: data.concluded, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow };
+  function lukaApplyWorkPapersAR(rowIds: string[]) {
+    const rowConfigs: Record<string, { docKey: DocKey; sectionIdx: number; match: string; wpName: string; comment: string }> = {
+      "ar-audit-basic-obtain": {
+        docKey: "auditProcedures", sectionIdx: 0,
+        match: "Preparation — Obtain a detailed (and aged) listing",
+        wpName: "B-1 AR Audit Procedures",
+        comment: `Luka: AR aged trial balance obtained from Xero (A/R Aging Summary, Dec 31, 2025). Total: ${lsAccountBalance}. Agreed to GL acct #1200. Current $1,240,000 (69%), 31–60 days $310,000 (17%), 61–90 days $180,000 (10%), >90 days $70,000 (4%). ✓`,
+      },
+      "ar-audit-accuracy-check": {
+        docKey: "auditProcedures", sectionIdx: 2,
+        match: "Accuracy of listing and aging — Check arithmetic accuracy of the accounts receivable listing (adds and cross-adds) and agree to the general ledger balance",
+        wpName: "B-1 AR Audit Procedures",
+        comment: `Luka: Aging subtotals verified: $1,240,000 + $310,000 + $180,000 + $70,000 = ${lsAccountBalance}. Agreed to Xero GL acct #1200 at Dec 31, 2025. No discrepancy. ✓`,
+      },
+      "ar-audit-existence-unusual": {
+        docKey: "auditProcedures", sectionIdx: 3,
+        match: "Unusual or large balances — Review the composition of the sub-ledger balances",
+        wpName: "B-1 AR Audit Procedures",
+        comment: "Luka: Sub-ledger reviewed. Balances above $100,000 flagged: Kestrel Manufacturing $285,000, Southfield Group $210,000, Bellmore Industries $175,000. No even-dollar amounts, fictitious names, or undisclosed related parties. All 3 selected for confirmation (see B-2). ✓",
+      },
+      "ar-audit-allowance-a": {
+        docKey: "auditProcedures", sectionIdx: 2,
+        match: "Allowance for doubtful accounts — a. Review the aged accounts receivable trial balance",
+        wpName: "B-1 AR Audit Procedures",
+        comment: `Luka: Aged AR trial balance reviewed vs. Dec 31, 2024 ($1,620,000). Current year increase $180,000 (+11%). Post year-end receipts Jan 1–31, 2026: $940,000 (52% of ${lsAccountBalance}). Management allowance: $35,000 (applied to >90 day bucket). ✓`,
+      },
+      "ar-audit-allowance-b": {
+        docKey: "auditProcedures", sectionIdx: 2,
+        match: "Allowance for doubtful accounts — b. For all significant or material accounts over 90 days",
+        wpName: "B-1 AR Audit Procedures",
+        comment: "Luka: >90 day balances: 4 invoices totalling $70,000 (Aug–Sep 2025). Northfield Supply Ltd $45,000 — payment arrangement in place, $15,000 received Jan 15, 2026. Orion Tech Inc $25,000 — disputed invoice, under review. Management specific allowance $35,000 documented. ✓",
+      },
+      "ar-audit-existence-validate": {
+        docKey: "auditProcedures", sectionIdx: 3,
+        match: "Validation of accounts receivable — Determine what",
+        wpName: "B-2 Confirmation Procedures",
+        comment: `Luka: Positive confirmations selected for balances >$100,000 (3 items, $670,000, 37% of ${lsAccountBalance}). Alternative procedures (subsequent receipts) applied to remaining 63%. See B-2. ✓`,
+      },
+      "ar-audit-existence-confirmation": {
+        docKey: "auditProcedures", sectionIdx: 3,
+        match: "Validation — Confirmation: Where confirmations are deemed to be effective",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Positive confirmation letters prepared for Kestrel Manufacturing ($285,000), Southfield Group ($210,000), Bellmore Industries ($175,000). Mailed Jan 8, 2026. C.110 procedures initiated. See B-2. ✓",
+      },
+      "ar-audit-completeness-subsequent": {
+        docKey: "auditProcedures", sectionIdx: 1,
+        match: "Subsequent receipts testing — Based on the assessment of the risks",
+        wpName: "B-1 AR Audit Procedures",
+        comment: `Luka: Xero payment listing Jan 1–31, 2026 obtained. Total receipts $940,000 matched to Dec 31, 2025 AR invoices. Coverage 52% of ${lsAccountBalance}. No invoices identified where revenue should have been recognized in a prior period. ✓`,
+      },
+      "ar-audit-existence-alternative": {
+        docKey: "auditProcedures", sectionIdx: 3,
+        match: "Validation — Alternative to confirmation: Where a significant amount of time has elapsed",
+        wpName: "B-1 AR Audit Procedures",
+        comment: `Luka: For balances <$100,000 ($1,130,000 / 63% of ${lsAccountBalance}), subsequent receipts extended to Feb 28, 2026. Receipts applied: $840,000 (74% coverage). Remaining unpaid ($290,000) — management explanations obtained. No material misstatement identified. ✓`,
+      },
+    };
+    setData(d => {
+      let updated = { ...d };
+      for (const rowId of rowIds) {
+        const cfg = rowConfigs[rowId];
+        if (!cfg) continue;
+        const ref: RefDoc = { id: rowId, name: cfg.wpName };
+        updated = {
+          ...updated,
+          [cfg.docKey]: (updated[cfg.docKey] as ARSection[]).map((s, si) =>
+            si !== cfg.sectionIdx ? s : {
+              ...s,
+              rows: s.rows.map(r =>
+                r.description.includes(cfg.match) && !r.wpRef.some(w => w.id === rowId)
+                  ? { ...r, wpRef: [...r.wpRef, ref], comments: r.comments || cfg.comment }
+                  : r
+              ),
+            }
+          ),
+        };
+      }
+      return updated;
+    });
+  }
+
+  function lukaApplyWorkPapersARConf(rowIds: string[]) {
+    const rowConfigs: Record<string, { match: string; wpName: string; comment: string }> = {
+      "arconf-agree-gl": {
+        match: "Obtain a copy of the accounts receivable sub-ledger/trial balance as at the confirmation date — a. Agree the balances to general ledger",
+        wpName: "B-2 Confirmation Procedures",
+        comment: `Luka: AR subledger as at Jan 8, 2026 (confirmation date) agreed to Xero GL acct #1200. Total: ${lsAccountBalance}. No reconciling items. ✓`,
+      },
+      "arconf-identify-large": {
+        match: "Obtain a copy of the accounts receivable sub-ledger — b. Identify the large and unusual items",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Large balances (>$100,000): Kestrel Manufacturing $285,000, Southfield Group $210,000, Bellmore Industries $175,000. All three selected for positive confirmation. No fictitious names or undisclosed related parties noted. ✓",
+      },
+      "arconf-select-sample": {
+        match: "Obtain a copy of the accounts receivable sub-ledger — c. Select a sample of accounts receivable invoices or balances for confirmation",
+        wpName: "B-2 Confirmation Procedures",
+        comment: `Luka: 3 positive confirmations selected — all balances >$100,000, totalling $670,000 (37% of ${lsAccountBalance}). Judgmental selection — all material items included. ✓`,
+      },
+      "arconf-document-sample": {
+        match: "Obtain a copy of the accounts receivable sub-ledger — d. Document how the sample of accounts receivable was chosen",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Judgmental selection — all balances >$100,000 (3 items) confirmed. Remaining 63% covered by subsequent receipts testing (see B-1). No monetary unit sampling applied given small population. ✓",
+      },
+      "arconf-prepare-requests": {
+        match: "Prepare the confirmation requests and maintain control",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Positive confirmation letters prepared on firm letterhead for all 3 debtors. Letters include debtor name/address, Dec 31, 2025 balance, and instruction to reply directly to audit firm. Mailed Jan 8, 2026 via registered mail. Copies on file. ✓",
+      },
+      "arconf-second-request": {
+        match: "Second request — After",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Second request mailed Jan 22, 2026 (14 days after first request) to Kestrel Manufacturing ($285,000), the sole non-respondent. Southfield Group and Bellmore Industries had already replied. ✓",
+      },
+      "arconf-differences": {
+        match: "Differences — When confirmation replies indicate that a difference exists",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Southfield Group reply indicated difference of $8,400 — credit note (CN-2025-0847, Dec 28, 2025) not yet applied by client. Management confirmed and credit note located in Xero. Balance adjusted. No fraud indicators. ✓",
+      },
+      "arconf-alternative": {
+        match: "Alternative procedures — Where confirmations are not returned or results are not satisfactory",
+        wpName: "B-2 Confirmation Procedures",
+        comment: "Luka: Kestrel Manufacturing ($285,000) did not respond after two requests. Alternative procedures: (a) subsequent payment of $285,000 confirmed received Feb 3, 2026 (deposit slip obtained); (b) underlying invoices INV-5841 to INV-5847 agreed to shipping records. Balance confirmed valid. ✓",
+      },
+      "arconf-statistics": {
+        match: "Complete confirmation statistics summary",
+        wpName: "B-2 Confirmation Procedures",
+        comment: `Luka: Confirmation statistics — Items selected: 3 ($670,000 / 37% of ${lsAccountBalance}). Responses received: 2 of 3 (67%). Differences: 1 ($8,400 — explained). Alternative procedures: 1 (Kestrel $285,000 — confirmed by subsequent receipt). Conclusion: No material misstatements identified. ✓`,
+      },
+    };
+    setData(d => {
+      let updated = { ...d };
+      for (const rowId of rowIds) {
+        const cfg = rowConfigs[rowId];
+        if (!cfg) continue;
+        const ref: RefDoc = { id: rowId, name: cfg.wpName };
+        updated = {
+          ...updated,
+          confirmationProcedures: (updated.confirmationProcedures as ARSection[]).map((s, si) =>
+            si !== 0 ? s : {
+              ...s,
+              rows: s.rows.map(r =>
+                r.description.includes(cfg.match) && !r.wpRef.some(w => w.id === rowId)
+                  ? { ...r, wpRef: [...r.wpRef, ref], comments: r.comments || cfg.comment }
+                  : r
+              ),
+            }
+          ),
+        };
+      }
+      return updated;
+    });
+  }
+
+  return { data, locked: data.concluded, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow, lukaApplyWorkPapersAR, lukaApplyWorkPapersARConf };
 }
 
 const INFO_CARD = "bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6";
@@ -608,7 +761,7 @@ function ARInfoBlock({ lsAccountBalance, materiality }: { lsAccountBalance: stri
 }
 
 export function AuditARWorksheet() {
-  const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useARStore();
+  const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow, lukaApplyWorkPapersAR } = useARStore();
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
@@ -624,7 +777,7 @@ export function AuditARWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersAR(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >
@@ -640,7 +793,7 @@ export function AuditARWorksheet() {
 }
 
 export function AuditARConfirmationWorksheet() {
-  const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useARStore();
+  const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow, lukaApplyWorkPapersARConf } = useARStore();
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
@@ -656,7 +809,7 @@ export function AuditARConfirmationWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersARConf(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >

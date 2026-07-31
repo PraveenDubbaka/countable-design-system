@@ -624,11 +624,149 @@ function useCashStore() {
   const lsAccountBalance = cashFsa ? fmtAmt(cashFsa.amount) : "";
   const materiality = ctx.overallMateriality ? fmtAmt(ctx.overallMateriality) : "";
 
-  return { data, locked: data.concluded, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow };
+  function lukaApplyWorkPapersAudit(rowIds: string[]) {
+    const rowConfigs: Record<string, { docKey: DocKey; sectionIdx: number; match: string; wpName: string; comment: string }> = {
+      "cash-audit-bankRec-review": {
+        docKey: "auditProcedures", sectionIdx: 2,
+        match: "Bank reconciliations — Review the reconciliations for accuracy",
+        wpName: "A-2 Bank Reconciliation",
+        comment: `Luka: TB cash balance ${lsAccountBalance} at Dec 31, 2025 agreed to Xero GL (acct #1010, RBC). Bank statement balance: $847,250. Outstanding cheques: $4,750 (3 items). Outstanding deposit: $2,000. Reconciled balance: ${lsAccountBalance}. ✓`,
+      },
+      "cash-audit-bankRec-stale": {
+        docKey: "auditProcedures", sectionIdx: 2,
+        match: "Bank reconciliations — Ensure there are no stale-dated cheques included",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Outstanding cheques list reviewed. No stale-dated cheques (>180 days) identified. All outstanding items dated Nov–Dec 2025. ✓",
+      },
+      "cash-audit-bankRec-explain": {
+        docKey: "auditProcedures", sectionIdx: 2,
+        match: "Bank reconciliations — Obtain explanations for very large",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Outstanding cheques — 3 items totalling $4,750: #5821 $3,200 Hydro One (Dec 28), #5826 $1,050 Office Depot (Dec 30), #5829 $500 Canada Post (Dec 31). Outstanding deposit — $2,000 Dec 31 deposit cleared Jan 2, 2026. All items traced and explained. See A-2.",
+      },
+      "cash-audit-count-significant": {
+        docKey: "auditProcedures", sectionIdx: 1,
+        match: "Count the material cash funds",
+        wpName: "A-3 Cash Count",
+        comment: "Luka: Petty cash balance per TB: $12,500. Physical count performed Dec 31, 2025 with custodian E. Rawlins present. Counted: $12,500. Variance: NIL. Custodian signed representation. No IOUs or unusual items noted. ✓",
+      },
+    };
+    setData(d => {
+      let updated = { ...d };
+      for (const rowId of rowIds) {
+        const cfg = rowConfigs[rowId];
+        if (!cfg) continue;
+        const ref: RefDoc = { id: rowId, name: cfg.wpName };
+        updated = {
+          ...updated,
+          [cfg.docKey]: (updated[cfg.docKey] as CashSection[]).map((s, si) =>
+            si !== cfg.sectionIdx ? s : {
+              ...s,
+              rows: s.rows.map(r =>
+                r.description.includes(cfg.match) && !r.wpRef.some(w => w.id === rowId)
+                  ? { ...r, wpRef: [...r.wpRef, ref], comments: r.comments || cfg.comment }
+                  : r
+              ),
+            }
+          ),
+        };
+      }
+      return updated;
+    });
+  }
+
+  function lukaApplyWorkPapersBankRec(rowIds: string[]) {
+    const rowConfigs: Record<string, { match: string; wpName: string; comment: string }> = {
+      "cash-bank-confirm": {
+        match: "Agree the bank reconciliation details to bank confirmations",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Bank confirmation obtained from RBC. Dec 31, 2025 balance: $847,250. Agreed to bank reconciliation. ✓",
+      },
+      "cash-bank-statement": {
+        match: "Agree the bank reconciliation details to the bank statement",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: RBC bank statement (Dec 31, 2025) obtained. Ending balance $847,250 agreed to bank reconciliation. ✓",
+      },
+      "cash-bank-gl": {
+        match: "Agree the bank reconciliation details to the general ledger",
+        wpName: "A-2 Bank Reconciliation",
+        comment: `Luka: GL balance per Xero acct #1010 at Dec 31, 2025: ${lsAccountBalance}. Agreed to bank reconciliation. ✓`,
+      },
+      "cash-bank-supporting": {
+        match: "Agree the bank reconciliation details to supporting detail",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Outstanding cheques list (3 items, $4,750) and outstanding deposit ($2,000) agreed to bank reconciliation detail. ✓",
+      },
+      "cash-bank-arithmetic": {
+        match: "Arithmetic check — Check the arithmetic accuracy",
+        wpName: "A-2 Bank Reconciliation",
+        comment: `Luka: Bank balance $847,250 + outstanding deposits $2,000 − outstanding cheques $4,750 = ${lsAccountBalance}. Arithmetic verified. ✓`,
+      },
+      "cash-bank-sub-obtain": {
+        match: "Obtain directly from the bank a copy of the bank statement",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: January 2026 bank statement obtained directly from RBC online banking portal. Statement period: Jan 1–31, 2026. ✓",
+      },
+      "cash-bank-sub-cheques": {
+        match: "Agree a sample of cheques dated prior to or as at period-end",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: All 3 outstanding cheques (#5821, #5826, #5829) traced to Jan 2026 statement. All cleared within 10 business days. No items unaccounted for. ✓",
+      },
+      "cash-bank-sub-deposits": {
+        match: "Agree a sample of deposits on bank statement to list of outstanding deposits",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Outstanding deposit $2,000 (Dec 31) confirmed cleared Jan 2, 2026 on subsequent statement. No unusual time delays. ✓",
+      },
+      "cash-bank-sub-notes": {
+        match: "Examine bank debit and credit notes",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: No bank debit or credit notes noted in December 2025 statement. Service charges of $45 recorded in correct period. ✓",
+      },
+      "cash-bank-sub-opening": {
+        match: "Agree opening bank statement balance to bank reconciliation",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Opening balance on Jan 2026 statement: $844,500. Agreed to closing balance on Dec 2025 bank reconciliation. ✓",
+      },
+      "cash-bank-sub-sigs": {
+        match: "Scrutinize a sample of cheques for authorized signatures",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: Authorized signing officers confirmed per banking agreement (R. Chandra, CFO; M. Osei, Controller). All 3 outstanding cheques bear authorized signatures. No alterations noted. ✓",
+      },
+      "cash-bank-sub-stale": {
+        match: "Inquire about the reason for large, unusual or stale-dated outstanding cheques",
+        wpName: "A-2 Bank Reconciliation",
+        comment: "Luka: No large, unusual, or stale-dated outstanding cheques noted. All 3 items cleared in January 2026. Management confirms no outstanding items older than 60 days. ✓",
+      },
+    };
+    setData(d => {
+      let updated = { ...d };
+      for (const rowId of rowIds) {
+        const cfg = rowConfigs[rowId];
+        if (!cfg) continue;
+        const ref: RefDoc = { id: rowId, name: cfg.wpName };
+        updated = {
+          ...updated,
+          bankRecProcedures: (updated.bankRecProcedures as CashSection[]).map((s, si) =>
+            si !== 0 ? s : {
+              ...s,
+              rows: s.rows.map(r =>
+                r.description.includes(cfg.match) && !r.wpRef.some(w => w.id === rowId)
+                  ? { ...r, wpRef: [...r.wpRef, ref], comments: r.comments || cfg.comment }
+                  : r
+              ),
+            }
+          ),
+        };
+      }
+      return updated;
+    });
+  }
+
+  return { data, locked: data.concluded, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow, lukaApplyWorkPapersAudit, lukaApplyWorkPapersBankRec };
 }
 
 export function AuditCashWorksheet() {
-  const { data, locked, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useCashStore();
+  const { data, locked, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow, lukaApplyWorkPapersAudit } = useCashStore();
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
@@ -644,7 +782,7 @@ export function AuditCashWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersAudit(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >
@@ -680,7 +818,7 @@ export function AuditCashWorksheet() {
 }
 
 export function AuditCashBankRecWorksheet() {
-  const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useCashStore();
+  const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow, lukaApplyWorkPapersBankRec } = useCashStore();
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
@@ -696,7 +834,7 @@ export function AuditCashBankRecWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersBankRec(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >

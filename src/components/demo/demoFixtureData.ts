@@ -76,6 +76,8 @@ export const DEMO_PROVENANCE = {
   },
 };
 
+export interface LukaProcTargetRow { id: string; label: string; }
+
 export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
   sources: string[];
   procedureType: string;
@@ -84,6 +86,7 @@ export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
     description: string;
     estimatedTime: string;
     source: string;
+    targetRows: LukaProcTargetRow[];
   }[];
 }> = {
   "gca-ws-proc-cash": {
@@ -95,12 +98,20 @@ export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
         description: "Agree TB cash balance to bank statement; identify outstanding items and timing differences.",
         estimatedTime: "~20 min",
         source: "Xero bank feed",
+        targetRows: [
+          { id: "cash-audit-bankRec-review", label: "Bank reconciliations — Review for accuracy, agree to bank statements and GL" },
+          { id: "cash-audit-bankRec-stale",  label: "Bank reconciliations — Ensure no stale-dated cheques included" },
+          { id: "cash-audit-bankRec-explain", label: "Bank reconciliations — Obtain explanations for large / old / unusual items" },
+        ],
       },
       {
         label: "A-3 Cash Count",
         description: "Generate petty cash count sheet from TB petty cash balance for physical count verification.",
         estimatedTime: "~10 min",
         source: "TB cash accounts",
+        targetRows: [
+          { id: "cash-audit-count-significant", label: "Significant cash transactions — Count material cash funds or undeposited receipts" },
+        ],
       },
     ],
   },
@@ -113,6 +124,20 @@ export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
         description: "Agree TB cash balance to bank statement; identify outstanding items and timing differences.",
         estimatedTime: "~20 min",
         source: "Xero bank feed",
+        targetRows: [
+          { id: "cash-bank-confirm",      label: "Obtain copies — Agree to bank confirmations" },
+          { id: "cash-bank-statement",    label: "Obtain copies — Agree to bank statement" },
+          { id: "cash-bank-gl",           label: "Obtain copies — Agree to general ledger" },
+          { id: "cash-bank-supporting",   label: "Obtain copies — Agree to supporting detail (outstanding items list)" },
+          { id: "cash-bank-arithmetic",   label: "Arithmetic check — Check accuracy of bank reconciliation" },
+          { id: "cash-bank-sub-obtain",   label: "Subsequent bank statement — Obtain copy from bank" },
+          { id: "cash-bank-sub-cheques",  label: "Subsequent bank statement — Agree sample of cheques to outstanding list" },
+          { id: "cash-bank-sub-deposits", label: "Subsequent bank statement — Agree sample of deposits to outstanding list" },
+          { id: "cash-bank-sub-notes",    label: "Subsequent bank statement — Examine bank debit and credit notes" },
+          { id: "cash-bank-sub-opening",  label: "Subsequent bank statement — Agree opening balance to bank rec" },
+          { id: "cash-bank-sub-sigs",     label: "Subsequent bank statement — Scrutinize cheques for authorized signatures" },
+          { id: "cash-bank-sub-stale",    label: "Subsequent bank statement — Inquire about large / unusual / stale-dated outstanding cheques" },
+        ],
       },
     ],
   },
@@ -125,24 +150,41 @@ export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
         description: "Agree AR subledger total to GL control account; identify reconciling items.",
         estimatedTime: "~10 min",
         source: "Xero AR subledger",
+        targetRows: [
+          { id: "ar-audit-basic-obtain",    label: "Preparation — Obtain detailed aged listing of AR at period end" },
+          { id: "ar-audit-accuracy-check",  label: "Accuracy of listing — Check arithmetic accuracy and agree to GL balance" },
+        ],
       },
       {
         label: "Sub-ledger — large and unusual items",
         description: "Pull sub-ledger, sort by balance, flag items above threshold and aged >90 days.",
         estimatedTime: "~15 min",
         source: "Xero AR subledger",
+        targetRows: [
+          { id: "ar-audit-existence-unusual", label: "Unusual or large balances — Review sub-ledger, flag unusual items" },
+          { id: "ar-audit-allowance-a",       label: "Allowance for doubtful accounts — Review aged AR trial balance and subsequent receipts" },
+          { id: "ar-audit-allowance-b",       label: "Allowance for doubtful accounts — Accounts >90 days not paid subsequent to period end" },
+        ],
       },
       {
         label: "B-2 Confirmation Procedures",
         description: "Generate confirmation letters from AR subledger using stratified sampling by balance tier.",
         estimatedTime: "~25 min",
         source: "Xero AR subledger",
+        targetRows: [
+          { id: "ar-audit-existence-validate",     label: "Validation of AR — Determine which balances to confirm or use alternative procedures" },
+          { id: "ar-audit-existence-confirmation", label: "Validation — Confirmation: Perform C.110 procedures" },
+        ],
       },
       {
         label: "Subsequent receipts testing",
         description: "Match post year-end cash receipts against year-end AR balances to confirm collectability.",
         estimatedTime: "~20 min",
         source: "Post year-end receipts",
+        targetRows: [
+          { id: "ar-audit-completeness-subsequent", label: "Subsequent receipts testing — Listing of invoices paid after period end" },
+          { id: "ar-audit-existence-alternative",   label: "Validation — Alternative to confirmation: Extend subsequent receipts testing" },
+        ],
       },
     ],
   },
@@ -155,6 +197,17 @@ export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
         description: "Generate confirmation letters from AR subledger using stratified sampling by balance tier.",
         estimatedTime: "~25 min",
         source: "Xero AR subledger",
+        targetRows: [
+          { id: "arconf-agree-gl",         label: "Sub-ledger/TB as at confirmation date — a. Agree to GL" },
+          { id: "arconf-identify-large",   label: "Sub-ledger — b. Identify large and unusual items" },
+          { id: "arconf-select-sample",    label: "Sub-ledger — c. Select sample for confirmation incl. large/unusual" },
+          { id: "arconf-document-sample",  label: "Sub-ledger — d. Document how sample was chosen" },
+          { id: "arconf-prepare-requests", label: "Prepare confirmation requests and maintain control" },
+          { id: "arconf-second-request",   label: "Second request — After X days, mail second request to non-respondents" },
+          { id: "arconf-differences",      label: "Differences — Reconcile replies indicating differences" },
+          { id: "arconf-alternative",      label: "Alternative procedures — Where confirmations not returned" },
+          { id: "arconf-statistics",       label: "Complete confirmation statistics summary" },
+        ],
       },
     ],
   },
