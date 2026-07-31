@@ -2377,7 +2377,7 @@ export default function EngagementDetail() {
  localStorage.setItem(`luka-used-${engagementId}`, '1');
  }
  setLukaInitialTab("threads");
- setLukaInitialAiMessage(`What would you like to do in the "${checklist?.title ?? checklistKey}" workpaper? I can help you understand requirements, fill in fields, review responses, or answer questions about this section.`);
+ setLukaInitialAiMessage(`What would you like to do in the "${checklist?.title ?? CUSTOM_WORKSHEET_TITLES[checklistKey ?? ''] ?? checklistKey}" workpaper? I can help you understand requirements, fill in fields, review responses, or answer questions about this section.`);
  setLukaInitialAiMessagePrompts(["/Explain requirements", "/Auto-fill this section", "/Review my responses", "/What are the risks?"]);
  setLukaOpen(true);
  }}

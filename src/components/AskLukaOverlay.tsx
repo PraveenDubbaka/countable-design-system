@@ -1541,6 +1541,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  <motion.div
  layoutId="luka-tab-indicator"
  className="absolute inset-0 rounded-full"
+ initial={{ opacity: 1 }}
+ animate={{ opacity: 1 }}
  style={{
  background: "linear-gradient(135deg, #6C2FF2 0%, #8A5BFF 55%, #B084FF 100%)",
  boxShadow: "0 6px 16px -6px hsl(265 80% 55% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.25)",
