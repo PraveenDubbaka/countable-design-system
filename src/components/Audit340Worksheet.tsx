@@ -211,7 +211,7 @@ export function Audit340Worksheet() {
        <tr className="bg-muted">
         <th className={TH + " w-16 text-center"}>PEG MAP</th>
         <th className={TH + " min-w-[280px]"}>Matter to be communicated</th>
-        <th className={TH + " min-w-[200px]"}>Form (such as letter) and date of communication</th>
+        <th className={TH + " min-w-[280px]"}>Form (such as letter) and date of communication</th>
         <th className={TH + " w-24 text-center"}>W/P Ref.</th>
        </tr>
       </thead>
@@ -233,7 +233,7 @@ export function Audit340Worksheet() {
             ))}
            </ul>
           </td>
-          <td className={TD + " min-w-[200px]"}>
+          <td className={TD + " min-w-[280px]"}>
            <Textarea
             disabled={locked}
             value={entry.formAndDate}
