@@ -35,7 +35,6 @@ import { AuditFinalReviewWorksheet } from "@/components/AuditFinalReviewWorkshee
 import { AuditPAP501Worksheet } from "@/components/AuditPAP501Worksheet";
 
 import { Audit507Worksheet } from "@/components/Audit507Worksheet";
-import { Audit506Worksheet } from "@/components/Audit506Worksheet";
 import { Audit510Worksheet } from "@/components/Audit510Worksheet";
 import { Audit511Worksheet } from "@/components/Audit511Worksheet";
 import { Audit513Worksheet } from "@/components/Audit513Worksheet";
@@ -97,6 +96,7 @@ import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { AuditASMImportBanner } from "@/components/AuditASMImportBanner";
+import { Audit506ImportBanner } from "@/components/Audit506ImportBanner";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import {
  generateClientAcceptanceContinuanceChecklist,
@@ -779,7 +779,7 @@ const WORKSHEET_KEYS = new Set([
  'aud-iar', 'aud-us-iar',
  'aud-form-440', 'aud-us-form-440',
  'aud-ra-pap501bc', 'aud-ra-pap501',
- 'aud-ra-506', 'aud-ra-507', 'aud-ra-510', 'aud-ra-511', 'aud-ra-513', 'aud-ra-514', 'aud-ra-515',
+ 'aud-ra-507', 'aud-ra-510', 'aud-ra-511', 'aud-ra-513', 'aud-ra-514', 'aud-ra-515',
  'aud-ra-520', 'aud-ra-535', 'aud-ra-540', 'aud-ra-550', 'aud-ra-551',
  'aud-ra-575', 'aud-ra-580', 'aud-ra-590',
  'aud-rp-605', 'aud-rp-610', 'aud-rp-625', 'aud-rp-630', 'aud-rp-635',
@@ -2841,8 +2841,6 @@ export default function EngagementDetail() {
  ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
  <AuditPAP501Worksheet />
 
- ) : (checklistKey === 'aud-ra-506') ? (
- <Audit506Worksheet connectedApps={connectedApps} onOpenConnectors={() => setConnectorsOpen(true)} />
  ) : (checklistKey === 'aud-ra-507') ? (
  <Audit507Worksheet connectedApps={connectedApps} onOpenConnectors={() => setConnectorsOpen(true)} />
  ) : (checklistKey === 'aud-ra-510') ? (
@@ -2924,6 +2922,15 @@ export default function EngagementDetail() {
  checklist={checklist}
  onUpdate={handleChecklistUpdate}
  isUS={checklistKey === 'aud-us-asm'}
+ />
+ )}
+ {/* 506 Fraud import banner */}
+ {checklistKey === 'aud-ra-506' && checklist && (
+ <Audit506ImportBanner
+ checklist={checklist}
+ onUpdate={handleChecklistUpdate}
+ connectedApps={connectedApps}
+ onOpenConnectors={() => setConnectorsOpen(true)}
  />
  )}
  {/* Clipboard prompt banner */}
