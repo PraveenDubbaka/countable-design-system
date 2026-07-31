@@ -85,13 +85,10 @@ export function Audit506ImportBanner({ checklist, onUpdate, connectedApps, onOpe
       <div className="bg-gradient-to-r from-[#1C63A6]/5 to-[#7A31D8]/5 border border-[#1C63A6]/20 rounded-lg px-4 py-3 flex items-center gap-3 mb-4">
         <Sparkles className="h-4 w-4 text-[#1C63A6] flex-shrink-0" />
         <span className="text-sm text-foreground flex-1">Import your fraud inquiry call transcript to pre-fill this checklist</span>
-        <button
-          onClick={() => setDialogOpen(true)}
-          className="bg-gradient-to-r from-[#1C63A6] to-[#7A31D8] text-white text-xs font-medium px-3 py-1.5 rounded-full gap-1.5 flex items-center hover:opacity-90 transition-opacity"
-        >
-          <Sparkles className="h-3 w-3" />
-          Import Notes
-        </button>
+        <Button size="sm" onClick={() => setDialogOpen(true)} className="h-8 shrink-0 whitespace-nowrap">
+          <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+          Import
+        </Button>
       </div>
       <ImportNotesDialog
         open={dialogOpen}
