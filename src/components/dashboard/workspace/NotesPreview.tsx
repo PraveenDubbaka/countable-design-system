@@ -55,9 +55,9 @@ const NotesPreview = ({ isEditMode = false, onContentChanged }: NotesPreviewProp
  <EditableTitleBlock
  isEditMode={isEditMode}
  onContentChanged={onContentChanged}
- entityName="ABC Pvt. Ltd."
+ entityName="Northline Precision Manufacturing Inc."
  pageName="Notes to Financial Information"
- dateLabel="For the year ended Month Date, 20XX"
+ dateLabel="For the year ended December 31, 2025"
  />
  );
 
@@ -142,10 +142,10 @@ const NotesPreview = ({ isEditMode = false, onContentChanged }: NotesPreviewProp
  <tr>
  <th style={{ width: "55%", textAlign: "left", padding: "4px 2px" }}></th>
  <th className={`${cellStyle} ${thickBorderTop} ${thickBorderBottom}`} style={{ width: "22.5%", fontWeight: 700 }}>
- December 31<br />2024
+ December 31<br />2025
  </th>
  <th className={`${cellStyle} ${thickBorderTop} ${thickBorderBottom}`} style={{ width: "22.5%", fontWeight: 700 }}>
- December 31<br />2023
+ December 31<br />2024
  </th>
  </tr>
  </thead>

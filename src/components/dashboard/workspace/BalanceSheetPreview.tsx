@@ -60,37 +60,37 @@ const BalanceSheetPreview = ({ isEditMode = false, onContentChanged }: BalanceSh
 
  const assets = {
  currentAssets: [
- { label: "Cash and cash equivalents", col1: "-", col2: "(830)" },
- { label: "Accounts receivable", col1: "-", col2: "10,207" },
- { label: "Allowance for doubtful debt", col1: "-", col2: "(2,721)" },
- { label: "Loans and notes receivable", col1: "-", col2: "10" },
- { label: "Other current assets", col1: "-", col2: "(243,740)" },
+ { label: "Cash and cash equivalents", col1: "425,000", col2: "188,100" },
+ { label: "Trade and other receivables", col1: "1,847,340", col2: "1,705,000" },
+ { label: "Inventories", col1: "1,245,000", col2: "1,160,000" },
+ { label: "Prepaid expenses and deposits", col1: "118,000", col2: "106,000" },
+ { label: "", col1: "", col2: "" },
  ],
- currentTotal: { col1: "-", col2: "(237,074)" },
- ppe: { col1: "-", col2: "(11,993)" },
- totalAssets: { col1: "-", col2: "(249,067)" },
+ currentTotal: { col1: "3,635,340", col2: "3,159,100" },
+ ppe: { col1: "5,982,000", col2: "6,437,000" },
+ totalAssets: { col1: "9,617,340", col2: "9,596,100" },
  };
 
  const liabilities = {
  current: [
- { label: "Accounts payable and accrued liabilities", col1: "-", col2: "47,492" },
- { label: "Taxes payable", col1: "-", col2: "(11,482)" },
- { label: "Short-term debt", col1: "-", col2: "(10)" },
- { label: "Due to shareholder(s)/director(s)", col1: "-", col2: "(100)" },
- { label: "Other current liabilities", col1: "-", col2: "3,827" },
+ { label: "Accounts payable and accrued liabilities", col1: "980,000", col2: "912,000" },
+ { label: "Current portion of long-term debt", col1: "420,000", col2: "420,000" },
+ { label: "Current portion of lease liabilities", col1: "120,000", col2: "120,000" },
+ { label: "Income taxes payable", col1: "85,000", col2: "67,000" },
+ { label: "", col1: "", col2: "" },
  ],
- currentTotal: { col1: "-", col2: "39,727" },
- longTerm: { col1: "-", col2: "(7,662)" },
- totalLiabilities: { col1: "-", col2: "32,065" },
+ currentTotal: { col1: "1,605,000", col2: "1,519,000" },
+ longTerm: { col1: "3,257,100", col2: "3,809,760" },
+ totalLiabilities: { col1: "4,862,100", col2: "5,328,760" },
  };
 
  const equity = [
- { label: "Share capital", col1: "-", col2: "(5,721)" },
- { label: "Deficit", col1: "-", col2: "(275,486)" },
- { label: "Other comprehensive income", col1: "-", col2: "75" },
+ { label: "Share capital", col1: "1,000", col2: "1,000" },
+ { label: "Retained earnings", col1: "4,754,240", col2: "4,266,340" },
+ { label: "", col1: "", col2: "" },
  ];
- const totalEquity = { col1: "-", col2: "(281,132)" };
- const totalLiabilitiesAndEquity = { col1: "-", col2: "(249,067)" };
+ const totalEquity = { col1: "4,755,240", col2: "4,267,340" };
+ const totalLiabilitiesAndEquity = { col1: "9,617,340", col2: "9,596,100" };
 
  const cellStyle = "px-2 py-[3px] text-right whitespace-nowrap";
  const labelStyle = "px-2 py-[3px] text-left";
@@ -196,9 +196,9 @@ const BalanceSheetPreview = ({ isEditMode = false, onContentChanged }: BalanceSh
  <EditableTitleBlock
  isEditMode={isEditMode}
  onContentChanged={onContentChanged}
- entityName="Cash Flow qa3"
+ entityName="Northline Precision Manufacturing Inc."
  pageName="Balance Sheet"
- dateLabel="As at December 31, 2024"
+ dateLabel="As at December 31, 2025"
  />
 
  <EditableTableControls isEditMode={isEditMode}>
@@ -207,8 +207,8 @@ const BalanceSheetPreview = ({ isEditMode = false, onContentChanged }: BalanceSh
  <tr>
  <th className={`${thickBorderTop} ${thickBorderBottom}`} style={{ width: colWidths.label, textAlign: "left", padding: "4px 2px" }}></th>
  {renderDataCells(
- headerCol("December 31, 2024", 0),
- headerCol("December 31, 2023", 1),
+ headerCol("December 31, 2025", 0),
+ headerCol("December 31, 2024", 1),
  headerManual,
  )}
  </tr>

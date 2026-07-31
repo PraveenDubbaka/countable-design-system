@@ -63,23 +63,23 @@ const CashFlowsPreview = ({ isEditMode = false, onContentChanged }: CashFlowsPre
 
  const rows: Row[] = [
  { label: "Operating activities", col1: "", col2: "", bold: true, topBorder: true },
- { label: "Net Profit/Loss", col1: "200", col2: "100" },
- { label: "Changes in operating assets and liabilities", col1: "", col2: "", bold: true },
- { label: "Changes in operating assets and liabilities 1", col1: "200", col2: "100", indent: 1 },
- { label: "Changes in operating assets and liabilities 2", col1: "200", col2: "100", indent: 1 },
- { label: "Changes in operating assets and liabilities 3", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "Net cash generated from (used in) operating activities", col1: "800", col2: "400", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Net income", col1: "837,900", col2: "681,650" },
+ { label: "Adjustments for non-cash items", col1: "", col2: "", bold: true },
+ { label: "Depreciation, amortization and ROU amortization", col1: "700,000", col2: "680,000", indent: 1 },
+ { label: "Deferred income taxes", col1: "25,000", col2: "37,660", indent: 1 },
+ { label: "Changes in non-cash working capital", col1: "(153,340)", col2: "(349,310)", indent: 1, bottomBorder: true },
+ { label: "Net cash generated from (used in) operating activities", col1: "1,409,560", col2: "1,050,000", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  { label: "Investing activities", col1: "", col2: "", bold: true, topBorder: true },
- { label: "Investing activities 1", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "Net cash used in investing activities", col1: "200", col2: "100", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Purchase of property, plant and equipment", col1: "(280,000)", col2: "(245,000)", indent: 1, bottomBorder: true },
+ { label: "Net cash used in investing activities", col1: "(280,000)", col2: "(245,000)", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  { label: "Financing activities", col1: "", col2: "", bold: true, topBorder: true },
- { label: "Financing activities 1", col1: "200", col2: "100", indent: 1 },
- { label: "Financing activities 2", col1: "200", col2: "100", indent: 1 },
- { label: "Financing activities 3", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "Net cash generated from (used in) financing activities", col1: "600", col2: "300", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
- { label: "Net Increase (Decrease) in Cash & cash equivalents", col1: "1,200", col2: "600", bold: true, topBorder: true, isTotal: true },
- { label: "Cash and cash equivalents, beginning of year", col1: "200", col2: "100", bold: true },
- { label: "Cash and cash equivalents, end of year", col1: "1,000", col2: "500", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Repayment of long-term debt", col1: "(420,000)", col2: "(420,000)", indent: 1 },
+ { label: "Repayment of lease liabilities", col1: "(122,660)", col2: "(120,000)", indent: 1 },
+ { label: "Dividends paid", col1: "(350,000)", col2: "(350,000)", indent: 1, bottomBorder: true },
+ { label: "Net cash generated from (used in) financing activities", col1: "(892,660)", col2: "(890,000)", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Net increase (decrease) in cash and cash equivalents", col1: "236,900", col2: "(85,000)", bold: true, topBorder: true, isTotal: true },
+ { label: "Cash and cash equivalents, beginning of year", col1: "188,100", col2: "273,100", bold: true },
+ { label: "Cash and cash equivalents, end of year", col1: "425,000", col2: "188,100", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  { label: "", col1: "0", col2: "0", red: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  ];
 
@@ -165,9 +165,9 @@ const CashFlowsPreview = ({ isEditMode = false, onContentChanged }: CashFlowsPre
  <EditableTitleBlock
  isEditMode={isEditMode}
  onContentChanged={onContentChanged}
- entityName="ABC Pvt. Ltd."
+ entityName="Northline Precision Manufacturing Inc."
  pageName="Statement of Cash Flows"
- dateLabel="For the year ended Month Date, 20XX"
+ dateLabel="For the year ended December 31, 2025"
  />
 
  <EditableTableControls isEditMode={isEditMode}>
@@ -176,8 +176,8 @@ const CashFlowsPreview = ({ isEditMode = false, onContentChanged }: CashFlowsPre
  <tr>
  <th className={`${thickBorderTop} ${thickBorderBottom}`} style={{ width: colWidths.label, textAlign: "left", padding: "4px 2px" }}></th>
  {renderDataCells(
- headerCol("Month Date 20XX", 0),
- headerCol("Month Date 20XX", 1),
+ headerCol("2025", 0),
+ headerCol("2024", 1),
  headerManual,
  )}
  </tr>

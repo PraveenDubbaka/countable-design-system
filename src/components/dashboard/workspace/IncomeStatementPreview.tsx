@@ -63,30 +63,26 @@ const IncomeStatementPreview = ({ isEditMode = false, onContentChanged }: Income
 
  const rows: Row[] = [
  { label: "Revenue", col1: "", col2: "", bold: true, topBorder: true },
- { label: "Revenue 1", col1: "200", col2: "100", indent: 1 },
- { label: "Revenue 2", col1: "200", col2: "100", indent: 1 },
- { label: "Revenue 3", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "", col1: "600", col2: "300", topBorder: true },
+ { label: "Product sales", col1: "14,200,000", col2: "12,850,000", indent: 1, bottomBorder: true },
+ { label: "", col1: "14,200,000", col2: "12,850,000", topBorder: true },
  { label: "Cost of Sales", col1: "", col2: "", bold: true },
- { label: "Cost of Sales 1", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "Gross Profit (Loss)", col1: "400", col2: "200", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Cost of goods sold", col1: "9,240,000", col2: "8,375,000", indent: 1, bottomBorder: true },
+ { label: "Gross Profit (Loss)", col1: "4,960,000", col2: "4,475,000", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  { label: "Expenses", col1: "", col2: "", bold: true },
- { label: "Expenses 1", col1: "200", col2: "100", indent: 1 },
- { label: "Expenses 2", col1: "200", col2: "100", indent: 1 },
- { label: "Expenses 3", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "Total Expenses", col1: "600", col2: "300", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
- { label: "Net income (loss) before undernoted", col1: "(200)", col2: "(100)", bold: true },
- { label: "Other Expenses (Income)", col1: "", col2: "", bold: true },
- { label: "Other Expenses (Income) 1", col1: "200", col2: "100", indent: 1 },
- { label: "Other Expenses (Income) 2", col1: "200", col2: "100", indent: 1 },
- { label: "Other Expenses (Income) 3", col1: "200", col2: "100", indent: 1, bottomBorder: true },
- { label: "Total Other Expenses (Income)", col1: "600", col2: "300", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
- { label: "Net loss before income tax", col1: "(400)", col2: "(200)", bold: true },
- { label: "Provision for (recovery of) income taxes", col1: "200", col2: "100", bold: true },
- { label: "Net income (loss)", col1: "(200)", col2: "(100)", bold: true },
- { label: "Retained Earnings (Deficit), beginning of the year", col1: "200", col2: "100.00", bold: true },
- { label: "Dividends declared", col1: "200", col2: "100", bold: true, bottomBorder: true },
- { label: "Retained Earnings (Deficit), end of year", col1: "(200)", col2: "100", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Administrative expenses", col1: "2,940,000", col2: "2,693,000", indent: 1 },
+ { label: "Depreciation and amortization", col1: "580,000", col2: "560,000", indent: 1 },
+ { label: "Interest expense", col1: "300,000", col2: "272,350", indent: 1, bottomBorder: true },
+ { label: "Total Expenses", col1: "3,820,000", col2: "3,525,350", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Net income before income taxes", col1: "1,140,000", col2: "949,650", bold: true },
+ { label: "Income taxes", col1: "", col2: "", bold: true },
+ { label: "Income tax expense", col1: "302,100", col2: "268,000", indent: 1 },
+ { label: "", col1: "", col2: "", indent: 1 },
+ { label: "", col1: "", col2: "", indent: 1, bottomBorder: true },
+ { label: "Total Income Taxes", col1: "302,100", col2: "268,000", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ { label: "Net income", col1: "837,900", col2: "681,650", bold: true },
+ { label: "Retained earnings, beginning of year", col1: "4,266,340", col2: "3,934,690", bold: true },
+ { label: "Dividends declared", col1: "(350,000)", col2: "(350,000)", bold: true, bottomBorder: true },
+ { label: "Retained Earnings, end of year", col1: "4,754,240", col2: "4,266,340", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  { label: "", col1: "0", col2: "0", topBorder: true, bottomBorder: true, thick: true, red: true },
  ];
 
@@ -172,9 +168,9 @@ const IncomeStatementPreview = ({ isEditMode = false, onContentChanged }: Income
  <EditableTitleBlock
  isEditMode={isEditMode}
  onContentChanged={onContentChanged}
- entityName="ABC Pvt. Ltd."
+ entityName="Northline Precision Manufacturing Inc."
  pageName="Statement of Income (Loss) and Retained Earnings (Deficit)"
- dateLabel="For the year ended Month Date, 20XX"
+ dateLabel="For the year ended December 31, 2025"
  />
 
  <EditableTableControls isEditMode={isEditMode}>
@@ -183,8 +179,8 @@ const IncomeStatementPreview = ({ isEditMode = false, onContentChanged }: Income
  <tr>
  <th className={`${thickBorderTop} ${thickBorderBottom}`} style={{ width: colWidths.label, textAlign: "left", padding: "4px 2px" }}></th>
  {renderDataCells(
- headerCol("Month Date 20XX", 0),
- headerCol("Month Date 20XX", 1),
+ headerCol("2025", 0),
+ headerCol("2024", 1),
  headerManual,
  )}
  </tr>

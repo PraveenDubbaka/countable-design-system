@@ -25,8 +25,8 @@ const CoverPagePreview = ({ isEditMode = false, onContentChanged, templateType =
 
  const defaultTitle = useMemo(() => getDefaultTitle(), [templateType]);
 
- const [clientName, setClientName] = useState("ABC Pvt. Ltd.");
- const [periodEnd, setPeriodEnd] = useState("December 31, 2024");
+ const [clientName, setClientName] = useState("Northline Precision Manufacturing Inc.");
+ const [periodEnd, setPeriodEnd] = useState("December 31, 2025");
  const [title, setTitle] = useState(defaultTitle);
 
  // Sync title when templateType changes
@@ -48,7 +48,7 @@ const CoverPagePreview = ({ isEditMode = false, onContentChanged, templateType =
  const interactiveRef = useRef<HTMLDivElement>(null);
  const toolbarRef = useRef<HTMLDivElement>(null);
 
- const initialValues = useRef({ clientName: "ABC Pvt. Ltd.", periodEnd: "December 31, 2024", title: getDefaultTitle() });
+ const initialValues = useRef({ clientName: "Northline Precision Manufacturing Inc.", periodEnd: "December 31, 2025", title: getDefaultTitle() });
 
  // Get the formatting shown in toolbar: if a field is active, show its formatting; otherwise show a merged/global view
  const getToolbarFormatting = useCallback((): CoverPageFormatting => {
