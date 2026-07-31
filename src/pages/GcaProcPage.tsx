@@ -1,15 +1,19 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { SendHorizontal, ClipboardList, PencilLine, FileSpreadsheet, Settings2, ChevronDown, Download, FileText, FileType, Landmark } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { SendHorizontal, ClipboardList, PencilLine, FileSpreadsheet, Settings2, ChevronDown, ChevronRight, Download, FileText, FileType, Landmark, Building2, Calendar, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Layout } from "@/components/Layout";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import { LukaIcon } from "@/components/LukaIcon";
 import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
 import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { AuditCashWorksheet, AuditCashBankRecWorksheet, AuditCashCountWorksheet } from "@/components/AuditCashWorksheet";
 import { AuditARWorksheet, AuditARConfirmationWorksheet } from "@/components/AuditARWorksheet";
+import { loadEngagements } from "@/store/engagementsStore";
+import xeroLogo from "@/assets/xero-logo.png";
+import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
 
 const TBCheckIcon = ({ className }: { className?: string }) => (
   <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -38,13 +42,86 @@ function getWorksheetComponent(id: string): React.ReactNode | null {
 
 export function GcaProcPage() {
   const { worksheetId, engagementId } = useParams<{ worksheetId: string; engagementId: string }>();
+  const navigate = useNavigate();
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
   const component = worksheetId ? getWorksheetComponent(worksheetId) : null;
   const title = worksheetId ? WORKSHEET_TITLES[worksheetId] : undefined;
 
+  const allEngagements = useMemo(() => loadEngagements(), []);
+  const engagement = engagementId ? allEngagements.find(e => e.id === engagementId) ?? null : null;
+  const clientName = engagement?.client || "Unknown Client";
+  const displayId = engagementId || "Unknown";
+  const status = engagement?.status || "In Progress";
+  const clientEngagements = allEngagements.filter(e => e.client === clientName);
+
+  const sourceIcon = useMemo(() => {
+    if (!engagementId) return null;
+    try {
+      const raw = localStorage.getItem(`connectors-${engagementId}`);
+      const apps: string[] = raw ? JSON.parse(raw) : [];
+      const joined = apps.join(" ").toLowerCase();
+      if (joined.includes("xero")) return (
+        <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
+          <img src={xeroLogo} alt="Xero" className="h-4 w-auto object-contain" />
+          <span className="text-xs font-medium text-foreground">Xero</span>
+        </div>
+      );
+      if (joined.includes("quickbooks") || joined.includes("qbo")) return (
+        <div className="ml-1 inline-flex items-center justify-center h-7 px-2 bg-card border border-border rounded-sm gap-1">
+          <img src={quickbooksLogo} alt="QuickBooks" className="h-4 w-auto object-contain" />
+          <span className="text-xs font-medium text-foreground">QuickBooks</span>
+        </div>
+      );
+    } catch { /* ignore */ }
+    return null;
+  }, [engagementId]);
+
+  const engagementBreadcrumb = (
+    <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
+      <div className="flex items-center gap-1.5 px-2 py-1">
+        <div className="w-6 h-6 rounded-md bg-sidebar-foreground/12 border border-sidebar-foreground/15 flex items-center justify-center">
+          <Building2 className="h-3.5 w-3.5 text-sidebar-foreground" />
+        </div>
+        <span className="text-sm font-medium text-sidebar-foreground">{clientName}</span>
+      </div>
+      <ChevronRight className="h-3.5 w-3.5 text-sidebar-foreground/60" />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="group flex items-center gap-1.5 px-2 py-1 rounded-md border border-sidebar-foreground/20 hover:bg-sidebar-foreground/10 transition-colors">
+            <div className="w-6 h-6 rounded-md bg-sidebar-foreground/12 border border-sidebar-foreground/15 flex items-center justify-center">
+              <FileText className="h-3.5 w-3.5 text-sidebar-foreground" />
+            </div>
+            <span className="text-sm font-medium text-sidebar-foreground font-mono">{displayId}</span>
+            <ChevronDown className="h-3 w-3 text-sidebar-foreground/60" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-72">
+          <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Engagements for {clientName}</div>
+          <DropdownMenuSeparator />
+          {clientEngagements.map(eng => (
+            <DropdownMenuItem key={eng.id} onClick={() => navigate(`/engagements/${eng.id}`)} className="flex items-center gap-3 cursor-pointer group py-2">
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-mono text-sm font-medium truncate">{eng.id}</span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">{eng.yearEnd}</span>
+                </div>
+              </div>
+              {eng.id === displayId && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Badge variant={status === "Completed" ? "completed" : status === "Not Started" ? "notStarted" : "inProgress"} className="ml-2 whitespace-nowrap">
+        {status}
+      </Badge>
+      {sourceIcon}
+    </div>
+  );
+
   return (
-    <Layout title="Engagements">
+    <Layout title="Engagements" headerContent={engagementBreadcrumb}>
       <div className="h-full flex flex-col min-w-0 overflow-hidden">
         {title && (
           <div className="sticky top-0 z-10 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">

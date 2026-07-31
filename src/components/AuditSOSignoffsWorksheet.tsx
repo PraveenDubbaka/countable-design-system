@@ -404,7 +404,7 @@ export function AuditSOSignoffsWorksheet() {
                         <div className="flex items-center gap-2">
                           <ItemIcon type={item.icon} />
                           {item.code && (
-                            <span className="text-[11px] font-semibold text-primary flex-shrink-0">{item.code}</span>
+                            <span className="text-sm font-semibold text-primary flex-shrink-0">{item.code}</span>
                           )}
                           <span className="text-sm text-foreground">{item.label}</span>
                         </div>

@@ -86,8 +86,18 @@ export default function ProcedureDetail() {
  const raw = localStorage.getItem(`connectors-${engagementId}`);
  const apps: string[] = raw ? JSON.parse(raw) : [];
  const joined = apps.join(" ").toLowerCase();
- if (joined.includes("xero")) return <img src={xeroLogo} alt="Xero" className="h-5 w-auto object-contain ml-2 shrink-0" />;
- if (joined.includes("quickbooks") || joined.includes("qbo")) return <img src={quickbooksLogo} alt="QuickBooks" className="h-6 w-auto object-contain ml-2 shrink-0" />;
+ if (joined.includes("xero")) return (
+ <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
+ <img src={xeroLogo} alt="Xero" className="h-4 w-auto object-contain" />
+ <span className="text-xs font-medium text-foreground">Xero</span>
+ </div>
+ );
+ if (joined.includes("quickbooks") || joined.includes("qbo")) return (
+ <div className="ml-1 inline-flex items-center justify-center h-7 px-2 bg-card border border-border rounded-sm gap-1">
+ <img src={quickbooksLogo} alt="QuickBooks" className="h-4 w-auto object-contain" />
+ <span className="text-xs font-medium text-foreground">QuickBooks</span>
+ </div>
+ );
  } catch { /* ignore */ }
  return null;
  }, [engagementId]);

@@ -1,4 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+
+const SCROLL_KEY = 'sidebar-scroll';
+function getScroll(): number { try { return parseInt(sessionStorage.getItem(SCROLL_KEY) ?? '0', 10) || 0; } catch { return 0; } }
+function setScroll(v: number) { try { sessionStorage.setItem(SCROLL_KEY, String(v)); } catch {} }
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
@@ -1732,19 +1736,30 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  setPortalTarget(el);
  }, []);
 
- // Preserve sidebar scroll position across navigations
+ // Preserve sidebar scroll position across navigations.
+ // The scroll div lives inside a createPortal that only renders when portalTarget is set,
+ // so we depend on both location.pathname AND portalTarget. This way, when portalTarget
+ // transitions null → element (after a fresh Sidebar mount), this effect re-runs with a
+ // valid ref and can restore the saved position before the browser paints.
  const sidebarScrollRef = useRef<HTMLDivElement>(null);
- const savedScrollRef = useRef<number>(0);
+
+ useLayoutEffect(() => {
+ const el = sidebarScrollRef.current;
+ if (el) el.scrollTop = getScroll();
+ return () => {
+ const el2 = sidebarScrollRef.current;
+ if (el2 && el2.scrollTop > 0) setScroll(el2.scrollTop);
+ };
+ }, [location.pathname, portalTarget]);
+
+ // Real-time save via scroll event; re-attaches when portal div appears
  useEffect(() => {
  const el = sidebarScrollRef.current;
  if (!el) return;
- el.scrollTop = savedScrollRef.current;
- const onScroll = () => { savedScrollRef.current = el.scrollTop; };
- el.addEventListener('scroll', onScroll, { passive: true });
- return () => el.removeEventListener('scroll', onScroll);
- // Re-run when pathname changes so we restore after route-driven re-renders
- // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [location.pathname]);
+ const saveScroll = () => { setScroll(el.scrollTop); };
+ el.addEventListener('scroll', saveScroll, { passive: true });
+ return () => { el.removeEventListener('scroll', saveScroll); };
+ }, [location.pathname, portalTarget]);
  
  // Determine if a secondary panel is visible and expanded (for dark mode gradient)
  const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
