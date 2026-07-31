@@ -11,6 +11,8 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { getEngagementContext } from "@/lib/engagementContext";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { WorksheetLayout, WorksheetSection, ConcludeBar } from "@/components/audit/WorksheetShell";
+import { LukaWorkPaperPanel } from "@/components/demo/LukaWorkPaperPanel";
+import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 type Nature = "Required" | "Optional" | "Additional Procedure" | "";
 type ProcType = "Inquiries" | "Analytics" | "Observation" | "Inspection" | "Recalculation" | "Other" | "";
@@ -627,11 +629,24 @@ function useCashStore() {
 
 export function AuditCashWorksheet() {
   const { data, locked, engagementId, setHeader, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useCashStore();
+  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
+  const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
+  const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
   return (
     <WorksheetLayout
       heading="A Cash > Audit Procedures"
       onAdd={locked ? undefined : () => addRow("auditProcedures", 5)}
       objective="Obtain sufficient appropriate audit evidence that cash and cash equivalents exist, are complete, are accurately valued, are properly classified, and are adequately disclosed in the financial statements."
+      banner={isDemoEngagement ? (
+        <LukaWorkPaperPanel
+          worksheetId="gca-ws-proc-cash"
+          procData={DEMO_LUKA_PROC_ACTIONS["gca-ws-proc-cash"]}
+          lukaState={lukaState}
+          selectedIds={selectedWorkPapers}
+          onSelectionChange={setSelectedWorkPapers}
+          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+        />
+      ) : undefined}
     >
       <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
         <div className="grid grid-cols-3 gap-4">
@@ -666,11 +681,24 @@ export function AuditCashWorksheet() {
 
 export function AuditCashBankRecWorksheet() {
   const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useCashStore();
+  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
+  const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
+  const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
   return (
     <WorksheetLayout
       heading="A Cash > Bank Reconciliation"
       onAdd={locked ? undefined : () => addRow("bankRecProcedures", 0)}
       objective="Perform bank reconciliation procedures to verify that the bank statement balances agree to the general ledger and that reconciling items are valid and properly recorded."
+      banner={isDemoEngagement ? (
+        <LukaWorkPaperPanel
+          worksheetId="gca-ws-proc-cash-bank"
+          procData={DEMO_LUKA_PROC_ACTIONS["gca-ws-proc-cash-bank"]}
+          lukaState={lukaState}
+          selectedIds={selectedWorkPapers}
+          onSelectionChange={setSelectedWorkPapers}
+          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+        />
+      ) : undefined}
     >
       <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden p-6">
         <div className="grid grid-cols-3 gap-4">

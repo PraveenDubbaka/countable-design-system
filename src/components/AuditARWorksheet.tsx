@@ -11,6 +11,8 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { getEngagementContext } from "@/lib/engagementContext";
 import { RefButton, type RefDoc } from "@/components/RefButton";
 import { WorksheetLayout, WorksheetSection, ConcludeBar } from "@/components/audit/WorksheetShell";
+import { LukaWorkPaperPanel } from "@/components/demo/LukaWorkPaperPanel";
+import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 
 type Nature = "Required" | "Optional" | "Additional Procedure" | "";
 type ProcType = "Inquiries" | "Analytics" | "Observation" | "Inspection" | "Recalculation" | "Other" | "";
@@ -607,11 +609,24 @@ function ARInfoBlock({ lsAccountBalance, materiality }: { lsAccountBalance: stri
 
 export function AuditARWorksheet() {
   const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useARStore();
+  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
+  const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
+  const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
   return (
     <WorksheetLayout
       heading="B Accounts Receivable > Audit Procedures"
       onAdd={locked ? undefined : () => addRow("auditProcedures", 5)}
       objective="To respond appropriately to assessed risks at the assertion level through the design and performance of further audit procedures for accounts receivable, trade and other."
+      banner={isDemoEngagement ? (
+        <LukaWorkPaperPanel
+          worksheetId="gca-ws-proc-ar"
+          procData={DEMO_LUKA_PROC_ACTIONS["gca-ws-proc-ar"]}
+          lukaState={lukaState}
+          selectedIds={selectedWorkPapers}
+          onSelectionChange={setSelectedWorkPapers}
+          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+        />
+      ) : undefined}
     >
       <ARInfoBlock lsAccountBalance={lsAccountBalance} materiality={materiality} />
 
@@ -626,11 +641,24 @@ export function AuditARWorksheet() {
 
 export function AuditARConfirmationWorksheet() {
   const { data, locked, engagementId, handleRowField, addRow, conclude, reopen, lsAccountBalance, materiality, toggleHidden, deleteRow } = useARStore();
+  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
+  const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
+  const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
   return (
     <WorksheetLayout
       heading="B Accounts Receivable > Confirmation Procedures"
       onAdd={locked ? undefined : () => addRow("confirmationProcedures", 0)}
       objective="Perform accounts receivable confirmation procedures to obtain sufficient appropriate audit evidence regarding the existence and accuracy of recorded receivable balances."
+      banner={isDemoEngagement ? (
+        <LukaWorkPaperPanel
+          worksheetId="gca-ws-proc-ar-conf"
+          procData={DEMO_LUKA_PROC_ACTIONS["gca-ws-proc-ar-conf"]}
+          lukaState={lukaState}
+          selectedIds={selectedWorkPapers}
+          onSelectionChange={setSelectedWorkPapers}
+          onInitiate={() => { setLukaState("loading"); setTimeout(() => setLukaState("done"), 2600); }}
+        />
+      ) : undefined}
     >
       <ARInfoBlock lsAccountBalance={lsAccountBalance} materiality={materiality} />
 

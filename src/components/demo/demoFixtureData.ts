@@ -76,32 +76,86 @@ export const DEMO_PROVENANCE = {
   },
 };
 
-export const DEMO_LUKA_PROC_ACTIONS: Record<string, { sources: string[]; actions: { label: string; description: string }[] }> = {
+export const DEMO_LUKA_PROC_ACTIONS: Record<string, {
+  sources: string[];
+  procedureType: string;
+  actions: {
+    label: string;
+    description: string;
+    estimatedTime: string;
+    source: string;
+  }[];
+}> = {
   "gca-ws-proc-cash": {
     sources: ["Xero bank feed", "TB cash accounts"],
+    procedureType: "Reconciliation & Count",
     actions: [
-      { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
-      { label: "Cash count sheet", description: "Generate count sheet from petty cash balance in TB" },
+      {
+        label: "A-2 Bank Reconciliation",
+        description: "Agree TB cash balance to bank statement; identify outstanding items and timing differences.",
+        estimatedTime: "~20 min",
+        source: "Xero bank feed",
+      },
+      {
+        label: "A-3 Cash Count",
+        description: "Generate petty cash count sheet from TB petty cash balance for physical count verification.",
+        estimatedTime: "~10 min",
+        source: "TB cash accounts",
+      },
     ],
   },
   "gca-ws-proc-cash-bank": {
     sources: ["Xero bank feed", "TB cash accounts"],
+    procedureType: "Reconciliation",
     actions: [
-      { label: "Bank reconciliation work paper", description: "Populate from connected bank feed and TB cash accounts" },
+      {
+        label: "A-2 Bank Reconciliation",
+        description: "Agree TB cash balance to bank statement; identify outstanding items and timing differences.",
+        estimatedTime: "~20 min",
+        source: "Xero bank feed",
+      },
     ],
   },
   "gca-ws-proc-ar": {
     sources: ["Xero AR subledger", "Post year-end receipts"],
+    procedureType: "Inspection & Confirmation",
     actions: [
-      { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
-      { label: "Aged AR schedule", description: "Pull aging buckets from Xero AR report" },
-      { label: "Subsequent receipts testing", description: "Match post year-end receipts against year-end AR balance" },
+      {
+        label: "Agree to general ledger",
+        description: "Agree AR subledger total to GL control account; identify reconciling items.",
+        estimatedTime: "~10 min",
+        source: "Xero AR subledger",
+      },
+      {
+        label: "Sub-ledger — large and unusual items",
+        description: "Pull sub-ledger, sort by balance, flag items above threshold and aged >90 days.",
+        estimatedTime: "~15 min",
+        source: "Xero AR subledger",
+      },
+      {
+        label: "B-2 Confirmation Procedures",
+        description: "Generate confirmation letters from AR subledger using stratified sampling by balance tier.",
+        estimatedTime: "~25 min",
+        source: "Xero AR subledger",
+      },
+      {
+        label: "Subsequent receipts testing",
+        description: "Match post year-end cash receipts against year-end AR balances to confirm collectability.",
+        estimatedTime: "~20 min",
+        source: "Post year-end receipts",
+      },
     ],
   },
   "gca-ws-proc-ar-conf": {
     sources: ["Xero AR subledger"],
+    procedureType: "Confirmation",
     actions: [
-      { label: "Confirmation letter — stratified sample", description: "Generate confirmation letters from AR subledger" },
+      {
+        label: "B-2 Confirmation Procedures",
+        description: "Generate confirmation letters from AR subledger using stratified sampling by balance tier.",
+        estimatedTime: "~25 min",
+        source: "Xero AR subledger",
+      },
     ],
   },
 };

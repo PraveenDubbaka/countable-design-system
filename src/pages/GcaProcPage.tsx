@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { SendHorizontal, ClipboardList, PencilLine, FileSpreadsheet, Settings2, ChevronDown, ChevronRight, Download, FileText, FileType, Landmark, Building2, Calendar, Check } from "lucide-react";
 import { toast } from "sonner";
@@ -7,8 +7,6 @@ import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { LukaIcon } from "@/components/LukaIcon";
-import { LukaSuggestButton } from "@/components/demo/LukaSuggestButton";
-import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { AuditCashWorksheet, AuditCashBankRecWorksheet, AuditCashCountWorksheet } from "@/components/AuditCashWorksheet";
 import { AuditARWorksheet, AuditARConfirmationWorksheet } from "@/components/AuditARWorksheet";
 import { loadEngagements } from "@/store/engagementsStore";
@@ -43,8 +41,6 @@ function getWorksheetComponent(id: string): React.ReactNode | null {
 export function GcaProcPage() {
   const { worksheetId, engagementId } = useParams<{ worksheetId: string; engagementId: string }>();
   const navigate = useNavigate();
-  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
-  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
   const component = worksheetId ? getWorksheetComponent(worksheetId) : null;
   const title = worksheetId ? WORKSHEET_TITLES[worksheetId] : undefined;
 
@@ -213,39 +209,6 @@ export function GcaProcPage() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
-        )}
-        {isDemoEngagement && worksheetId && DEMO_LUKA_PROC_ACTIONS[worksheetId] && (
-          <div className="flex items-center justify-between px-4 py-2.5 bg-violet-50 border-b border-violet-200">
-            <div className="flex items-center gap-2">
-              <LukaIcon size={13} bare inverted className="shrink-0 text-violet-700" />
-              <span className="text-xs font-medium text-violet-700">
-                {lukaState === 'loading'
-                  ? "Luka is preparing work papers from connected bank feed and prior file…"
-                  : lukaState === 'done'
-                  ? "Luka has prepared work papers — review before proceeding."
-                  : <>
-                      Luka can initiate{" "}
-                      <span className="font-semibold">
-                        {DEMO_LUKA_PROC_ACTIONS[worksheetId].actions.length} work paper
-                        {DEMO_LUKA_PROC_ACTIONS[worksheetId].actions.length !== 1 ? "s" : ""}
-                      </span>{" "}
-                      for this procedure
-                    </>
-                }
-              </span>
-            </div>
-            {lukaState === 'idle' && (
-              <LukaSuggestButton
-                actions={DEMO_LUKA_PROC_ACTIONS[worksheetId].actions.map(a => ({
-                  ...a,
-                  onTrigger: () => {
-                    setLukaState('loading');
-                    setTimeout(() => setLukaState('done'), 2400);
-                  },
-                }))}
-              />
-            )}
           </div>
         )}
         <div className="flex-1 overflow-auto bg-card">
