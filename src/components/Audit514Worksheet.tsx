@@ -263,7 +263,7 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
- <p className="text-base text-foreground leading-relaxed">
+ <p className="text-sm text-foreground leading-relaxed">
  <span className="font-semibold text-primary">Objective: </span>
  To facilitate and document the results of reviewing the outcome of previous years&apos; accounting estimates, and assess whether differences indicate possible management bias or require audit response.
  </p>

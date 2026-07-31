@@ -334,8 +334,8 @@ export function Audit535Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3 shrink-0">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-base text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To obtain an understanding of the entity’s information system and communication relevant to the preparation of the financial statements through performing risk assessment procedures.
  <span className="block mt-1.5 text-[11px]">
  <span className="font-semibold text-foreground">Legend: </span>

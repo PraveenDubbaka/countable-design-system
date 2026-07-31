@@ -570,8 +570,8 @@ export function Audit590Worksheet() {
  {/* Objective banner */}
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-base text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Perform engagement scoping for all classes of transactions, account balances and disclosures (COTABDs).
  Identify SCOTABDs and material-only COTABDs, assess RMM at the assertion level, summarise the audit
  response, and complete a stand-back assessment to ensure all risks have been identified.

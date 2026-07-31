@@ -334,7 +334,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {importStep === 1 && (
  <div className="p-8 flex flex-col items-center gap-5 text-center">
  <div className="text-4xl">🗓️</div>
- <p className="text-base font-semibold text-foreground">Connecting to Google Calendar...</p>
+ <p className="text-sm font-semibold text-foreground">Connecting to Google Calendar...</p>
  <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -345,7 +345,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {importStep === 2 && (
  <div className="p-8 flex flex-col items-center gap-5 text-center">
  <div className="text-4xl">✨</div>
- <p className="text-base font-semibold text-foreground">Luka AI is analyzing your meeting notes...</p>
+ <p className="text-sm font-semibold text-foreground">Luka AI is analyzing your meeting notes...</p>
  <ImportProgressBar />
  <p className="text-sm text-muted-foreground">Reading transcript… Extracting attendees… Mapping team roles…</p>
  </div>
@@ -353,7 +353,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {importStep === 3 && (
  <div>
  <div className="px-6 pt-6 pb-4 border-b border-border flex items-center justify-between">
- <p className="text-base font-semibold text-foreground">Draft Content Found</p>
+ <p className="text-sm font-semibold text-foreground">Draft Content Found</p>
  <button onClick={() => setImportStep(0)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
  </div>
  <div className="px-6 py-5 space-y-4">
@@ -379,7 +379,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {importStep === 4 && (
  <div>
  <div className="px-6 pt-6 pb-4 border-b border-border flex items-center justify-between">
- <p className="text-base font-semibold text-foreground">Review Draft</p>
+ <p className="text-sm font-semibold text-foreground">Review Draft</p>
  <button onClick={() => setImportStep(0)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
  </div>
  <div className="px-6 py-5 max-h-72 overflow-y-auto space-y-3">
@@ -414,8 +414,8 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-base text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  To document the scope, timing and direction of the audit as a guide for the development of the audit plan.{" "}
  <span className="font-medium text-foreground">Legend:</span> EQCR = Engagement quality control review. TCWG = Those charged with governance.
  

@@ -429,8 +429,8 @@ export function Audit506Worksheet({ isUS = false, connectedApps, onOpenConnector
       <div className="flex-1 overflow-y-auto bg-muted/30">
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-        <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
-        <p className="text-base text-muted-foreground flex-1 leading-relaxed">
+        <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
+        <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
           To document inquiries about fraud risks performed as part of the risk assessment.{" "}
           <span className="font-medium text-foreground">Part A</span> covers required inquiries of management, others in the entity, and TCWG.{" "}
           <span className="font-medium text-foreground">Part B</span> covers other fraud risk assessment procedures.{" "}

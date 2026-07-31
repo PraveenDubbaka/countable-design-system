@@ -301,8 +301,8 @@ export function AuditTimeTrackerWorksheet() {
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
- <span className="text-base font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-base text-muted-foreground flex-1 leading-relaxed">
+ <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
+ <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
  Track actual time against budgeted hours by role and section. Budget is based on
  CAS industry standards and fully editable. Blended rate, cost variance, and fee
  position are computed automatically from engagement hourly rates.
@@ -377,7 +377,7 @@ export function AuditTimeTrackerWorksheet() {
 
  {/* Role budget table */}
  <div className="overflow-x-auto">
- <table className="w-full text-base">
+ <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted text-sm font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
  <th className="px-5 py-2 text-left">Role</th>
@@ -446,23 +446,23 @@ export function AuditTimeTrackerWorksheet() {
  })}
  </tbody>
  <tfoot>
- <tr className="bg-muted/50 border-t-2 border-border font-semibold text-base [&>td]:whitespace-nowrap">
+ <tr className="bg-muted/50 border-t-2 border-border font-semibold text-sm [&>td]:whitespace-nowrap">
  <td className="px-5 py-2 text-foreground">Total</td>
  <td className="px-3 py-2" />
- <td className="px-3 py-2 text-center text-base text-foreground">100%</td>
- <td className="px-3 py-2 text-right text-base text-foreground">
+ <td className="px-3 py-2 text-center text-sm text-foreground">100%</td>
+ <td className="px-3 py-2 text-right text-sm text-foreground">
  {blendedRate > 0 ? fmt$(blendedRate) : "—"}
  </td>
  <td className="px-3 py-2 text-right text-foreground">{totalBudgetHrs > 0 ? fmtH(totalBudgetHrs) : "—"}</td>
- <td className="px-3 py-2 text-right text-base text-foreground">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</td>
+ <td className="px-3 py-2 text-right text-sm text-foreground">{totalBudgetCost > 0 ? fmt$(totalBudgetCost) : "—"}</td>
  <td className="px-3 py-2 text-right text-foreground">{totalActualHrs > 0 ? fmtH(totalActualHrs) : "—"}</td>
  <td className="px-3 py-2 text-right text-foreground">
  {totalBudgetHrs > 0 ? (varHrs >= 0 ? "+" : "") + fmtH(varHrs) : "—"}
  </td>
- <td className="px-3 py-2 text-right text-base text-foreground">
+ <td className="px-3 py-2 text-right text-sm text-foreground">
  {totalBudgetCost > 0 ? ((totalBudgetCost - totalActualCost) >= 0 ? "+" : "") + fmt$(totalBudgetCost - totalActualCost) : "—"}
  </td>
- <td className="px-3 py-2 text-right text-base text-foreground">{totalActualCost > 0 ? fmt$(totalActualCost) : "—"}</td>
+ <td className="px-3 py-2 text-right text-sm text-foreground">{totalActualCost > 0 ? fmt$(totalActualCost) : "—"}</td>
  </tr>
  </tfoot>
  </table>
@@ -475,7 +475,7 @@ export function AuditTimeTrackerWorksheet() {
  <span className="text-sm font-semibold">Budget vs Actual — By Section</span>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-base">
+ <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted text-sm font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
  <th className="px-5 py-2 text-left">Section</th>
@@ -627,7 +627,7 @@ export function AuditTimeTrackerWorksheet() {
  </div>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-base">
+ <table className="w-full text-sm">
  <thead>
  <tr className="bg-muted text-sm font-semibold uppercase tracking-wider text-foreground border-b border-border [&>th]:whitespace-nowrap">
  {/* Date */}

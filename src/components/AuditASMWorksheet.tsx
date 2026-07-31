@@ -572,7 +572,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {importStep === 1 && (
  <div className="p-8 flex flex-col items-center gap-5 text-center" style={{ animation: "fadeInUp 0.25s ease" }}>
  <div className="text-4xl">🗓️</div>
- <p className="text-base font-semibold text-foreground">Connecting to Google Calendar...</p>
+ <p className="text-sm font-semibold text-foreground">Connecting to Google Calendar...</p>
  <div className="flex items-center justify-center">
  <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -587,7 +587,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {importStep === 2 && (
  <div className="p-8 flex flex-col items-center gap-5 text-center" style={{ animation: "fadeInUp 0.25s ease" }}>
  <div className="text-4xl">✨</div>
- <p className="text-base font-semibold text-foreground">Luka AI is analyzing your meeting notes...</p>
+ <p className="text-sm font-semibold text-foreground">Luka AI is analyzing your meeting notes...</p>
  <ProgressBar />
  <p className="text-sm text-muted-foreground">Reading transcript... Extracting attendees... Mapping team roles...</p>
  </div>
@@ -597,7 +597,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {importStep === 3 && (
  <div style={{ animation: "fadeInUp 0.25s ease" }}>
  <div className="px-6 pt-6 pb-4 border-b border-border flex items-center justify-between">
- <p className="text-base font-semibold text-foreground">Draft Content Found</p>
+ <p className="text-sm font-semibold text-foreground">Draft Content Found</p>
  <button onClick={handleCloseModal} className="text-muted-foreground hover:text-foreground transition-colors">
  <X className="h-4 w-4" />
  </button>
@@ -633,7 +633,7 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  {importStep === 4 && (
  <div style={{ animation: "fadeInUp 0.25s ease" }}>
  <div className="px-6 pt-6 pb-4 border-b border-border flex items-center justify-between">
- <p className="text-base font-semibold text-foreground">Review Draft</p>
+ <p className="text-sm font-semibold text-foreground">Review Draft</p>
  <button onClick={handleCloseModal} className="text-muted-foreground hover:text-foreground transition-colors">
  <X className="h-4 w-4" />
  </button>
