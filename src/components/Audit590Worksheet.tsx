@@ -144,6 +144,15 @@ function emptyAssertions(): Record<Assertion, AssertionCell> {
  };
 }
 
+/** Expand a proc group ID to its leaf worksheet children; return as-is if already a leaf. */
+function expandToLeaves(procId: string): string[] {
+  if (!procId) return [];
+  const node = findGlobalProcedureNode(procId);
+  if (!node || node.type !== "folder") return [procId];
+  const leaves = (node.children ?? []).filter(c => c.type !== "folder").map(c => c.id);
+  return leaves.length > 0 ? leaves : [procId];
+}
+
 function emptyRow(fsa = ""): CotabdRow {
  return {
  id: uid(), fsa, amount: "", material: "", materialBasis: "",
@@ -166,7 +175,7 @@ function rowFromFsa(f: FsaBalance): CotabdRow {
  const ls = getLsInfo(f.fsa);
  row.lsCode = ls?.lsCode ?? "";
  const gcaProcId = ls && f.amount > 0 ? (getGcaProcIdForWp(ls.wpNodeId) || "") : "";
- row.plannedProcedureIds = gcaProcId ? [gcaProcId] : [];
+ row.plannedProcedureIds = expandToLeaves(gcaProcId);
  if (f.assertionsX) {
  for (const a of f.assertionsX) {
  row.assertions[a] = { marker: "X", rmm: f.inherentRisk };
@@ -396,18 +405,28 @@ export function Audit590Worksheet() {
  const [expandedProcFolders, setExpandedProcFolders] = useState<Set<string>>(new Set());
  const prevActiveProcIdsRef = useRef<string>("");
 
- // Backfill plannedProcedureIds for existing material rows that don't have one yet
+ // Backfill plannedProcedureIds for existing material rows that don't have one yet,
+ // and migrate any stored folder IDs to their leaf children
  useEffect(() => {
  setData(d => {
  let changed = false;
  const rows = d.rows.map(row => {
+ // Expand any existing folder IDs to leaf children
+ const current = row.plannedProcedureIds ?? [];
+ const expanded = current.flatMap(id => expandToLeaves(id));
+ const needsExpansion = expanded.length !== current.length || expanded.some((id, i) => id !== current[i]);
+ if (needsExpansion) {
+ changed = true;
+ row = { ...row, plannedProcedureIds: expanded };
+ }
+ // Auto-fill empty material rows that have no procedures yet
  if ((row.plannedProcedureIds ?? []).length > 0 || row.material !== "Y" || !row.lsCode) return row;
  const lsInfo = ALL_PROCEDURE_NODES.find(n => n.lsCode === row.lsCode);
  if (!lsInfo) return row;
  const gcaId = getGcaProcIdForWp(lsInfo.wpNodeId);
  if (!gcaId) return row;
  changed = true;
- return { ...row, plannedProcedureIds: [gcaId] };
+ return { ...row, plannedProcedureIds: expandToLeaves(gcaId) };
  });
  return changed ? { ...d, rows } : d;
  });
@@ -470,7 +489,7 @@ export function Audit590Worksheet() {
  const lsInfo = ALL_PROCEDURE_NODES.find(n => n.lsCode === updated.lsCode);
  if (lsInfo) {
  const gcaId = getGcaProcIdForWp(lsInfo.wpNodeId);
- if (gcaId) updated.plannedProcedureIds = [gcaId];
+ if (gcaId) updated.plannedProcedureIds = expandToLeaves(gcaId);
  }
  }
  return updated;
@@ -817,7 +836,7 @@ export function Audit590Worksheet() {
       <div className="flex flex-col gap-1 min-h-[40px]">
        {(r.plannedProcedureIds ?? []).map(procId => {
         const node = findGlobalProcedureNode(procId);
-        if (!node) return null;
+        if (!node || node.type === "folder") return null;
         return (
          <span key={procId} className="inline-flex items-center justify-between px-1.5 py-0.5 rounded border border-border bg-primary/5 text-[11px] font-medium text-primary w-full">
           <span className="truncate flex-1">{node.name}</span>
