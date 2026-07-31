@@ -40,6 +40,7 @@ export function LukaWorkPaperPanel({
   const [expanded, setExpanded] = useState(false);
   const [selecting, setSelecting] = useState(false);
   const [rowSelectIds, setRowSelectIds] = useState<Set<string>>(new Set());
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
   const allSelected = selectedIds.size === procData.actions.length;
 
@@ -156,38 +157,53 @@ export function LukaWorkPaperPanel({
         </div>
 
         <div className="max-h-56 overflow-y-auto divide-y divide-violet-100">
-          {Array.from(groups.entries()).map(([groupLabel, rows]) => (
-            <div key={groupLabel}>
-              <div className="px-4 py-1.5 bg-violet-100/60">
-                <span className="text-[10px] font-semibold text-violet-600 uppercase tracking-wide">{groupLabel}</span>
-              </div>
-              {rows.map(row => (
-                <div
-                  key={row.id}
-                  onClick={() => toggleRowId(row.id)}
-                  className={cn(
-                    "flex items-start gap-2.5 px-4 py-2 cursor-pointer hover:bg-violet-100/60 transition-colors",
-                    rowSelectIds.has(row.id) && "bg-violet-100/40"
-                  )}
+          {Array.from(groups.entries()).map(([groupLabel, rows]) => {
+            const isCollapsed = collapsedGroups.has(groupLabel);
+            const groupSelected = rows.filter(r => rowSelectIds.has(r.id)).length;
+            const groupTotal = rows.length;
+            return (
+              <div key={groupLabel}>
+                <button
+                  type="button"
+                  onClick={() => setCollapsedGroups(prev => {
+                    const next = new Set(prev);
+                    next.has(groupLabel) ? next.delete(groupLabel) : next.add(groupLabel);
+                    return next;
+                  })}
+                  className="w-full flex items-center gap-1.5 px-4 py-1.5 bg-violet-100/60 hover:bg-violet-200/50 transition-colors"
                 >
-                  <Checkbox
-                    id={`luka-row-${row.id}`}
-                    checked={rowSelectIds.has(row.id)}
-                    onCheckedChange={() => toggleRowId(row.id)}
-                    onClick={e => e.stopPropagation()}
-                    className="mt-0.5 shrink-0 border-violet-300 data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
-                  />
-                  <label
-                    htmlFor={`luka-row-${row.id}`}
-                    className="text-[11px] text-foreground leading-snug cursor-pointer select-none"
-                    onClick={e => e.stopPropagation()}
+                  <ChevronDown className={cn("h-3 w-3 text-violet-500 shrink-0 transition-transform", isCollapsed && "-rotate-90")} />
+                  <span className="text-[10px] font-semibold text-violet-600 uppercase tracking-wide">{groupLabel}</span>
+                  <span className="ml-auto text-[10px] text-violet-400">{groupSelected}/{groupTotal}</span>
+                </button>
+                {!isCollapsed && rows.map(row => (
+                  <div
+                    key={row.id}
+                    onClick={() => toggleRowId(row.id)}
+                    className={cn(
+                      "flex items-start gap-2.5 px-4 py-2 cursor-pointer hover:bg-violet-100/60 transition-colors",
+                      rowSelectIds.has(row.id) && "bg-violet-100/40"
+                    )}
                   >
-                    {row.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          ))}
+                    <Checkbox
+                      id={`luka-row-${row.id}`}
+                      checked={rowSelectIds.has(row.id)}
+                      onCheckedChange={() => toggleRowId(row.id)}
+                      onClick={e => e.stopPropagation()}
+                      className="mt-0.5 shrink-0 border-violet-300 data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
+                    />
+                    <label
+                      htmlFor={`luka-row-${row.id}`}
+                      className="text-[11px] text-foreground leading-snug cursor-pointer select-none"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      {row.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
 
         <div className="flex items-center justify-between px-4 py-2.5 border-t border-violet-200 bg-violet-50/80">
