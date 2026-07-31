@@ -21,19 +21,39 @@ export function Audit506ImportBanner({ checklist, onUpdate, connectedApps, onOpe
   const handleImport = (result: ImportResult) => {
     if (!checklist) return;
 
-    const managerName = result.attendees?.find(a => a.role?.toLowerCase().includes('manager'))?.name ?? 'Engagement Manager';
-    const seniorName = result.attendees?.find(a => a.role?.toLowerCase().includes('senior') || a.role?.toLowerCase().includes('associate'))?.name ?? 'Senior Associate';
+    const partnerName = result.attendees?.find(a => a.role?.toLowerCase().includes('partner'))?.name ?? '';
+    const managerName = result.attendees?.find(a => a.role?.toLowerCase().includes('manager'))?.name ?? '';
+    const auditorName = partnerName || managerName || 'Engagement Manager';
+
+    // Client-side attendees (management / TCWG)
+    const clientAttendees = result.attendees?.filter(a =>
+      a.role?.toLowerCase().includes('cfo') ||
+      a.role?.toLowerCase().includes('controller') ||
+      a.role?.toLowerCase().includes('client') ||
+      a.role?.toLowerCase().includes('ceo') ||
+      a.role?.toLowerCase().includes('board') ||
+      a.role?.toLowerCase().includes('chair') ||
+      a.role?.toLowerCase().includes('director')
+    ) ?? [];
+    const mgmtInterviewee = clientAttendees.find(a =>
+      a.role?.toLowerCase().includes('cfo') || a.role?.toLowerCase().includes('ceo') || a.role?.toLowerCase().includes('controller')
+    )?.name ?? clientAttendees[0]?.name ?? 'CFO / Controller';
+    const tcwgInterviewee = clientAttendees.find(a =>
+      a.role?.toLowerCase().includes('board') || a.role?.toLowerCase().includes('chair') || a.role?.toLowerCase().includes('director')
+    )?.name ?? clientAttendees[clientAttendees.length - 1]?.name ?? 'Board Chair / Audit Committee';
+
     const meetingDate = result.meetingDate ? result.meetingDate.slice(0, 10) : new Date().toISOString().slice(0, 10);
     const attendeeList = result.attendees?.map(a => `${a.name} (${a.role})`).join(', ') ?? '';
 
-    const fields: Record<string, { answer?: string; explanation?: string }> = {
-      '506-mgmt-iv': { answer: meetingDate, explanation: seniorName },
+    type FieldFill = { answer?: string; explanation?: string; labelAnswer?: string };
+    const fields: Record<string, FieldFill> = {
+      '506-mgmt-iv': { answer: meetingDate, labelAnswer: mgmtInterviewee, explanation: auditorName },
       '506-mgmt-1': { answer: 'Yes', explanation: 'Management identified revenue cut-off as a potential fraud risk. Misstatement risk noted for voyage completion percentages at year-end.' },
       '506-mgmt-2': { answer: 'No', explanation: 'Management confirmed no knowledge of any actual, suspected or alleged fraud affecting the entity.' },
       '506-mgmt-3': { answer: 'Yes', explanation: 'Management confirmed understanding of the fraud risk management process. Controls include segregation of duties in revenue recognition, dual authorization for journal entries, and CFO review of unusual transactions.' },
       '506-mgmt-4': { answer: 'No', explanation: 'Management is not aware of any allegations or suspicions of fraud from former employees, analysts, regulators, or other parties.' },
       '506-mgmt-5': { answer: 'Yes', explanation: 'Management confirmed consideration of fraud risk across key assertions including revenue recognition cut-off and management override of controls.' },
-      '506-tcwg-iv': { answer: meetingDate, explanation: managerName },
+      '506-tcwg-iv': { answer: meetingDate, labelAnswer: tcwgInterviewee, explanation: auditorName },
       '506-tcwg-1': { answer: 'No', explanation: 'TCWG confirmed no awareness of actual, suspected or alleged fraud affecting the entity.' },
       '506-tcwg-2': { answer: 'Yes', explanation: `TCWG oversight documented through Board minutes and Audit Committee communications. Attendees: ${attendeeList}.` },
       '506-b1': { answer: 'Yes', explanation: `Engagement team brainstorming held on ${meetingDate}. Discussed: revenue recognition fraud risk, management override, and potential misappropriation of assets.` },
@@ -53,6 +73,7 @@ export function Audit506ImportBanner({ checklist, onUpdate, connectedApps, onOpe
         return {
           ...question,
           ...(fill.answer !== undefined ? { answer: fill.answer } : {}),
+          ...(fill.labelAnswer !== undefined ? { labelAnswer: fill.labelAnswer } : {}),
           ...(fill.explanation !== undefined ? { explanation: fill.explanation } : {}),
         };
       }),
