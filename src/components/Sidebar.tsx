@@ -3036,7 +3036,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
  <Eye className="h-4 w-4" /> Show / Hide
  </DropdownMenuSubTrigger>
- <DropdownMenuSubContent className="w-56">
+ <DropdownMenuSubContent className="min-w-max">
  {node.children.map(child => {
  const isHidden = (hiddenChildren[node.id] ?? []).includes(child.id);
  const toggle = () => {
@@ -3062,9 +3062,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  checked={!isHidden}
  className="pointer-events-none h-4 w-4 shrink-0"
  />
- <span className="flex items-center gap-1.5 min-w-0">
+ <span className="flex items-center gap-1.5">
  {child.code && <span className="text-[10px] font-semibold text-muted-foreground shrink-0">{child.code}</span>}
- <span className="truncate">{child.label}</span>
+ <span>{child.label}</span>
  </span>
  </DropdownMenuItem>
  );
