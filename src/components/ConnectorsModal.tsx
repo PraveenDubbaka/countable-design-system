@@ -45,7 +45,6 @@ const CATEGORIES: CategoryDef[] = [
  { id: "netsuite", name: "NetSuite", description: "Oracle ERP, advanced accounting", bg: "#2949A3", fg: "#fff", label: "NS" },
  { id: "freshbooks", name: "FreshBooks", description: "Small business invoicing & expenses", bg: "#00BF6F", fg: "#fff", label: "FB" },
  { id: "wave", name: "Wave", description: "Free accounting for small businesses", bg: "#5EC3D4", fg: "#fff", label: "WV" },
- { id: "caseware", name: "Caseware Working Papers", description: "Audit file import & TB sync", bg: "#003087", fg: "#fff", label: "CW" },
  ],
  },
  {
