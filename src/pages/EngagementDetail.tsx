@@ -779,7 +779,7 @@ const WORKSHEET_KEYS = new Set([
  'aud-iar', 'aud-us-iar',
  'aud-form-440', 'aud-us-form-440',
  'aud-ra-pap501bc', 'aud-ra-pap501',
- 'aud-ra-507', 'aud-ra-510', 'aud-ra-511', 'aud-ra-513', 'aud-ra-514', 'aud-ra-515',
+ 'aud-ra-506', 'aud-ra-507', 'aud-ra-510', 'aud-ra-511', 'aud-ra-513', 'aud-ra-514', 'aud-ra-515',
  'aud-ra-520', 'aud-ra-535', 'aud-ra-540', 'aud-ra-550', 'aud-ra-551',
  'aud-ra-575', 'aud-ra-580', 'aud-ra-590',
  'aud-rp-605', 'aud-rp-610', 'aud-rp-625', 'aud-rp-630', 'aud-rp-635',
@@ -2841,6 +2841,8 @@ export default function EngagementDetail() {
  ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
  <AuditPAP501Worksheet />
 
+ ) : (checklistKey === 'aud-ra-506') ? (
+ <Audit506Worksheet connectedApps={connectedApps} onOpenConnectors={() => setConnectorsOpen(true)} />
  ) : (checklistKey === 'aud-ra-507') ? (
  <Audit507Worksheet connectedApps={connectedApps} onOpenConnectors={() => setConnectorsOpen(true)} />
  ) : (checklistKey === 'aud-ra-510') ? (

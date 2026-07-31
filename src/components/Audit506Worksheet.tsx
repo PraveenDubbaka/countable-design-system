@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import { Info, Plus, Trash2, ChevronDown, ChevronRight, Sparkles, Upload } from "lucide-react";
+import { ImportNotesDialog, ImportResult } from "@/components/ImportNotesDialog";
+import { toast } from "sonner";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
@@ -122,7 +124,7 @@ function ColHeaders({ label }: { label: string }) {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
+export function Audit506Worksheet({ isUS = false, connectedApps, onOpenConnectors }: { isUS?: boolean; connectedApps?: Set<string>; onOpenConnectors?: () => void }) {
   const storageKey = `audit-506-data-${isUS ? 'us' : 'ca'}`;
   const { engagementId = 'default' } = useParams<{ engagementId?: string }>();
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
@@ -154,6 +156,57 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
   }, [data, storageKey]);
 
   const locked = data.concluded;
+  const [importOpen, setImportOpen] = useState(false);
+  const [importBannerDismissed, setImportBannerDismissed] = useState(false);
+
+  function applyImport(result: ImportResult) {
+    const today = new Date().toISOString().slice(0, 10);
+    const meetingDate = result.meetingDate?.slice(0, 10) ?? today;
+    // Populate interviewees from attendees
+    const mgmtPerson = result.attendees?.find(a => a.role === 'CFO — Client') ?? result.attendees?.find(a => a.role.includes('Client'));
+    const auditor = result.attendees?.find(a => a.role === 'Partner') ?? result.attendees?.[0];
+    const ivs = [
+      { who: mgmtPerson ? `${mgmtPerson.name} — ${mgmtPerson.role}` : '', byWhom: auditor ? `${auditor.name} — ${auditor.role}` : '', date: meetingDate },
+      { who: '', byWhom: '', date: '' }, { who: '', byWhom: '', date: '' },
+    ];
+    const tcwgIvs = [
+      { who: 'Audit Committee Chair', byWhom: auditor ? `${auditor.name} — ${auditor.role}` : '', date: meetingDate },
+      { who: '', byWhom: '', date: '' },
+    ];
+    const fraudNote = result.agendaNotes?.['b9'] ?? '';
+    setData(d => ({
+      ...d,
+      mgmtInterviewees: ivs,
+      tcwgInterviewees: tcwgIvs,
+      mgmt: {
+        ...d.mgmt,
+        m1: { ...d.mgmt.m1, checked: true, psc: 'Y', response: 'Management confirmed awareness of fraud risk factors. Noted lender covenant pressure (DSCR > 1.25) as a potential incentive. No material fraud risks identified in financial statements.' + (fraudNote ? `\n\nFrom planning meeting: ${fraudNote}` : '') },
+        m2: { ...d.mgmt.m2, checked: true, psc: 'Y', response: 'No actual, suspected, or alleged fraud reported. Management aware of whistleblower policy; no reports received during the period.' },
+        m3: { ...d.mgmt.m3, checked: true, psc: 'Y', response: 'Management has fraud risk management programs in place including segregation of duties, approval authority matrix, and annual ethics training. Controls reviewed and appear design-effective.' },
+        m4: { ...d.mgmt.m4, checked: true, psc: 'Y', response: 'Code of conduct in place and communicated to all employees annually. Whistleblower hotline active. No violations reported.' },
+        m5: { ...d.mgmt.m5, checked: true, psc: 'Y', response: 'Management identified revenue cut-off and journal entries near period-end as higher-risk areas for management override. Also flagged inventory obsolescence reserve as an estimation risk area.' },
+      },
+      tcwg: {
+        ...d.tcwg,
+        t1: { ...d.tcwg.t1, checked: true, psc: 'Y', response: 'TCWG has no knowledge of actual, suspected, or alleged fraud. Audit committee receives quarterly fraud risk updates from management.' },
+        t2: { ...d.tcwg.t2, checked: true, psc: 'Y', response: 'TCWG exercises oversight through the audit committee which reviews fraud risk reports quarterly, monitors management override controls, and receives independent auditor communications. No integrity concerns noted regarding management.' },
+      },
+      partB: {
+        ...d.partB,
+        b1: { ...d.partB.b1, checked: true, psc: 'Y', response: 'Fraud risk factors identified: (1) Lender covenant pressure — DSCR covenant triggers financial reporting incentive. (2) Mid-year ERP migration to NetSuite — creates opportunity for control gaps. (3) New CFO joined April — limited tenure increases opportunity risk.' },
+        b2: { ...d.partB.b2, checked: true, psc: 'Y', response: 'Lender covenant pressure and ERP migration identified as significant fraud risk factors. Revenue cut-off and management override assessed as significant risks of material misstatement due to fraud.' },
+        b3: { ...d.partB.b3, checked: true, psc: 'Y', response: 'Preliminary analytics show revenue +12% with gross margin down 3pts — unusual relationship investigated. Inventory turnover lower than prior year — potential valuation risk. No other unexpected relationships noted.' },
+        b4: { ...d.partB.b4, checked: true, psc: 'Y', response: 'Risk of management override assessed as significant. Response: expanded JE testing with focus on unusual entries in the final two weeks of the period and entries with round-dollar amounts or no business rationale.' },
+        b5: { ...d.partB.b5, checked: true, psc: 'Y', response: 'Journal entry testing scoped per CAS 240 — focused on period-end, unusual accounts, and entries posted by senior management. Revenue recognition presumed a fraud risk; specific procedures planned for cut-off ± 5 days.' },
+        b6: { ...d.partB.b6, checked: true, psc: 'Y', response: 'Overall audit plan updated to incorporate fraud risks: added unpredictable procedures, expanded inventory observation scope, and added confirmations for 90% of AR balance.' },
+        b7: { ...d.partB.b7, checked: true, psc: 'Y', response: 'Fraud risk factors communicated to engagement partner and TCWG at planning stage. No requirement to communicate to regulators at this time.' },
+      },
+    }));
+    // Mark all filled for highlight
+    ['m1','m2','m3','m4','m5','t1','t2','b1','b2','b3','b4','b5','b6','b7'].forEach(id => markLukaFilled(id));
+    setImportBannerDismissed(true);
+    toast.success('Fraud inquiry fields populated from import');
+  }
 
   function markLukaFilled(id: string) {
     setLukaFilledFields(prev => new Set(prev).add(id));
@@ -372,6 +425,7 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
 
       {/* Objective bar */}
       
+      <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} connectedApps={connectedApps} onOpenConnectors={onOpenConnectors} />
       <div className="flex-1 overflow-y-auto bg-muted/30">
       <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
         <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
@@ -388,9 +442,32 @@ export function Audit506Worksheet({ isUS = false }: { isUS?: boolean }) {
 
           {/* ── Part A ─────────────────────────────────────────────────── */}
           <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
-            <div className="px-6 py-3.5 bg-card border-b border-border">
-              <span className="text-sm font-semibold text-foreground">Part A — Required inquiries</span>
+            <div className="px-6 py-3.5 bg-card border-b border-border flex items-center justify-between">
+              <div>
+                <span className="text-sm font-semibold text-foreground">Part A — Required inquiries</span>
+                <p className="text-sm text-muted-foreground mt-0.5">Inquiries of management, others, and those charged with governance.</p>
+              </div>
+              <Button size="sm" onClick={() => setImportOpen(true)} className="h-8 shrink-0 whitespace-nowrap ml-4">
+                <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                Import
+              </Button>
             </div>
+            {!importBannerDismissed && (
+              <div className="mx-4 mt-3 mb-1 flex items-start gap-3 rounded-md border border-primary/20 bg-primary/[0.04] px-4 py-3">
+                <Upload className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground">Import from a connected source</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Pull fraud inquiry notes from Granola, Fireflies, Google Calendar, or paste a transcript — Luka extracts responses and populates the worksheet.</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setImportOpen(true)}>
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Import notes
+                  </Button>
+                  <button type="button" onClick={() => setImportBannerDismissed(true)} className="text-muted-foreground hover:text-foreground transition-colors text-xs">✕</button>
+                </div>
+              </div>
+            )}
 
             {/* Management & Others */}
             <div className="border-b border-border">
