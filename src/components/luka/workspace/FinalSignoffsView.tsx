@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { LukaIcon } from "@/components/LukaIcon";
 import BottomPrompter from "./BottomPrompter";
-import { useParams } from "react-router-dom";
 import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
+import { useParams } from "react-router-dom";
 
 const FONT = "'DM Sans', system-ui, sans-serif";
 const MONO = "'Share Tech Mono', 'DM Sans', monospace";

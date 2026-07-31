@@ -14,7 +14,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -466,7 +465,6 @@ function FieldRow({ label, sublabel, field, locked, onChange, storageKey, lukaFi
  </LukaTypingRow>
  {lukaFilled && (
  <div className="mt-1">
-   <AutomationStateChip state="luka-drafted" />
  </div>
  )}
  </td>

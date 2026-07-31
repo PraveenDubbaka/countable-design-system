@@ -13,7 +13,6 @@ import {
  WorksheetLayout, WorksheetSection, LinkedRisksCard, ProcedureTable, ConcludeBar, makeProcRow,
  type ProcRow,
 } from "@/components/audit/WorksheetShell";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
@@ -385,7 +384,6 @@ export function Audit625Worksheet() {
  />
  {isDemoEngagement && (
  <div className="flex items-center gap-2 mt-2">
-  <AutomationStateChip state="luka-drafted" />
   <ProvenancePopover data={DEMO_PROVENANCE.covenantRatio}>
    <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">Why this? ↗</span>
   </ProvenancePopover>
@@ -498,9 +496,6 @@ export function Audit625Worksheet() {
    placeholder="Summarise the evidence and judgment supporting the conclusions above."
    />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('conclusion-rationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </WorksheetSection>
 
@@ -668,9 +663,6 @@ export function Audit625Worksheet() {
    placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement related to going concern to an acceptably low level."
    />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidence-rationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>

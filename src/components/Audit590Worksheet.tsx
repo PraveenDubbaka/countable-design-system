@@ -10,7 +10,6 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { useEngagementContext } from "@/hooks/useEngagementContext";
 import { formatCurrency, type FsaBalance } from "@/lib/engagementContext";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
@@ -595,7 +594,6 @@ export function Audit590Worksheet() {
  placeholder="From" className="h-8 text-sm" />
  {isDemoEngagement && (
    <div className="flex items-center gap-2 mt-1">
-     <AutomationStateChip state="luka-drafted" />
      <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
        <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer">Why this? ↗</span>
      </ProvenancePopover>
@@ -846,9 +844,6 @@ export function Audit590Worksheet() {
        placeholder="Summarise the audit response or cross-reference the detailed plan…"
        className="min-h-[60px] text-sm resize-none rounded-[10px]" />
       </LukaTypingRow>
-      {isDemoEngagement && fillKey && lukaFilledFields.has(fillKey) && (
-       <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
-      )}
      </td>
  <td className="px-3 py-2 text-center">
  <span className={`inline-block px-2 py-0.5 rounded-md border text-[11px] font-medium ${cls.tone}`}>

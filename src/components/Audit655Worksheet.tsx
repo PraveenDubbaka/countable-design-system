@@ -19,7 +19,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
@@ -220,7 +219,6 @@ export function Audit655Worksheet() {
  <LukaTypingRow filled={isFilled}>
  <Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Explain variance / unexpected relationship" />
  </LukaTypingRow>
- {isFilled && <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>}
  </td>
  <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
  <td className="border-b border-border p-2"><RefButton reference={r.wpRef} disabled={locked} onAttach={(doc) => updRow(which, r.id, { wpRef: [...r.wpRef, doc] })} onRemove={(idx) => updRow(which, r.id, { wpRef: typeof idx === "number" ? r.wpRef.filter((_, i) => i !== idx) : [] })} /></td>
@@ -324,9 +322,6 @@ export function Audit655Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The final analytical procedures corroborate the conclusions formed during the audit and no unidentified RMM was identified." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>

@@ -12,7 +12,6 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -586,9 +585,6 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  className="min-h-[44px] text-sm bg-background resize-none"
  />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has(p.id) && (
- <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-4 py-2.5 text-center w-24">
  <RefButton

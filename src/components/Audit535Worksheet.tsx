@@ -12,7 +12,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -265,9 +264,6 @@ export function Audit535Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(item.id)}>
  <Textarea disabled={locked} value={row.comments} onChange={e => setRow(item.id, { comments: e.target.value })} placeholder="Document procedure performed and findings…" className="min-h-[72px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has(item.id) && (
- <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-4 py-3 text-center">
  <RefButton

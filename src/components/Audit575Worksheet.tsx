@@ -11,7 +11,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -320,9 +319,6 @@ export function Audit575Worksheet() {
   placeholder="Describe the deficiency…"
   className="min-h-[72px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {isDemoEngagement && rowFillKey && lukaFilledFields.has(rowFillKey) && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.source} onValueChange={v => patchRow(r.id, { source: v })}>
@@ -455,9 +451,6 @@ export function Audit575Worksheet() {
   placeholder="Briefly support the conclusion."
   className="h-8 text-sm" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('575-conclusion') && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </div>

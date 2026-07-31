@@ -7,7 +7,6 @@ import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AttributedComment } from "@/components/ui/AttributedComment";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 
@@ -420,7 +419,6 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <tr>
   <td colSpan={99} className="px-4 pb-2">
    <div className="flex items-center gap-2">
-    <AutomationStateChip state="luka-drafted" />
     <span className="text-xs text-muted-foreground">Populated from Xero trial balance · Dec 31, 2025</span>
    </div>
   </td>

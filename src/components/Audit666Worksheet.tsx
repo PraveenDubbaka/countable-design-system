@@ -20,7 +20,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
@@ -327,9 +326,6 @@ export function Audit666Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('tcwgCommunicationLog')}>
  <AttributedComment value={data.tcwgCommunicationLog} onChange={v => setData(d => ({...d, tcwgCommunicationLog: v }))} storageKey={`666-${engagementId ?? "def"}-tcwgLog`} placeholder="Summarise communication, date, attendees, matters discussed." disabled={locked} className="text-sm min-h-[64px]" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('tcwgCommunicationLog') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>
@@ -342,9 +338,6 @@ export function Audit666Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
  <AttributedComment value={data.disclosureNotes} onChange={v => setData(d => ({...d, disclosureNotes: v }))} storageKey={`666-${engagementId ?? "def"}-discNotes`} placeholder="Confirm notes meet AFRF related-party disclosure requirements." disabled={locked} className="text-sm min-h-[72px]" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('disclosureNotes') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>
@@ -365,9 +358,6 @@ export function Audit666Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The audit evidence obtained over related-party relationships and transactions is sufficient and appropriate to reduce RMM to an acceptably low level." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>

@@ -11,7 +11,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -337,9 +336,6 @@ export function Audit550Worksheet() {
   placeholder="Describe the risk of material misstatement (link / 535 where applicable)…"
   className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {isFirstJeRisk && lukaFilledFields.has('550-risk0') && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  {!locked && cat.risks.length > 1 && (
  <button onClick={() => removeRisk(cat.key, risk.id)}
@@ -385,9 +381,6 @@ export function Audit550Worksheet() {
   placeholder="Describe the control activity, owner, and how it operates…"
   className="min-h-[64px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {isFirstJeCtrl && lukaFilledFields.has('550-ctrl0') && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-3 py-2 text-center">
  <Select disabled={locked} value={ct.inherentRisk}
@@ -588,9 +581,6 @@ export function Audit550Worksheet() {
   placeholder="Briefly support the overall conclusion."
   className="h-8 text-sm" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('550-overall') && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </div>

@@ -11,7 +11,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -335,9 +334,6 @@ export function Audit551Worksheet() {
   placeholder="Describe the GITC and how it operates…"
   className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {gitcFillKey && lukaFilledFields.has(gitcFillKey) && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itLayer}
@@ -581,9 +577,6 @@ export function Audit551Worksheet() {
   placeholder="Describe the RAFUIT (Appendix 1)…"
   className="min-h-[56px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {isDemoEngagement && i === 0 && lukaFilledFields.has('551-rafuit0') && (
-  <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itProcess}

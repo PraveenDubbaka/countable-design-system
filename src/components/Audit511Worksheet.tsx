@@ -14,7 +14,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -259,7 +258,6 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  </LukaTypingRow>
  {lukaFilled && (
  <div className="mt-1">
-   <AutomationStateChip state="luka-drafted" />
  </div>
  )}
  </td>
@@ -326,7 +324,6 @@ function ProcessTable({ rows, locked, onChange, lukaFilledFields, lukaHighlightF
  </LukaTypingRow>
  {lukaFilledFields?.has(id) && (
  <div className="mt-1">
-   <AutomationStateChip state="luka-drafted" />
  </div>
  )}
  </td>

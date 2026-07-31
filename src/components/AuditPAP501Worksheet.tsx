@@ -15,7 +15,6 @@ import { loadEngagements } from "@/store/engagementsStore";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────

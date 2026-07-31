@@ -19,7 +19,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
@@ -247,9 +246,6 @@ export function Audit670Worksheet() {
  <Textarea disabled={locked} value={data.selectionRationale} onChange={e => setData(d => ({...d, selectionRationale: e.target.value }))} className="text-sm min-h-[72px]"
  placeholder="Document selection attributes: unusual preparers, seldom-used accounts, post-closing entries with limited descriptions, round numbers, accounts with estimates / reconciliation issues / intercompany, identified fraud-risk accounts." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('selectionRationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>
@@ -362,9 +358,6 @@ export function Audit670Worksheet() {
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]"
  placeholder="JE testing performed addresses the presumed management-override fraud risk; evidence is sufficient and appropriate to reduce RMM to an acceptably low level." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>

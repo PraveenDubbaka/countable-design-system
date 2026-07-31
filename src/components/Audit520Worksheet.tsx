@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Info, BookOpen, X } from "lucide-react";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
@@ -660,11 +659,6 @@ export function Audit520Worksheet() {
  <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
  {formatRefList(row.wpRefSource)}
  </div>
- {isDemoEngagement && (
-   <div className="mt-1">
-     <AutomationStateChip state={row.rmmIdentified ? 'luka-drafted' : 'needs-input'} />
-   </div>
- )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[240px]">
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartA(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pA-rmm-${row.id}`} placeholder="Describe the risk of material misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
@@ -878,19 +872,11 @@ export function Audit520Worksheet() {
  <div className="h-8 flex items-center px-2 text-sm text-foreground bg-muted/40 rounded-md border border-border/60 whitespace-nowrap">
  {formatRefList(row.wpRefSource)}
  </div>
- {isDemoEngagement && (
-   <div className="mt-1">
-     <AutomationStateChip state={row.rmmIdentified ? 'luka-drafted' : 'needs-input'} />
-   </div>
- )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[180px]">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(row.id)}>
  <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has(row.id) && (
- <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[140px]">
  <Select value={row.scotabd} onValueChange={v => updatePartB(row.id, "scotabd", v)} disabled={locked}>

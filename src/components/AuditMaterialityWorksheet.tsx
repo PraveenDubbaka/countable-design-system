@@ -11,7 +11,6 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
@@ -535,7 +534,6 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  {isDemoEngagement && row.basis === 'grossRevenue' ? (
    <div className="flex items-center justify-end gap-1.5 min-h-[32px]">
-     <AutomationStateChip state="luka-drafted" />
      <ProvenancePopover data={DEMO_PROVENANCE.revenue}>
        <span className="text-sm tabular-nums">{row.periodAmount ? formatDisplay(row.periodAmount) : "—"}</span>
      </ProvenancePopover>
@@ -551,11 +549,6 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  />
  </LukaTypingRow>
  </div>
- )}
- {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-amount') && (
-   <div className="mt-1">
-     <AutomationStateChip state="luka-drafted" />
-   </div>
  )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
@@ -591,11 +584,6 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  className="tabular-nums text-right"
  />
  </LukaTypingRow>
- {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-py') && (
-   <div className="mt-1">
-     <AutomationStateChip state="luka-drafted" />
-   </div>
- )}
  </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[160px]">
@@ -607,11 +595,6 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  placeholder="Comments…"
  />
  </LukaTypingRow>
- {rowIdx === 0 && isDemoEngagement && lukaFilledFields.has('mat-row-0-comments') && (
-   <div className="mt-1">
-     <AutomationStateChip state="luka-drafted" />
-   </div>
- )}
  </div>
  </td>
  <td className="px-2 py-2.5 align-top text-center">
@@ -638,7 +621,6 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <td className="pl-4 pr-7 py-2 text-sm tabular-nums font-bold text-primary text-right">
  {isDemoEngagement && overallMateriality ? (
    <div className="flex items-center justify-end gap-1.5">
-     <AutomationStateChip state="luka-drafted" />
      <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
        <span className="font-bold text-primary">{formatDisplay(overallMateriality)}</span>
      </ProvenancePopover>

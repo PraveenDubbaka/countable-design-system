@@ -17,7 +17,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
@@ -420,7 +419,6 @@ export function Audit680Worksheet() {
  <WorksheetSection title="Financial instruments (Section 3856) — understanding" bodyClassName="p-0">
  <div ref={firstFillRef as React.RefObject<HTMLDivElement>}>
  <ProcedureTable sections={[{ title: "Identification of FA / FL", rows: data.proc3856_Understanding }]} locked={locked} onChange={handler("proc3856_Understanding")}
-   renderRowBadge={(_si, ri) => isDemoEngagement && lukaFilledFields.has(`proc3856-understanding-${ri}`) ? <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div> : null}
  />
  </div>
  </WorksheetSection>
@@ -435,7 +433,6 @@ export function Audit680Worksheet() {
  const map: ProcKey[] = ["proc3856_General","proc3856_InitArms","proc3856_InitRP","proc3856_Forgiveness","proc3856_RPImpair"];
  updProc(map[si], rowId, f, v);
  }}
- renderRowBadge={(si, ri) => si === 0 && isDemoEngagement && lukaFilledFields.has(`proc3856-general-${ri}`) ? <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div> : null}
  />
  </WorksheetSection>
  <WorksheetSection title="FI — specific instruments" bodyClassName="p-0">
@@ -492,9 +489,6 @@ export function Audit680Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The audit evidence obtained for applicable ASPE supplementary areas is sufficient and appropriate to reduce RMM to an acceptably low level." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>

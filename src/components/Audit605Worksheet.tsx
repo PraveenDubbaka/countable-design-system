@@ -11,7 +11,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
-import { AutomationStateChip } from "@/components/demo/AutomationStateChip";
 import { LukaTypingRow } from "@/components/demo/LukaTypingRow";
 
 interface Data605 {
@@ -225,7 +224,6 @@ export function Audit605Worksheet() {
  </LukaTypingRow>
  {isDemoEngagement && lukaFilledFields.has('fsLevelControlWeaknesses') && (
    <div className="mt-1">
-     <AutomationStateChip state="luka-drafted" />
    </div>
  )}
  </div>
@@ -240,7 +238,6 @@ export function Audit605Worksheet() {
    renderRowBadge={(si, ri) =>
      isDemoEngagement && lukaFilledFields.has(`s${si}-r${ri}`) ? (
        <div className="mt-1">
-         <AutomationStateChip state="luka-drafted" />
        </div>
      ) : null
    }

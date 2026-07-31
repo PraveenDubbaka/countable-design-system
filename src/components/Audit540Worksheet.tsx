@@ -11,7 +11,6 @@ import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -397,9 +396,6 @@ export function Audit540Worksheet() {
  placeholder="Describe what can go wrong…"
  className="min-h-[52px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has(`rf-${r.id}`) && (
- <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-4 py-2">
  <div className="flex flex-wrap gap-1 justify-center">
@@ -502,9 +498,6 @@ export function Audit540Worksheet() {
  placeholder="Describe the control activity and who performs it…"
  className="min-h-[60px] text-sm resize-none rounded-[10px]" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has(`ctl-${ct.id}`) && (
- <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={ct.controlType}

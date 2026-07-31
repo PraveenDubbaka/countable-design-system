@@ -16,7 +16,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -424,9 +423,6 @@ export function Audit635Worksheet() {
    placeholder="e.g. Allowance for doubtful accounts"
    />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('estimate-name') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  <div className={`md:col-span-3${isDemoEngagement && lukaHighlightFields.has('estimate-method') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
  <Label>Method used by management to prepare the estimate</Label>
@@ -439,9 +435,6 @@ export function Audit635Worksheet() {
    placeholder="Describe the method, key assumptions, data sources and any model or expert used."
    />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('estimate-method') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>
@@ -664,9 +657,6 @@ export function Audit635Worksheet() {
    placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the RMM related to this estimate to an acceptably low level."
    />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidence-rationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>

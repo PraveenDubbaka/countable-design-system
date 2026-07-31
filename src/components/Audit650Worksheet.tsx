@@ -19,7 +19,6 @@ import {
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
-import { AutomationStateChip } from '@/components/demo/AutomationStateChip';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 
 type YN = "Y" | "N" | "";
@@ -383,9 +382,6 @@ export function Audit650Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
  <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Confirm that adjusting / non-adjusting subsequent events are reflected in accordance with the AFRF." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('disclosureNotes') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>
@@ -395,9 +391,6 @@ export function Audit650Worksheet() {
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('otherProcedures')}>
  <AttributedComment value={data.otherProcedures} onChange={v => setData(d => ({...d, otherProcedures: v }))} storageKey={`650-${engagementId ?? "def"}-otherProcs`} placeholder="Add any additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('otherProcedures') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </WorksheetSection>
 
@@ -415,9 +408,6 @@ export function Audit650Worksheet() {
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]"
  placeholder="The audit evidence obtained over subsequent events is sufficient and appropriate to reduce risk of material misstatement to an acceptably low level." />
  </LukaTypingRow>
- {isDemoEngagement && lukaFilledFields.has('evidenceRationale') && (
-   <div className="mt-1"><AutomationStateChip state="luka-drafted" /></div>
- )}
  </div>
  </div>
  </WorksheetSection>
