@@ -206,12 +206,18 @@ export function Audit340Worksheet() {
      <span className="text-sm font-semibold text-foreground uppercase tracking-wider">Part A — Matters to be communicated</span>
     </div>
     <div className="overflow-x-auto">
-     <table className="w-full min-w-[700px] border-collapse">
+     <table className="w-full min-w-[700px] border-collapse table-fixed">
+      <colgroup>
+       <col className="w-16" />
+       <col className="w-[calc(50%-40px)]" />
+       <col className="w-[calc(50%-40px)]" />
+       <col className="w-24" />
+      </colgroup>
       <thead>
        <tr className="bg-muted">
         <th className={TH + " w-16 text-center"}>PEG MAP</th>
-        <th className={TH + " min-w-[280px]"}>Matter to be communicated</th>
-        <th className={TH + " min-w-[280px]"}>Form (such as letter) and date of communication</th>
+        <th className={TH}>Matter to be communicated</th>
+        <th className={TH}>Form (such as letter) and date of communication</th>
         <th className={TH + " w-24 text-center"}>W/P Ref.</th>
        </tr>
       </thead>
