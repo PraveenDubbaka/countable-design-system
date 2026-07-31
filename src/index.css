@@ -543,6 +543,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-size: 1rem !important;
     font-weight: 500;
   }
+
+  /* Worksheet content areas use 14px */
+  #worksheet-export-content .text-sm {
+    font-size: 0.875rem !important;
+    font-weight: inherit;
+  }
   
   /* Enhanced heading hierarchy */
   h1, .h1 {
