@@ -199,6 +199,28 @@ function buildDefault(): DataCash {
 
 type DocKey = "auditProcedures" | "cashCountProcedures" | "bankRecProcedures";
 
+const CASH_AUDIT_MATCHES: Record<string, { docKey: DocKey; sectionIdx: number; match: string }> = {
+  "cash-audit-bankRec-review":    { docKey: "auditProcedures", sectionIdx: 2, match: "Bank reconciliations — Review the reconciliations for accuracy" },
+  "cash-audit-bankRec-stale":     { docKey: "auditProcedures", sectionIdx: 2, match: "Bank reconciliations — Ensure there are no stale-dated cheques included" },
+  "cash-audit-bankRec-explain":   { docKey: "auditProcedures", sectionIdx: 2, match: "Bank reconciliations — Obtain explanations for very large" },
+  "cash-audit-count-significant": { docKey: "auditProcedures", sectionIdx: 1, match: "Count the material cash funds" },
+};
+
+const CASH_BANKREC_MATCHES: Record<string, { match: string }> = {
+  "cash-bank-confirm":      { match: "Agree the bank reconciliation details to bank confirmations" },
+  "cash-bank-statement":    { match: "Agree the bank reconciliation details to the bank statement" },
+  "cash-bank-gl":           { match: "Agree the bank reconciliation details to the general ledger" },
+  "cash-bank-supporting":   { match: "Agree the bank reconciliation details to supporting detail" },
+  "cash-bank-arithmetic":   { match: "Arithmetic check — Check the arithmetic accuracy" },
+  "cash-bank-sub-obtain":   { match: "Obtain directly from the bank a copy of the bank statement" },
+  "cash-bank-sub-cheques":  { match: "Agree a sample of cheques dated prior to or as at period-end" },
+  "cash-bank-sub-deposits": { match: "Agree a sample of deposits on bank statement to list of outstanding deposits" },
+  "cash-bank-sub-notes":    { match: "Examine bank debit and credit notes" },
+  "cash-bank-sub-opening":  { match: "Agree opening bank statement balance to bank reconciliation" },
+  "cash-bank-sub-sigs":     { match: "Scrutinize a sample of cheques for authorized signatures" },
+  "cash-bank-sub-stale":    { match: "Inquire about the reason for large, unusual or stale-dated outstanding cheques" },
+};
+
 type RowSetter = (docKey: DocKey, sectionIdx: number, rowId: string, field: keyof CashRow, value: string | RefDoc[]) => void;
 
 const TD = "border-b border-border px-3 py-2.5 text-sm align-top";
@@ -305,13 +327,15 @@ function AddReferenceModal({ open, onClose, onAdd }: {
   );
 }
 
-function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDeleteRow }: {
+function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDeleteRow, lukaHighlightMatches, onLukaRowToggle }: {
   docKey: DocKey;
   sections: CashSection[];
   locked: boolean;
   onRowField: RowSetter;
   onToggleHidden: (docKey: DocKey, sectionIdx: number, rowId: string) => void;
   onDeleteRow: (docKey: DocKey, sectionIdx: number, rowId: string) => void;
+  lukaHighlightMatches?: string[];
+  onLukaRowToggle?: (description: string, sectionIdx: number) => void;
 }) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [refModal, setRefModal] = useState<{ sectionIdx: number; rowId: string } | null>(null);
@@ -398,8 +422,14 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
                 <tr className="bg-primary/[0.06]">
                   <td colSpan={8} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{s.title}</td>
                 </tr>
-                {s.rows.filter(r => !r.hidden).map(r => (
-                  <tr key={r.id} className={`hover:bg-muted/20 ${selectedRows.has(r.id) ? "bg-primary/[0.04]" : ""}`}>
+                {s.rows.filter(r => !r.hidden).map(r => {
+                  const isLukaHighlighted = lukaHighlightMatches?.some(m => r.description.includes(m)) ?? false;
+                  return (
+                  <tr
+                    key={r.id}
+                    className={`hover:bg-muted/20 ${selectedRows.has(r.id) ? "bg-primary/[0.04]" : ""} ${isLukaHighlighted ? "bg-violet-200/60 dark:bg-violet-900/30" : ""} ${onLukaRowToggle ? "cursor-pointer" : ""}`}
+                    onClick={onLukaRowToggle ? () => onLukaRowToggle(r.description, si) : undefined}
+                  >
                     <td className={`${TD} text-center`}>
                       <Checkbox
                         checked={selectedRows.has(r.id)}
@@ -478,7 +508,8 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </Fragment>
             ))}
           </tbody>
@@ -770,6 +801,24 @@ export function AuditCashWorksheet() {
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
+  const [lukaSelecting, setLukaSelecting] = useState(false);
+  const [lukaRowSelectIds, setLukaRowSelectIds] = useState<Set<string>>(new Set());
+
+  const lukaHighlightMatches = lukaSelecting
+    ? Array.from(lukaRowSelectIds).map(id => CASH_AUDIT_MATCHES[id]?.match).filter((m): m is string => !!m)
+    : undefined;
+
+  function handleLukaRowToggle(description: string, _sectionIdx: number) {
+    const entry = Object.entries(CASH_AUDIT_MATCHES).find(([, cfg]) => description.includes(cfg.match));
+    if (!entry) return;
+    const [lukaId] = entry;
+    setLukaRowSelectIds(prev => {
+      const next = new Set(prev);
+      next.has(lukaId) ? next.delete(lukaId) : next.add(lukaId);
+      return next;
+    });
+  }
+
   return (
     <WorksheetLayout
       heading="A Cash > Audit Procedures"
@@ -782,7 +831,11 @@ export function AuditCashWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersAudit(rowIds); setLukaState("done"); }, 2600); }}
+          selecting={lukaSelecting}
+          rowSelectIds={lukaRowSelectIds}
+          onSelectingChange={setLukaSelecting}
+          onRowSelectIdsChange={setLukaRowSelectIds}
+          onInitiate={(rowIds) => { setLukaSelecting(false); setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersAudit(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >
@@ -809,7 +862,16 @@ export function AuditCashWorksheet() {
       </div>
 
       <WorksheetSection title="Audit Procedures" bodyClassName="p-0">
-        <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} onToggleHidden={toggleHidden} onDeleteRow={deleteRow} />
+        <ProcTable
+          docKey="auditProcedures"
+          sections={data.auditProcedures}
+          locked={locked}
+          onRowField={handleRowField}
+          onToggleHidden={toggleHidden}
+          onDeleteRow={deleteRow}
+          lukaHighlightMatches={lukaHighlightMatches}
+          onLukaRowToggle={lukaSelecting ? handleLukaRowToggle : undefined}
+        />
       </WorksheetSection>
 
       <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
@@ -822,6 +884,24 @@ export function AuditCashBankRecWorksheet() {
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
+  const [lukaSelecting, setLukaSelecting] = useState(false);
+  const [lukaRowSelectIds, setLukaRowSelectIds] = useState<Set<string>>(new Set());
+
+  const lukaHighlightMatches = lukaSelecting
+    ? Array.from(lukaRowSelectIds).map(id => CASH_BANKREC_MATCHES[id]?.match).filter((m): m is string => !!m)
+    : undefined;
+
+  function handleLukaRowToggle(description: string, _sectionIdx: number) {
+    const entry = Object.entries(CASH_BANKREC_MATCHES).find(([, cfg]) => description.includes(cfg.match));
+    if (!entry) return;
+    const [lukaId] = entry;
+    setLukaRowSelectIds(prev => {
+      const next = new Set(prev);
+      next.has(lukaId) ? next.delete(lukaId) : next.add(lukaId);
+      return next;
+    });
+  }
+
   return (
     <WorksheetLayout
       heading="A Cash > Bank Reconciliation"
@@ -834,7 +914,11 @@ export function AuditCashBankRecWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersBankRec(rowIds); setLukaState("done"); }, 2600); }}
+          selecting={lukaSelecting}
+          rowSelectIds={lukaRowSelectIds}
+          onSelectingChange={setLukaSelecting}
+          onRowSelectIdsChange={setLukaRowSelectIds}
+          onInitiate={(rowIds) => { setLukaSelecting(false); setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersBankRec(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >
@@ -861,7 +945,16 @@ export function AuditCashBankRecWorksheet() {
       </div>
 
       <WorksheetSection title="A.110 · Bank Reconciliation Procedures" bodyClassName="p-0">
-        <ProcTable docKey="bankRecProcedures" sections={data.bankRecProcedures} locked={locked} onRowField={handleRowField} onToggleHidden={toggleHidden} onDeleteRow={deleteRow} />
+        <ProcTable
+          docKey="bankRecProcedures"
+          sections={data.bankRecProcedures}
+          locked={locked}
+          onRowField={handleRowField}
+          onToggleHidden={toggleHidden}
+          onDeleteRow={deleteRow}
+          lukaHighlightMatches={lukaHighlightMatches}
+          onLukaRowToggle={lukaSelecting ? handleLukaRowToggle : undefined}
+        />
       </WorksheetSection>
 
       <ConcludeBar worksheetKey="audit-cash" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />

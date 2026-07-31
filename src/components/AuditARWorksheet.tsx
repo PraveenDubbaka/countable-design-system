@@ -154,6 +154,30 @@ function buildDefault(): DataAR {
 
 type DocKey = "auditProcedures" | "confirmationProcedures";
 
+const AR_AUDIT_MATCHES: Record<string, { docKey: DocKey; sectionIdx: number; match: string }> = {
+  "ar-audit-basic-obtain":           { docKey: "auditProcedures", sectionIdx: 0, match: "Preparation — Obtain a detailed (and aged) listing" },
+  "ar-audit-accuracy-check":         { docKey: "auditProcedures", sectionIdx: 2, match: "Accuracy of listing and aging — Check arithmetic accuracy of the accounts receivable listing (adds and cross-adds) and agree to the general ledger balance" },
+  "ar-audit-existence-unusual":      { docKey: "auditProcedures", sectionIdx: 3, match: "Unusual or large balances — Review the composition of the sub-ledger balances" },
+  "ar-audit-allowance-a":            { docKey: "auditProcedures", sectionIdx: 2, match: "Allowance for doubtful accounts — a. Review the aged accounts receivable trial balance" },
+  "ar-audit-allowance-b":            { docKey: "auditProcedures", sectionIdx: 2, match: "Allowance for doubtful accounts — b. For all significant or material accounts over 90 days" },
+  "ar-audit-existence-validate":     { docKey: "auditProcedures", sectionIdx: 3, match: "Validation of accounts receivable — Determine what" },
+  "ar-audit-existence-confirmation": { docKey: "auditProcedures", sectionIdx: 3, match: "Validation — Confirmation: Where confirmations are deemed to be effective" },
+  "ar-audit-completeness-subsequent":{ docKey: "auditProcedures", sectionIdx: 1, match: "Subsequent receipts testing — Based on the assessment of the risks" },
+  "ar-audit-existence-alternative":  { docKey: "auditProcedures", sectionIdx: 3, match: "Validation — Alternative to confirmation: Where a significant amount of time has elapsed" },
+};
+
+const ARCONF_MATCHES: Record<string, { match: string }> = {
+  "arconf-agree-gl":         { match: "Obtain a copy of the accounts receivable sub-ledger/trial balance as at the confirmation date — a. Agree the balances to general ledger" },
+  "arconf-identify-large":   { match: "Obtain a copy of the accounts receivable sub-ledger — b. Identify the large and unusual items" },
+  "arconf-select-sample":    { match: "Obtain a copy of the accounts receivable sub-ledger — c. Select a sample of accounts receivable invoices or balances for confirmation" },
+  "arconf-document-sample":  { match: "Obtain a copy of the accounts receivable sub-ledger — d. Document how the sample of accounts receivable was chosen" },
+  "arconf-prepare-requests": { match: "Prepare the confirmation requests and maintain control" },
+  "arconf-second-request":   { match: "Second request — After" },
+  "arconf-differences":      { match: "Differences — When confirmation replies indicate that a difference exists" },
+  "arconf-alternative":      { match: "Alternative procedures — Where confirmations are not returned or results are not satisfactory" },
+  "arconf-statistics":       { match: "Complete confirmation statistics summary" },
+};
+
 type RowSetter = (docKey: DocKey, sectionIdx: number, rowId: string, field: keyof ARRow, value: string | RefDoc[]) => void;
 
 const TD = "border-b border-border px-3 py-2.5 text-sm align-top";
@@ -260,13 +284,15 @@ function AddReferenceModal({ open, onClose, onAdd }: {
   );
 }
 
-function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDeleteRow }: {
+function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDeleteRow, lukaHighlightMatches, onLukaRowToggle }: {
   docKey: DocKey;
   sections: ARSection[];
   locked: boolean;
   onRowField: RowSetter;
   onToggleHidden: (docKey: DocKey, sectionIdx: number, rowId: string) => void;
   onDeleteRow: (docKey: DocKey, sectionIdx: number, rowId: string) => void;
+  lukaHighlightMatches?: string[];
+  onLukaRowToggle?: (description: string, sectionIdx: number) => void;
 }) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [refModal, setRefModal] = useState<{ sectionIdx: number; rowId: string } | null>(null);
@@ -353,8 +379,14 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
                 <tr className="bg-primary/[0.06]">
                   <td colSpan={8} className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-primary border-b border-border">{s.title}</td>
                 </tr>
-                {s.rows.filter(r => !r.hidden).map(r => (
-                  <tr key={r.id} className={`hover:bg-muted/20 ${selectedRows.has(r.id) ? "bg-primary/[0.04]" : ""}`}>
+                {s.rows.filter(r => !r.hidden).map(r => {
+                  const isLukaHighlighted = lukaHighlightMatches?.some(m => r.description.includes(m)) ?? false;
+                  return (
+                  <tr
+                    key={r.id}
+                    className={`hover:bg-muted/20 ${selectedRows.has(r.id) ? "bg-primary/[0.04]" : ""} ${isLukaHighlighted ? "bg-violet-200/60 dark:bg-violet-900/30" : ""} ${onLukaRowToggle ? "cursor-pointer" : ""}`}
+                    onClick={onLukaRowToggle ? () => onLukaRowToggle(r.description, si) : undefined}
+                  >
                     <td className={`${TD} text-center`}>
                       <Checkbox
                         checked={selectedRows.has(r.id)}
@@ -433,7 +465,8 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </Fragment>
             ))}
           </tbody>
@@ -765,6 +798,24 @@ export function AuditARWorksheet() {
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
+  const [lukaSelecting, setLukaSelecting] = useState(false);
+  const [lukaRowSelectIds, setLukaRowSelectIds] = useState<Set<string>>(new Set());
+
+  const lukaHighlightMatches = lukaSelecting
+    ? Array.from(lukaRowSelectIds).map(id => AR_AUDIT_MATCHES[id]?.match).filter((m): m is string => !!m)
+    : undefined;
+
+  function handleLukaRowToggle(description: string, _sectionIdx: number) {
+    const entry = Object.entries(AR_AUDIT_MATCHES).find(([, cfg]) => description.includes(cfg.match));
+    if (!entry) return;
+    const [lukaId] = entry;
+    setLukaRowSelectIds(prev => {
+      const next = new Set(prev);
+      next.has(lukaId) ? next.delete(lukaId) : next.add(lukaId);
+      return next;
+    });
+  }
+
   return (
     <WorksheetLayout
       heading="B Accounts Receivable > Audit Procedures"
@@ -777,14 +828,27 @@ export function AuditARWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersAR(rowIds); setLukaState("done"); }, 2600); }}
+          selecting={lukaSelecting}
+          rowSelectIds={lukaRowSelectIds}
+          onSelectingChange={setLukaSelecting}
+          onRowSelectIdsChange={setLukaRowSelectIds}
+          onInitiate={(rowIds) => { setLukaSelecting(false); setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersAR(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >
       <ARInfoBlock lsAccountBalance={lsAccountBalance} materiality={materiality} />
 
       <WorksheetSection title="Audit Procedures" bodyClassName="p-0">
-        <ProcTable docKey="auditProcedures" sections={data.auditProcedures} locked={locked} onRowField={handleRowField} onToggleHidden={toggleHidden} onDeleteRow={deleteRow} />
+        <ProcTable
+          docKey="auditProcedures"
+          sections={data.auditProcedures}
+          locked={locked}
+          onRowField={handleRowField}
+          onToggleHidden={toggleHidden}
+          onDeleteRow={deleteRow}
+          lukaHighlightMatches={lukaHighlightMatches}
+          onLukaRowToggle={lukaSelecting ? handleLukaRowToggle : undefined}
+        />
       </WorksheetSection>
 
       <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />
@@ -797,6 +861,24 @@ export function AuditARConfirmationWorksheet() {
   const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
   const [lukaState, setLukaState] = useState<"idle" | "loading" | "done">("idle");
   const [selectedWorkPapers, setSelectedWorkPapers] = useState<Set<number>>(new Set());
+  const [lukaSelecting, setLukaSelecting] = useState(false);
+  const [lukaRowSelectIds, setLukaRowSelectIds] = useState<Set<string>>(new Set());
+
+  const lukaHighlightMatches = lukaSelecting
+    ? Array.from(lukaRowSelectIds).map(id => ARCONF_MATCHES[id]?.match).filter((m): m is string => !!m)
+    : undefined;
+
+  function handleLukaRowToggle(description: string, _sectionIdx: number) {
+    const entry = Object.entries(ARCONF_MATCHES).find(([, cfg]) => description.includes(cfg.match));
+    if (!entry) return;
+    const [lukaId] = entry;
+    setLukaRowSelectIds(prev => {
+      const next = new Set(prev);
+      next.has(lukaId) ? next.delete(lukaId) : next.add(lukaId);
+      return next;
+    });
+  }
+
   return (
     <WorksheetLayout
       heading="B Accounts Receivable > Confirmation Procedures"
@@ -809,14 +891,27 @@ export function AuditARConfirmationWorksheet() {
           lukaState={lukaState}
           selectedIds={selectedWorkPapers}
           onSelectionChange={setSelectedWorkPapers}
-          onInitiate={(rowIds) => { setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersARConf(rowIds); setLukaState("done"); }, 2600); }}
+          selecting={lukaSelecting}
+          rowSelectIds={lukaRowSelectIds}
+          onSelectingChange={setLukaSelecting}
+          onRowSelectIdsChange={setLukaRowSelectIds}
+          onInitiate={(rowIds) => { setLukaSelecting(false); setLukaState("loading"); setTimeout(() => { lukaApplyWorkPapersARConf(rowIds); setLukaState("done"); }, 2600); }}
         />
       ) : undefined}
     >
       <ARInfoBlock lsAccountBalance={lsAccountBalance} materiality={materiality} />
 
       <WorksheetSection title="C.110 · Confirmation Supplementary Procedures" bodyClassName="p-0">
-        <ProcTable docKey="confirmationProcedures" sections={data.confirmationProcedures} locked={locked} onRowField={handleRowField} onToggleHidden={toggleHidden} onDeleteRow={deleteRow} />
+        <ProcTable
+          docKey="confirmationProcedures"
+          sections={data.confirmationProcedures}
+          locked={locked}
+          onRowField={handleRowField}
+          onToggleHidden={toggleHidden}
+          onDeleteRow={deleteRow}
+          lukaHighlightMatches={lukaHighlightMatches}
+          onLukaRowToggle={lukaSelecting ? handleLukaRowToggle : undefined}
+        />
       </WorksheetSection>
 
       <ConcludeBar worksheetKey="audit-ar" engagementId={engagementId} concluded={data.concluded} concludedOn={data.concludedOn} onConclude={conclude} onReopen={reopen} />

@@ -28,6 +28,10 @@ interface LukaWorkPaperPanelProps {
   selectedIds: Set<number>;
   onSelectionChange: (ids: Set<number>) => void;
   onInitiate: (rowIds: string[]) => void;
+  selecting: boolean;
+  rowSelectIds: Set<string>;
+  onSelectingChange: (selecting: boolean) => void;
+  onRowSelectIdsChange: (ids: Set<string>) => void;
 }
 
 export function LukaWorkPaperPanel({
@@ -36,10 +40,12 @@ export function LukaWorkPaperPanel({
   selectedIds,
   onSelectionChange,
   onInitiate,
+  selecting,
+  rowSelectIds,
+  onSelectingChange,
+  onRowSelectIdsChange,
 }: LukaWorkPaperPanelProps) {
   const [expanded, setExpanded] = useState(false);
-  const [selecting, setSelecting] = useState(false);
-  const [rowSelectIds, setRowSelectIds] = useState<Set<string>>(new Set());
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
   const allSelected = selectedIds.size === procData.actions.length;
@@ -57,22 +63,20 @@ export function LukaWorkPaperPanel({
 
   function handleInitiateClick() {
     const allTargetRows = getTargetRows();
-    setRowSelectIds(new Set(allTargetRows.map(t => t.row.id)));
-    setSelecting(true);
+    onRowSelectIdsChange(new Set(allTargetRows.map(t => t.row.id)));
+    onSelectingChange(true);
     setExpanded(false);
   }
 
   function handleConfirm() {
-    setSelecting(false);
+    onSelectingChange(false);
     onInitiate(Array.from(rowSelectIds));
   }
 
   function toggleRowId(id: string) {
-    setRowSelectIds(prev => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+    const next = new Set(rowSelectIds);
+    next.has(id) ? next.delete(id) : next.add(id);
+    onRowSelectIdsChange(next);
   }
 
   function toggleAll() {
@@ -125,9 +129,9 @@ export function LukaWorkPaperPanel({
 
     function toggleSelectAll() {
       if (allRowsSelected) {
-        setRowSelectIds(new Set());
+        onRowSelectIdsChange(new Set());
       } else {
-        setRowSelectIds(new Set(allTargetRows.map(t => t.row.id)));
+        onRowSelectIdsChange(new Set(allTargetRows.map(t => t.row.id)));
       }
     }
 
@@ -209,7 +213,7 @@ export function LukaWorkPaperPanel({
         <div className="flex items-center justify-between px-4 py-2.5 border-t border-violet-200 bg-violet-50/80">
           <button
             type="button"
-            onClick={() => { setSelecting(false); setExpanded(true); }}
+            onClick={() => { onSelectingChange(false); setExpanded(true); }}
             className="inline-flex items-center gap-1 text-[11px] text-violet-500 hover:text-violet-700 transition-colors"
           >
             <ChevronLeft className="h-3 w-3" />
