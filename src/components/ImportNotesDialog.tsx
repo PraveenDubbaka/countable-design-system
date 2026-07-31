@@ -24,18 +24,18 @@ export interface ImportResult {
 
 interface SourceOption {
  id: string;
+ connectorId?: string;
  label: string;
  description: string;
  icon: React.ComponentType<{ className?: string }>;
- badge?: string;
 }
 
 const SOURCES: SourceOption[] = [
- { id: "granola", label: "Granola", description: "Pull the latest planning meeting note with AI summary & action items.", icon: StickyNote, badge: "Connected" },
- { id: "fireflies", label: "Fireflies.ai", description: "Import transcript + AI summary from your most recent recorded call.", icon: Mic, badge: "Connected" },
- { id: "otter", label: "Otter.ai", description: "Pull conversation notes and decisions from Otter.", icon: FileAudio },
- { id: "gcal", label: "Google Calendar", description: "Use the meeting invite (date, attendees, agenda) as the seed.", icon: Calendar, badge: "Connected" },
- { id: "outlook", label: "Outlook Calendar", description: "Pull invite details and attached agenda from Outlook.", icon: Calendar },
+ { id: "granola", connectorId: "granola", label: "Granola", description: "Pull the latest planning meeting note with AI summary & action items.", icon: StickyNote },
+ { id: "fireflies", connectorId: "fireflies", label: "Fireflies.ai", description: "Import transcript + AI summary from your most recent recorded call.", icon: Mic },
+ { id: "otter", connectorId: "otter", label: "Otter.ai", description: "Pull conversation notes and decisions from Otter.", icon: FileAudio },
+ { id: "gcal", connectorId: "gcal", label: "Google Calendar", description: "Use the meeting invite (date, attendees, agenda) as the seed.", icon: Calendar },
+ { id: "outlook", connectorId: "outlook", label: "Outlook Calendar", description: "Pull invite details and attached agenda from Outlook.", icon: Calendar },
  { id: "paste", label: "Paste transcript / notes", description: "Paste raw notes — Luka extracts attendees, decisions, and actions.", icon: Upload },
 ];
 
@@ -81,9 +81,11 @@ interface Props {
  open: boolean;
  onOpenChange: (o: boolean) => void;
  onImport: (result: ImportResult) => void;
+ connectedApps?: Set<string>;
+ onOpenConnectors?: () => void;
 }
 
-export function ImportNotesDialog({ open, onOpenChange, onImport }: Props) {
+export function ImportNotesDialog({ open, onOpenChange, onImport, connectedApps, onOpenConnectors }: Props) {
  const [selected, setSelected] = useState<string>("granola");
  const [pasted, setPasted] = useState("");
  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
@@ -136,13 +138,21 @@ export function ImportNotesDialog({ open, onOpenChange, onImport }: Props) {
  <div className="flex items-start gap-2.5">
  <Icon className={cn("h-4 w-4 mt-0.5 shrink-0", active ? "text-primary" : "text-link")} />
  <div className="flex-1 min-w-0">
- <div className="flex items-center gap-1.5">
+ <div className="flex items-center gap-1.5 flex-wrap">
  <span className="text-sm font-semibold text-foreground">{src.label}</span>
- {src.badge && (
+ {src.connectorId && (connectedApps?.has(src.connectorId) ? (
  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
- {src.badge}
+ Connected
  </span>
- )}
+ ) : (
+ <button
+ type="button"
+ onClick={(e) => { e.stopPropagation(); onOpenConnectors?.(); }}
+ className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-primary/8 text-primary border border-primary/20 hover:bg-primary/15 transition-colors"
+ >
+ Connect
+ </button>
+ ))}
  </div>
  <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{src.description}</p>
  </div>

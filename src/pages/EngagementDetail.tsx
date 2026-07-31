@@ -2842,7 +2842,7 @@ export default function EngagementDetail() {
  <AuditPAP501Worksheet />
 
  ) : (checklistKey === 'aud-ra-507') ? (
- <Audit507Worksheet />
+ <Audit507Worksheet connectedApps={connectedApps} onOpenConnectors={() => setConnectorsOpen(true)} />
  ) : (checklistKey === 'aud-ra-510') ? (
  <Audit510Worksheet />
  ) : (checklistKey === 'aud-ra-511') ? (

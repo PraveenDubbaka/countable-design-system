@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Check, Search, Loader2, PlugZap, Calculator, Banknote, CreditCard, Users, Briefcase, Receipt, FolderOpen, MessageSquare, ShieldCheck, Building2, ClipboardList, Network } from "lucide-react";
+import { Check, Search, Loader2, PlugZap, Calculator, Banknote, CreditCard, Users, Briefcase, Receipt, FolderOpen, MessageSquare, ShieldCheck, Building2, ClipboardList, Network, Video } from "lucide-react";
 import { toast } from "sonner";
 
 interface ConnectorDef {
@@ -129,6 +129,18 @@ const CATEGORIES: CategoryDef[] = [
  { id: "zoom", name: "Zoom", description: "Meeting recordings & transcripts", bg: "#2D8CFF", fg: "#fff", label: "ZM" },
  { id: "msteams", name: "Microsoft Teams", description: "Team channel messages", bg: "#6264A7", fg: "#fff", label: "MT" },
  { id: "slack", name: "Slack", description: "Workspace messages & channels", bg: "#4A154B", fg: "#fff", label: "SL" },
+ ],
+ },
+ {
+ id: "meetings",
+ name: "Meeting & Notes",
+ tier: "T8b",
+ Icon: Video,
+ connectors: [
+  { id: "granola", name: "Granola", description: "AI meeting notes & summaries", bg: "#1A1A2E", fg: "#fff", label: "GR" },
+  { id: "fireflies", name: "Fireflies.ai", description: "Meeting transcripts & AI summaries", bg: "#7C3AED", fg: "#fff", label: "FF" },
+  { id: "otter", name: "Otter.ai", description: "Conversation notes & decisions", bg: "#2196F3", fg: "#fff", label: "OT" },
+  { id: "gcal", name: "Google Calendar", description: "Meeting invites, attendees & agenda", bg: "#4285F4", fg: "#fff", label: "GC" },
  ],
  },
  {

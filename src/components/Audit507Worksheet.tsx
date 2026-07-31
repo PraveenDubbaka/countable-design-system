@@ -176,7 +176,7 @@ function groupedPartA() {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
+export function Audit507Worksheet({ isUS = false, connectedApps, onOpenConnectors }: { isUS?: boolean; connectedApps?: Set<string>; onOpenConnectors?: () => void }) {
  const storageKey = `audit-507-data-${isUS ? 'us' : 'ca'}`;
  const { engagementId = '' } = useParams<{ engagementId: string }>();
  const isDemoEngagement = engagementId === DEMO_ENGAGEMENT_ID;
@@ -408,8 +408,8 @@ export function Audit507Worksheet({ isUS = false }: { isUS?: boolean }) {
   />
  )}
 
- <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
- <ImportNotesDialog open={importPartCOpen} onOpenChange={setImportPartCOpen} onImport={applyPartCImport} />
+ <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} connectedApps={connectedApps} onOpenConnectors={onOpenConnectors} />
+ <ImportNotesDialog open={importPartCOpen} onOpenChange={setImportPartCOpen} onImport={applyPartCImport} connectedApps={connectedApps} onOpenConnectors={onOpenConnectors} />
 
  <div className="flex-1 overflow-y-auto bg-muted/30">
  {/* Objective */}
