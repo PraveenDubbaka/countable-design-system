@@ -6,7 +6,7 @@ import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaAct
 import { LukaIcon as LukaHeaderIcon } from "@/components/LukaIcon";
 import quickbooksLogo from "@/assets/quickbooks-intuit-logo.png";
 import xeroLogo from "@/assets/xero-logo.png";
-import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
  Tooltip,
  TooltipContent,
@@ -1501,7 +1501,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  </div>
 
  {/* Tabs — pill switch */}
- <LayoutGroup><div className="flex-1 flex items-center justify-center">
+ <div className="flex-1 flex items-center justify-center">
  <div
  className="relative flex items-center gap-1 rounded-full p-1"
  style={{
@@ -1537,26 +1537,23 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  color: isActive ? "hsl(0 0% 100%)" : "hsl(222 30% 18%)",
  }}
  >
- {isActive && (
  <motion.div
- layoutId="luka-tab-indicator"
  className="absolute inset-0 rounded-full"
- initial={{ opacity: 1 }}
- animate={{ opacity: 1 }}
+ initial={false}
+ animate={{ opacity: isActive ? 1 : 0 }}
+ transition={{ duration: 0.15 }}
  style={{
  background: "linear-gradient(135deg, #6C2FF2 0%, #8A5BFF 55%, #B084FF 100%)",
  boxShadow: "0 6px 16px -6px hsl(265 80% 55% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.25)",
  }}
- transition={{ type: "spring", stiffness: 420, damping: 32 }}
  />
- )}
  <Icon size={14} className="relative z-10" />
  <span className="relative z-10">{tab.label}</span>
  </motion.button>
  );
  })}
  </div>
- </div></LayoutGroup>
+ </div>
 
  {/* Window controls */}
  <div className="flex items-center gap-1 shrink-0">
