@@ -789,7 +789,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  return parsed;
  }
  }
- return 300;
+ return 400;
  });
  const [isResizing, setIsResizing] = useState(false);
  const [isResizeHovering, setIsResizeHovering] = useState(false);
