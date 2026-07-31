@@ -132,14 +132,15 @@ const procStorageKey = (engId: string) => `audit-590-active-procs-${engId}`;
 const wpProcMapKey = (engId: string) => `audit-590-wp-proc-map-${engId}`;
 
 /** Store a map of aud-wp-* ID → selected gca-ws-proc-* IDs so the sidebar can show children. */
-export function setWpProcMap(engagementId: string, rows: Array<{ plannedProcedureId: string }>): void {
+export function setWpProcMap(engagementId: string, rows: Array<{ plannedProcedureIds: string[] }>): void {
   const map: Record<string, string[]> = {};
   for (const row of rows) {
-    if (!row.plannedProcedureId) continue;
-    const audWpId = getAudWpIdForProc(row.plannedProcedureId);
-    if (!audWpId) continue;
-    if (!map[audWpId]) map[audWpId] = [];
-    if (!map[audWpId].includes(row.plannedProcedureId)) map[audWpId].push(row.plannedProcedureId);
+    for (const procId of row.plannedProcedureIds ?? []) {
+      const audWpId = getAudWpIdForProc(procId);
+      if (!audWpId) continue;
+      if (!map[audWpId]) map[audWpId] = [];
+      if (!map[audWpId].includes(procId)) map[audWpId].push(procId);
+    }
   }
   try {
     const key = wpProcMapKey(engagementId);
