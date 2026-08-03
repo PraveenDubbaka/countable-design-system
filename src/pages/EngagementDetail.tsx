@@ -1292,7 +1292,7 @@ export default function EngagementDetail() {
  // Load checklist from localStorage - use first saved checklist or fallback
  useEffect(() => {
  // FS pages, standalone custom worksheets, and notes pages render without a checklist
- if (checklistKey && checklistKey !== 'aud-ra-pap501a' && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('custom-'))) {
+ if (checklistKey && checklistKey !== 'aud-ra-pap501a' && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('node-note-') || checklistKey.startsWith('custom-'))) {
  setIsLoading(false);
  setChecklist(null);
  return;
@@ -2238,6 +2238,7 @@ export default function EngagementDetail() {
  {checklist?.title
  || (checklistKey && CUSTOM_WORKSHEET_TITLES[checklistKey])
  || (checklistKey?.startsWith('notes-') && `Notes — ${searchParams.get('t') || CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
+ || (checklistKey?.startsWith('node-note-') && (searchParams.get('t') || checklistKey.slice('node-note-'.length)))
  || (checklistKey?.startsWith('custom-') && (() => { const s = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey); return s?.name; })())
  || (checklistKey && FS_PAGE_KEYS.has(checklistKey) && FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]])
  || 'Client acceptance and continuance'}
@@ -2802,6 +2803,15 @@ export default function EngagementDetail() {
  <LayoutSettingsPanel open={isLayoutOpen} onClose={() => setIsLayoutOpen(false)} />
  </CommentProvider>
  </LayoutSettingsProvider>
+ ) : checklistKey?.startsWith('node-note-') ? (
+ <NotesSlidePanel
+ pageMode
+ open
+ onOpenChange={() => {}}
+ noteId={checklistKey.slice('node-note-'.length)}
+ noteName={searchParams.get('t') || checklistKey.slice('node-note-'.length)}
+ engId={engagementId ?? ''}
+ />
  ) : checklistKey?.startsWith('notes-') ? (
  <NotesWorksheet
  parentKey={checklistKey.slice('notes-'.length)}

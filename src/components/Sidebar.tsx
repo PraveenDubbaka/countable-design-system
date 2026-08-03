@@ -3105,10 +3105,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  key={note.id}
  className={cn(
  "group/doc flex items-center gap-1.5 py-1.5 px-2 rounded-[8px] cursor-pointer hover:bg-primary/10 transition-colors text-sm mt-0.5",
- engId && location.pathname.endsWith(`/checklist/notes-${note.id}`) && "bg-primary/10 ring-1 ring-primary/25",
+ engId && location.pathname.includes(`/checklist/node-note-${note.id}`) && "bg-primary/10 ring-1 ring-primary/25",
  )}
  style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
- onClick={e => { e.stopPropagation(); if (engId) window.dispatchEvent(new CustomEvent('open-note-panel', { detail: { noteId: note.id, noteName: note.name, engId } })); }}
+ onClick={e => { e.stopPropagation(); if (engId) navigate(`/engagements/${engId}/checklist/node-note-${note.id}?t=${encodeURIComponent(note.name)}`); }}
  >
  <NotebookPen className="h-4 w-4 text-amber-500 flex-shrink-0" />
  <span className="truncate flex-1 text-black dark:text-white font-medium">{note.name}</span>

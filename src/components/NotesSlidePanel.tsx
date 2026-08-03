@@ -409,9 +409,10 @@ function AISuggestionCard({ suggestion, onAccept, onDiscard }: {
 interface NotesSlidePanelProps {
  open: boolean; onOpenChange: (open: boolean) => void;
  noteId: string | null; noteName: string; engId: string;
+ pageMode?: boolean;
 }
 
-export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId }: NotesSlidePanelProps) {
+export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId, pageMode }: NotesSlidePanelProps) {
  const storageKey = noteId ? `engagement-note-content-${engId}-${noteId}` : null;
 
  const [note, setNote] = useState<NoteData | null>(null);
@@ -719,19 +720,22 @@ ${note.blocks.map(b => {
  <AnimatePresence>
  {open && (
  <>
+ {!pageMode && (
  <motion.div className="fixed inset-0 z-40 bg-black/10"
  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
  transition={{ duration: 0.2 }} onClick={handleClose} />
+ )}
 
  <motion.div
- className={cn(
+ className={pageMode ? "flex flex-col h-full bg-background overflow-hidden" : cn(
  "fixed top-0 right-0 z-50 h-full bg-background border-l border-border flex flex-col shadow-2xl overflow-hidden",
  isFullscreen ? "!w-screen !max-w-none rounded-none" : "rounded-l-2xl"
  )}
- style={isFullscreen ? undefined : { width: 640, maxWidth: '98vw' }}
- initial={{ x: '100%', opacity: 0.6 }} animate={{ x: 0, opacity: 1 }}
- exit={{ x: '100%', opacity: 0.6 }}
- transition={{ type: 'spring', damping: 32, stiffness: 280, mass: 0.85 }}
+ style={pageMode ? undefined : (isFullscreen ? undefined : { width: 640, maxWidth: '98vw' })}
+ initial={pageMode ? {} : { x: '100%', opacity: 0.6 }}
+ animate={pageMode ? {} : { x: 0, opacity: 1 }}
+ exit={pageMode ? {} : { x: '100%', opacity: 0.6 }}
+ transition={pageMode ? {} : { type: 'spring', damping: 32, stiffness: 280, mass: 0.85 }}
  onClick={() => slashMenuBlockId && setSlashMenuBlockId(null)}
  >
  {/* ── Toolbar ── */}
@@ -801,7 +805,7 @@ ${note.blocks.map(b => {
  </DropdownMenu>
  </div>
  {/* ── Window controls ── */}
- <div className="flex items-center gap-1 shrink-0">
+ {!pageMode && <div className="flex items-center gap-1 shrink-0">
  <Tooltip>
  <TooltipTrigger asChild>
  <button onClick={() => window.open(window.location.href, '_blank')} className="action-icon" aria-label="Open in new window">
@@ -834,7 +838,7 @@ ${note.blocks.map(b => {
  </TooltipTrigger>
  <TooltipContent side="bottom" className="text-xs"><p>Close</p></TooltipContent>
  </Tooltip>
- </div>
+ </div>}
  </div>
 
  {/* ── Call recording banner ── */}
