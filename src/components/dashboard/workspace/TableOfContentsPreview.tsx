@@ -1,5 +1,5 @@
 const tocItems = [
- { title: "Compilation Engagement Report", page: 1 },
+ { title: "Independent Auditor's Report", page: 1 },
  { title: "Balance Sheet", page: 2 },
  { title: "Statement of Income (Loss) & Retained Earnings (Deficit)", page: 3 },
  { title: "Statement of Cash Flows", page: 4 },
