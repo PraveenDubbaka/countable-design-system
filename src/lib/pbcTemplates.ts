@@ -244,6 +244,211 @@ Equity transactions are initiated through a directors' resolution for approval. 
  "Describe the disaster recovery and business continuity plans for key IT systems.",
  ],
  },
+ "408": {
+ title: "Initial Audit Engagements (WP 408)",
+ questions: [
+ "Is this the first year of the engagement? Please confirm the Company's legal name, fiscal year end, and legal structure (e.g., corporation, partnership).",
+ "Describe any significant changes in the ownership or management of the Company that the audit team should be aware of.",
+ "What accounting framework does the Company use (e.g., ASPE, IFRS)? Has there been any change in accounting standards adopted during the year?",
+ "Please provide the prior period financial statements and trial balance for comparison purposes.",
+ "Are there any outstanding tax, legal, or regulatory issues from prior periods that the audit team should be aware of?",
+ ],
+ },
+ "410": {
+ title: "Acceptance & Continuance (WP 410)",
+ questions: [
+ "Describe the Company's ownership structure and identify the ultimate controlling party.",
+ "Have there been any changes in ownership, management, or board composition during the year? If so, describe.",
+ "Are there any known or suspected instances of fraud, illegal acts, or regulatory violations involving the Company or its management?",
+ "Has the Company or any of its principals been involved in any legal proceedings, regulatory investigations, or formal complaints during the year?",
+ "Describe any factors that may affect the audit team's independence or objectivity with respect to the Company.",
+ ],
+ },
+ "420": {
+ title: "Materiality (WP 420)",
+ questions: [
+ "What is the primary basis that the Company's financial statement users rely on for decision-making (e.g., net income, total assets, total revenue)?",
+ "Are there any known or expected changes in financial results that would significantly affect the appropriate benchmark for materiality?",
+ "Have there been any significant one-time transactions or events during the year that may be material but unusual in nature?",
+ "Are there any balances or transactions that, although small in dollar amount, would be considered material due to their nature (e.g., related party transactions, executive compensation)?",
+ ],
+ },
+ "428": {
+ title: "Auditor's Expert (WP 428)",
+ questions: [
+ "Does the Company require a specialist (e.g., actuary, valuator, environmental consultant) to support significant estimates or disclosures in the financial statements?",
+ "If a specialist has been engaged, please provide their name, qualifications, and the nature of the work performed.",
+ "What significant assumptions or inputs did the specialist rely upon, and how were those assumptions developed and validated?",
+ "Has the specialist's report or findings been reviewed and approved by management? Please provide a copy.",
+ ],
+ },
+ "430": {
+ title: "Overall Audit Strategy (WP 430)",
+ questions: [
+ "Describe any significant changes in the Company's business, financial reporting processes, or control environment compared to the prior year.",
+ "Are there any areas of the financial statements management considers to involve significant judgment, estimation, or complexity?",
+ "Please identify all subsidiaries, branches, or business units included in the consolidated financial statements and their relative significance.",
+ "Are there any constraints on the audit (e.g., timing, access to information, personnel availability) that management is aware of?",
+ ],
+ },
+ "436": {
+ title: "Team Planning Discussions (WP 436)",
+ questions: [
+ "Who are the key accounting and finance personnel the audit team will be working with, and what are their primary roles?",
+ "Please confirm the timing of key deliverables (e.g., draft financial statements, trial balance, supporting schedules) and the names of individuals responsible for providing them.",
+ "Are there any planned disruptions to finance operations (e.g., system upgrades, staff changes, relocations) during the audit fieldwork period?",
+ "Please identify the primary contact person for each significant account area or audit request.",
+ ],
+ },
+ "450": {
+ title: "Time & Budget Tracker (WP 450)",
+ questions: [
+ "Are there any timing constraints or deadlines that would affect the scheduling of audit procedures (e.g., bank covenant reporting dates, tax filing deadlines)?",
+ "Please confirm the expected date for the following: delivery of trial balance, completion of year-end reconciliations, and availability of draft financial statements.",
+ "Are there any unusual workload pressures on the finance team during the audit period that may affect the timely delivery of requested information?",
+ ],
+ },
+ "500": {
+ title: "Observation & Inspection (WP 500)",
+ questions: [
+ "Please describe any significant physical assets the Company holds (e.g., inventory, property, equipment) and their locations.",
+ "How does the Company safeguard and track its physical assets? Describe the controls over physical access and movement of assets.",
+ "When and how was the most recent physical inventory count or fixed asset verification performed? Who was responsible, and what were the results?",
+ "Are there any assets held by third parties (e.g., consignment inventory, assets in transit, assets held under bailment)? If so, please describe.",
+ "Please describe the Company's processes for identifying and writing off obsolete, damaged, or impaired assets.",
+ ],
+ },
+ "575": {
+ title: "Control Deficiencies (WP 575)",
+ questions: [
+ "Has management identified any control deficiencies, material weaknesses, or significant deficiencies in internal controls during the year?",
+ "If control deficiencies were identified (by internal or external parties), what remediation actions have been taken or are planned?",
+ "Are there any areas where the Company currently lacks adequate segregation of duties? If so, what compensating controls are in place?",
+ "Has the Company experienced any financial reporting errors, fraudulent transactions, or unauthorized access to financial systems during the year?",
+ ],
+ },
+ "580": {
+ title: "Revenue Recognition (WP 580)",
+ questions: [
+ "Describe the Company's primary revenue streams and how revenue is recognized for each.",
+ "What is the timing of revenue recognition for each significant revenue stream, and how does this align with the delivery of goods or completion of services?",
+ "Are there any long-term contracts, multiple-element arrangements, or variable consideration that affect when and how revenue is recognized?",
+ "Describe the controls over the completeness and accuracy of revenue recorded, including controls over cut-off at period end.",
+ "Were there any changes to the Company's revenue recognition policies or significant contracts during the year?",
+ ],
+ },
+ "590": {
+ title: "Engagement Scoping (WP 590)",
+ questions: [
+ "Please confirm the entities, legal structures, and operations to be included in the scope of the audit.",
+ "Are there any components, subsidiaries, or joint ventures that are excluded from the audit scope? If so, please explain.",
+ "Are there any significant transactions, balances, or disclosures that management considers outside the normal course of business?",
+ "Please identify any third-party service organizations (e.g., payroll processors, IT service providers) whose activities are relevant to the audit.",
+ ],
+ },
+ "605": {
+ title: "Risk Responses (WP 605)",
+ questions: [
+ "For each significant identified risk, describe the controls management has implemented to reduce the risk of material misstatement.",
+ "How does management monitor the effectiveness of its controls over significant risk areas on an ongoing basis?",
+ "Are there any significant risks for which management has determined that no controls exist or that existing controls are insufficient?",
+ "Please provide documentation of any control testing or effectiveness assessments performed by management or internal audit during the year.",
+ ],
+ },
+ "610": {
+ title: "Sampling — Tests of Details (WP 610)",
+ questions: [
+ "Please confirm the total population count and dollar amount for the accounts to be sampled as at year end.",
+ "Describe the source documents and supporting records available to support individual transactions and balances in the population.",
+ "Are there any known gaps, missing documents, or transactions that lack standard supporting documentation?",
+ "What is the process for locating and retrieving historical documents for audit sampling purposes?",
+ ],
+ },
+ "625": {
+ title: "Going Concern Response (WP 625)",
+ questions: [
+ "Describe in detail management's plan to address any going concern conditions identified (e.g., refinancing, asset disposals, cost reductions, capital raises).",
+ "What is the status of any financing arrangements being negotiated or renewed? Please provide copies of relevant term sheets or commitment letters.",
+ "Has management prepared cash flow forecasts for the next 12 to 24 months? If so, please provide the most recent version and describe the key assumptions.",
+ "Are there any waivers or amendments required from lenders or creditors? If so, describe their current status.",
+ ],
+ },
+ "630": {
+ title: "Confirmations (WP 630)",
+ questions: [
+ "Please provide a complete list of the Company's bank accounts, including the financial institution, account type, and account number.",
+ "Please provide a list of all outstanding loans, lines of credit, and other debt instruments, including the lender, outstanding balance, and terms as at year end.",
+ "Please provide a list of the Company's significant customers and suppliers for accounts receivable and accounts payable confirmation purposes.",
+ "Are there any legal matters, contingencies, or disputes for which the Company's legal counsel would need to provide a confirmation?",
+ ],
+ },
+ "635": {
+ title: "Accounting Estimates Response (WP 635)",
+ questions: [
+ "For each significant accounting estimate, please provide the supporting calculations, data sources, and key assumptions used by management.",
+ "Has management engaged an independent expert to support any estimates? If so, please provide the expert's report or findings.",
+ "What sensitivity analysis has management performed on significant estimates to assess the impact of changes in key assumptions?",
+ "For estimates carried from prior periods, describe how actual outcomes compared to prior estimates and whether any adjustments were required.",
+ ],
+ },
+ "645": {
+ title: "Litigation, Claims & Non-Compliance (WP 645)",
+ questions: [
+ "Please describe any current, pending, or threatened litigation, claims, or regulatory investigations involving the Company.",
+ "For each matter, describe the nature of the claim, the estimated amount at risk, and management's assessment of the likely outcome.",
+ "Have any legal judgments or settlements been reached during the year? If so, describe the terms and any financial impact.",
+ "Has the Company received any notices of non-compliance with laws, regulations, contracts, or permits? If so, describe the matter and the Company's response.",
+ "Please provide the name and contact information for legal counsel handling each significant legal matter.",
+ ],
+ },
+ "650": {
+ title: "Subsequent Events (WP 650)",
+ questions: [
+ "Are you aware of any significant events that occurred after the balance sheet date but before the financial statements were authorized for issue?",
+ "Have there been any significant changes in the Company's financial position, business, or operations after the balance sheet date?",
+ "Have any significant transactions been completed after the balance sheet date (e.g., acquisitions, disposals, financing, restructuring)?",
+ "Have any new claims, legal proceedings, or regulatory matters arisen after the balance sheet date?",
+ "Has management performed a review of events occurring after the balance sheet date? If so, describe the procedures performed and key findings.",
+ ],
+ },
+ "655": {
+ title: "Final Analytical Review (WP 655)",
+ questions: [
+ "Please explain any significant fluctuations in revenue, expenses, or other financial statement balances compared to the prior year.",
+ "Are there any balances or ratios in the financial statements that appear unusual or inconsistent with management's expectations?",
+ "How do the final financial results compare to the Company's budget or forecast for the year? Please explain any significant variances.",
+ "Are there any non-recurring items in the current year that significantly affect the comparability of financial results to the prior year?",
+ ],
+ },
+ "666": {
+ title: "Related Parties Response (WP 666)",
+ questions: [
+ "For each related party transaction identified, please provide complete supporting documentation including contracts, invoices, and approval records.",
+ "Were all related party transactions conducted at arm's length and on terms similar to those available in the open market? If not, explain.",
+ "Please confirm the completeness of the related party list provided earlier in the engagement.",
+ "Are there any undisclosed related party relationships or transactions that management is aware of that have not been previously identified?",
+ ],
+ },
+ "670": {
+ title: "Journal Entry Testing (WP 670)",
+ questions: [
+ "Who has the authority to prepare, approve, and post journal entries in the Company's accounting system?",
+ "Describe the controls over the initiation, authorization, and recording of journal entries, including segregation of duties.",
+ "Are manual journal entries to revenue accounts permitted? If so, describe the approvals required and provide a listing of all such entries for the year.",
+ "Please provide a complete listing of all journal entries posted during the year, including preparer, approver, date, and description.",
+ "Are there any recurring journal entries that are automated? If so, describe the controls over their accuracy and completeness.",
+ ],
+ },
+ "680": {
+ title: "ASPE Supplementary Procedures (WP 680)",
+ questions: [
+ "Has the Company applied all relevant Canadian Accounting Standards for Private Enterprises (ASPE) sections correctly during the year?",
+ "Are there any areas where management exercised significant judgment in the application of ASPE, including accounting policy elections or alternatives used?",
+ "Were there any changes in accounting policies applied during the year under ASPE? If so, describe the nature of the change and the financial statement impact.",
+ "Please confirm that the note disclosures in the financial statements include all required disclosures under applicable ASPE sections.",
+ "Are there any ASPE sections newly applicable to the Company this year (e.g., new standards or new circumstances that trigger additional disclosure requirements)?",
+ ],
+ },
  };
 
  const DEFAULT_SECTION: { title: string; questions: string[] } = {
