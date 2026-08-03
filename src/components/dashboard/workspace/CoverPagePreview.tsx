@@ -20,7 +20,7 @@ const CoverPagePreview = ({ isEditMode = false, onContentChanged, templateType =
  const getDefaultTitle = () => {
  if (templateType === "review") return "Reviewed Financial Statements";
  if (templateType === "tax") return "Income Tax Basis - Financial Statements";
- return "Compiled Financial Information";
+ return "Financial Statements";
  };
 
  const defaultTitle = useMemo(() => getDefaultTitle(), [templateType]);
