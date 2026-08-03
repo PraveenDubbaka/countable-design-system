@@ -14,6 +14,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -384,6 +385,9 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
  </td>
  <td className="px-4 py-3 align-top" style={{ width: 140 }}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.psc} />
+ <div className="flex-1">
  <Select value={row.psc} onValueChange={v => setPlan(proc.id, { psc: v })} disabled={locked}>
  <SelectTrigger className="h-8 text-sm bg-background"><SelectValue placeholder="Select" /></SelectTrigger>
  <SelectContent>
@@ -392,8 +396,13 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <SelectItem value="N/A">N/A</SelectItem>
  </SelectContent>
  </Select>
+ </div>
+ </div>
  </td>
  <td className="px-6 py-3 align-top">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.response} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
    <AttributedComment value={row.response} onChange={v => setPlan(proc.id, { response: v })} storageKey={`505-${engagementId}-${proc.id}`} placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
  </LukaTypingRow>
@@ -401,6 +410,8 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
    <div className="mt-1">
    </div>
  )}
+ </div>
+ </div>
  </td>
  <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
  <RefButton
@@ -537,6 +548,9 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <span className="text-sm text-foreground leading-relaxed">{item}</span>
  </td>
  <td className="px-4 py-2.5 align-top" style={{ width: 130 }}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.psc} />
+ <div className="flex-1">
  <Select value={row.psc} onValueChange={v => setInq(key, { psc: v })} disabled={locked}>
  <SelectTrigger className="h-8 text-sm bg-background w-full">
  <SelectValue placeholder="Select" />
@@ -547,8 +561,13 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  <SelectItem value="N/A">N/A</SelectItem>
  </SelectContent>
  </Select>
+ </div>
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.response} />
+ <div className="flex-1">
  <Textarea
  disabled={locked}
  value={row.response}
@@ -556,6 +575,8 @@ export function Audit505Worksheet({ isUS = false }: { isUS?: boolean }) {
  placeholder="Document findings…"
  className="min-h-[72px] text-sm resize-y bg-background"
  />
+ </div>
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top text-center" style={{ width: 100 }}>
  <RefButton
