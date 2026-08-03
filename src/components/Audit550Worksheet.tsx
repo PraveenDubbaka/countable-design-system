@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -331,10 +332,13 @@ export function Audit550Worksheet() {
  Description of risk
  </label>
  <LukaTypingRow filled={isFirstJeRisk && lukaFilledFields.has('550-risk0')}>
-  <Textarea disabled={locked} value={risk.description}
-  onChange={e => setRisk(cat.key, risk.id, { description: e.target.value })}
-  placeholder="Describe the risk of material misstatement (link / 535 where applicable)…"
-  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+  <div className="flex items-start gap-1.5">
+    <GreenDot show={!!risk.description} />
+    <Textarea disabled={locked} value={risk.description}
+    onChange={e => setRisk(cat.key, risk.id, { description: e.target.value })}
+    placeholder="Describe the risk of material misstatement (link / 535 where applicable)…"
+    className="flex-1 min-h-[56px] text-sm resize-none rounded-[10px]" />
+  </div>
  </LukaTypingRow>
  </div>
  {!locked && cat.risks.length > 1 && (
@@ -376,10 +380,13 @@ export function Audit550Worksheet() {
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
  <LukaTypingRow filled={isFirstJeCtrl && lukaFilledFields.has('550-ctrl0')}>
-  <Textarea disabled={locked} value={ct.description}
-  onChange={e => setControl(cat.key, risk.id, ct.id, { description: e.target.value })}
-  placeholder="Describe the control activity, owner, and how it operates…"
-  className="min-h-[64px] text-sm resize-none rounded-[10px]" />
+  <div className="flex items-start gap-1.5">
+    <GreenDot show={!!ct.description} />
+    <Textarea disabled={locked} value={ct.description}
+    onChange={e => setControl(cat.key, risk.id, ct.id, { description: e.target.value })}
+    placeholder="Describe the control activity, owner, and how it operates…"
+    className="flex-1 min-h-[64px] text-sm resize-none rounded-[10px]" />
+  </div>
  </LukaTypingRow>
  </td>
  <td className="px-3 py-2 text-center">
@@ -588,10 +595,13 @@ export function Audit550Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <Textarea disabled={locked} value={data.notes}
- onChange={e => setData(d => ({...d, notes: e.target.value }))}
- placeholder="Additional observations, follow-ups, communication to TCWG, or cross-references…"
- className="min-h-[90px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.notes} />
+   <Textarea disabled={locked} value={data.notes}
+   onChange={e => setData(d => ({...d, notes: e.target.value }))}
+   placeholder="Additional observations, follow-ups, communication to TCWG, or cross-references…"
+   className="flex-1 min-h-[90px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <WorksheetSignOff worksheetKey="audit-550" engagementId={engagementId} />

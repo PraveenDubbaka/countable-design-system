@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -391,10 +392,13 @@ export function Audit540Worksheet() {
  <td className="px-4 py-2 text-center font-mono text-foreground">{i + 1}</td>
  <td className="px-4 py-2">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(`rf-${r.id}`)}>
- <Textarea disabled={locked} value={r.description}
- onChange={e => setRiskFactor(cycle.id, r.id, { description: e.target.value })}
- placeholder="Describe what can go wrong…"
- className="min-h-[52px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!r.description} />
+   <Textarea disabled={locked} value={r.description}
+   onChange={e => setRiskFactor(cycle.id, r.id, { description: e.target.value })}
+   placeholder="Describe what can go wrong…"
+   className="flex-1 min-h-[52px] text-sm resize-none rounded-[10px]" />
+ </div>
  </LukaTypingRow>
  </td>
  <td className="px-4 py-2">
@@ -493,10 +497,13 @@ export function Audit540Worksheet() {
  </td>
  <td className="px-3 py-2">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(`ctl-${ct.id}`)}>
- <Textarea disabled={locked} value={ct.description}
- onChange={e => setControl(cycle.id, ct.id, { description: e.target.value })}
- placeholder="Describe the control activity and who performs it…"
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!ct.description} />
+   <Textarea disabled={locked} value={ct.description}
+   onChange={e => setControl(cycle.id, ct.id, { description: e.target.value })}
+   placeholder="Describe the control activity and who performs it…"
+   className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </div>
  </LukaTypingRow>
  </td>
  <td className="px-3 py-2">
@@ -551,10 +558,13 @@ export function Audit540Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={ct.comments}
- onChange={e => setControl(cycle.id, ct.id, { comments: e.target.value })}
- placeholder="Walkthrough / inspection results, deficiencies, planned response…"
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!ct.comments} />
+   <Textarea disabled={locked} value={ct.comments}
+   onChange={e => setControl(cycle.id, ct.id, { comments: e.target.value })}
+   placeholder="Walkthrough / inspection results, deficiencies, planned response…"
+   className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2 text-center">
  <RefButton
@@ -654,10 +664,13 @@ export function Audit540Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <Textarea disabled={locked} value={data.notes}
- onChange={e => setData(d => ({...d, notes: e.target.value }))}
- placeholder="Additional observations, follow-ups, or cross-references…"
- className="min-h-[90px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.notes} />
+   <Textarea disabled={locked} value={data.notes}
+   onChange={e => setData(d => ({...d, notes: e.target.value }))}
+   placeholder="Additional observations, follow-ups, or cross-references…"
+   className="flex-1 min-h-[90px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <WorksheetSignOff worksheetKey="audit-540" engagementId={engagementId} />

@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -314,10 +315,13 @@ export function Audit575Worksheet() {
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
  <LukaTypingRow filled={isDemoEngagement && !!rowFillKey && lukaFilledFields.has(rowFillKey)}>
-  <Textarea disabled={locked} value={r.description}
-  onChange={e => patchRow(r.id, { description: e.target.value })}
-  placeholder="Describe the deficiency…"
-  className="min-h-[72px] text-sm resize-none rounded-[10px]" />
+  <div className="flex items-start gap-1.5">
+    <GreenDot show={!!r.description} />
+    <Textarea disabled={locked} value={r.description}
+    onChange={e => patchRow(r.id, { description: e.target.value })}
+    placeholder="Describe the deficiency…"
+    className="flex-1 min-h-[72px] text-sm resize-none rounded-[10px]" />
+  </div>
  </LukaTypingRow>
  </td>
  <td className="px-3 py-2">
@@ -347,22 +351,31 @@ export function Audit575Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.potentialImpact}
- onChange={e => patchRow(r.id, { potentialImpact: e.target.value })}
- placeholder="Assertions / accounts affected, magnitude…"
- className="min-h-[72px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!r.potentialImpact} />
+   <Textarea disabled={locked} value={r.potentialImpact}
+   onChange={e => patchRow(r.id, { potentialImpact: e.target.value })}
+   placeholder="Assertions / accounts affected, magnitude…"
+   className="flex-1 min-h-[72px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.rootCause}
- onChange={e => patchRow(r.id, { rootCause: e.target.value })}
- placeholder="Underlying cause…"
- className="min-h-[72px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!r.rootCause} />
+   <Textarea disabled={locked} value={r.rootCause}
+   onChange={e => patchRow(r.id, { rootCause: e.target.value })}
+   placeholder="Underlying cause…"
+   className="flex-1 min-h-[72px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.mgmtResponse}
- onChange={e => patchRow(r.id, { mgmtResponse: e.target.value })}
- placeholder="Management's planned response…"
- className="min-h-[72px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!r.mgmtResponse} />
+   <Textarea disabled={locked} value={r.mgmtResponse}
+   onChange={e => patchRow(r.id, { mgmtResponse: e.target.value })}
+   placeholder="Management's planned response…"
+   className="flex-1 min-h-[72px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2 text-center">
  <Input disabled={locked} type="date" value={r.remediationDate}
@@ -458,10 +471,13 @@ export function Audit575Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <Textarea disabled={locked} value={data.notes}
- onChange={e => setData(d => ({...d, notes: e.target.value }))}
- placeholder="Additional observations, follow-ups, prior-year carry-forwards, or cross-references…"
- className="min-h-[90px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.notes} />
+   <Textarea disabled={locked} value={data.notes}
+   onChange={e => setData(d => ({...d, notes: e.target.value }))}
+   placeholder="Additional observations, follow-ups, prior-year carry-forwards, or cross-references…"
+   className="flex-1 min-h-[90px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <WorksheetSignOff worksheetKey="audit-575" engagementId={engagementId} />

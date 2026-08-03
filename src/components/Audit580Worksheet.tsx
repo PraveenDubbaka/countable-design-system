@@ -14,6 +14,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -408,10 +409,13 @@ export function Audit580Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={s.description}
- onChange={e => patchStream(s.id, { description: e.target.value })}
- placeholder="Nature, timing, recognition policy…"
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!s.description} />
+   <Textarea disabled={locked} value={s.description}
+   onChange={e => patchStream(s.id, { description: e.target.value })}
+   placeholder="Nature, timing, recognition policy…"
+   className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2">
  <div className="flex flex-wrap gap-1 justify-center">
@@ -472,10 +476,13 @@ export function Audit580Worksheet() {
  </Select>
  </td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={s.rationale}
- onChange={e => patchStream(s.id, { rationale: e.target.value })}
- placeholder="Support the assessment…"
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!s.rationale} />
+   <Textarea disabled={locked} value={s.rationale}
+   onChange={e => patchStream(s.id, { rationale: e.target.value })}
+   placeholder="Support the assessment…"
+   className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2 text-center">
  <RefButton
@@ -547,10 +554,13 @@ export function Audit580Worksheet() {
  </td>
  <td className="px-3 py-3">
  <LukaTypingRow filled={isDemoEngagement && !!procFillKey && lukaFilledFields.has(procFillKey)}>
-  <Textarea disabled={locked} value={p.exceptions}
-  onChange={e => patchProcedure(p.id, { exceptions: e.target.value })}
-  placeholder="Summarize exceptions or difficulties encountered…"
-  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+  <div className="flex items-start gap-1.5">
+    <GreenDot show={!!p.exceptions} />
+    <Textarea disabled={locked} value={p.exceptions}
+    onChange={e => patchProcedure(p.id, { exceptions: e.target.value })}
+    placeholder="Summarize exceptions or difficulties encountered…"
+    className="flex-1 min-h-[56px] text-sm resize-none rounded-[10px]" />
+  </div>
  </LukaTypingRow>
  </td>
  <td className="px-3 py-3 text-center">
@@ -601,10 +611,13 @@ export function Audit580Worksheet() {
  <label className="text-sm font-medium text-muted-foreground">
  {data.fraudRiskIdentified === "N" ? "Rationale for rebutting the presumption" : "Rationale"}
  </label>
- <Textarea disabled={locked} value={data.rebuttalRationale}
- onChange={e => setData(d => ({...d, rebuttalRationale: e.target.value }))}
- placeholder="Document the reasons supporting the conclusion above."
- className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.rebuttalRationale} />
+   <Textarea disabled={locked} value={data.rebuttalRationale}
+   onChange={e => setData(d => ({...d, rebuttalRationale: e.target.value }))}
+   placeholder="Document the reasons supporting the conclusion above."
+   className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
  </div>
  </div>
@@ -641,10 +654,13 @@ export function Audit580Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <Textarea disabled={locked} value={data.notes}
- onChange={e => setData(d => ({...d, notes: e.target.value }))}
- placeholder="Additional observations, cross-references to Forms 520 / 705, follow-ups…"
- className="min-h-[90px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.notes} />
+   <Textarea disabled={locked} value={data.notes}
+   onChange={e => setData(d => ({...d, notes: e.target.value }))}
+   placeholder="Additional observations, cross-references to Forms 520 / 705, follow-ups…"
+   className="flex-1 min-h-[90px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <WorksheetSignOff worksheetKey="audit-580" engagementId={engagementId} />

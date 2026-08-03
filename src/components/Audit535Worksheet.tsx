@@ -13,6 +13,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -262,7 +263,10 @@ export function Audit535Worksheet() {
  </td>
  <td className="px-6 py-3">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(item.id)}>
- <Textarea disabled={locked} value={row.comments} onChange={e => setRow(item.id, { comments: e.target.value })} placeholder="Document procedure performed and findings…" className="min-h-[72px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.comments} />
+   <Textarea disabled={locked} value={row.comments} onChange={e => setRow(item.id, { comments: e.target.value })} placeholder="Document procedure performed and findings…" className="flex-1 min-h-[72px] w-full text-sm resize-none rounded-[10px] border border-input bg-white px-3 py-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2" />
+ </div>
  </LukaTypingRow>
  </td>
  <td className="px-4 py-3 text-center">
@@ -391,17 +395,28 @@ export function Audit535Worksheet() {
 
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">How was understanding obtained (inquiry, observation, inspection, walkthrough)</label>
- <Textarea disabled={locked} value={s.understandingObtained} onChange={e => setScotabd(idx, { understandingObtained: e.target.value })} placeholder="Inspection of documents: …&#10;Inquiries of: …&#10;Observation of: …&#10;Walkthrough performed: …" className="min-h-[80px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!s.understandingObtained} />
+   <Textarea disabled={locked} value={s.understandingObtained} onChange={e => setScotabd(idx, { understandingObtained: e.target.value })} placeholder="Inspection of documents: …&#10;Inquiries of: …&#10;Observation of: …&#10;Walkthrough performed: …" className="flex-1 min-h-[80px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">Business process (flow of information)</label>
- <AttributedComment value={s.processDescription} onChange={v => setScotabd(idx, { processDescription: v })} storageKey={`535-${engagementId ?? "def"}-proc-${idx}`} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." disabled={locked} className="min-h-[110px] text-sm resize-none rounded-[10px]" minHeight="110px" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!s.processDescription} />
+   <div className="flex-1">
+     <AttributedComment value={s.processDescription} onChange={v => setScotabd(idx, { processDescription: v })} storageKey={`535-${engagementId ?? "def"}-proc-${idx}`} placeholder="Describe initiation, authorization, recording, processing, correction, posting to GL and reporting in F/S. Reference specific accounts and supporting documents." disabled={locked} className="min-h-[110px] text-sm resize-none rounded-[10px]" minHeight="110px" />
+   </div>
+ </div>
  </div>
 
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">Events and conditions other than transactions</label>
- <Textarea disabled={locked} value={s.nonTransactionEvents} onChange={e => setScotabd(idx, { nonTransactionEvents: e.target.value })} placeholder="How the entity captures, processes and discloses these events." className="min-h-[70px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!s.nonTransactionEvents} />
+   <Textarea disabled={locked} value={s.nonTransactionEvents} onChange={e => setScotabd(idx, { nonTransactionEvents: e.target.value })} placeholder="How the entity captures, processes and discloses these events." className="flex-1 min-h-[70px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <div className="grid grid-cols-3 gap-3">
@@ -431,15 +446,26 @@ export function Audit535Worksheet() {
  <h3 className="text-sm font-semibold text-foreground">Evaluation of risks identified</h3>
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">New risks identified ()</label>
- <AttributedComment value={data.newRisksIdentified} onChange={v => setData(d => ({...d, newRisksIdentified: v }))} storageKey={`535-${engagementId ?? "def"}-newRisks`} placeholder="Describe any new RMMs identified during this understanding." disabled={locked} className="min-h-[70px] text-sm resize-none rounded-[10px]" minHeight="70px" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.newRisksIdentified} />
+   <div className="flex-1">
+     <AttributedComment value={data.newRisksIdentified} onChange={v => setData(d => ({...d, newRisksIdentified: v }))} storageKey={`535-${engagementId ?? "def"}-newRisks`} placeholder="Describe any new RMMs identified during this understanding." disabled={locked} className="min-h-[70px] text-sm resize-none rounded-[10px]" minHeight="70px" />
+   </div>
+ </div>
  </div>
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">Controls identified for D&amp;I testing</label>
- <Textarea disabled={locked} value={data.controlsIdentified} onChange={e => setData(d => ({...d, controlsIdentified: e.target.value }))} className="min-h-[70px] text-sm resize-none rounded-[10px]" placeholder="List controls over significant risks, journal entries, and assertion-level risks." />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.controlsIdentified} />
+   <Textarea disabled={locked} value={data.controlsIdentified} onChange={e => setData(d => ({...d, controlsIdentified: e.target.value }))} className="flex-1 min-h-[70px] text-sm resize-none rounded-[10px]" placeholder="List controls over significant risks, journal entries, and assertion-level risks." />
+ </div>
  </div>
  <div className="space-y-1">
  <label className="text-sm font-medium text-muted-foreground">Significant deficiencies communicated to TCWG</label>
- <Textarea disabled={locked} value={data.deficienciesComm} onChange={e => setData(d => ({...d, deficienciesComm: e.target.value }))} className="min-h-[60px] text-sm resize-none rounded-[10px]" placeholder="Summarize deficiencies and date communicated." />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.deficienciesComm} />
+   <Textarea disabled={locked} value={data.deficienciesComm} onChange={e => setData(d => ({...d, deficienciesComm: e.target.value }))} className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" placeholder="Summarize deficiencies and date communicated." />
+ </div>
  </div>
  </div>
 
@@ -468,7 +494,12 @@ export function Audit535Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <AttributedComment value={data.notes} onChange={v => setData(d => ({...d, notes: v }))} storageKey={`535-${engagementId ?? "def"}-notes`} placeholder="Additional observations, follow-ups, or cross-references…" disabled={locked} className="min-h-[90px] text-sm resize-none rounded-[10px]" minHeight="90px" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.notes} />
+   <div className="flex-1">
+     <AttributedComment value={data.notes} onChange={v => setData(d => ({...d, notes: v }))} storageKey={`535-${engagementId ?? "def"}-notes`} placeholder="Additional observations, follow-ups, or cross-references…" disabled={locked} className="min-h-[90px] text-sm resize-none rounded-[10px]" minHeight="90px" />
+   </div>
+ </div>
  </div>
 
  <WorksheetSignOff worksheetKey="audit-535" engagementId={engagementId} />

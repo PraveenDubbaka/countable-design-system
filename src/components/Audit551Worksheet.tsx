@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -329,10 +330,13 @@ export function Audit551Worksheet() {
  </td>
  <td className="px-3 py-2">
  <LukaTypingRow filled={!!gitcFillKey && lukaFilledFields.has(gitcFillKey)}>
-  <Textarea disabled={locked} value={r.description}
-  onChange={e => patchGitcRow(target, sec.key, r.id, { description: e.target.value })}
-  placeholder="Describe the GITC and how it operates…"
-  className="min-h-[60px] text-sm resize-none rounded-[10px]" />
+  <div className="flex items-start gap-1.5">
+    <GreenDot show={!!r.description} />
+    <Textarea disabled={locked} value={r.description}
+    onChange={e => patchGitcRow(target, sec.key, r.id, { description: e.target.value })}
+    placeholder="Describe the GITC and how it operates…"
+    className="flex-1 min-h-[60px] text-sm resize-none rounded-[10px]" />
+  </div>
  </LukaTypingRow>
  </td>
  <td className="px-3 py-2">
@@ -556,10 +560,13 @@ export function Audit551Worksheet() {
   className={`hover:bg-muted/50 transition-colors align-top border-b border-border last:border-b-0${isDemoEngagement && i === 0 && lukaHighlightFields.has('551-rafuit0') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
  <td className="px-3 py-2 text-center font-mono">{i + 1}</td>
  <td className="px-3 py-2">
- <Textarea disabled={locked} value={r.automatedControl}
- onChange={e => setRafuit(r.id, { automatedControl: e.target.value })}
- placeholder="Reference or describe the automated control…"
- className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!r.automatedControl} />
+   <Textarea disabled={locked} value={r.automatedControl}
+   onChange={e => setRafuit(r.id, { automatedControl: e.target.value })}
+   placeholder="Reference or describe the automated control…"
+   className="flex-1 min-h-[56px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2">
  <Select disabled={locked} value={r.itLayer}
@@ -572,10 +579,13 @@ export function Audit551Worksheet() {
  </td>
  <td className="px-3 py-2">
  <LukaTypingRow filled={isDemoEngagement && i === 0 && lukaFilledFields.has('551-rafuit0')}>
-  <Textarea disabled={locked} value={r.rafuit}
-  onChange={e => setRafuit(r.id, { rafuit: e.target.value })}
-  placeholder="Describe the RAFUIT (Appendix 1)…"
-  className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+  <div className="flex items-start gap-1.5">
+    <GreenDot show={!!r.rafuit} />
+    <Textarea disabled={locked} value={r.rafuit}
+    onChange={e => setRafuit(r.id, { rafuit: e.target.value })}
+    placeholder="Describe the RAFUIT (Appendix 1)…"
+    className="flex-1 min-h-[56px] text-sm resize-none rounded-[10px]" />
+  </div>
  </LukaTypingRow>
  </td>
  <td className="px-3 py-2">
@@ -690,10 +700,13 @@ export function Audit551Worksheet() {
  {/* Notes */}
  <div className="bg-card border border-border rounded-md p-5 space-y-2">
  <h3 className="text-sm font-semibold text-foreground">Notes</h3>
- <Textarea disabled={locked} value={data.notes}
- onChange={e => setData(d => ({...d, notes: e.target.value }))}
- placeholder="Additional observations, IT environment context, follow-ups, or communications to TCWG…"
- className="min-h-[90px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!data.notes} />
+   <Textarea disabled={locked} value={data.notes}
+   onChange={e => setData(d => ({...d, notes: e.target.value }))}
+   placeholder="Additional observations, IT environment context, follow-ups, or communications to TCWG…"
+   className="flex-1 min-h-[90px] text-sm resize-none rounded-[10px]" />
+ </div>
  </div>
 
  <WorksheetSignOff worksheetKey="audit-551" engagementId={engagementId} />
