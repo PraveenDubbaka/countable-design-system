@@ -535,7 +535,91 @@ function ArtifactCard({
  );
 }
 
-function ResponsesCard({ onAccept, templateId, wpNumbers }: { onAccept: () => void; templateId?: string; wpNumbers?: string[] }) {
+function generateClientResponseContent(templateId: string, wpNumbers: string[]): string {
+ const year = new Date().getFullYear();
+ const dateStr = new Date().toLocaleDateString("en-CA");
+ if (templateId === "it-questionnaire") {
+ return `# Client Questionnaire Responses
+## Audit Questionnaire — Forms ${wpNumbers.join(", ")}
+
+**Submitted by:** Northline Precision Manufacturing Inc.
+**Date Submitted:** ${dateStr}
+
+---
+
+## Section 1: Software & Applications
+
+**Q1: What accounting/ERP systems does your organization use?**
+We use QuickBooks Enterprise for accounting and a custom ERP system for inventory management.
+
+**Q2: Are software updates and patches applied regularly?**
+Yes — our IT team applies security patches monthly through a centralized update management system. Critical patches are applied within 48 hours.
+
+---
+
+## Section 2: Third-Party Providers
+
+**Q3: List key third-party service providers with access to financial data.**
+1. Payroll processor — ADP Canada
+2. Cloud storage — Microsoft Azure (Canada East region)
+3. Banking portal — RBC Online Banking
+4. Document management — SharePoint Online
+
+---
+
+## Section 3: Access Controls
+
+**Q4: How is access to financial systems granted and revoked?**
+Access is provisioned through our HR onboarding workflow. IT receives termination notices and revokes all access within 24 hours. Quarterly access reviews are conducted by department heads.
+
+**Q5: Is multi-factor authentication (MFA) enabled?**
+Yes — MFA is required for all remote access and financial system logins company-wide since January ${year - 1}.
+
+---
+
+## Section 4: Physical & Backup Controls
+
+**Q6: Describe your data backup procedures.**
+Daily incremental backups and weekly full backups are stored off-site in an encrypted vault. Restoration testing is performed quarterly. Retention period: 7 years for financial records.
+
+---
+
+## Section 5: Information Flow
+
+**Q7: How is sensitive financial data transmitted externally?**
+All external transmissions use TLS 1.3 encryption. External file sharing is conducted exclusively through our secure client portal. No unencrypted email attachments containing financial data are permitted.
+
+---
+
+## Section 6: Cybersecurity
+
+**Q8: Any security incidents in the past year?**
+No reportable security incidents occurred during the current fiscal year. One phishing attempt was detected and blocked by email filtering in Q2; no data was compromised.
+
+---
+
+## Section 7: Communication
+
+**Q9: How are IT control deficiencies communicated to management?**
+All IT issues are logged in our ticketing system (ServiceNow). Material items are escalated to the CFO and documented in the risk register within 5 business days.
+`;
+ }
+ return `# Client Response — Document Package\n**Submitted:** ${dateStr}\n\nAll requested documents have been provided as attachments to this response.`;
+}
+
+function ResponsesCard({
+ onAccept,
+ onViewDoc,
+ onViewResponses,
+ templateId,
+ wpNumbers,
+}: {
+ onAccept: () => void;
+ onViewDoc: () => void;
+ onViewResponses: () => void;
+ templateId?: string;
+ wpNumbers?: string[];
+}) {
  const isQuestionnaire = templateId === "it-questionnaire";
  const mockResponses = isQuestionnaire
  ? [
@@ -566,7 +650,21 @@ function ResponsesCard({ onAccept, templateId, wpNumbers }: { onAccept: () => vo
  </div>
  ))}
  </div>
- <div className="px-4 py-3 border-t border-border bg-muted/20">
+ <div className="px-4 pt-2.5 pb-3 border-t border-border bg-muted/20 space-y-2">
+ <div className="flex gap-2">
+ <button
+ onClick={onViewDoc}
+ className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors"
+ >
+ <Eye className="h-3.5 w-3.5" /> View Document
+ </button>
+ <button
+ onClick={onViewResponses}
+ className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors"
+ >
+ <FileText className="h-3.5 w-3.5" /> View Responses
+ </button>
+ </div>
  <button
  onClick={onAccept}
  className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
@@ -868,7 +966,16 @@ export function PBCRequestFlow({
  return (
  <LukaBubble key={i} done={isDone}>
  {msg.text && <LukaText text={msg.text} />}
- <ResponsesCard onAccept={handleApply} templateId={selectedTemplate?.id} wpNumbers={wpNumbers} />
+ <ResponsesCard
+ onAccept={handleApply}
+ onViewDoc={() => onViewDoc(docContent, selectedTemplate?.label ?? "Document")}
+ onViewResponses={() => onViewDoc(
+ generateClientResponseContent(selectedTemplate?.id ?? "", wpNumbers),
+ "Client Responses"
+ )}
+ templateId={selectedTemplate?.id}
+ wpNumbers={wpNumbers}
+ />
  </LukaBubble>
  );
  }
