@@ -426,6 +426,7 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId, p
  const [callSeconds, setCallSeconds] = useState(0);
  const [isDictating, setIsDictating] = useState(false);
  const [isFullscreen, setIsFullscreen] = useState(false);
+ const [showAiFloating, setShowAiFloating] = useState(false);
 
  const titleRef = useRef<HTMLDivElement>(null);
  const blockRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -705,6 +706,12 @@ ${note.blocks.map(b => {
  if (w) { w.document.write(html); w.document.close(); setTimeout(() => w.print(), 300); }
  }, [note]);
 
+ useEffect(() => {
+ if (!pageMode) return;
+ window.addEventListener('notes-export-pdf', handleExport);
+ return () => window.removeEventListener('notes-export-pdf', handleExport);
+ }, [pageMode, handleExport]);
+
  const handleFormat = (cmd: string) => document.execCommand(cmd, false);
  const activeBlock = note?.blocks.find(b => b.id === activeBlockId);
  const olIndices = (blocks: NoteBlock[]) => {
@@ -727,7 +734,7 @@ ${note.blocks.map(b => {
  )}
 
  <motion.div
- className={pageMode ? "flex flex-col h-full bg-background overflow-hidden" : cn(
+ className={pageMode ? "flex flex-col h-full bg-background relative" : cn(
  "fixed top-0 right-0 z-50 h-full bg-background border-l border-border flex flex-col shadow-2xl overflow-hidden",
  isFullscreen ? "!w-screen !max-w-none rounded-none" : "rounded-l-2xl"
  )}
@@ -739,7 +746,7 @@ ${note.blocks.map(b => {
  onClick={() => slashMenuBlockId && setSlashMenuBlockId(null)}
  >
  {/* ── Toolbar ── */}
- <div className="flex items-center gap-0.5 px-3 py-2 border-b border-border flex-shrink-0 bg-background">
+ <div className={cn("flex items-center gap-0.5 px-3 py-2 border-b border-border flex-shrink-0 bg-background", pageMode && "hidden")}>
  <div className="flex items-center gap-0.5 flex-1 min-w-0">
  {activeBlock && activeBlock.type !== 'divider' && activeBlock.type !== 'table' ? (
  <DropdownMenu>
@@ -962,9 +969,9 @@ ${note.blocks.map(b => {
  </div>
 
  {/* ── AI Input Bar ── */}
- <div className="flex-shrink-0 px-4 pb-4 pt-2 border-t border-border bg-background">
- <div className="luka-input-wrapper">
- {isVoiceActive && (
+ <div className={cn("flex-shrink-0 bg-background", pageMode ? "px-4 pb-3 pt-2" : "px-4 pb-4 pt-2 border-t border-border")}>
+ <div className={pageMode ? "" : "luka-input-wrapper"}>
+ {!pageMode && isVoiceActive && (
  <div className="flex items-center gap-2 px-1 pb-1">
  <span className="relative flex h-2 w-2">
  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
@@ -973,15 +980,15 @@ ${note.blocks.map(b => {
  <span className="text-xs text-red-500 font-medium">Recording… speak your note</span>
  </div>
  )}
- <textarea ref={textareaRef} value={aiInput}
+ {!pageMode && <textarea ref={textareaRef} value={aiInput}
  onChange={e => setAiInput(e.target.value)}
  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleDirectInsert(); } }}
  placeholder={isVoiceActive ? '' : "Type / for prompts or just ask anything..."}
  rows={1}
  className="luka-input luka-input-autoresize"
  style={{ maxHeight: 120 }}
- />
- <div className="flex items-center justify-between pt-1 px-1">
+ />}
+ <div className={pageMode ? "flex items-center" : "flex items-center justify-between pt-1 px-1"}>
  <div className="flex items-center gap-2">
  {/* + block palette */}
  <DropdownMenu>
@@ -996,7 +1003,7 @@ ${note.blocks.map(b => {
  <React.Fragment key={item.type}>
  {idx === 2 && <DropdownMenuSeparator />}
  <DropdownMenuItem className="flex items-center gap-2.5 text-sm cursor-pointer" onClick={() => {
- if (item.type === 'ai') textareaRef.current?.focus();
+ if (item.type === 'ai') { if (pageMode) setShowAiFloating(true); else textareaRef.current?.focus(); }
  else if (item.type === 'pdf') fileInputRef.current?.click();
  else if (note) {
  const lastId = note.blocks[note.blocks.length - 1]?.id;
@@ -1016,7 +1023,7 @@ ${note.blocks.map(b => {
  </DropdownMenu>
  </div>
 
- <div className="flex items-center gap-1.5">
+ <div className={cn("flex items-center gap-1.5", pageMode && "hidden")}>
  {/* Wand — Luka AI generate */}
  <Tooltip>
  <TooltipTrigger asChild>
@@ -1094,6 +1101,55 @@ ${note.blocks.map(b => {
  </div>
  </div>
  </div>
+
+ {pageMode && showAiFloating && (
+ <motion.div
+  initial={{ opacity: 0, y: 10, scale: 0.97 }}
+  animate={{ opacity: 1, y: 0, scale: 1 }}
+  exit={{ opacity: 0, y: 10, scale: 0.97 }}
+  transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+  className="fixed bottom-16 left-1/2 -translate-x-1/2 w-[520px] max-w-[calc(100%-3rem)] z-50"
+ >
+  <div className="luka-input-wrapper shadow-xl">
+   <textarea
+    autoFocus
+    value={aiInput}
+    onChange={e => setAiInput(e.target.value)}
+    onKeyDown={e => {
+     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAiSend(); setShowAiFloating(false); }
+     if (e.key === 'Escape') { setShowAiFloating(false); setAiInput(''); }
+    }}
+    placeholder="What would you like Luka to generate?"
+    rows={2}
+    className="luka-input luka-input-autoresize"
+    style={{ maxHeight: 120 }}
+   />
+   <div className="flex items-center justify-between pt-1 px-1">
+    <button onClick={() => { setShowAiFloating(false); setAiInput(''); }} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-1">Cancel</button>
+    <div className="flex items-center gap-1.5">
+     <motion.button
+      whileHover={aiInput.trim() ? { scale: 1.06 } : {}}
+      whileTap={aiInput.trim() ? { scale: 0.9 } : {}}
+      onClick={() => { handleAiSend(); setShowAiFloating(false); }}
+      disabled={!aiInput.trim() || isAiLoading}
+      style={{
+       width: 30, height: 30, borderRadius: 8,
+       display: 'flex', alignItems: 'center', justifyContent: 'center',
+       background: 'hsl(var(--background))',
+       border: '1px solid hsl(var(--border) / 0.6)',
+       boxShadow: 'rgba(0,0,0,0.06) 0px 1px 3px',
+       cursor: aiInput.trim() ? 'pointer' : 'default',
+       color: aiInput.trim() ? '#8649F1' : 'hsl(var(--muted-foreground))',
+       opacity: aiInput.trim() ? 1 : 0.45,
+      }}>
+      {isAiLoading ? <Loader2 width={15} height={15} className="animate-spin" style={{ color: '#8649F1' }} /> : <Wand2 width={15} height={15} />}
+     </motion.button>
+    </div>
+   </div>
+  </div>
+ </motion.div>
+ )}
+
  </motion.div>
  </>
  )}

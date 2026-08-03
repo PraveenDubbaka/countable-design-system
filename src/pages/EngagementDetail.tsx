@@ -2369,6 +2369,16 @@ export default function EngagementDetail() {
  </Button>
  </div>
  <div className="flex items-center gap-1">
+ {checklistKey?.startsWith('node-note-') && (
+  <>
+  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
+   onClick={() => window.dispatchEvent(new CustomEvent('notes-export-pdf'))}>
+   <Download className="h-3 w-3" />
+   Export PDF
+  </Button>
+  <div className="w-px h-4 bg-border mx-0.5" />
+  </>
+ )}
  {checklistKey && engagementId && !FS_PAGE_KEYS.has(checklistKey) && (
  <>
  <Tooltip>
