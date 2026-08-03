@@ -2476,7 +2476,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "aud-fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/aud-fs-bs" },
  { id: "aud-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc", route: "checklist/aud-fs-is" },
  { id: "aud-fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/aud-fs-cf" },
- { id: "aud-fs-eq", label: "Statement of Changes in Equity", icon: "doc", route: "checklist/aud-fs-eq" },
  { id: "aud-fs-notes", label: "Notes to Financial Statements", icon: "doc", route: "checklist/aud-fs-notes" },
  ]
  },
