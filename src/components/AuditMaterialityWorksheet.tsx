@@ -15,6 +15,7 @@ import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
@@ -552,12 +553,15 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
- <TdInput
- value={row.extrapolatedPeriod ? formatDisplay(row.extrapolatedPeriod) : ""}
- onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
- placeholder="e.g. 12,500,000.00"
- className="tabular-nums text-right"
- />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.extrapolatedPeriod} />
+   <TdInput
+   value={row.extrapolatedPeriod ? formatDisplay(row.extrapolatedPeriod) : ""}
+   onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
+   placeholder="e.g. 12,500,000.00"
+   className="tabular-nums text-right flex-1"
+   />
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top w-28 text-right">
  <TdInput
@@ -577,23 +581,30 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <td className="px-4 py-2.5 align-top min-w-[165px] text-right">
  <div className="relative">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
- <TdInput
- value={row.materialityPY ? formatDisplay(row.materialityPY) : ""}
- onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
- placeholder="—"
- className="tabular-nums text-right"
- />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.materialityPY} />
+   <TdInput
+   value={row.materialityPY ? formatDisplay(row.materialityPY) : ""}
+   onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
+   placeholder="—"
+   className="tabular-nums text-right flex-1"
+   />
+ </div>
  </LukaTypingRow>
  </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[160px]">
  <div className="relative">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-comments')}>
- <TdInput
- value={row.comments}
- onChange={(v) => updateEntityRow(row.id, "comments", v)}
- placeholder="Comments…"
- />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.comments} />
+   <TdInput
+   value={row.comments}
+   onChange={(v) => updateEntityRow(row.id, "comments", v)}
+   placeholder="Comments…"
+   className="flex-1"
+   />
+ </div>
  </LukaTypingRow>
  </div>
  </td>
@@ -704,12 +715,15 @@ export function AuditMaterialityWorksheet({ isUS = false, engagementId }: AuditM
  <tr className="hover:bg-muted/10 transition-colors">
  <td className="py-2 text-sm text-muted-foreground align-top pt-3">Rationale</td>
  <td className="px-2 py-2 w-full">
- <Textarea
- value={pmRationale}
- onChange={(e) => setPmRationale(e.target.value)}
- placeholder="Explain why this percentage was selected…"
- className="min-h-[72px] text-sm resize-none bg-background border-border"
- />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!pmRationale} />
+   <Textarea
+   value={pmRationale}
+   onChange={(e) => setPmRationale(e.target.value)}
+   placeholder="Explain why this percentage was selected…"
+   className="min-h-[72px] text-sm resize-none bg-background border-border flex-1"
+   />
+ </div>
  </td>
  </tr>
  </tbody>
