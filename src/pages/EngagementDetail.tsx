@@ -1146,6 +1146,7 @@ export default function EngagementDetail() {
 
  // Connectors modal
  const [connectorsOpen, setConnectorsOpen] = useState(false);
+ const [scrollToConnectorId, setScrollToConnectorId] = useState<string | undefined>(undefined);
  const [connectedApps, setConnectedApps] = useState<Set<string>>(() => {
  const stored = localStorage.getItem(`connectors-${engagementId}`);
  if (stored) {
@@ -2830,7 +2831,7 @@ export default function EngagementDetail() {
  ) : (checklistKey === 'aud-form-440' || checklistKey === 'aud-us-form-440') ? (
  <BulkRequestsWorksheet isUS={checklistKey === 'aud-us-form-440'} />
  ) : (checklistKey === 'aud-plan' || checklistKey === 'aud-us-plan') ? (
- <AuditTeamPlanningWorksheet isUS={checklistKey === 'aud-us-plan'} />
+ <AuditTeamPlanningWorksheet isUS={checklistKey === 'aud-us-plan'} connectedApps={connectedApps} onOpenConnectors={(id) => { setScrollToConnectorId(id); setConnectorsOpen(true); }} />
  ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
  <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
  ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (
@@ -3121,10 +3122,11 @@ export default function EngagementDetail() {
 
  <ConnectorsModal
  open={connectorsOpen}
- onOpenChange={setConnectorsOpen}
+ onOpenChange={(v) => { setConnectorsOpen(v); if (!v) setScrollToConnectorId(undefined); }}
  connectedApps={connectedApps}
  onConnect={handleConnectorConnect}
  onDisconnect={handleConnectorDisconnect}
+ scrollToConnectorId={scrollToConnectorId}
  />
 
  {/* Client Response Dialog */}

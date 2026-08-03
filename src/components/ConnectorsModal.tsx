@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
  Dialog,
  DialogContent,
@@ -203,6 +203,7 @@ export interface ConnectorsModalProps {
  connectedApps: Set<string>;
  onConnect: (connectorId: string) => void;
  onDisconnect: (connectorId: string) => void;
+ scrollToConnectorId?: string;
 }
 
 // Simple Icons CDN slugs for connectors that have official brand icons
@@ -263,10 +264,22 @@ function ConnectorAvatar({ connector }: { connector: ConnectorDef }) {
  );
 }
 
-export function ConnectorsModal({ open, onOpenChange, connectedApps, onConnect, onDisconnect }: ConnectorsModalProps) {
+export function ConnectorsModal({ open, onOpenChange, connectedApps, onConnect, onDisconnect, scrollToConnectorId }: ConnectorsModalProps) {
  const [search, setSearch] = useState("");
  const [expandedId, setExpandedId] = useState<string | null>(null);
  const [loadingId, setLoadingId] = useState<string | null>(null);
+ const [highlightedId, setHighlightedId] = useState<string | null>(null);
+
+ useEffect(() => {
+  if (!open || !scrollToConnectorId) return;
+  setHighlightedId(scrollToConnectorId);
+  const scrollTimer = setTimeout(() => {
+   const el = document.querySelector(`[data-connector-id="${scrollToConnectorId}"]`);
+   el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 150);
+  const clearTimer = setTimeout(() => setHighlightedId(null), 3000);
+  return () => { clearTimeout(scrollTimer); clearTimeout(clearTimer); };
+ }, [open, scrollToConnectorId]);
 
  const q = search.trim().toLowerCase();
 
@@ -365,7 +378,7 @@ export function ConnectorsModal({ open, onOpenChange, connectedApps, onConnect, 
 
  return (
  <div key={connector.id}>
- <div className={`flex items-center gap-3 px-3 py-2.5 rounded-md border transition-colors ${isBlockedByExclusive ? "border-border/40 opacity-50 cursor-not-allowed" : isExpanded ? "border-primary/40 bg-primary/[0.03]" : "border-border hover:bg-muted/40"}`}>
+ <div data-connector-id={connector.id} className={`flex items-center gap-3 px-3 py-2.5 rounded-md border transition-colors ${isBlockedByExclusive ? "border-border/40 opacity-50 cursor-not-allowed" : highlightedId === connector.id ? "border-primary bg-primary/5 ring-2 ring-primary/30" : isExpanded ? "border-primary/40 bg-primary/[0.03]" : "border-border hover:bg-muted/40"}`}>
  <ConnectorAvatar connector={connector} />
  <div className="flex-1 min-w-0">
  <div className="flex items-center gap-2">

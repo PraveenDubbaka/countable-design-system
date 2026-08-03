@@ -163,7 +163,7 @@ function buildDefault(): Data436 {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean }) {
+export function AuditTeamPlanningWorksheet({ isUS = false, connectedApps, onOpenConnectors }: { isUS?: boolean; connectedApps?: Set<string>; onOpenConnectors?: (connectorId?: string) => void }) {
  const { engagementId = "default" } = useParams<{ engagementId: string }>();
  const storageKey = `audit-436-data-${isUS ? 'us' : 'ca'}`;
 
@@ -311,7 +311,7 @@ export function AuditTeamPlanningWorksheet({ isUS = false }: { isUS?: boolean })
  return (
  <div className="flex flex-col h-full">
 
- <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} />
+ <ImportNotesDialog open={importOpen} onOpenChange={setImportOpen} onImport={applyImport} connectedApps={connectedApps} onOpenConnectors={onOpenConnectors} />
 
  <div className="flex-1 overflow-y-auto bg-muted/30">
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-3">
