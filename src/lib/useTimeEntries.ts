@@ -33,8 +33,10 @@ export interface TimeEntry {
  tbSection: string; // 'general' | 'risk-assess' | 'risk-resp'
  hours: number;
  description: string;
- userName?: string; // display name of the person who logged this entry
- costOverride?: number; // manual cost override; when absent, computed as hours × rate
+ entryType?: 'Billable' | 'Non Billable';
+ category?: string;
+ userName?: string;
+ costOverride?: number;
 }
 
 const storageKey = (eid: string) => `audit-time-entries-${eid}`;

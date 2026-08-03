@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Timer } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,8 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import VersionHistoryPanel from "@/components/luka/workspace/versionControl/VersionHistoryPanel";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
-import { useTimeEntries, fmtElapsed, CURRENT_USER, TimeEntry } from "@/lib/useTimeEntries";
+import { useTimeEntries, fmtElapsed, CURRENT_USER, type TimeEntry, type RoleKey } from "@/lib/useTimeEntries";
+import { TimeTrackerPanel } from "@/components/TimeTrackerPanel";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Assignee, Checklist, Question } from "@/types/checklist";
 import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
@@ -1054,6 +1055,9 @@ export default function EngagementDetail() {
  const globalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
  const globalActiveRef = useRef(false);
  const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
+ const [trackerPanelOpen, setTrackerPanelOpen] = useState(false);
+ const [idleSec, setIdleSec] = useState(0);
+ const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
  useEffect(() => {
  if (!priorYearFile) return;
@@ -1135,6 +1139,21 @@ export default function EngagementDetail() {
  };
 
  useEffect(() => () => { if (globalTimerRef.current) clearInterval(globalTimerRef.current); }, []);
+
+ // Idle detection — track inactivity for display in TimeTrackerPanel
+ useEffect(() => {
+  let idleCounter = 0;
+  const idleInterval = setInterval(() => { idleCounter++; setIdleSec(idleCounter); }, 1000);
+  const resetIdle = () => { idleCounter = 0; setIdleSec(0); };
+  window.addEventListener('mousemove', resetIdle, { passive: true });
+  window.addEventListener('keydown', resetIdle, { passive: true });
+  return () => {
+   clearInterval(idleInterval);
+   window.removeEventListener('mousemove', resetIdle);
+   window.removeEventListener('keydown', resetIdle);
+   if (idleRef.current) clearTimeout(idleRef.current);
+  };
+ }, []);
  // ────────────────────────────────────────────────────────────────────────────
 
  const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2341,26 +2360,25 @@ export default function EngagementDetail() {
  {/* Action buttons row */}
  <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
  {/* Global timer — always visible on all pages */}
- <div className="flex items-center gap-4 shrink-0">
- <div className="flex items-center gap-2">
- {globalTimerRunning && (
- <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
- <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
- Recording
- </span>
- )}
- <span className="font-mono text-sm font-semibold tabular-nums text-foreground w-16 text-center">
- {fmtElapsed(globalTimerSec)}
- </span>
- </div>
- <Button
- onClick={toggleGlobalTimer}
- variant={globalTimerRunning ? 'destructive' : 'secondary'}
- size="sm"
- className="h-7 px-2.5 text-xs gap-1.5"
+ <div className="flex items-center gap-2 shrink-0">
+ <button
+  onClick={() => setTrackerPanelOpen(true)}
+  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
+  title="View time tracker"
  >
- {globalTimerRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
- {globalTimerRunning ? 'Stop & Log' : 'Start Time Log'}
+  <Timer className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+  <span className="text-xs font-mono font-medium text-emerald-700">
+   {fmtElapsed(globalTimerSec)}
+  </span>
+ </button>
+ <Button
+  variant={globalTimerRunning ? 'destructive' : 'secondary'}
+  size="sm"
+  className="h-7 gap-1.5 text-xs"
+  onClick={globalTimerRunning ? toggleGlobalTimer : toggleGlobalTimer}
+ >
+  {globalTimerRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+  {globalTimerRunning ? 'Stop & Log' : 'Start Time Log'}
  </Button>
  </div>
  <div className="flex items-center gap-1">
@@ -3292,6 +3310,38 @@ export default function EngagementDetail() {
  noteId={notePanel?.noteId ?? null}
  noteName={notePanel?.noteName ?? ''}
  engId={engagementId ?? ''}
+ />
+ <TimeTrackerPanel
+ open={trackerPanelOpen}
+ onClose={() => setTrackerPanelOpen(false)}
+ engagementId={engagementId ?? 'AUD-NPM-Dec312025'}
+ engagementLabel={engagementId ?? 'AUD-NPM-Dec312025'}
+ clientName="Northline Precision Manufacturing"
+ activeSec={globalTimerSec}
+ idleSec={idleSec}
+ onLogTime={() => {
+  if (globalTimerRunning) {
+   clearInterval(globalTimerRef.current!);
+   globalActiveRef.current = false;
+   setGlobalTimerRunning(false);
+   const hrs = Math.round(globalTimerSec / 900) / 4;
+   if (hrs > 0) {
+    addTimeEntry({
+     id: `auto-${Date.now()}`,
+     date: new Date().toISOString().split('T')[0],
+     roleKey: CURRENT_USER.roleKey as RoleKey,
+     tbRowId: 'g4',
+     tbSection: 'general',
+     hours: hrs,
+     description: `Session logged (${fmtElapsed(globalTimerSec)})`,
+     entryType: 'Billable',
+     category: 'General',
+    } as TimeEntry);
+    setGlobalTimerSec(0);
+   }
+  }
+  setTrackerPanelOpen(false);
+ }}
  />
  </>;
 }

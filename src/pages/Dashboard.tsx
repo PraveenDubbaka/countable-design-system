@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
-import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
+import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Briefcase, Loader, CheckCircle2, Archive, Timer } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -384,6 +384,26 @@ function EngagementProgressPanel({ progress }: {
  );
 }
 
+function getEngagementTimeData(engagementId: string) {
+ if (engagementId === 'AUD-NPM-Dec312025') {
+  return {
+   budgetHrs: 75,
+   usedHrs: 32.5,
+   budgetCost: 8750,
+   usedCost: 3900,
+   sections: [
+    { label: 'Client Onboarding', hrs: 4.5, budget: 8 },
+    { label: 'Planning', hrs: 7.0, budget: 12 },
+    { label: 'Risk Assessment', hrs: 10.5, budget: 18 },
+    { label: 'Risk Response', hrs: 8.5, budget: 28 },
+    { label: 'Financial Statements', hrs: 2.0, budget: 5 },
+    { label: 'Completion & Signoffs', hrs: 0, budget: 4 },
+   ],
+  };
+ }
+ return null;
+}
+
 export default function Dashboard() {
  const navigate = useNavigate();
  const { engagements: allEngagementsRaw } = useEngagements();
@@ -391,6 +411,10 @@ export default function Dashboard() {
  const [searchQuery, setSearchQuery] = useState("");
  const [expandedEngagement, setExpandedEngagement] = useState<string | null>(null);
  function toggleExpand(id: string) { setExpandedEngagement(prev => prev === id ? null : id); }
+ const [ttExpandedIds, setTtExpandedIds] = useState<Set<string>>(new Set());
+ function toggleTt(id: string) {
+  setTtExpandedIds(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+ }
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;
  try {
@@ -552,6 +576,122 @@ export default function Dashboard() {
  </tbody>
  </table>
  </div>
+ </StyledCard>
+
+ {/* ── Time Tracker Section ────────────────────────────────────────── */}
+ <StyledCard className="overflow-hidden flex-shrink-0">
+  <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+   <Timer className="h-4 w-4 text-primary" />
+   <h3 className="text-sm font-semibold text-foreground">Time Tracker</h3>
+  </div>
+  <div className="overflow-x-auto">
+   <table className="w-full text-sm">
+    <thead className="bg-muted/40">
+     <tr>
+      {['Engagement Name', 'Client Name', 'Year End', 'Budget Used'].map(h => (
+       <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
+      ))}
+      <th className="w-10" />
+     </tr>
+    </thead>
+    <tbody className="divide-y divide-border">
+     {filteredDashboardEngagements.map(eng => {
+      const timeData = getEngagementTimeData(eng.id);
+      if (!timeData) return null;
+      const pct = Math.round((timeData.usedHrs / timeData.budgetHrs) * 100);
+      const overBudget = pct > 100;
+      const ttExpanded = ttExpandedIds.has(eng.id);
+      return (
+       <React.Fragment key={`tt-${eng.id}`}>
+        <tr className="hover:bg-muted/20 transition-colors">
+         <td className="px-4 py-3">
+          <span className="text-primary font-medium text-sm">{eng.id}</span>
+         </td>
+         <td className="px-4 py-3 text-sm">{eng.client}</td>
+         <td className="px-4 py-3 text-sm text-muted-foreground">{eng.yearEnd}</td>
+         <td className="px-4 py-3">
+          <div className="flex items-center gap-3">
+           <div className="flex-1 max-w-[160px] h-2 rounded-full bg-muted overflow-hidden">
+            <div
+             className={`h-full rounded-full transition-all duration-700 ${overBudget ? 'bg-red-500' : 'bg-primary'}`}
+             style={{ width: `${Math.min(pct, 100)}%` }}
+            />
+           </div>
+           <span className={`text-xs font-semibold tabular-nums w-28 ${overBudget ? 'text-red-600' : 'text-foreground'}`}>
+            ${timeData.usedCost.toLocaleString()} / ${timeData.budgetCost.toLocaleString()}
+           </span>
+          </div>
+         </td>
+         <td className="px-2">
+          <button onClick={() => toggleTt(eng.id)} className="p-1 hover:bg-muted rounded transition-colors">
+           <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform duration-200', ttExpanded && 'rotate-180')} />
+          </button>
+         </td>
+        </tr>
+        {ttExpanded && (
+         <tr key={`tt-detail-${eng.id}`}>
+          <td colSpan={5} className="px-0 py-0">
+           <div className="mx-6 my-3 rounded-lg border border-border overflow-hidden">
+            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] bg-muted/40 px-4 py-2 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+             <span>Section</span>
+             <span className="w-28 text-right">Time Spent</span>
+             <span className="w-24 text-right ml-4">Amount</span>
+             <span className="w-20 text-center ml-4">Progress</span>
+             <span className="w-24 text-center">Status</span>
+            </div>
+            {timeData.sections.map((sec, idx) => {
+             const secPct = sec.budget > 0 ? Math.round((sec.hrs / sec.budget) * 100) : 0;
+             return (
+              <div key={idx} className="grid grid-cols-[1fr_auto_auto_auto_auto] items-center px-4 py-2.5 border-b border-border last:border-0 hover:bg-muted/20">
+               <span className="text-sm text-foreground">{sec.label}</span>
+               <span className="w-28 text-right text-sm tabular-nums">{sec.hrs.toFixed(2)}h / {sec.budget}h</span>
+               <span className="w-24 text-right text-sm tabular-nums ml-4">${(sec.hrs * 120).toLocaleString()}</span>
+               <div className="w-20 flex justify-center ml-4">
+                {secPct >= 100 ? (
+                 <span className="text-emerald-600">✓</span>
+                ) : (
+                 <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div className="h-full bg-primary rounded-full" style={{ width: `${secPct}%` }} />
+                 </div>
+                )}
+               </div>
+               <div className="w-24 flex justify-center">
+                {sec.hrs > 0 && (
+                 <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2 py-0.5 font-medium">Ready</span>
+                )}
+               </div>
+              </div>
+             );
+            })}
+            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] items-center px-4 py-3 bg-muted/40 border-t border-border">
+             <span className="text-sm font-semibold">Total (Actual)</span>
+             <span className="w-28 text-right text-sm font-semibold tabular-nums">{timeData.usedHrs.toFixed(2)}h</span>
+             <span className="w-24 text-right text-sm font-semibold tabular-nums ml-4">${timeData.usedCost.toLocaleString()}</span>
+             <span className="w-20" /><span className="w-24" />
+            </div>
+            <div className="grid grid-cols-[1fr_auto_auto] px-4 py-2 bg-muted/20 text-xs text-muted-foreground">
+             <span>Budget</span>
+             <span className="w-28 text-right font-semibold">{timeData.budgetHrs}h</span>
+             <span className="w-24 text-right font-semibold ml-4">${timeData.budgetCost.toLocaleString()}</span>
+            </div>
+            <div className={`grid grid-cols-[1fr_auto_auto] px-4 py-2 border-t border-border text-xs font-bold ${timeData.usedHrs > timeData.budgetHrs ? 'text-red-600' : 'text-emerald-600'}`}>
+             <span>Over / Under Budget</span>
+             <span className="w-28 text-right">{timeData.usedHrs > timeData.budgetHrs ? '+' : ''}{(timeData.usedHrs - timeData.budgetHrs).toFixed(1)}h</span>
+             <span className="w-24 text-right ml-4">{timeData.usedCost > timeData.budgetCost ? '+' : '–'}${Math.abs(timeData.usedCost - timeData.budgetCost).toLocaleString()}</span>
+            </div>
+           </div>
+          </td>
+         </tr>
+        )}
+       </React.Fragment>
+      );
+     }).filter(Boolean)}
+     {filteredDashboardEngagements.filter(e => getEngagementTimeData(e.id)).length === 0 && (
+      <tr><td colSpan={5} className="py-10 text-center text-sm text-muted-foreground">No time has been recorded yet.</td></tr>
+     )}
+    </tbody>
+   </table>
+  </div>
  </StyledCard>
  </div>
 
