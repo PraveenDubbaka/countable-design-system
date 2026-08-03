@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
-import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Briefcase, Loader, CheckCircle2, Archive, Timer, ChevronUp } from "lucide-react";
-import { fmtElapsed } from "@/lib/useTimeEntries";
+import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -392,8 +391,6 @@ export default function Dashboard() {
  const [searchQuery, setSearchQuery] = useState("");
  const [expandedEngagement, setExpandedEngagement] = useState<string | null>(null);
  function toggleExpand(id: string) { setExpandedEngagement(prev => prev === id ? null : id); }
- const [ttExpandedIds, setTtExpandedIds] = useState<Set<string>>(new Set());
- function toggleTt(id: string) { setTtExpandedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; }); }
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;
  try {
@@ -557,85 +554,6 @@ export default function Dashboard() {
  </div>
  </StyledCard>
 
- {/* Time Tracker Section */}
- <StyledCard className="p-5 flex-shrink-0">
- <div className="flex items-center justify-between mb-4">
- <div className="flex items-center gap-2">
- <Timer className="h-4 w-4 text-primary" />
- <h2 className="text-sm font-semibold text-foreground">Time Tracker</h2>
- </div>
- <span className="text-xs text-muted-foreground">This week's overview</span>
- </div>
- {(() => {
- const TT_SECTIONS = [
- { key: 'co', label: 'Client Onboarding', usedHrs: 3.0, budgetHrs: 8 },
- { key: 'do', label: 'Documents', usedHrs: 2.5, budgetHrs: 6 },
- { key: 'fs', label: 'Financial Statements', usedHrs: 4.0, budgetHrs: 10 },
- { key: 'tb', label: 'Trial Balance & Adj. Entries', usedHrs: 8.0, budgetHrs: 14 },
- { key: 'pr', label: 'Procedures', usedHrs: 10.0, budgetHrs: 25 },
- { key: 'so', label: 'Completion & Signoffs', usedHrs: 5.0, budgetHrs: 12 },
- ];
- const usedHrs = 32.5, budgetHrs = 75, usedCost = 3900, budgetCost = 8750;
- const DEMO_ENG_ID = 'AUD-NPM-Dec312025';
- const DEMO_CLIENT = 'Northline Precision';
- const isExpanded = ttExpandedIds.has(DEMO_ENG_ID);
- const pct = Math.round((usedHrs / budgetHrs) * 100);
- return (
- <div>
- {/* Summary row */}
- <div className="grid grid-cols-[1fr_100px_100px_100px_100px_36px] items-center gap-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border mb-2">
- <span>CLIENT</span>
- <span>USED HRS</span>
- <span>BUDGET HRS</span>
- <span>USED COST</span>
- <span>BUDGET COST</span>
- <span />
- </div>
- <div className="grid grid-cols-[1fr_100px_100px_100px_100px_36px] items-center gap-2 py-2">
- <div>
- <p className="text-sm font-medium">{DEMO_CLIENT}</p>
- <p className="text-[11px] text-primary">{DEMO_ENG_ID}</p>
- </div>
- <span className="text-sm font-mono">{usedHrs}h</span>
- <div className="flex items-center gap-1.5">
- <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
- <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${Math.min(pct, 100)}%` }} />
- </div>
- <span className="text-xs text-muted-foreground w-8 shrink-0">{budgetHrs}h</span>
- </div>
- <span className="text-sm font-mono">${usedCost.toLocaleString()}</span>
- <span className="text-sm font-mono">${budgetCost.toLocaleString()}</span>
- <button onClick={() => toggleTt(DEMO_ENG_ID)} className="p-1 hover:bg-muted rounded transition-colors ml-auto">
- {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
- </button>
- </div>
-
- {isExpanded && (
- <div className="mt-2 ml-4 space-y-1.5 border-l-2 border-primary/20 pl-3">
- {TT_SECTIONS.map(sec => {
- const sp = Math.round((sec.usedHrs / sec.budgetHrs) * 100);
- return (
- <div key={sec.key} className="grid grid-cols-[1fr_60px_60px] items-center gap-2 py-1">
- <span className="text-xs text-foreground">{sec.label}</span>
- <span className="text-xs font-mono text-muted-foreground">{sec.usedHrs}h / {sec.budgetHrs}h</span>
- <div className="h-1.5 bg-muted rounded-full overflow-hidden">
- <div className="h-full bg-primary/70 rounded-full" style={{ width: `${Math.min(sp, 100)}%` }} />
- </div>
- </div>
- );
- })}
- </div>
- )}
-
- <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
- <Timer className="h-3.5 w-3.5 text-muted-foreground" />
- <span className="text-xs text-muted-foreground">Active session: </span>
- <span className="text-xs font-mono font-medium text-emerald-600">{fmtElapsed(0)}</span>
- </div>
- </div>
- );
- })()}
- </StyledCard>
  </div>
 
  {/* Right Sidebar - Enhanced spacing */}

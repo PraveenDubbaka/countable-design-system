@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Timer } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -73,8 +73,7 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import VersionHistoryPanel from "@/components/luka/workspace/versionControl/VersionHistoryPanel";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
-import { useTimeEntries, fmtElapsed, CURRENT_USER, type TimeEntry, type RoleKey } from "@/lib/useTimeEntries";
-import { TimeTrackerDrawer } from "@/components/TimeTrackerDrawer";
+import { useTimeEntries, fmtElapsed, CURRENT_USER, type TimeEntry } from "@/lib/useTimeEntries";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Assignee, Checklist, Question } from "@/types/checklist";
 import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
@@ -1049,15 +1048,11 @@ export default function EngagementDetail() {
  const [pbcNotificationCount, setPBCNotificationCount] = useState(() =>
  engagementId ? getPBCNotificationCount(engagementId) : 0
  );
- // ── Global timer + time tracker drawer ──────────────────────────────────────
- const IDLE_MS = 15 * 60 * 1000;
+ // ── Global timer ────────────────────────────────────────────────────────────
  const [globalTimerSec, setGlobalTimerSec] = useState(0);
  const [globalTimerRunning, setGlobalTimerRunning] = useState(false);
- const [trackerDrawerOpen, setTrackerDrawerOpen] = useState(false);
- const [idleSec, setIdleSec] = useState(0);
  const globalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
  const globalActiveRef = useRef(false);
- const lastActivityRef = useRef(Date.now());
  const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
 
  useEffect(() => {
@@ -1141,34 +1136,6 @@ export default function EngagementDetail() {
 
  useEffect(() => () => { if (globalTimerRef.current) clearInterval(globalTimerRef.current); }, []);
 
- // Auto-start timer 600ms after mount
- useEffect(() => {
-   const t = setTimeout(() => {
-     if (!globalActiveRef.current) {
-       globalActiveRef.current = true;
-       setGlobalTimerRunning(true);
-       globalTimerRef.current = setInterval(() => {
-         if (document.visibilityState !== 'visible') return;
-         const idle = Date.now() - lastActivityRef.current >= IDLE_MS;
-         if (idle) setIdleSec(s => s + 1);
-         else setGlobalTimerSec(s => s + 1);
-       }, 1000);
-     }
-   }, 600);
-   return () => clearTimeout(t);
- // eslint-disable-next-line react-hooks/exhaustive-deps
- }, []);
-
- // Idle detection
- useEffect(() => {
-   const touch = () => { lastActivityRef.current = Date.now(); };
-   window.addEventListener('mousemove', touch);
-   window.addEventListener('keydown', touch);
-   return () => {
-     window.removeEventListener('mousemove', touch);
-     window.removeEventListener('keydown', touch);
-   };
- }, []);
  // ────────────────────────────────────────────────────────────────────────────
 
  const autoFillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2374,14 +2341,29 @@ export default function EngagementDetail() {
  </div>
  {/* Action buttons row */}
  <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
- {/* Time tracker pill — opens TimeTrackerDrawer */}
- <button
- onClick={() => setTrackerDrawerOpen(true)}
- className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-colors"
+ {/* Global timer — always visible on all pages */}
+ <div className="flex items-center gap-4 shrink-0">
+ <div className="flex items-center gap-2">
+ {globalTimerRunning && (
+ <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
+ <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+ Recording
+ </span>
+ )}
+ <span className="font-mono text-sm font-semibold tabular-nums text-foreground w-16 text-center">
+ {fmtElapsed(globalTimerSec)}
+ </span>
+ </div>
+ <Button
+ onClick={toggleGlobalTimer}
+ variant={globalTimerRunning ? 'destructive' : 'secondary'}
+ size="sm"
+ className="h-7 px-2.5 text-xs gap-1.5"
  >
- <Timer className="h-3.5 w-3.5" />
- <span className="font-mono tabular-nums">{fmtElapsed(globalTimerSec)}</span>
- </button>
+ {globalTimerRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+ {globalTimerRunning ? 'Stop & Log' : 'Start Time Log'}
+ </Button>
+ </div>
  <div className="flex items-center gap-1">
  {checklistKey?.startsWith('node-note-') && (
   <>
@@ -3311,32 +3293,6 @@ export default function EngagementDetail() {
  noteId={notePanel?.noteId ?? null}
  noteName={notePanel?.noteName ?? ''}
  engId={engagementId ?? ''}
- />
- <TimeTrackerDrawer
- open={trackerDrawerOpen}
- onClose={() => setTrackerDrawerOpen(false)}
- engagementId={engagementId ?? ''}
- clientName={clientName}
- activeSec={globalTimerSec}
- idleSec={idleSec}
- onLogTime={() => {
-   const hrs = Math.round(globalTimerSec / 900) / 4;
-   if (hrs > 0) {
-     addTimeEntry({
-       id: `e-${Date.now()}`,
-       date: new Date().toISOString().slice(0, 10),
-       roleKey: CURRENT_USER.roleKey as RoleKey,
-       userName: CURRENT_USER.name,
-       tbRowId: 'g1',
-       tbSection: 'general',
-       hours: hrs,
-       description: 'Time tracked via timer',
-     } as TimeEntry);
-   }
-   setGlobalTimerSec(0);
-   setIdleSec(0);
-   setTrackerDrawerOpen(false);
- }}
  />
  </>;
 }
