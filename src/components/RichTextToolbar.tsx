@@ -60,6 +60,7 @@ export function RichTextToolbar({ position, onFormatAction, onAIAssist, toolbarR
  className={`flex items-center gap-0.5 bg-card border rounded-lg shadow-lg px-2 py-1 ${inline ? 'mb-1 w-fit' : ''}`}
  style={positionStyles}
  data-rich-text-toolbar
+ onMouseDown={e => e.preventDefault()}
  >
  {/* Text Style Dropdown */}
  <DropdownMenu>

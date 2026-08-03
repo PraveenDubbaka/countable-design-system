@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { format } from "date-fns";
+import { RichTextToolbar } from './RichTextToolbar';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -427,6 +428,8 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId, p
  const [isDictating, setIsDictating] = useState(false);
  const [isFullscreen, setIsFullscreen] = useState(false);
  const [showAiFloating, setShowAiFloating] = useState(false);
+ const [showRichToolbar, setShowRichToolbar] = useState(false);
+ const [richToolbarPos, setRichToolbarPos] = useState({ x: 0, y: 0 });
 
  const titleRef = useRef<HTMLDivElement>(null);
  const blockRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -435,6 +438,7 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId, p
  const recognitionRef = useRef<any>(null);
  const dictationRef = useRef<any>(null);
  const callTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+ const richToolbarRef = useRef<HTMLDivElement>(null);
  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
  const registerRef = useCallback((id: string, el: HTMLDivElement | null) => {
@@ -711,6 +715,45 @@ ${note.blocks.map(b => {
  window.addEventListener('notes-export-pdf', handleExport);
  return () => window.removeEventListener('notes-export-pdf', handleExport);
  }, [pageMode, handleExport]);
+
+ useEffect(() => {
+ if (!open || !pageMode) return;
+ const handler = () => {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || !sel.rangeCount) { setShowRichToolbar(false); return; }
+  const anchorNode = sel.anchorNode;
+  const insideEditor = Array.from(blockRefs.current.values()).some(el => el?.contains(anchorNode));
+  if (!insideEditor) { setShowRichToolbar(false); return; }
+  const rect = sel.getRangeAt(0).getBoundingClientRect();
+  if (!rect.width && !rect.height) { setShowRichToolbar(false); return; }
+  const toolbarH = 44;
+  let x = rect.left + rect.width / 2;
+  let y = rect.top - toolbarH - 6;
+  x = Math.max(380, Math.min(window.innerWidth - 380, x));
+  if (y < 10) y = rect.bottom + 6;
+  setRichToolbarPos({ x, y });
+  setShowRichToolbar(true);
+ };
+ document.addEventListener('selectionchange', handler);
+ return () => document.removeEventListener('selectionchange', handler);
+ }, [open, pageMode]); // eslint-disable-line
+
+ const handleRichFormatAction = useCallback((action: string, value?: string) => {
+ switch (action) {
+  case 'bold': document.execCommand('bold', false); break;
+  case 'italic': document.execCommand('italic', false); break;
+  case 'underline': document.execCommand('underline', false); break;
+  case 'strikethrough': document.execCommand('strikeThrough', false); break;
+  case 'bulletList': document.execCommand('insertUnorderedList', false); break;
+  case 'numberedList': document.execCommand('insertOrderedList', false); break;
+  case 'alignLeft': document.execCommand('justifyLeft', false); break;
+  case 'alignCenter': document.execCommand('justifyCenter', false); break;
+  case 'alignRight': document.execCommand('justifyRight', false); break;
+  case 'undo': document.execCommand('undo', false); break;
+  case 'redo': document.execCommand('redo', false); break;
+  case 'textStyle': if (value) document.execCommand('formatBlock', false, value); break;
+ }
+ }, []);
 
  const handleFormat = (cmd: string) => document.execCommand(cmd, false);
  const activeBlock = note?.blocks.find(b => b.id === activeBlockId);
@@ -1101,6 +1144,14 @@ ${note.blocks.map(b => {
  </div>
  </div>
  </div>
+
+ {pageMode && showRichToolbar && (
+ <RichTextToolbar
+  position={richToolbarPos}
+  onFormatAction={handleRichFormatAction}
+  toolbarRef={richToolbarRef}
+ />
+ )}
 
  {pageMode && showAiFloating && (
  <motion.div
