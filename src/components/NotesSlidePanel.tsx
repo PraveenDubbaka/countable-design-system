@@ -1046,7 +1046,7 @@ ${note.blocks.map(b => {
  <React.Fragment key={item.type}>
  {idx === 2 && <DropdownMenuSeparator />}
  <DropdownMenuItem className="flex items-center gap-2.5 text-sm cursor-pointer" onClick={() => {
- if (item.type === 'ai') { if (pageMode) setShowAiFloating(true); else textareaRef.current?.focus(); }
+ if (item.type === 'ai') { if (pageMode) setTimeout(() => setShowAiFloating(true), 0); else textareaRef.current?.focus(); }
  else if (item.type === 'pdf') fileInputRef.current?.click();
  else if (note) {
  const lastId = note.blocks[note.blocks.length - 1]?.id;
