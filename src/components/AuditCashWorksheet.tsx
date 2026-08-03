@@ -13,6 +13,7 @@ import { RefButton, type RefDoc } from "@/components/RefButton";
 import { WorksheetLayout, WorksheetSection, ConcludeBar } from "@/components/audit/WorksheetShell";
 import { LukaWorkPaperPanel } from "@/components/demo/LukaWorkPaperPanel";
 import { DEMO_LUKA_PROC_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
+import { GreenDot } from "@/components/demo/GreenDot";
 
 type Nature = "Required" | "Optional" | "Additional Procedure" | "";
 type ProcType = "Inquiries" | "Analytics" | "Observation" | "Inspection" | "Recalculation" | "Other" | "";
@@ -468,21 +469,27 @@ function ProcTable({ docKey, sections, locked, onRowField, onToggleHidden, onDel
                     </td>
                     <td className={TD}><span className="block whitespace-pre-wrap leading-snug">{r.description}</span></td>
                     <td className={TD}>
-                      <Textarea
-                        disabled={locked}
-                        value={r.comments}
-                        onChange={e => onRowField(docKey, si, r.id, "comments", e.target.value)}
-                        className="min-h-[56px] text-sm resize-none"
-                        placeholder="—"
-                      />
+                      <div className="flex items-start gap-1.5">
+                        <GreenDot show={!!r.comments} />
+                        <Textarea
+                          disabled={locked}
+                          value={r.comments}
+                          onChange={e => onRowField(docKey, si, r.id, "comments", e.target.value)}
+                          className="min-h-[56px] text-sm resize-none flex-1"
+                          placeholder="—"
+                        />
+                      </div>
                     </td>
                     <td className={`${TD} text-center`}>
-                      <RefButton
-                        reference={r.wpRef}
-                        disabled={locked}
-                        onAttach={doc => onRowField(docKey, si, r.id, "wpRef", [...r.wpRef, doc])}
-                        onRemove={idx => onRowField(docKey, si, r.id, "wpRef", r.wpRef.filter((_, j) => j !== (idx ?? -1)))}
-                      />
+                      <div className="flex items-start gap-1.5">
+                        <GreenDot show={r.wpRef != null && r.wpRef.length > 0} />
+                        <RefButton
+                          reference={r.wpRef}
+                          disabled={locked}
+                          onAttach={doc => onRowField(docKey, si, r.id, "wpRef", [...r.wpRef, doc])}
+                          onRemove={idx => onRowField(docKey, si, r.id, "wpRef", r.wpRef.filter((_, j) => j !== (idx ?? -1)))}
+                        />
+                      </div>
                     </td>
                     <td className={TD}>
                       <span className="text-sm text-muted-foreground px-1">—</span>
