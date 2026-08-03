@@ -1159,9 +1159,10 @@ ${note.blocks.map(b => {
   animate={{ opacity: 1, y: 0, scale: 1 }}
   exit={{ opacity: 0, y: 10, scale: 0.97 }}
   transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-  className="fixed bottom-16 left-1/2 -translate-x-1/2 w-[520px] max-w-[calc(100%-3rem)] z-50"
+  className="fixed bottom-16 left-1/2 -translate-x-1/2 w-[520px] max-w-[calc(100%-3rem)] z-50 shadow-xl"
+  style={{ padding: '1.5px', borderRadius: '14px', background: 'linear-gradient(135deg, #8649F1, #B084FF)' }}
  >
-  <div className="luka-input-wrapper shadow-xl">
+  <div className="luka-input-wrapper" style={{ border: 'none', borderRadius: '12.5px', padding: '0.75rem' }}>
    <textarea
     autoFocus
     value={aiInput}
