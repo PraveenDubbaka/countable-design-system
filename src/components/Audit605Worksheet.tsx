@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 import { LukaTypingRow } from "@/components/demo/LukaTypingRow";
+import { GreenDot } from "@/components/demo/GreenDot";
 
 interface Data605 {
  fsLevelControlWeaknesses: string;
@@ -214,13 +215,16 @@ export function Audit605Worksheet() {
  </div>
  <div className="p-6">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('fsLevelControlWeaknesses')}>
-   <Textarea
-   disabled={locked}
-   value={data.fsLevelControlWeaknesses}
-   onChange={e => setData(d => ({...d, fsLevelControlWeaknesses: e.target.value }))}
-   className="text-sm min-h-[88px]"
-   placeholder="Summarise any control weaknesses at the financial-statement level identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…"
-   />
+   <div className="flex items-start gap-1.5">
+     <GreenDot show={!!data.fsLevelControlWeaknesses} />
+     <Textarea
+     disabled={locked}
+     value={data.fsLevelControlWeaknesses}
+     onChange={e => setData(d => ({...d, fsLevelControlWeaknesses: e.target.value }))}
+     className="flex-1 text-sm min-h-[88px]"
+     placeholder="Summarise any control weaknesses at the financial-statement level identified during the audit (e.g. weak governance, lack of segregation of duties, management override exposure)…"
+     />
+   </div>
  </LukaTypingRow>
  {isDemoEngagement && lukaFilledFields.has('fsLevelControlWeaknesses') && (
    <div className="mt-1">
