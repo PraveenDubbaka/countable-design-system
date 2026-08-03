@@ -808,6 +808,15 @@ export function AuditCashWorksheet() {
     ? Array.from(lukaRowSelectIds).map(id => CASH_AUDIT_MATCHES[id]?.match).filter((m): m is string => !!m)
     : undefined;
 
+  useEffect(() => {
+    if (!lukaSelecting) return;
+    requestAnimationFrame(() => {
+      const rows = document.querySelectorAll("tr");
+      const first = Array.from(rows).find(r => r.className.includes("bg-violet-200"));
+      first?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, [lukaSelecting]);
+
   function handleLukaRowToggle(description: string, _sectionIdx: number) {
     const entry = Object.entries(CASH_AUDIT_MATCHES).find(([, cfg]) => description.includes(cfg.match));
     if (!entry) return;
