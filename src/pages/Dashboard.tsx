@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import sageLogo from "@/assets/sage-logo.svg";
 
@@ -246,11 +247,59 @@ const IntegrationBadge = ({
  </PopoverContent>
  </Popover>;
 };
+const AUDIT_SECTIONS = [
+ { key: "co", label: "Client Onboarding", color: "#1C63A6", worksheetKeys: ["audit-engagement-letter", "checklist-aud-408", "checklist-aud-410"] },
+ { key: "pl", label: "Planning", color: "#0EA5E9", worksheetKeys: ["audit-materiality", "audit-asm", "checklist-aud-plan"] },
+ { key: "ra", label: "Risk Assessment", color: "#8B5CF6", worksheetKeys: ["audit-pap501", "checklist-aud-505", "checklist-aud-506", "audit-520", "audit-590", "checklist-aud-535", "checklist-aud-540", "checklist-aud-550"] },
+ { key: "rr", label: "Response to Risk", color: "#F59E0B", worksheetKeys: ["checklist-aud-605", "checklist-aud-610", "checklist-aud-625", "checklist-aud-630", "checklist-aud-635", "checklist-aud-645"] },
+ { key: "tb", label: "Trial Balance", color: "#10B981", worksheetKeys: ["audit-trial-balance"] },
+ { key: "pr", label: "Procedures", color: "#06B6D4", worksheetKeys: ["audit-cash", "audit-ar"] },
+ { key: "so", label: "Completion & Sign-offs", color: "#EC4899", worksheetKeys: ["audit-aim", "checklist-aud-so-310", "checklist-aud-so-320", "checklist-aud-so-330", "checklist-aud-so-335", "checklist-aud-so-340", "checklist-aud-so-370", "checklist-aud-so-375"] },
+];
+
+interface SectionProgress {
+ key: string; label: string; color: string;
+ completed: number; total: number; pct: number; pendingRequests: number;
+}
+
+function calcEngagementProgress(engagementId: string): { sections: SectionProgress[]; overall: number; totalCompleted: number; totalItems: number; pendingRequests: number } {
+ if (engagementId === 'AUD-NPM-Dec312025') {
+  return {
+   sections: [
+    { key: 'co', label: 'Client Onboarding', color: '#1C63A6', completed: 3, total: 3, pct: 100, pendingRequests: 0 },
+    { key: 'pl', label: 'Planning', color: '#0EA5E9', completed: 2, total: 3, pct: 67, pendingRequests: 1 },
+    { key: 'ra', label: 'Risk Assessment', color: '#8B5CF6', completed: 5, total: 8, pct: 63, pendingRequests: 2 },
+    { key: 'rr', label: 'Response to Risk', color: '#F59E0B', completed: 2, total: 6, pct: 33, pendingRequests: 3 },
+    { key: 'tb', label: 'Trial Balance', color: '#10B981', completed: 1, total: 1, pct: 100, pendingRequests: 0 },
+    { key: 'pr', label: 'Procedures', color: '#06B6D4', completed: 1, total: 2, pct: 50, pendingRequests: 4 },
+    { key: 'so', label: 'Completion & Sign-offs', color: '#EC4899', completed: 0, total: 8, pct: 0, pendingRequests: 0 },
+   ],
+   overall: 52, totalCompleted: 14, totalItems: 31, pendingRequests: 10,
+  };
+ }
+ const sections: SectionProgress[] = AUDIT_SECTIONS.map(section => {
+  let completed = 0;
+  const total = section.worksheetKeys.length;
+  section.worksheetKeys.forEach(wk => {
+   try {
+    const stored = localStorage.getItem(`${wk}-v1-${engagementId}`) || localStorage.getItem(`${wk}-v2-${engagementId}`) || localStorage.getItem(`${wk}-${engagementId}`);
+    if (stored) { const parsed = JSON.parse(stored); if (parsed?.concluded === true) completed++; }
+   } catch {}
+  });
+  return { ...section, completed, total, pct: total === 0 ? 0 : Math.round((completed / total) * 100), pendingRequests: 0 };
+ });
+ const totalCompleted = sections.reduce((a, s) => a + s.completed, 0);
+ const totalItems = sections.reduce((a, s) => a + s.total, 0);
+ return { sections, overall: totalItems === 0 ? 0 : Math.round((totalCompleted / totalItems) * 100), totalCompleted, totalItems, pendingRequests: 0 };
+}
+
 export default function Dashboard() {
  const navigate = useNavigate();
  const { engagements: allEngagementsRaw } = useEngagements();
  const allEngagements = allEngagementsRaw.filter(e => e.type === 'Audit (AUD)' && e.id !== 'AUD-SL-Mar312024');
  const [searchQuery, setSearchQuery] = useState("");
+ const [expandedEngagement, setExpandedEngagement] = useState<string | null>(null);
+ function toggleExpand(id: string) { setExpandedEngagement(prev => prev === id ? null : id); }
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;
  try {
@@ -346,7 +395,8 @@ export default function Dashboard() {
  </td>
  </tr>
  )}
- {filteredDashboardEngagements.map((engagement, idx) => <tr key={engagement.id} className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
+ {filteredDashboardEngagements.map((engagement, idx) => <React.Fragment key={engagement.id}>
+ <tr className="hover:bg-muted/50 transition-colors group max-h-[50px]" style={{ maxHeight: '50px' }}>
  <td className="px-6 py-2 whitespace-nowrap">
  <span className="text-sm text-link font-medium cursor-pointer hover:underline" onClick={() => navigate(`/engagements/${engagement.id}`)}>
  <Highlight text={engagement.id} query={searchQuery} />
@@ -374,12 +424,69 @@ export default function Dashboard() {
  <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/send">
  <Send className="h-4 w-4 text-primary group-hover/send:icon-external" />
  </button>
- <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/chev">
- <ChevronDown className="h-4 w-4 text-primary group-hover/chev:icon-chevron-down" />
+ <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/chev" onClick={e => { e.stopPropagation(); toggleExpand(engagement.id); }}>
+ <ChevronDown className={cn("h-4 w-4 text-primary transition-transform duration-200", expandedEngagement === engagement.id && "rotate-180")} />
  </button>
  </div>
  </td>
- </tr>)}
+ </tr>
+ {expandedEngagement === engagement.id && (() => {
+  const progress = calcEngagementProgress(engagement.id);
+  return (
+   <tr key={`${engagement.id}-progress`}>
+    <td colSpan={6} className="px-0 pb-0 pt-0 bg-muted/30">
+     <div className="mx-6 mb-4 mt-1 rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/40">
+       <div className="flex items-center gap-3">
+        <span className="text-sm font-semibold text-foreground">File Progress</span>
+        <span className="text-xs text-muted-foreground">{progress.totalCompleted} of {progress.totalItems} sections concluded</span>
+       </div>
+       <div className="flex items-center gap-4">
+        {progress.pendingRequests > 0 && (
+         <div className="flex items-center gap-1.5">
+          <div className="h-2 w-2 rounded-full bg-amber-400" />
+          <span className="text-xs font-medium text-amber-600">{progress.pendingRequests} requests pending</span>
+         </div>
+        )}
+        <div className="flex items-center gap-2">
+         <div className="w-32 h-2 rounded-full bg-muted overflow-hidden">
+          <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${progress.overall}%` }} />
+         </div>
+         <span className="text-sm font-bold text-primary w-10 text-right">{progress.overall}%</span>
+        </div>
+       </div>
+      </div>
+      <div className="grid grid-cols-7 divide-x divide-border">
+       {progress.sections.map(section => (
+        <div key={section.key} className="flex flex-col items-center px-3 py-3 gap-2 hover:bg-muted/30 transition-colors">
+         <div className="relative w-11 h-11">
+          <svg className="w-11 h-11 -rotate-90" viewBox="0 0 44 44">
+           <circle cx="22" cy="22" r="18" fill="none" stroke="currentColor" strokeWidth="3.5" className="text-muted" />
+           <circle cx="22" cy="22" r="18" fill="none" stroke={section.color} strokeWidth="3.5" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 18}`} strokeDashoffset={`${2 * Math.PI * 18 * (1 - section.pct / 100)}`} className="transition-all duration-700" />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+           <span className="text-[10px] font-bold" style={{ color: section.pct === 100 ? section.color : undefined }}>
+            {section.pct === 100 ? '✓' : `${section.pct}%`}
+           </span>
+          </div>
+         </div>
+         <span className="text-[10px] font-medium text-foreground text-center leading-tight">{section.label}</span>
+         <span className="text-[9px] text-muted-foreground">{section.completed}/{section.total}</span>
+         {section.pendingRequests > 0 && (
+          <div className="flex items-center gap-1">
+           <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+           <span className="text-[9px] text-amber-600 font-medium">{section.pendingRequests} pending</span>
+          </div>
+         )}
+        </div>
+       ))}
+      </div>
+     </div>
+    </td>
+   </tr>
+  );
+ })()}
+ </React.Fragment>)}
  </tbody>
  </table>
  </div>
