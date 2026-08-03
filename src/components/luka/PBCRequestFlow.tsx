@@ -5,7 +5,7 @@ import {
  Circle, ChevronDown, Upload, Shield, Monitor, Sparkles, ArrowRight, Download,
 } from "lucide-react";
 import { PBC_TEMPLATES, type PBCTemplate } from "@/lib/pbcTemplates";
-import { savePBCRequest, addPBCNotification } from "@/lib/pbcRequestStore";
+import { savePBCRequest, addPBCNotification, addGlobalPBCNotification } from "@/lib/pbcRequestStore";
 import { LukaIcon } from "@/components/LukaIcon";
 import { cn } from "@/lib/utils";
 
@@ -73,6 +73,10 @@ interface PBCRequestFlowProps {
  onViewDoc: (content: string, templateLabel: string) => void;
  onSentToPortal: (engagementId: string, threadId: string) => void;
  onApplyResponses: (responses: Array<{ questionId: string; answer: string }>) => void;
+ initialPhase?: Phase;
+ initialWpNumbers?: string[];
+ initialTemplateId?: string;
+ initialDocContent?: string;
 }
 
 // ── Module-level constants ────────────────────────────────────────────────────
@@ -531,8 +535,13 @@ function ArtifactCard({
  );
 }
 
-function ResponsesCard({ onAccept }: { onAccept: () => void }) {
- const mockResponses = [
+function ResponsesCard({ onAccept, templateId, wpNumbers }: { onAccept: () => void; templateId?: string; wpNumbers?: string[] }) {
+ const isQuestionnaire = templateId === "it-questionnaire";
+ const mockResponses = isQuestionnaire
+ ? [
+ { q: `Completed Questionnaire — Forms ${(wpNumbers ?? []).join(", ") || "WP"}`, a: `Uploaded — Audit_Questionnaire_Completed_${new Date().getFullYear()}.pdf` },
+ ]
+ : [
  { q: "Organization chart", a: "Uploaded — Org Chart v3 April 2024.pdf" },
  { q: "Policies & procedures", a: "Uploaded — Financial Policies Manual 2024.pdf" },
  { q: "Management review evidence", a: "Uploaded — Q4 Review Sign-offs.xlsx" },
@@ -579,22 +588,41 @@ export function PBCRequestFlow({
  onViewDoc,
  onSentToPortal,
  onApplyResponses,
+ initialPhase,
+ initialWpNumbers,
+ initialTemplateId,
+ initialDocContent: initialDocContentProp,
 }: PBCRequestFlowProps) {
- const [phase, setPhase] = useState<Phase>("greeting");
- const [messages, setMessages] = useState<ChatMsg[]>([]);
+ const [phase, setPhase] = useState<Phase>(initialPhase ?? "greeting");
+ const [messages, setMessages] = useState<ChatMsg[]>(() => {
+ if (initialPhase === "responding") {
+ const engLabel = clientName || "the client";
+ return [
+ { role: "luka" as const, text: `I'll help you create a PBC request for **${clientName} · ${engagementId}**.\n\nWould you like a single document request or multiple?` },
+ { role: "user" as const, text: "Single" },
+ { role: "user" as const, text: "Send to Client Portal" },
+ { role: "luka" as const, text: `Sent to the client portal. I'll notify you here when **${engLabel}** responds.` },
+ { role: "luka" as const, text: `**${engLabel}** has submitted responses to your PBC request:`, isResponses: true },
+ ];
+ }
+ return [];
+ });
  const [requestType, setRequestType] = useState<"single" | "multi" | null>(null);
  const [wpInput, setWpInput] = useState("");
- const [wpNumbers, setWpNumbers] = useState<string[]>([]);
- const [selectedTemplate, setSelectedTemplate] = useState<PBCTemplate | null>(null);
- const [docContent, setDocContent] = useState("");
- const [sent, setSent] = useState(false);
+ const [wpNumbers, setWpNumbers] = useState<string[]>(initialWpNumbers ?? []);
+ const [selectedTemplate, setSelectedTemplate] = useState<PBCTemplate | null>(
+ initialTemplateId ? { id: initialTemplateId, label: initialTemplateId, wpRef: "", generate: () => "" } : null
+ );
+ const [docContent, setDocContent] = useState(initialDocContentProp ?? "");
+ const [sent, setSent] = useState(initialPhase === "sent" || initialPhase === "responding" || initialPhase === "applied");
  const [lukaPromptInput, setLukaPromptInput] = useState("");
  const bottomRef = useRef<HTMLDivElement>(null);
 
  const addMsg = (msg: ChatMsg) => setMessages(prev => [...prev, msg]);
 
- // Greeting on mount
+ // Greeting on mount — skip if restoring or resuming an existing thread
  useEffect(() => {
+ if (initialPhase) return;
  const engLabel = clientName && engagementId ? `**${clientName} · ${engagementId}**` : "this engagement";
  const t = setTimeout(() => {
  addMsg({
@@ -750,6 +778,7 @@ export function PBCRequestFlow({
  });
  setPhase("responding");
  addPBCNotification(engagementId, threadId);
+ addGlobalPBCNotification({ engagementId, threadId, clientName: clientName || "Client", receivedAt: new Date().toISOString() });
  }, 5000);
  }, 600);
  };
@@ -839,7 +868,7 @@ export function PBCRequestFlow({
  return (
  <LukaBubble key={i} done={isDone}>
  {msg.text && <LukaText text={msg.text} />}
- <ResponsesCard onAccept={handleApply} />
+ <ResponsesCard onAccept={handleApply} templateId={selectedTemplate?.id} wpNumbers={wpNumbers} />
  </LukaBubble>
  );
  }

@@ -48,3 +48,34 @@ export function getPBCNotificationCount(engagementId: string): number {
 export function getPBCNotifications(engagementId: string): PBCNotification[] {
  return readJsonFromLocalStorage<PBCNotification[]>(`pbc-notifications-${engagementId}`, []);
 }
+
+export function getPBCRequestByThread(engagementId: string, threadId: string): PBCRequest | undefined {
+ return getPBCRequests(engagementId).find(r => r.threadId === threadId);
+}
+
+export interface GlobalPBCNotification {
+ id: string;
+ engagementId: string;
+ threadId: string;
+ clientName: string;
+ receivedAt: string;
+ read: boolean;
+}
+
+export function addGlobalPBCNotification(n: Omit<GlobalPBCNotification, 'id' | 'read'>): void {
+ const key = 'global-pbc-notifications';
+ const existing = readJsonFromLocalStorage<GlobalPBCNotification[]>(key, []);
+ const entry: GlobalPBCNotification = { ...n, id: `gpbc-${Date.now()}`, read: false };
+ writeJsonToLocalStorage(key, [entry, ...existing]);
+ window.dispatchEvent(new CustomEvent('global-pbc-notification', { detail: entry }));
+}
+
+export function getGlobalPBCNotifications(): GlobalPBCNotification[] {
+ return readJsonFromLocalStorage<GlobalPBCNotification[]>('global-pbc-notifications', []);
+}
+
+export function markGlobalPBCNotificationRead(id: string): void {
+ const key = 'global-pbc-notifications';
+ const existing = readJsonFromLocalStorage<GlobalPBCNotification[]>(key, []);
+ writeJsonToLocalStorage(key, existing.map(n => n.id === id ? { ...n, read: true } : n));
+}

@@ -14,7 +14,8 @@ import { Input as SearchInput } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { AskLukaOverlay } from "@/components/AskLukaOverlay";
-import { subscribeLukaOpen, getLukaOpen, setLukaOpen } from "@/lib/lukaOpenStore";
+import { subscribeLukaOpen, getLukaOpen, setLukaOpen, openLukaWithConfig } from "@/lib/lukaOpenStore";
+import { getGlobalPBCNotifications, markGlobalPBCNotificationRead, type GlobalPBCNotification } from "@/lib/pbcRequestStore";
 
 export function GlobalHeader({ title, headerContent }: { title?: string; headerContent?: React.ReactNode }) {
  const navigate = useNavigate();
@@ -54,7 +55,17 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  });
  };
  
- const [notifications, setNotifications] = useState([
+ type AppNotif = {
+ id: string;
+ sender: string;
+ initials: string;
+ message: string;
+ read: boolean;
+ time: string;
+ pbcMeta?: { engagementId: string; threadId: string };
+ };
+
+ const [notifications, setNotifications] = useState<AppNotif[]>([
  { id: '1', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: false, time: '2m ago' },
  { id: '2', sender: 'Cpt Group', initials: 'CG', message: '1 team members added', read: false, time: '5m ago' },
  { id: '3', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: true, time: '1h ago' },
@@ -62,6 +73,23 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  { id: '5', sender: 'Cpt Group', initials: 'CG', message: 'You have been assigned as the packager for Cpt Group', read: true, time: '3h ago' },
  { id: '6', sender: 'Cpt Group', initials: 'CG', message: 'New engagement created Cpt Group', read: true, time: '5h ago' },
  ]);
+
+ useEffect(() => {
+ const handler = (e: Event) => {
+ const n = (e as CustomEvent).detail as GlobalPBCNotification;
+ setNotifications(prev => [{
+ id: n.id,
+ sender: n.clientName,
+ initials: n.clientName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase(),
+ message: `responded to your PBC request — click to review`,
+ read: false,
+ time: 'just now',
+ pbcMeta: { engagementId: n.engagementId, threadId: n.threadId },
+ }, ...prev]);
+ };
+ window.addEventListener('global-pbc-notification', handler);
+ return () => window.removeEventListener('global-pbc-notification', handler);
+ }, []);
 
  const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -213,7 +241,14 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  <div
  key={notif.id}
  className={`flex items-start gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors cursor-pointer ${!notif.read ? 'bg-primary/5' : ''}`}
- onClick={() => setNotifications(prev => prev.map(n => n.id === notif.id ? {...n, read: true } : n))}
+ onClick={() => {
+ setNotifications(prev => prev.map(n => n.id === notif.id ? {...n, read: true } : n));
+ if (notif.pbcMeta) {
+ markGlobalPBCNotificationRead(notif.id);
+ setNotifOpen(false);
+ openLukaWithConfig({ flow: 'pbc-request', engagementId: notif.pbcMeta.engagementId, threadId: notif.pbcMeta.threadId });
+ }
+ }}
  >
  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 mt-0.5">
  <span className="text-[10px] font-semibold text-primary">{notif.initials}</span>

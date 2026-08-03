@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect, useMemo, Fragment } from "react";
 import { setLukaOpen, subscribeLukaConfig } from "@/lib/lukaOpenStore";
+import { getPBCRequestByThread } from "@/lib/pbcRequestStore";
 import { loadEngagements } from "@/store/engagementsStore";
 
 import LukaActivityPanel, { type ActivityEntry } from "@/components/luka/LukaActivityPanel";
@@ -794,6 +795,9 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  const [pbcViewingDoc, setPBCViewingDoc] = useState<{ templateLabel: string } | null>(null);
  const [pbcEditing, setPBCEditing] = useState(false);
  const [pbcDocHtml, setPBCDocHtml] = useState<string | null>(null);
+ const [pbcInitialPhase, setPBCInitialPhase] = useState<string | undefined>(undefined);
+ const [pbcInitialWpNumbers, setPBCInitialWpNumbers] = useState<string[] | undefined>(undefined);
+ const [pbcInitialTemplateId, setPBCInitialTemplateId] = useState<string | undefined>(undefined);
  const [pbcEditDirty, setPBCEditDirty] = useState(false);
  const pbcPreviewRef = useRef<HTMLDivElement>(null);
  const pbcEditRef = useRef<HTMLDivElement>(null);
@@ -826,13 +830,26 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  const eng = ENGAGEMENTS.find(e => e.id === config.engagementId);
  if (eng) setSelectedEngagement(eng);
  }
+ if (config.threadId && config.engagementId) {
+ // Restore existing thread
+ const stored = getPBCRequestByThread(config.engagementId, config.threadId);
+ setPBCThreadId(config.threadId);
+ setPBCInitialPhase(stored?.status === "responded" ? "responding" : undefined);
+ setPBCInitialWpNumbers(stored?.wpNumbers);
+ setPBCInitialTemplateId(stored?.templateId);
+ setPBCDocContent(stored?.documentContent ?? "");
+ } else {
  const newThreadId = `pbc-${Date.now()}`;
  const threadName = `PBC Request — ${new Date().toLocaleDateString()}`;
  setRecentThreads(prev => [{ name: threadName, createdAt: new Date() },...prev]);
  setPBCThreadId(newThreadId);
+ setPBCInitialPhase(undefined);
+ setPBCInitialWpNumbers(undefined);
+ setPBCInitialTemplateId(undefined);
+ setPBCDocContent("");
+ }
  setPBCViewingDoc(null);
  setPBCEditing(false);
- setPBCDocContent("");
  setActiveFlow("pbc-request");
  setIsFullscreen(false);
  setThreadsSidebarCollapsed(true);
@@ -1901,6 +1918,10 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  clientName={selectedEngagement?.client ?? ""}
  yearEnd={selectedEngagement?.yearEnd ?? ""}
  threadId={pbcThreadId}
+ initialPhase={pbcInitialPhase as Parameters<typeof PBCRequestFlow>[0]['initialPhase']}
+ initialWpNumbers={pbcInitialWpNumbers}
+ initialTemplateId={pbcInitialTemplateId}
+ initialDocContent={pbcDocContent || undefined}
  onViewDoc={(content, templateLabel) => {
  setPBCDocContent(content);
  setPBCDocHtml(null);
@@ -1910,7 +1931,7 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  setIsFullscreen(true);
  }}
  onSentToPortal={() => {
- // notification dispatched inside PBCRequestFlow
+ // global notification dispatched inside PBCRequestFlow
  }}
  onApplyResponses={(responses) => {
  window.dispatchEvent(new CustomEvent("pbc-apply-responses", { detail: responses }));
