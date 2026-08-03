@@ -13,6 +13,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -247,13 +248,16 @@ function ProcedureTable({
  </Select>
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.response} />
  <Textarea
  disabled={locked}
  value={row.response}
  onChange={e => onPatch({ response: e.target.value })}
  placeholder="Document procedure results…"
- className="min-h-[72px] text-sm bg-background resize-none"
+ className="min-h-[72px] text-sm bg-background resize-none flex-1"
  />
+ </div>
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -577,6 +581,9 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  />
  </td>
  <td className="px-4 py-2.5">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!p.reasons} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(p.id)}>
  <Textarea
  disabled={locked} value={p.reasons}
@@ -585,6 +592,8 @@ export function Audit515Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  className="min-h-[44px] text-sm bg-background resize-none"
  />
  </LukaTypingRow>
+ </div>
+ </div>
  </td>
  <td className="px-4 py-2.5 text-center w-24">
  <RefButton

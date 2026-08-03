@@ -16,6 +16,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -237,6 +238,9 @@ function ControlRow({ label, question, value, locked, onChange, lukaFilled, luka
  <p className="text-sm text-foreground leading-relaxed">{question}</p>
  </div>
  <div className="pl-8">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!value} />
+ <div className="flex-1">
  <LukaTypingRow filled={lukaFilled ?? false}>
  <Textarea
  disabled={locked}
@@ -250,6 +254,8 @@ function ControlRow({ label, question, value, locked, onChange, lukaFilled, luka
  <div className="mt-1">
  </div>
  )}
+ </div>
+ </div>
  </div>
  </div>
  );
@@ -457,6 +463,9 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </Select>
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.partAResponse} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('partAResponse')}>
  <Textarea
  disabled={locked}
@@ -470,6 +479,8 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
    <div className="mt-1">
    </div>
  )}
+ </div>
+ </div>
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -652,6 +663,9 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  </Select>
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.partBDeficiencies} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('partBDeficiencies')}>
  <Textarea
  disabled={locked}
@@ -665,6 +679,8 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
    <div className="mt-1">
    </div>
  )}
+ </div>
+ </div>
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -729,13 +745,16 @@ export function Audit513Worksheet({ isUS: isUSProp }: { isUS?: boolean } = {}) {
  <p className="text-sm text-foreground font-medium">
  Based on the understanding obtained, evaluate and explain whether the entity's process for preparing estimates and related disclosures in the F/S is appropriate in the circumstances, considering the nature and complexity of the entity.
  </p>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evaluation} />
  <Textarea
  disabled={locked}
  value={data.evaluation}
  onChange={e => patch("evaluation", e.target.value)}
  placeholder="Document your evaluation of the entity's estimate preparation process…"
- className="min-h-[100px] text-sm resize-none bg-background"
+ className="min-h-[100px] text-sm resize-none bg-background flex-1"
  />
+ </div>
  <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 px-4 py-2.5 flex items-start gap-2">
  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
  <p className="text-sm text-amber-800 dark:text-amber-300">

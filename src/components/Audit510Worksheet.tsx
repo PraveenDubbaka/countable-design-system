@@ -15,6 +15,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -456,6 +457,9 @@ function FieldRow({ label, sublabel, field, locked, onChange, storageKey, lukaFi
  {sublabel && <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{sublabel}</p>}
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!field.response} />
+ <div className="flex-1">
  <LukaTypingRow filled={lukaFilled ?? false}>
  {storageKey ? (
  <AttributedComment value={field.response} onChange={v => onChange({...field, response: v})} storageKey={storageKey} placeholder="Enter response…" disabled={locked} className="min-h-[56px] text-sm bg-background resize-none" />
@@ -467,6 +471,8 @@ function FieldRow({ label, sublabel, field, locked, onChange, storageKey, lukaFi
  <div className="mt-1">
  </div>
  )}
+ </div>
+ </div>
  </td>
  <td className="px-4 py-3 text-center w-[100px]">
  <RefButton

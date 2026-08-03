@@ -15,6 +15,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -247,6 +248,9 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  )}
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!value} />
+ <div className="flex-1">
  <LukaTypingRow filled={lukaFilled ?? false}>
  <Textarea
  disabled={locked}
@@ -260,6 +264,8 @@ function NarrativeRow({ label, bullets, value, wpRef, locked, onChange, onWpChan
  <div className="mt-1">
  </div>
  )}
+ </div>
+ </div>
  </td>
  <td className="px-4 py-3 text-center w-[100px]">
  <RefButton
@@ -313,6 +319,9 @@ function ProcessTable({ rows, locked, onChange, lukaFilledFields, lukaHighlightF
  </Select>
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.response} />
+ <div className="flex-1">
  <LukaTypingRow filled={lukaFilledFields?.has(id) ?? false}>
  <Textarea
  disabled={locked}
@@ -326,6 +335,8 @@ function ProcessTable({ rows, locked, onChange, lukaFilledFields, lukaHighlightF
  <div className="mt-1">
  </div>
  )}
+ </div>
+ </div>
  </td>
  <td className="px-4 py-3 text-center w-24">
  <RefButton
@@ -852,13 +863,16 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
  )}
  </td>
  <td className="px-4 py-3">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!detail[topic.key]} />
  <Textarea
  disabled={locked}
  value={detail[topic.key]}
  onChange={e => updateAppDetail(app.id, { [topic.key]: e.target.value })}
  placeholder="Enter response…"
- className="min-h-[64px] text-sm bg-background resize-none"
+ className="min-h-[64px] text-sm bg-background resize-none flex-1"
  />
+ </div>
  </td>
  </tr>
  ))}
@@ -965,13 +979,16 @@ export function Audit511Worksheet({ isUS = false }: { isUS?: boolean }) {
 
  <div className="pt-2 border-t border-border space-y-2">
  <p className="text-sm font-medium text-muted-foreground">Response / Comments</p>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.dTestingResponse.response} />
  <Textarea
  disabled={locked}
  value={data.dTestingResponse.response}
  onChange={e => patchProcess("dTestingResponse", { response: e.target.value })}
  placeholder="Document your assessment of testing operating effectiveness of controls…"
- className="min-h-[80px] text-sm resize-none bg-background"
+ className="min-h-[80px] text-sm resize-none bg-background flex-1"
  />
+ </div>
  <div className="flex items-center gap-3">
  <div>
  <p className="text-sm font-medium text-muted-foreground mb-1">PSC?</p>

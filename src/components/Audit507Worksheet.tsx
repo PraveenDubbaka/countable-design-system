@@ -16,6 +16,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -334,20 +335,25 @@ export function Audit507Worksheet({ isUS = false, connectedApps, onOpenConnector
  )}
  </td>
  <td className="px-4 py-3 align-top">
-   <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
-     <AttributedComment
-       value={row.comments}
-       onChange={v => setRow(proc.id, { comments: v })}
-       storageKey={`507-${engagementId}-${proc.id}`}
-       placeholder="Enter comments…"
-       disabled={locked}
-       className="min-h-[56px] text-sm bg-background resize-none"
-     />
-   </LukaTypingRow>
-   {isDemoEngagement && lukaFilledFields.has(proc.id) && (
-     <div className="mt-1">
+   <div className="flex items-start gap-1.5">
+     <GreenDot show={!!row.comments} />
+     <div className="flex-1">
+       <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
+         <AttributedComment
+           value={row.comments}
+           onChange={v => setRow(proc.id, { comments: v })}
+           storageKey={`507-${engagementId}-${proc.id}`}
+           placeholder="Enter comments…"
+           disabled={locked}
+           className="min-h-[56px] text-sm bg-background resize-none"
+         />
+       </LukaTypingRow>
+       {isDemoEngagement && lukaFilledFields.has(proc.id) && (
+         <div className="mt-1">
+         </div>
+       )}
      </div>
-   )}
+   </div>
  </td>
  <td className="w-[100px] px-4 py-3 align-top text-center" style={{ minWidth: 100 }}>
  <RefButton

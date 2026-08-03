@@ -16,6 +16,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -356,15 +357,20 @@ export function Audit506Worksheet({ isUS = false, connectedApps, onOpenConnector
                 </Select>
               </td>
               <td className="px-6 py-3 align-top">
-                <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
-                  <AttributedComment value={row.response} onChange={v => setFn(proc.id, { response: v })}
-                    storageKey={`506-${isUS ? 'us' : 'ca'}-${prefix}-${proc.id}`}
-                    placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
-                </LukaTypingRow>
-                {isDemoEngagement && lukaFilledFields.has(proc.id) && (
-                  <div className="mt-1">
+                <div className="flex items-start gap-1.5">
+                  <GreenDot show={!!row.response} />
+                  <div className="flex-1">
+                    <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(proc.id)}>
+                      <AttributedComment value={row.response} onChange={v => setFn(proc.id, { response: v })}
+                        storageKey={`506-${isUS ? 'us' : 'ca'}-${prefix}-${proc.id}`}
+                        placeholder="Enter response…" disabled={locked} className="min-h-[60px] text-sm resize-none bg-background" />
+                    </LukaTypingRow>
+                    {isDemoEngagement && lukaFilledFields.has(proc.id) && (
+                      <div className="mt-1">
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </td>
               <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
                 <RefButton reference={row.wpRef}
@@ -579,10 +585,13 @@ export function Audit506Worksheet({ isUS = false, connectedApps, onOpenConnector
                               </Select>
                             </td>
                             <td className="px-6 py-3 align-top">
-                              <Textarea disabled={locked} value={row.response}
-                                onChange={e => setAppendix(item.id, { response: e.target.value })}
-                                placeholder="Document findings and assessment…"
-                                className="min-h-[72px] text-sm resize-y bg-background" />
+                              <div className="flex items-start gap-1.5">
+                                <GreenDot show={!!row.response} />
+                                <Textarea disabled={locked} value={row.response}
+                                  onChange={e => setAppendix(item.id, { response: e.target.value })}
+                                  placeholder="Document findings and assessment…"
+                                  className="min-h-[72px] text-sm resize-y bg-background flex-1" />
+                              </div>
                             </td>
                             <td className="px-4 py-3 align-top text-center" style={{ width: 100 }}>
                               <RefButton reference={row.wpRef}

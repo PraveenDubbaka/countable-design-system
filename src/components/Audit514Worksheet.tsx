@@ -12,6 +12,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -420,13 +421,16 @@ export function Audit514Worksheet({ isUS = false }: { isUS?: boolean }) {
  <p className="text-sm text-muted-foreground">
  Summarize whether any differences indicate possible management bias and the overall impact on the current period audit.
  </p>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.conclusion} />
  <Textarea
  disabled={locked}
  value={data.conclusion}
  onChange={e => setData(d => ({...d, conclusion: e.target.value }))}
  placeholder="Document your conclusion…"
- className="min-h-[120px] text-sm resize-none bg-background"
+ className="min-h-[120px] text-sm resize-none bg-background flex-1"
  />
+ </div>
  </div>
  </SectionCard>
 
