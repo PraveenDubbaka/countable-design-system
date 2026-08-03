@@ -562,10 +562,10 @@ export function NotesSlidePanel({ open, onOpenChange, noteId, noteName, engId, p
  }, [addBlock, removeBlock, changeBlockType]);
 
  const handlePaletteSelect = useCallback((item: PaletteItem, afterId: string) => {
- if (item.type === 'ai') { textareaRef.current?.focus(); }
+ if (item.type === 'ai') { if (pageMode) setTimeout(() => setShowAiFloating(true), 0); else textareaRef.current?.focus(); }
  else if (item.type === 'pdf') { fileInputRef.current?.click(); }
  else { addBlock(afterId, item.type as BlockType); }
- }, [addBlock]);
+ }, [addBlock, pageMode]);
 
  const handleAiSend = useCallback(() => {
  const prompt = aiInput.trim();
