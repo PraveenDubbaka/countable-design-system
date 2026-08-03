@@ -16,6 +16,7 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { GreenDot } from "@/components/demo/GreenDot";
 
 // ── Flow state machine ─────────────────────────────────────────────────────────
 
@@ -405,7 +406,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </td>
  <td className="px-3 py-3">
- <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(proc.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[56px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.exceptions} />
+ <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(proc.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="flex-1 min-h-[56px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-3 text-center" style={{width:90}}>
  <RefButton reference={row.wpRef} onAttach={doc => setPA(proc.id, { wpRef: [...row.wpRef, doc] })} onRemove={i => setPA(proc.id, { wpRef: row.wpRef.filter((_,idx)=>idx!==i) })} disabled={locked} />
@@ -430,7 +434,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </td>
  <td className="px-3 py-2.5">
- <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(item.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="min-h-[48px] text-sm resize-none rounded-[10px]" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.exceptions} />
+ <Textarea disabled={locked} value={row.exceptions} onChange={e => setPA(item.id, { exceptions: e.target.value })} placeholder="Summarize exceptions or findings…" className="flex-1 min-h-[48px] text-sm resize-none rounded-[10px]" />
+ </div>
  </td>
  <td className="px-3 py-2.5 text-center" style={{width:90}}>
  <RefButton reference={row.wpRef} onAttach={doc => setPA(item.id, { wpRef: [...row.wpRef, doc] })} onRemove={i => setPA(item.id, { wpRef: row.wpRef.filter((_,idx)=>idx!==i) })} disabled={locked} />
@@ -451,7 +458,10 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  {showLS && <td className="px-3 py-2 text-center align-middle" style={{width:52}}>{LS_MAP[id] ? <Badge variant="outline" className="font-mono text-[10px] px-1 py-0 h-5 rounded">{LS_MAP[id]}</Badge> : null}</td>}
  <td className={`px-4 py-2 text-sm ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`} style={{paddingLeft: `${16 + indent * 12}px`}}>{label}</td>
  <td className="px-2 py-2" style={{width:120}}>
- <TdInput value={row.current} onChange={v => setter(id,{current:v})} placeholder="0" className="text-right font-mono" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={row.current !== '' && row.current !== undefined && row.current !== null} />
+ <TdInput value={row.current} onChange={v => setter(id,{current:v})} placeholder="0" className="flex-1 text-right font-mono" />
+ </div>
  </td>
  {showPrior && <td className="px-2 py-2" style={{width:120}}>
  <TdInput value={row.prior} onChange={v => setter(id,{prior:v})} placeholder="0" className="text-right font-mono" />
@@ -467,7 +477,12 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Select>
  </td>
  <td className="px-2 py-2" style={{minWidth:180}}>
- {row.hasIssue === 'Yes' && <AttributedComment value={row.explanation} onChange={v => setter(id,{explanation:v})} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-exp-${id}`} placeholder="Describe…" className="min-h-[44px] text-sm resize-none rounded-[10px]" minHeight="44px" />}
+ {row.hasIssue === 'Yes' && (
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.explanation} />
+ <AttributedComment value={row.explanation} onChange={v => setter(id,{explanation:v})} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-exp-${id}`} placeholder="Describe…" className="flex-1 min-h-[44px] text-sm resize-none rounded-[10px]" minHeight="44px" />
+ </div>
+ )}
  </td>
  <td className="px-2 py-2" style={{width:140}}>
  {row.hasIssue === 'Yes' && <TdInput value={row.auditResponse} onChange={v => setter(id,{auditResponse:v})} placeholder="Form/ref." className="text-sm" />}
@@ -888,13 +903,22 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  <TdInput value={m.partBRef} onChange={v => setMatter(idx, { partBRef: v })} placeholder="—" />
  </td>
  <td className="px-4 py-2.5 align-top">
- <AttributedComment value={m.summary} onChange={v => setMatter(idx, { summary: v })} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-sum-${idx}`} placeholder="Describe the matter…" disabled={locked} className="min-h-[52px] text-sm resize-none bg-background border-border" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!m.summary} />
+ <AttributedComment value={m.summary} onChange={v => setMatter(idx, { summary: v })} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-sum-${idx}`} placeholder="Describe the matter…" disabled={locked} className="flex-1 min-h-[52px] text-sm resize-none bg-background border-border" />
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top">
- <AttributedComment value={m.mgmtResponse} onChange={v => setMatter(idx, { mgmtResponse: v })} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-mgmt-${idx}`} placeholder="Management response…" disabled={locked} className="min-h-[52px] text-sm resize-none bg-background border-border" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!m.mgmtResponse} />
+ <AttributedComment value={m.mgmtResponse} onChange={v => setMatter(idx, { mgmtResponse: v })} storageKey={`pap501-${engagementId}-${isUS?'us':'ca'}-mgmt-${idx}`} placeholder="Management response…" disabled={locked} className="flex-1 min-h-[52px] text-sm resize-none bg-background border-border" />
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top">
- <Textarea disabled={locked} value={m.auditImplications} onChange={e => setMatter(idx, { auditImplications: e.target.value })} placeholder="Audit implications…" className="min-h-[52px] text-sm resize-none bg-background border-border" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!m.auditImplications} />
+ <Textarea disabled={locked} value={m.auditImplications} onChange={e => setMatter(idx, { auditImplications: e.target.value })} placeholder="Audit implications…" className="flex-1 min-h-[52px] text-sm resize-none bg-background border-border" />
+ </div>
  </td>
  </tr>
  ))}
@@ -915,13 +939,16 @@ export function AuditPAP501Worksheet({ isUS = false }: { isUS?: boolean }) {
  </Tooltip>
  </div>
  <div className="px-6 py-5">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.fraudAnswer} />
  <Textarea
  disabled={locked}
  value={data.fraudAnswer}
  onChange={e => set({ fraudAnswer: e.target.value })}
  placeholder="Document conclusion on fraud risk indicators arising from the preliminary analytical procedures…"
- className="min-h-[100px] text-sm resize-none bg-background border-border"
+ className="flex-1 min-h-[100px] text-sm resize-none bg-background border-border"
  />
+ </div>
  </div>
  </div>
 

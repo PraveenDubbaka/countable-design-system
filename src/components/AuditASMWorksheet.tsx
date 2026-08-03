@@ -9,6 +9,7 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_ENGAGEMENT_ID, DEMO_TEAM, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
+import { GreenDot } from "@/components/demo/GreenDot";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -267,18 +268,24 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  <td className="px-3 py-2 align-top">
  <div className="relative">
  {storageKey ? (
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.response} />
  <AttributedComment
  value={row.response}
  onChange={(v) => onChange("response", v)}
  storageKey={storageKey}
- className="min-h-[56px] text-sm resize-none"
+ className="flex-1 min-h-[56px] text-sm resize-none"
  />
+ </div>
  ) : (
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!row.response} />
  <Textarea
- className="min-h-[56px] text-sm resize-none"
+ className="flex-1 min-h-[56px] text-sm resize-none"
  value={row.response}
  onChange={(e) => onChange("response", e.target.value)}
  />
+ </div>
  )}
  {extra && <div className="mt-1.5">{extra}</div>}
  </div>
@@ -493,18 +500,24 @@ export function AuditASMWorksheet({ isUS = false }: AuditASMWorksheetProps) {
  </td>
  <td className="px-3 py-2 align-top">
  <div className="flex flex-col gap-1">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!s4[i].name} />
  <Input
- className="h-7 text-sm"
+ className="flex-1 h-7 text-sm"
  placeholder="Name"
  value={s4[i].name}
  onChange={(e) => updateTeamRow(i, "name", e.target.value)}
  />
+ </div>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!s4[i].response} />
  <Input
- className="h-7 text-sm"
+ className="flex-1 h-7 text-sm"
  placeholder="Experience / notes"
  value={s4[i].response}
  onChange={(e) => updateTeamRow(i, "response", e.target.value)}
  />
+ </div>
  </div>
  </td>
  </tr>

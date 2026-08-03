@@ -16,6 +16,7 @@ import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJso
 import { cn } from "@/lib/utils";
 import { buildAutoFillRows, mergeAutoFill } from "@/lib/audit520AutoFill";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
+import { GreenDot } from "@/components/demo/GreenDot";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -661,7 +662,10 @@ export function Audit520Worksheet() {
  </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[240px]">
- <AttributedComment value={row.rmmIdentified} onChange={v => updatePartA(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pA-rmm-${row.id}`} placeholder="Describe the risk of material misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.rmmIdentified} />
+   <AttributedComment value={row.rmmIdentified} onChange={v => updatePartA(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pA-rmm-${row.id}`} placeholder="Describe the risk of material misstatement…" disabled={locked} className="flex-1 min-h-[72px] text-sm resize-none bg-background" />
+ </div>
  {isDemoEngagement && row.rmmIdentified && (() => {
    const rmmLower = row.rmmIdentified.toLowerCase();
    const provenance =
@@ -690,7 +694,10 @@ export function Audit520Worksheet() {
  </Select>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[260px]">
- <AttributedComment value={row.auditResponse} onChange={v => updatePartA(row.id, "auditResponse", v)} storageKey={`520-${engagementId ?? "def"}-pA-resp-${row.id}`} placeholder="Document overall audit response…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.auditResponse} />
+   <AttributedComment value={row.auditResponse} onChange={v => updatePartA(row.id, "auditResponse", v)} storageKey={`520-${engagementId ?? "def"}-pA-resp-${row.id}`} placeholder="Document overall audit response…" disabled={locked} className="flex-1 min-h-[72px] text-sm resize-none bg-background" />
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top w-28">
  <RefButton
@@ -875,7 +882,10 @@ export function Audit520Worksheet() {
  </td>
  <td className="px-4 py-2.5 align-top min-w-[180px]">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has(row.id)}>
- <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
+   <div className="flex items-start gap-1.5">
+     <GreenDot show={!!row.rmmIdentified} />
+     <AttributedComment value={row.rmmIdentified} onChange={v => updatePartB(row.id, "rmmIdentified", v)} storageKey={`520-${engagementId ?? "def"}-pB-rmm-${row.id}`} placeholder="Describe the RMM…" disabled={locked} className="flex-1 min-h-[72px] text-sm resize-none bg-background" />
+   </div>
  </LukaTypingRow>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[140px]">
@@ -906,7 +916,10 @@ export function Audit520Worksheet() {
  </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[200px]">
- <AttributedComment value={row.irFactors} onChange={v => updatePartB(row.id, "irFactors", v)} storageKey={`520-${engagementId ?? "def"}-pB-ir-${row.id}`} placeholder="Document how IR factors affect susceptibility to misstatement…" disabled={locked} className="min-h-[72px] text-sm resize-none bg-background" />
+ <div className="flex items-start gap-1.5">
+   <GreenDot show={!!row.irFactors} />
+   <AttributedComment value={row.irFactors} onChange={v => updatePartB(row.id, "irFactors", v)} storageKey={`520-${engagementId ?? "def"}-pB-ir-${row.id}`} placeholder="Document how IR factors affect susceptibility to misstatement…" disabled={locked} className="flex-1 min-h-[72px] text-sm resize-none bg-background" />
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top w-16">
  <Select disabled={locked} value={row.fraudRisk} onValueChange={v => updatePartB(row.id, "fraudRisk", v as YN)}>
