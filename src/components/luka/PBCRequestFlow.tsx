@@ -535,87 +535,48 @@ function ArtifactCard({
  );
 }
 
-function generateClientResponseContent(templateId: string, wpNumbers: string[]): string {
- const year = new Date().getFullYear();
- const dateStr = new Date().toLocaleDateString("en-CA");
- if (templateId === "it-questionnaire") {
- return `# Client Questionnaire Responses
-## Audit Questionnaire — Forms ${wpNumbers.join(", ")}
+function generateFilledDocument(docContent: string): string {
+ if (!docContent) return "";
+ const year = new Date().getFullYear() - 1;
+ const date = new Date().toLocaleDateString("en-CA");
 
-**Submitted by:** Northline Precision Manufacturing Inc.
-**Date Submitted:** ${dateStr}
+ const shortAnswers = ["Sarah Mitchell, CFO", date];
+ let shortIdx = 0;
 
----
+ const longAnswers = [
+ `Yes, this is the first year of the engagement. The Company's legal name is Northline Precision Manufacturing Inc., a private corporation incorporated in Ontario. Fiscal year end is December 31, ${year}.`,
+ `No significant changes in ownership or management occurred during the period. The founding shareholders retain 100% of equity. No board or key management changes were made.`,
+ `Financial statements are prepared under ASPE (Accounting Standards for Private Enterprises). No changes to accounting standards were adopted in the current year.`,
+ `Prior period financial statements and trial balance have been provided to the audit team via the client portal. Comparative figures are available for all material accounts.`,
+ `There are no outstanding tax, legal, or regulatory issues from prior periods that the audit team should be aware of.`,
+ `The Company uses QuickBooks Enterprise for accounting and a custom ERP for inventory management. Microsoft 365 is used for communications and document management. All systems are hosted on-premises with Microsoft Azure as a backup cloud environment.`,
+ `Yes — multi-factor authentication (MFA) has been enforced for all remote access and financial system logins since January ${year}. Quarterly access reviews are conducted by each department head and results reported to the CFO.`,
+ `Daily incremental and weekly full backups are stored off-site in an AES-256 encrypted vault. Restoration testing is performed quarterly. Financial records are retained for 7 years in accordance with CRA requirements.`,
+ `All external data transmissions use TLS 1.3 encryption. File sharing with external parties is conducted exclusively through the Company's secure client portal. Unencrypted email attachments containing financial data are prohibited by policy.`,
+ `No reportable security incidents occurred during the current fiscal year. One phishing attempt was detected and blocked by the email filtering system in Q2 — no data was compromised and no breach notification was required.`,
+ `IT control deficiencies are logged in the Company's ticketing system (ServiceNow). Material deficiencies are escalated to the CFO within 5 business days and documented in the enterprise risk register. Remediation timelines are tracked to closure.`,
+ `Key third-party providers with access to financial data: (1) ADP Canada — payroll processing; (2) Microsoft Azure — cloud backup and storage; (3) RBC — banking portal; (4) SharePoint Online — document management. All providers are subject to annual vendor assessments.`,
+ `Software updates are applied monthly through a centralized patch management system. Critical security patches are deployed within 48 hours of release. Patch logs are reviewed by the IT Manager and reported to the CFO quarterly.`,
+ `No significant IT system changes are planned that would affect financial reporting systems. A CRM platform migration is scheduled for Q3 but is isolated from all financial systems and will not impact accounting records.`,
+ `The IT environment is managed by a dedicated team of 3 IT staff. IT controls documentation was comprehensively reviewed and updated in Q1 ${year}. The documentation is stored in SharePoint and accessible to the audit team on request.`,
+ `Not applicable to this engagement.`,
+ ];
+ let longIdx = 0;
 
-## Section 1: Software & Applications
-
-**Q1: What accounting/ERP systems does your organization use?**
-We use QuickBooks Enterprise for accounting and a custom ERP system for inventory management.
-
-**Q2: Are software updates and patches applied regularly?**
-Yes — our IT team applies security patches monthly through a centralized update management system. Critical patches are applied within 48 hours.
-
----
-
-## Section 2: Third-Party Providers
-
-**Q3: List key third-party service providers with access to financial data.**
-1. Payroll processor — ADP Canada
-2. Cloud storage — Microsoft Azure (Canada East region)
-3. Banking portal — RBC Online Banking
-4. Document management — SharePoint Online
-
----
-
-## Section 3: Access Controls
-
-**Q4: How is access to financial systems granted and revoked?**
-Access is provisioned through our HR onboarding workflow. IT receives termination notices and revokes all access within 24 hours. Quarterly access reviews are conducted by department heads.
-
-**Q5: Is multi-factor authentication (MFA) enabled?**
-Yes — MFA is required for all remote access and financial system logins company-wide since January ${year - 1}.
-
----
-
-## Section 4: Physical & Backup Controls
-
-**Q6: Describe your data backup procedures.**
-Daily incremental backups and weekly full backups are stored off-site in an encrypted vault. Restoration testing is performed quarterly. Retention period: 7 years for financial records.
-
----
-
-## Section 5: Information Flow
-
-**Q7: How is sensitive financial data transmitted externally?**
-All external transmissions use TLS 1.3 encryption. External file sharing is conducted exclusively through our secure client portal. No unencrypted email attachments containing financial data are permitted.
-
----
-
-## Section 6: Cybersecurity
-
-**Q8: Any security incidents in the past year?**
-No reportable security incidents occurred during the current fiscal year. One phishing attempt was detected and blocked by email filtering in Q2; no data was compromised.
-
----
-
-## Section 7: Communication
-
-**Q9: How are IT control deficiencies communicated to management?**
-All IT issues are logged in our ticketing system (ServiceNow). Material items are escalated to the CFO and documented in the risk register within 5 business days.
-`;
- }
- return `# Client Response — Document Package\n**Submitted:** ${dateStr}\n\nAll requested documents have been provided as attachments to this response.`;
+ // Replace long blanks first (80 underscores), then short header blanks (30 underscores)
+ // Order matters — short pattern is a substring of the long pattern
+ return docContent
+ .replace(/_{80}/g, () => `\n\n> ${longAnswers[longIdx++] ?? "Client response provided."}`)
+ .replace(/_{30}/g, () => shortAnswers[shortIdx++] ?? "N/A");
 }
 
 function ResponsesCard({
  onAccept,
- onViewDoc,
  onViewResponses,
  templateId,
  wpNumbers,
 }: {
  onAccept: () => void;
- onViewDoc: () => void;
  onViewResponses: () => void;
  templateId?: string;
  wpNumbers?: string[];
@@ -650,26 +611,18 @@ function ResponsesCard({
  </div>
  ))}
  </div>
- <div className="px-4 pt-2.5 pb-3 border-t border-border bg-muted/20 space-y-2">
- <div className="flex gap-2">
- <button
- onClick={onViewDoc}
- className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors"
- >
- <Eye className="h-3.5 w-3.5" /> View Document
- </button>
+ <div className="px-4 pt-2.5 pb-3 border-t border-border bg-muted/20 flex gap-2">
  <button
  onClick={onViewResponses}
  className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors"
  >
- <FileText className="h-3.5 w-3.5" /> View Responses
+ <Eye className="h-3.5 w-3.5" /> View Responses
  </button>
- </div>
  <button
  onClick={onAccept}
- className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+ className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
  >
- <CheckCircle2 className="h-3.5 w-3.5" /> Accept & Fill Worksheets
+ <CheckCircle2 className="h-3.5 w-3.5" /> Accept & Fill
  </button>
  </div>
  </div>
@@ -968,10 +921,9 @@ export function PBCRequestFlow({
  {msg.text && <LukaText text={msg.text} />}
  <ResponsesCard
  onAccept={handleApply}
- onViewDoc={() => onViewDoc(docContent, selectedTemplate?.label ?? "Document")}
  onViewResponses={() => onViewDoc(
- generateClientResponseContent(selectedTemplate?.id ?? "", wpNumbers),
- "Client Responses"
+ generateFilledDocument(docContent),
+ selectedTemplate?.label ?? "Responses"
  )}
  templateId={selectedTemplate?.id}
  wpNumbers={wpNumbers}
