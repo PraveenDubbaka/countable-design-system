@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
 import type { EngagementContext } from "@/lib/engagementContext";
 import type { Risk520Row } from "@/lib/audit520Bridge";
 import { WorksheetSignOff } from "@/components/WorksheetSignOff";
+import { GreenDot } from "@/components/demo/GreenDot";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 
 export interface ManualRisk {
@@ -269,10 +270,13 @@ export function LinkedRisksCard({
  </Select>
  </td>
  <td className={td}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!rmmVal} />
  <Textarea disabled={locked} value={rmmVal}
  onChange={e => patchForm520(r.ref, { rmmIdentified: e.target.value })}
  placeholder="Risk of material misstatement…"
- className="text-sm min-h-[56px] resize-none min-w-[200px]" />
+ className="text-sm min-h-[56px] resize-none min-w-[200px] flex-1" />
+ </div>
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={fraudVal} onValueChange={v => patchForm520(r.ref, { fraudRisk: v as "Y" | "N" | "" })}>
@@ -329,11 +333,14 @@ export function LinkedRisksCard({
  </Select>
  </td>
  <td className={td}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!r.rmmIdentified} />
  <Textarea disabled={locked} value={r.rmmIdentified}
  autoFocus={r.id === newRowIdRef.current}
  onChange={e => patchManual(r.id, { rmmIdentified: e.target.value })}
  placeholder="Risk of material misstatement…"
- className="text-sm min-h-[56px] resize-none min-w-[200px]" />
+ className="text-sm min-h-[56px] resize-none min-w-[200px] flex-1" />
+ </div>
  </td>
  <td className={`${td} text-center`}>
  <Select disabled={locked} value={r.fraudRisk ?? ""} onValueChange={v => patchManual(r.id, { fraudRisk: v as "Y" | "N" | "" })}>
@@ -461,8 +468,11 @@ function FragmentRows({ title, rows, sectionIdx, td, locked, onChange, showPsa, 
  </Select>
  </td>
  <td className={td}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!r.comments} />
  <Textarea disabled={locked} value={r.comments} onChange={e => onChange(sectionIdx, r.id, "comments", e.target.value)}
- className="min-h-[56px] text-sm resize-none" placeholder="—" />
+ className="min-h-[56px] text-sm resize-none flex-1" placeholder="—" />
+ </div>
  {renderRowBadge?.(sectionIdx, rowIdx)}
  </td>
  <td className={`${td} text-center`}>
