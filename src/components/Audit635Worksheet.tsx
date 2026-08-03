@@ -17,6 +17,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -426,15 +427,20 @@ export function Audit635Worksheet() {
  </div>
  <div className={`md:col-span-3${isDemoEngagement && lukaHighlightFields.has('estimate-method') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
  <Label>Method used by management to prepare the estimate</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.managementMethod} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('estimate-method')}>
    <Textarea
    disabled={locked}
    value={data.managementMethod}
    onChange={e => setData(d => ({...d, managementMethod: e.target.value }))}
-   className="text-sm min-h-[72px]"
+   className="flex-1 text-sm min-h-[72px]"
    placeholder="Describe the method, key assumptions, data sources and any model or expert used."
    />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>
@@ -553,36 +559,45 @@ export function Audit635Worksheet() {
  {data.managementBiasIdentified === "Y" && (
  <div className="md:col-span-2">
  <Label>Management bias — supporting evidence</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.managementBiasNotes} />
  <Textarea
  disabled={locked}
  value={data.managementBiasNotes}
  onChange={e => setData(d => ({...d, managementBiasNotes: e.target.value }))}
- className="text-sm min-h-[64px]"
+ className="flex-1 text-sm min-h-[64px]"
  placeholder="Describe the judgments / decisions that indicate possible bias and the implications for the audit."
  />
+ </div>
  </div>
  )}
  {data.rmmReassessmentAppropriate === "N" && (
  <div className="md:col-span-2">
  <Label>RMM reassessment — required change</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.rmmReassessmentNotes} />
  <Textarea
  disabled={locked}
  value={data.rmmReassessmentNotes}
  onChange={e => setData(d => ({...d, rmmReassessmentNotes: e.target.value }))}
- className="text-sm min-h-[64px]"
+ className="flex-1 text-sm min-h-[64px]"
  placeholder="Document the revised assessment and update accordingly."
  />
+ </div>
  </div>
  )}
  <div className="md:col-span-2">
  <Label>Auditor's point estimate / range vs management's estimate</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.pointEstimateRange} />
  <Textarea
  disabled={locked}
  value={data.pointEstimateRange}
  onChange={e => setData(d => ({...d, pointEstimateRange: e.target.value }))}
- className="text-sm min-h-[72px]"
+ className="flex-1 text-sm min-h-[72px]"
  placeholder="Document the point estimate or range, the difference vs management's estimate, and whether the difference is within performance materiality."
  />
+ </div>
  </div>
  </div>
  </WorksheetSection>
@@ -616,13 +631,16 @@ export function Audit635Worksheet() {
  </div>
  <div className="md:col-span-3">
  <Label>Presentation & disclosure notes</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.presentationNotes} />
  <Textarea
  disabled={locked}
  value={data.presentationNotes}
  onChange={e => setData(d => ({...d, presentationNotes: e.target.value }))}
- className="text-sm min-h-[72px]"
+ className="flex-1 text-sm min-h-[72px]"
  placeholder="Conclude on whether the F/S disclose estimation uncertainty and that information is relevant, reliable, comparable and understandable (fair-presentation or compliance framework)."
  />
+ </div>
  </div>
  </div>
  </WorksheetSection>
@@ -648,15 +666,20 @@ export function Audit635Worksheet() {
  </div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidence-rationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidence-rationale')}>
    <Textarea
    disabled={locked}
    value={data.evidenceRationale}
    onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
-   className="text-sm min-h-[72px]"
+   className="flex-1 text-sm min-h-[72px]"
    placeholder="Confirm the audit evidence obtained is sufficient and appropriate to reduce the RMM related to this estimate to an acceptably low level."
    />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>

@@ -17,6 +17,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ─── Sample-plan calculator (mirrors the spreadsheet on pages 1-3 of the source workbook) ──
 type Method = "statistical" | "non-statistical";
@@ -231,14 +232,19 @@ export function Audit610Worksheet() {
  </LukaTypingRow>
  </div>
  <div><Label>Assertion(s) addressed</Label><Input disabled={locked} value={p.assertions} onChange={e => upd("assertions", e.target.value)} className="h-8 text-sm" placeholder="e.g. C, AV, E" /></div>
- <div className="col-span-2"><Label>Purpose of the audit procedure</Label><AttributedComment value={p.purpose} onChange={v => upd("purpose", v)} storageKey={`610-${engagementId ?? "def"}-purpose`} placeholder="Describe what the test is intended to detect or substantiate" disabled={locked} className="text-sm min-h-[60px]" /></div>
+ <div className="col-span-2"><Label>Purpose of the audit procedure</Label><div className="flex items-start gap-1.5"><GreenDot show={!!p.purpose} /><div className="flex-1"><AttributedComment value={p.purpose} onChange={v => upd("purpose", v)} storageKey={`610-${engagementId ?? "def"}-purpose`} placeholder="Describe what the test is intended to detect or substantiate" disabled={locked} className="text-sm min-h-[60px]" /></div></div></div>
  <div className={`col-span-2${isDemoEngagement && lukaHighlightFields.has('plan-population') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}`}>
  <Label>Population characteristics</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!p.populationDesc} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('plan-population')}>
-   <Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" />
+   <Textarea disabled={locked} value={p.populationDesc} onChange={e => upd("populationDesc", e.target.value)} className="flex-1 text-sm min-h-[60px]" placeholder="e.g. all customer invoices issued during the period, excluding intercompany" />
  </LukaTypingRow>
  </div>
- <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><AttributedComment value={p.controlsTested} onChange={v => upd("controlsTested", v)} storageKey={`610-${engagementId ?? "def"}-controlsTested`} placeholder="None / describe and reference WP" disabled={locked} className="text-sm min-h-[48px]" /></div>
+ </div>
+ </div>
+ <div className="col-span-2"><Label>Controls also tested (if any) and cross-reference</Label><div className="flex items-start gap-1.5"><GreenDot show={!!p.controlsTested} /><div className="flex-1"><AttributedComment value={p.controlsTested} onChange={v => upd("controlsTested", v)} storageKey={`610-${engagementId ?? "def"}-controlsTested`} placeholder="None / describe and reference WP" disabled={locked} className="text-sm min-h-[48px]" /></div></div></div>
  <div>
  <Label>Assessed RMM</Label>
  <Select disabled={locked} value={p.riskLevel} onValueChange={(v: SamplePlan["riskLevel"]) => upd("riskLevel", v)}>
@@ -263,7 +269,7 @@ export function Audit610Worksheet() {
  <div><Label hint="A">Total monetary value $</Label><Input disabled={locked} value={p.totalValue} onChange={e => upd("totalValue", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
  <div><Label>Number of physical items</Label><Input disabled={locked} value={p.numberOfItems} onChange={e => upd("numberOfItems", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
  <div><Label hint="">Performance materiality $ (D)</Label><Input disabled={locked} value={p.performanceMateriality} onChange={e => upd("performanceMateriality", e.target.value)} className="h-8 text-sm" placeholder={String(Math.round(ctx.performanceMateriality))} /></div>
- <div className="col-span-3"><Label>Nature of key items removed and tested separately</Label><Textarea disabled={locked} value={p.keyItemsNature} onChange={e => upd("keyItemsNature", e.target.value)} className="text-sm min-h-[48px]" placeholder="e.g. balances ≥ $100K, related-party items" /></div>
+ <div className="col-span-3"><Label>Nature of key items removed and tested separately</Label><div className="flex items-start gap-1.5"><GreenDot show={!!p.keyItemsNature} /><Textarea disabled={locked} value={p.keyItemsNature} onChange={e => upd("keyItemsNature", e.target.value)} className="flex-1 text-sm min-h-[48px]" placeholder="e.g. balances ≥ $100K, related-party items" /></div></div>
  <div><Label hint="B">Value of key items $</Label><Input disabled={locked} value={p.keyItemsValue} onChange={e => upd("keyItemsValue", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
  <div><Label>Number of key items</Label><Input disabled={locked} value={p.keyItemsCount} onChange={e => upd("keyItemsCount", e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
  {p.method === "statistical" && (
@@ -293,13 +299,18 @@ export function Audit610Worksheet() {
  <div className="p-4 grid grid-cols-1 gap-4">
  <div className={isDemoEngagement && lukaHighlightFields.has('documentation') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2 rounded' : ''}>
  <Label>Documentation of items selected (W/P cross-reference)</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.documentation} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('documentation')}>
-   <Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({...d, documentation: e.target.value }))} className="text-sm min-h-[56px]" />
+   <Textarea disabled={locked} value={data.documentation} onChange={e => setData(d => ({...d, documentation: e.target.value }))} className="flex-1 text-sm min-h-[56px]" />
  </LukaTypingRow>
  </div>
+ </div>
+ </div>
  <div className="grid grid-cols-2 gap-4">
- <div><Label>Replacements (count and reason)</Label><Textarea disabled={locked} value={data.replacements} onChange={e => setData(d => ({...d, replacements: e.target.value }))} className="text-sm min-h-[48px]" /></div>
- <div><Label>Anomalies identified</Label><Textarea disabled={locked} value={data.anomalies} onChange={e => setData(d => ({...d, anomalies: e.target.value }))} className="text-sm min-h-[48px]" /></div>
+ <div><Label>Replacements (count and reason)</Label><div className="flex items-start gap-1.5"><GreenDot show={!!data.replacements} /><Textarea disabled={locked} value={data.replacements} onChange={e => setData(d => ({...d, replacements: e.target.value }))} className="flex-1 text-sm min-h-[48px]" /></div></div>
+ <div><Label>Anomalies identified</Label><div className="flex items-start gap-1.5"><GreenDot show={!!data.anomalies} /><Textarea disabled={locked} value={data.anomalies} onChange={e => setData(d => ({...d, anomalies: e.target.value }))} className="flex-1 text-sm min-h-[48px]" /></div></div>
  </div>
  </div>
  <div className="overflow-x-auto border-t border-border">
@@ -327,7 +338,7 @@ export function Audit610Worksheet() {
  <td className={`${td} text-right`}><Input disabled={locked} value={r.auditedValue} onChange={e => updResult(r.id, "auditedValue", e.target.value)} className="h-8 text-sm text-right tabular-nums" placeholder="0" /></td>
  <td className={`${td} text-right tabular-nums text-foreground`}>{mis ? formatCurrency(mis) : "—"}</td>
  <td className={`${td} text-right tabular-nums text-foreground`}>{proj ? formatCurrency(proj) : "—"}</td>
- <td className={td}><Textarea disabled={locked} value={r.reason} onChange={e => updResult(r.id, "reason", e.target.value)} className="min-h-[40px] text-sm resize-none" /></td>
+ <td className={td}><div className="flex items-start gap-1.5"><GreenDot show={!!r.reason} /><Textarea disabled={locked} value={r.reason} onChange={e => updResult(r.id, "reason", e.target.value)} className="flex-1 min-h-[40px] text-sm resize-none" /></div></td>
  {!locked && <td className={`${td} text-center w-10`}><button onClick={() => setData(d => ({...d, results: d.results.filter(x => x.id !== r.id) }))} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="h-3.5 w-3.5" /></button></td>}
  </tr>
  );
@@ -361,12 +372,15 @@ export function Audit610Worksheet() {
  <SelectContent><SelectItem value="Y">Yes</SelectItem><SelectItem value="N">No</SelectItem></SelectContent>
  </Select>
  </div>
- {data.testObjectivesMet === "N" && <div className="col-span-2"><Label>Explanation</Label><Textarea disabled={locked} value={data.testObjectivesMetExplain} onChange={e => setData(d => ({...d, testObjectivesMetExplain: e.target.value }))} className="text-sm min-h-[56px]" placeholder="Explain and describe further procedures planned" /></div>}
- {data.deviationsOtherAreas === "Y" && <div className="col-span-2"><Label>Impact on other audit areas</Label><Textarea disabled={locked} value={data.deviationsOtherAreasExplain} onChange={e => setData(d => ({...d, deviationsOtherAreasExplain: e.target.value }))} className="text-sm min-h-[56px]" placeholder="Describe the effect; update the audit strategy accordingly" /></div>}
+ {data.testObjectivesMet === "N" && <div className="col-span-2"><Label>Explanation</Label><div className="flex items-start gap-1.5"><GreenDot show={!!data.testObjectivesMetExplain} /><Textarea disabled={locked} value={data.testObjectivesMetExplain} onChange={e => setData(d => ({...d, testObjectivesMetExplain: e.target.value }))} className="flex-1 text-sm min-h-[56px]" placeholder="Explain and describe further procedures planned" /></div></div>}
+ {data.deviationsOtherAreas === "Y" && <div className="col-span-2"><Label>Impact on other audit areas</Label><div className="flex items-start gap-1.5"><GreenDot show={!!data.deviationsOtherAreasExplain} /><Textarea disabled={locked} value={data.deviationsOtherAreasExplain} onChange={e => setData(d => ({...d, deviationsOtherAreasExplain: e.target.value }))} className="flex-1 text-sm min-h-[56px]" placeholder="Describe the effect; update the audit strategy accordingly" /></div></div>}
  </div>
  <div>
  <Label>Overall sampling conclusion</Label>
- <Textarea disabled={locked} value={data.conclusion} onChange={e => setData(d => ({...d, conclusion: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Conclude on whether the population is fairly stated within performance materiality." />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.conclusion} />
+ <Textarea disabled={locked} value={data.conclusion} onChange={e => setData(d => ({...d, conclusion: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="Conclude on whether the population is fairly stated within performance materiality." />
+ </div>
  </div>
  </div>
  </div>

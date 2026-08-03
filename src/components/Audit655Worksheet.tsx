@@ -20,6 +20,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 type YN = "Y" | "N" | "";
 
@@ -216,9 +217,14 @@ export function Audit655Worksheet() {
  <td className="border-b border-border p-2"><Input disabled={locked} value={r.priorYear} onChange={e => updRow(which, r.id, { priorYear: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
  <td className={`border-b border-border p-2 text-right font-mono text-sm ${v.tone}`}>{v.abs}<div className="text-[10px]">{v.pct}</div></td>
  <td className={`border-b border-border p-2${isHighlighted ? ' border-l-2 border-l-violet-400' : ''}`}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!r.varianceExplain} />
+ <div className="flex-1">
  <LukaTypingRow filled={isFilled}>
- <Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Explain variance / unexpected relationship" />
+ <Textarea disabled={locked} value={r.varianceExplain} onChange={e => updRow(which, r.id, { varianceExplain: e.target.value })} className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Explain variance / unexpected relationship" />
  </LukaTypingRow>
+ </div>
+ </div>
  </td>
  <td className="border-b border-border p-2"><YNSelect value={r.consistent} onChange={v => updRow(which, r.id, { consistent: v as YN })} locked={locked} /></td>
  <td className="border-b border-border p-2"><RefButton reference={r.wpRef} disabled={locked} onAttach={(doc) => updRow(which, r.id, { wpRef: [...r.wpRef, doc] })} onRemove={(idx) => updRow(which, r.id, { wpRef: typeof idx === "number" ? r.wpRef.filter((_, i) => i !== idx) : [] })} /></td>
@@ -294,17 +300,17 @@ export function Audit655Worksheet() {
  <div><Label>RMM reassessment needed?</Label><YNSelect value={data.rmmReassessmentNeeded} onChange={v => setData(d => ({...d, rmmReassessmentNeeded: v as YN }))} locked={locked} /></div>
  {data.unexpectedRelationships === "Y" && (
  <div className="md:col-span-3"><Label>Unexpected relationships — nature & response</Label>
- <AttributedComment value={data.unexpectedRelationshipsNotes} onChange={v => setData(d => ({...d, unexpectedRelationshipsNotes: v }))} storageKey={`655-${engagementId ?? "def"}-unexpRel`} placeholder="Describe inconsistencies with our understanding of the entity and the additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.unexpectedRelationshipsNotes} /><div className="flex-1"><AttributedComment value={data.unexpectedRelationshipsNotes} onChange={v => setData(d => ({...d, unexpectedRelationshipsNotes: v }))} storageKey={`655-${engagementId ?? "def"}-unexpRel`} placeholder="Describe inconsistencies with our understanding of the entity and the additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" /></div></div>
  </div>
  )}
  {data.newRisksIdentified === "Y" && (
  <div className="md:col-span-3"><Label>New risks — nature & resolution</Label>
- <Textarea disabled={locked} value={data.newRisksNotes} onChange={e => setData(d => ({...d, newRisksNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Document the risk and how it was resolved (update Forms 520 / 590)." />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.newRisksNotes} /><Textarea disabled={locked} value={data.newRisksNotes} onChange={e => setData(d => ({...d, newRisksNotes: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="Document the risk and how it was resolved (update Forms 520 / 590)." /></div>
  </div>
  )}
  {data.rmmReassessmentNeeded === "Y" && (
  <div className="md:col-span-3"><Label>RMM reassessment notes</Label>
- <Textarea disabled={locked} value={data.rmmReassessmentNotes} onChange={e => setData(d => ({...d, rmmReassessmentNotes: e.target.value }))} className="text-sm min-h-[64px]" placeholder="Required updates / 590." />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.rmmReassessmentNotes} /><Textarea disabled={locked} value={data.rmmReassessmentNotes} onChange={e => setData(d => ({...d, rmmReassessmentNotes: e.target.value }))} className="flex-1 text-sm min-h-[64px]" placeholder="Required updates / 590." /></div>
  </div>
  )}
  </div>
@@ -319,9 +325,14 @@ export function Audit655Worksheet() {
  <div><Label>Final analytics support audit conclusions?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
- <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The final analytical procedures corroborate the conclusions formed during the audit and no unidentified RMM was identified." />
+ <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="The final analytical procedures corroborate the conclusions formed during the audit and no unidentified RMM was identified." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>

@@ -20,6 +20,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 type YN = "Y" | "N" | "";
 type YNNA = YN | "N/A";
@@ -318,7 +319,7 @@ export function Audit650Worksheet() {
  {data.events.map(ev => (
  <tr key={ev.id} className="align-top hover:bg-muted/20">
  <td className="border-b border-border p-2"><Input disabled={locked} type="date" value={ev.dateIdentified} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, dateIdentified: e.target.value } : x) }))} className="h-8 text-sm" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ev.description} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, description: e.target.value } : x) }))} className="min-h-[44px] text-sm resize-none" placeholder="Nature of event" /></td>
+ <td className="border-b border-border p-2"><div className="flex items-start gap-1.5"><GreenDot show={!!ev.description} /><Textarea disabled={locked} value={ev.description} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, description: e.target.value } : x) }))} className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Nature of event" /></div></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={ev.source} onChange={e => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, source: e.target.value } : x) }))} className="h-8 text-sm" placeholder="Minutes / inquiry / bank" /></td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={ev.category} onValueChange={v => setData(d => ({...d, events: d.events.map(x => x.id === ev.id ? {...x, category: v as EventCategory } : x) }))}>
@@ -358,17 +359,17 @@ export function Audit650Worksheet() {
  <div><Label>Revised auditor's report issued?</Label><YNSelect value={data.revisedReportIssued} onChange={v => setData(d => ({...d, revisedReportIssued: v as YN }))} locked={locked} /></div>
  {data.newFactsDiscovered === "Y" && (
  <div className="md:col-span-3"><Label>New facts — discussion with management / TCWG</Label>
- <Textarea disabled={locked} value={data.newFactsNotes} onChange={e => setData(d => ({...d, newFactsNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Document the fact, discussions held, and conclusion on whether the F/S require amendment." />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.newFactsNotes} /><Textarea disabled={locked} value={data.newFactsNotes} onChange={e => setData(d => ({...d, newFactsNotes: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="Document the fact, discussions held, and conclusion on whether the F/S require amendment." /></div>
  </div>
  )}
  {data.fsAmendmentRequired === "Y" && (
  <div className="md:col-span-3"><Label>Amendment procedures performed</Label>
- <Textarea disabled={locked} value={data.fsAmendmentNotes} onChange={e => setData(d => ({...d, fsAmendmentNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Audit procedures on the circumstances of the amendment; revised report dating; EOM / OM paragraph if procedures restricted to the amendment." />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.fsAmendmentNotes} /><Textarea disabled={locked} value={data.fsAmendmentNotes} onChange={e => setData(d => ({...d, fsAmendmentNotes: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="Audit procedures on the circumstances of the amendment; revised report dating; EOM / OM paragraph if procedures restricted to the amendment." /></div>
  </div>
  )}
  {data.revisedReportIssued === "Y" && (
  <div className="md:col-span-3"><Label>Revised report — dating & references</Label>
- <Textarea disabled={locked} value={data.revisedReportNotes} onChange={e => setData(d => ({...d, revisedReportNotes: e.target.value }))} className="text-sm min-h-[64px]" placeholder="Record the new report date (≥ date of approval of amended F/S) and link" />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.revisedReportNotes} /><Textarea disabled={locked} value={data.revisedReportNotes} onChange={e => setData(d => ({...d, revisedReportNotes: e.target.value }))} className="flex-1 text-sm min-h-[64px]" placeholder="Record the new report date (≥ date of approval of amended F/S) and link" /></div>
  </div>
  )}
  </div>
@@ -379,18 +380,28 @@ export function Audit650Worksheet() {
  <div><Label>Disclosures adequate (AFRF)?</Label><YNSelect value={data.disclosuresAdequate} onChange={v => setData(d => ({...d, disclosuresAdequate: v as YNNA }))} withNA locked={locked} /></div>
  <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={isDemoEngagement && lukaHighlightFields.has('disclosureNotes') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Disclosure notes</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.disclosureNotes} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
- <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Confirm that adjusting / non-adjusting subsequent events are reflected in accordance with the AFRF." />
+ <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="Confirm that adjusting / non-adjusting subsequent events are reflected in accordance with the AFRF." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>
 
  <WorksheetSection title="Other procedures (specify)">
  <div className={isDemoEngagement && lukaHighlightFields.has('otherProcedures') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.otherProcedures} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('otherProcedures')}>
  <AttributedComment value={data.otherProcedures} onChange={v => setData(d => ({...d, otherProcedures: v }))} storageKey={`650-${engagementId ?? "def"}-otherProcs`} placeholder="Add any additional procedures performed." disabled={locked} className="text-sm min-h-[72px]" />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </WorksheetSection>
 
@@ -404,10 +415,15 @@ export function Audit650Worksheet() {
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
- <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]"
+ <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="flex-1 text-sm min-h-[72px]"
  placeholder="The audit evidence obtained over subsequent events is sufficient and appropriate to reduce risk of material misstatement to an acceptably low level." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>

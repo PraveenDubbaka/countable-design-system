@@ -23,6 +23,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -356,8 +357,11 @@ export function Audit645Worksheet() {
  </Select>
  </td>
  <td className="border-b border-border p-2">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!m.description} />
  <Textarea disabled={locked} value={m.description} onChange={e => updateMatter(m.id, { description: e.target.value })}
- className="min-h-[44px] text-sm resize-none" placeholder="Nature of matter" />
+ className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Nature of matter" />
+ </div>
  </td>
  <td className="border-b border-border p-2">
  <Input disabled={locked} value={m.counterparty} onChange={e => updateMatter(m.id, { counterparty: e.target.value })}
@@ -470,22 +474,31 @@ export function Audit645Worksheet() {
  {data.nonComplianceIdentified === "Y" && (
  <div className="md:col-span-3">
  <Label>Non-compliance — nature and financial-statement impact</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.nonComplianceNotes} />
  <Textarea disabled={locked} value={data.nonComplianceNotes} onChange={e => setData(d => ({...d, nonComplianceNotes: e.target.value }))}
- className="text-sm min-h-[72px]" placeholder="Describe the suspected/identified non-compliance, evidence obtained and the impact on the financial statements." />
+ className="flex-1 text-sm min-h-[72px]" placeholder="Describe the suspected/identified non-compliance, evidence obtained and the impact on the financial statements." />
+ </div>
  </div>
  )}
  {data.rmmReassessmentNeeded === "Y" && (
  <div className="md:col-span-3">
  <Label>RMM reassessment — required updates</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.rmmReassessmentNotes} />
  <Textarea disabled={locked} value={data.rmmReassessmentNotes} onChange={e => setData(d => ({...d, rmmReassessmentNotes: e.target.value }))}
- className="text-sm min-h-[64px]" placeholder="Document the revised assessment and update accordingly." />
+ className="flex-1 text-sm min-h-[64px]" placeholder="Document the revised assessment and update accordingly." />
+ </div>
  </div>
  )}
  {data.reportModificationConsidered === "Y" && (
  <div className="md:col-span-3">
  <Label>Auditor's report — implications</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.reportModificationNotes} />
  <Textarea disabled={locked} value={data.reportModificationNotes} onChange={e => setData(d => ({...d, reportModificationNotes: e.target.value }))}
- className="text-sm min-h-[64px]" placeholder="Describe the nature of the modification considered (qualification / EOM / OM) and link" />
+ className="flex-1 text-sm min-h-[64px]" placeholder="Describe the nature of the modification considered (qualification / EOM / OM) and link" />
+ </div>
  </div>
  )}
  </div>
@@ -504,16 +517,24 @@ export function Audit645Worksheet() {
  </div>
  <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={`md:col-span-2${isDemoEngagement && lukaHighlightFields.has('tcwgCommunicationLog') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}`}>
  <Label>TCWG communication log</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.tcwgCommunicationLog} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('tcwgCommunicationLog')}>
  <Textarea disabled={locked} value={data.tcwgCommunicationLog} onChange={e => setData(d => ({...d, tcwgCommunicationLog: e.target.value }))}
- className="text-sm min-h-[80px]" placeholder="Summarise what was communicated, to whom, and on what date. Where intentional management non-compliance is suspected, communicate directly with TCWG." />
+ className="flex-1 text-sm min-h-[80px]" placeholder="Summarise what was communicated, to whom, and on what date. Where intentional management non-compliance is suspected, communicate directly with TCWG." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  {data.externalReportingRequired === "Y" && (
  <div className="md:col-span-2">
  <Label>External reporting — basis and actions taken</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.externalReportingNotes} />
  <Textarea disabled={locked} value={data.externalReportingNotes} onChange={e => setData(d => ({...d, externalReportingNotes: e.target.value }))}
- className="text-sm min-h-[64px]" placeholder="Identify the authority, the legal basis for reporting, and the steps taken (or planned)." />
+ className="flex-1 text-sm min-h-[64px]" placeholder="Identify the authority, the legal basis for reporting, and the steps taken (or planned)." />
+ </div>
  </div>
  )}
  </div>
@@ -528,18 +549,26 @@ export function Audit645Worksheet() {
  </div>
  <div className={isDemoEngagement && lukaHighlightFields.has('disclosureNotes') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Disclosure notes</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.disclosureNotes} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
  <Textarea disabled={locked} value={data.disclosureNotes} onChange={e => setData(d => ({...d, disclosureNotes: e.target.value }))}
- className="text-sm min-h-[72px]" placeholder="Confirm notes to the F/S include all required disclosures (provisions, contingent liabilities, non-compliance impacts) and that overall presentation is not obscured." />
+ className="flex-1 text-sm min-h-[72px]" placeholder="Confirm notes to the F/S include all required disclosures (provisions, contingent liabilities, non-compliance impacts) and that overall presentation is not obscured." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>
 
  {/* Other procedures */}
  <WorksheetSection title="Other procedures (specify)">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.otherProcedures} />
  <Textarea disabled={locked} value={data.otherProcedures} onChange={e => setData(d => ({...d, otherProcedures: e.target.value }))}
- className="text-sm min-h-[72px]" placeholder="Add any additional procedures performed in response to identified risks." />
+ className="flex-1 text-sm min-h-[72px]" placeholder="Add any additional procedures performed in response to identified risks." />
+ </div>
  </WorksheetSection>
 
  {/* Audit conclusion */}
@@ -560,11 +589,16 @@ export function Audit645Worksheet() {
  </div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
  <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))}
- className="text-sm min-h-[72px]"
+ className="flex-1 text-sm min-h-[72px]"
  placeholder="The audit evidence obtained is sufficient and appropriate to reduce the risk of material misstatement from litigation, claims and non-compliance to an acceptably low level." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>

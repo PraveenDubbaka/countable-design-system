@@ -18,6 +18,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 type YN = "Y" | "N" | "";
 
@@ -486,9 +487,14 @@ export function Audit680Worksheet() {
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
- <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The audit evidence obtained for applicable ASPE supplementary areas is sufficient and appropriate to reduce RMM to an acceptably low level." />
+ <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="The audit evidence obtained for applicable ASPE supplementary areas is sufficient and appropriate to reduce RMM to an acceptably low level." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>

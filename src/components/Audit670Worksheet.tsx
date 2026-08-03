@@ -20,6 +20,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 type YN = "Y" | "N" | "";
 
@@ -242,10 +243,15 @@ export function Audit670Worksheet() {
  <div><Label>JE population size</Label><Input disabled={locked} value={data.totalEntriesPopulation} onChange={e => setData(d => ({...d, totalEntriesPopulation: e.target.value }))} className="h-8 text-sm" placeholder="# of entries" /></div>
  <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={`md:col-span-4${isDemoEngagement && lukaHighlightFields.has('selectionRationale') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}`}>
  <Label>Selection rationale / attributes used</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.selectionRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('selectionRationale')}>
- <Textarea disabled={locked} value={data.selectionRationale} onChange={e => setData(d => ({...d, selectionRationale: e.target.value }))} className="text-sm min-h-[72px]"
+ <Textarea disabled={locked} value={data.selectionRationale} onChange={e => setData(d => ({...d, selectionRationale: e.target.value }))} className="flex-1 text-sm min-h-[72px]"
  placeholder="Document selection attributes: unusual preparers, seldom-used accounts, post-closing entries with limited descriptions, round numbers, accounts with estimates / reconciliation issues / intercompany, identified fraud-risk accounts." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>
@@ -281,9 +287,24 @@ export function Audit670Worksheet() {
  <td className="border-b border-border p-2"><Input disabled={locked} value={ent.preparer} onChange={e => updEntry(ent.id, { preparer: e.target.value })} className="h-8 text-sm" /></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={ent.approver} onChange={e => updEntry(ent.id, { approver: e.target.value })} className="h-8 text-sm" /></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={ent.amount} onChange={e => updEntry(ent.id, { amount: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.accounts} onChange={e => updEntry(ent.id, { accounts: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Dr / Cr accounts" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.attributes} onChange={e => updEntry(ent.id, { attributes: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Round amt, post-close, unusual account…" /></td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={ent.rationale} onChange={e => updEntry(ent.id, { rationale: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Business rationale & supporting doc reviewed" /></td>
+ <td className="border-b border-border p-2">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!ent.accounts} />
+ <Textarea disabled={locked} value={ent.accounts} onChange={e => updEntry(ent.id, { accounts: e.target.value })} className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Dr / Cr accounts" />
+ </div>
+ </td>
+ <td className="border-b border-border p-2">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!ent.attributes} />
+ <Textarea disabled={locked} value={ent.attributes} onChange={e => updEntry(ent.id, { attributes: e.target.value })} className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Round amt, post-close, unusual account…" />
+ </div>
+ </td>
+ <td className="border-b border-border p-2">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!ent.rationale} />
+ <Textarea disabled={locked} value={ent.rationale} onChange={e => updEntry(ent.id, { rationale: e.target.value })} className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Business rationale & supporting doc reviewed" />
+ </div>
+ </td>
  <td className="border-b border-border p-2">
  <Select disabled={locked} value={ent.outcome} onValueChange={v => updEntry(ent.id, { outcome: v as JeOutcome })}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -329,17 +350,26 @@ export function Audit670Worksheet() {
  <div><Label>Reported to TCWG?</Label><YNSelect value={data.reportToTcwg} onChange={v => setData(d => ({...d, reportToTcwg: v as YN }))} locked={locked} /></div>
  {data.extendToFullPeriod === "Y" && (
  <div className="md:col-span-3"><Label>Extended testing — basis & approach</Label>
- <Textarea disabled={locked} value={data.extendNotes} onChange={e => setData(d => ({...d, extendNotes: e.target.value }))} className="text-sm min-h-[64px]" placeholder="Rationale for extending; period covered; selection approach." />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.extendNotes} />
+ <Textarea disabled={locked} value={data.extendNotes} onChange={e => setData(d => ({...d, extendNotes: e.target.value }))} className="flex-1 text-sm min-h-[64px]" placeholder="Rationale for extending; period covered; selection approach." />
+ </div>
  </div>
  )}
  {data.managementOverrideIndicated === "Y" && (
  <div className="md:col-span-3"><Label>Management override — nature & response</Label>
- <Textarea disabled={locked} value={data.managementOverrideNotes} onChange={e => setData(d => ({...d, managementOverrideNotes: e.target.value }))} className="text-sm min-h-[72px]" placeholder="Update fraud assessment and RMM accordingly." />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.managementOverrideNotes} />
+ <Textarea disabled={locked} value={data.managementOverrideNotes} onChange={e => setData(d => ({...d, managementOverrideNotes: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="Update fraud assessment and RMM accordingly." />
+ </div>
  </div>
  )}
  {data.reportToTcwg === "Y" && (
  <div className="md:col-span-3"><Label>TCWG communication</Label>
- <Textarea disabled={locked} value={data.reportToTcwgNotes} onChange={e => setData(d => ({...d, reportToTcwgNotes: e.target.value }))} className="text-sm min-h-[64px]" placeholder="What was communicated, when, to whom." />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.reportToTcwgNotes} />
+ <Textarea disabled={locked} value={data.reportToTcwgNotes} onChange={e => setData(d => ({...d, reportToTcwgNotes: e.target.value }))} className="flex-1 text-sm min-h-[64px]" placeholder="What was communicated, when, to whom." />
+ </div>
  </div>
  )}
  </div>
@@ -354,10 +384,15 @@ export function Audit670Worksheet() {
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
- <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]"
+ <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="flex-1 text-sm min-h-[72px]"
  placeholder="JE testing performed addresses the presumed management-override fraud risk; evidence is sufficient and appropriate to reduce RMM to an acceptably low level." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>

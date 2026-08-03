@@ -16,6 +16,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 interface ConfirmRow {
  id: string;
@@ -204,14 +205,19 @@ export function Audit630Worksheet() {
  </Select>
  </td>
  <td className={td}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!r.nature} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && (rowIndex === 0 ? lukaFilledFields.has('confirm-0') : rowIndex === 1 ? lukaFilledFields.has('confirm-1') : false)}>
-   <Textarea disabled={locked} value={r.nature} onChange={e => upd(r.id, "nature", e.target.value)} className="min-h-[56px] text-sm resize-none" placeholder="e.g. top 15 customers by balance" />
+   <Textarea disabled={locked} value={r.nature} onChange={e => upd(r.id, "nature", e.target.value)} className="flex-1 min-h-[56px] text-sm resize-none" placeholder="e.g. top 15 customers by balance" />
  </LukaTypingRow>
+ </div>
+ </div>
  </td>
  <td className={td}><Input disabled={locked} value={r.itemsSent} onChange={e => upd(r.id, "itemsSent", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
  <td className={td}><Input disabled={locked} value={r.itemsReceived} onChange={e => upd(r.id, "itemsReceived", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
  <td className={td}><Input disabled={locked} value={r.amountConfirmed} onChange={e => upd(r.id, "amountConfirmed", e.target.value)} className="h-8 text-sm" placeholder="0" /></td>
- <td className={td}><AttributedComment value={r.exceptions} onChange={v => upd(r.id, "exceptions", v)} storageKey={`630-${engagementId ?? "def"}-exc-${r.id}`} placeholder="None / describe" disabled={locked} className="min-h-[56px] text-sm resize-none" /></td>
+ <td className={td}><div className="flex items-start gap-1.5"><GreenDot show={!!r.exceptions} /><div className="flex-1"><AttributedComment value={r.exceptions} onChange={v => upd(r.id, "exceptions", v)} storageKey={`630-${engagementId ?? "def"}-exc-${r.id}`} placeholder="None / describe" disabled={locked} className="min-h-[56px] text-sm resize-none" /></div></div></td>
  <td className={td}>
  <Select disabled={locked} value={r.psc} onValueChange={(v: "Y" | "N") => upd(r.id, "psc", v)}>
  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="—" /></SelectTrigger>
@@ -239,16 +245,24 @@ export function Audit630Worksheet() {
  <div className={CARD}>
  <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Control over the confirmation process</h3></div>
  <div className="p-6">
- <Textarea disabled={locked} value={data.controlSummary} onChange={e => setData(d => ({...d, controlSummary: e.target.value }))} className="text-sm min-h-[80px]" />
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.controlSummary} />
+ <Textarea disabled={locked} value={data.controlSummary} onChange={e => setData(d => ({...d, controlSummary: e.target.value }))} className="flex-1 text-sm min-h-[80px]" />
+ </div>
  </div>
  </div>
 
  <div className={CARD}>
  <div className="px-6 py-3.5 border-b border-border"><h3 className="text-sm font-semibold">Overall conclusion</h3></div>
  <div className={`p-6${isDemoEngagement && lukaHighlightFields.has('conclusion') ? ' border-l-2 border-violet-400 bg-violet-50/40' : ''}`}>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.overallConclusion} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('conclusion')}>
-   <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({...d, overallConclusion: e.target.value }))} className="text-sm min-h-[88px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
+   <Textarea disabled={locked} value={data.overallConclusion} onChange={e => setData(d => ({...d, overallConclusion: e.target.value }))} className="flex-1 text-sm min-h-[88px]" placeholder="Conclude on the sufficiency of evidence obtained from external confirmations." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
 

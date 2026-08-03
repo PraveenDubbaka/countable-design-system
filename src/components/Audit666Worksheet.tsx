@@ -21,6 +21,7 @@ import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { DEMO_LUKA_ACTIONS, DEMO_ENGAGEMENT_ID } from "@/components/demo/demoFixtureData";
 import { lukaSequentialFill } from '@/lib/lukaInlineFill';
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
+import { GreenDot } from '@/components/demo/GreenDot';
 
 type YN = "Y" | "N" | "";
 type YNNA = YN | "N/A";
@@ -281,7 +282,7 @@ export function Audit666Worksheet() {
  </SelectContent>
  </Select>
  </td>
- <td className="border-b border-border p-2"><Textarea disabled={locked} value={p.natureOfTxn} onChange={e => updParty(p.id, { natureOfTxn: e.target.value })} className="min-h-[44px] text-sm resize-none" placeholder="Loans, mgmt fees, leases, sales…" /></td>
+ <td className="border-b border-border p-2"><div className="flex items-start gap-1.5"><GreenDot show={!!p.natureOfTxn} /><Textarea disabled={locked} value={p.natureOfTxn} onChange={e => updParty(p.id, { natureOfTxn: e.target.value })} className="flex-1 min-h-[44px] text-sm resize-none" placeholder="Loans, mgmt fees, leases, sales…" /></div></td>
  <td className="border-b border-border p-2"><Input disabled={locked} value={p.amount} onChange={e => updParty(p.id, { amount: e.target.value })} className="h-8 text-sm font-mono text-right" inputMode="decimal" placeholder="0" /></td>
  <td className="border-b border-border p-2"><YNSelect value={p.armsLength} onChange={v => updParty(p.id, { armsLength: v as YNNA })} withNA locked={locked} /></td>
  <td className="border-b border-border p-2"><YNSelect value={p.outsideNormal} onChange={v => updParty(p.id, { outsideNormal: v as YN })} locked={locked} /></td>
@@ -318,14 +319,19 @@ export function Audit666Worksheet() {
  <div><Label>Communicated to TCWG?</Label><YNSelect value={data.tcwgCommunicated} onChange={v => setData(d => ({...d, tcwgCommunicated: v as YN }))} locked={locked} /></div>
  {data.unidentifiedFound === "Y" && (
  <div className="md:col-span-2"><Label>Unidentified RP transactions — nature & response</Label>
- <AttributedComment value={data.unidentifiedNotes} onChange={v => setData(d => ({...d, unidentifiedNotes: v }))} storageKey={`666-${engagementId ?? "def"}-unidentNotes`} placeholder="Describe the transactions, why not identified earlier, and updated RMM response." disabled={locked} className="text-sm min-h-[72px]" />
+ <div className="flex items-start gap-1.5"><GreenDot show={!!data.unidentifiedNotes} /><div className="flex-1"><AttributedComment value={data.unidentifiedNotes} onChange={v => setData(d => ({...d, unidentifiedNotes: v }))} storageKey={`666-${engagementId ?? "def"}-unidentNotes`} placeholder="Describe the transactions, why not identified earlier, and updated RMM response." disabled={locked} className="text-sm min-h-[72px]" /></div></div>
  </div>
  )}
  <div ref={firstFillRef as React.RefObject<HTMLDivElement>} className={`md:col-span-2${isDemoEngagement && lukaHighlightFields.has('tcwgCommunicationLog') ? ' border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}`}>
  <Label>TCWG communication log</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.tcwgCommunicationLog} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('tcwgCommunicationLog')}>
  <AttributedComment value={data.tcwgCommunicationLog} onChange={v => setData(d => ({...d, tcwgCommunicationLog: v }))} storageKey={`666-${engagementId ?? "def"}-tcwgLog`} placeholder="Summarise communication, date, attendees, matters discussed." disabled={locked} className="text-sm min-h-[64px]" />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>
@@ -335,15 +341,25 @@ export function Audit666Worksheet() {
  <div><Label>Disclosures adequate (AFRF)?</Label><YNSelect value={data.disclosuresAdequate} onChange={v => setData(d => ({...d, disclosuresAdequate: v as YNNA }))} withNA locked={locked} /></div>
  <div className={isDemoEngagement && lukaHighlightFields.has('disclosureNotes') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Disclosure notes</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.disclosureNotes} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('disclosureNotes')}>
  <AttributedComment value={data.disclosureNotes} onChange={v => setData(d => ({...d, disclosureNotes: v }))} storageKey={`666-${engagementId ?? "def"}-discNotes`} placeholder="Confirm notes meet AFRF related-party disclosure requirements." disabled={locked} className="text-sm min-h-[72px]" />
  </LukaTypingRow>
  </div>
  </div>
+ </div>
+ </div>
  </WorksheetSection>
 
  <WorksheetSection title="Other procedures (specify)">
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.otherProcedures} />
+ <div className="flex-1">
  <AttributedComment value={data.otherProcedures} onChange={v => setData(d => ({...d, otherProcedures: v }))} storageKey={`666-${engagementId ?? "def"}-otherProcs`} placeholder="Additional procedures performed in response to identified risks." disabled={locked} className="text-sm min-h-[72px]" />
+ </div>
+ </div>
  </WorksheetSection>
 
  <WorksheetSection title={`Audit conclusion (${ctx.standardPrefix} 550)`}
@@ -355,9 +371,14 @@ export function Audit666Worksheet() {
  <div><Label>Evidence sufficient & appropriate?</Label><YNSelect value={data.evidenceSufficient} onChange={v => setData(d => ({...d, evidenceSufficient: v as YN }))} locked={locked} /></div>
  <div className={isDemoEngagement && lukaHighlightFields.has('evidenceRationale') ? 'border-l-2 border-violet-400 bg-violet-50/40 pl-2' : ''}>
  <Label>Rationale</Label>
+ <div className="flex items-start gap-1.5">
+ <GreenDot show={!!data.evidenceRationale} />
+ <div className="flex-1">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('evidenceRationale')}>
- <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="text-sm min-h-[72px]" placeholder="The audit evidence obtained over related-party relationships and transactions is sufficient and appropriate to reduce RMM to an acceptably low level." />
+ <Textarea disabled={locked} value={data.evidenceRationale} onChange={e => setData(d => ({...d, evidenceRationale: e.target.value }))} className="flex-1 text-sm min-h-[72px]" placeholder="The audit evidence obtained over related-party relationships and transactions is sufficient and appropriate to reduce RMM to an acceptably low level." />
  </LukaTypingRow>
+ </div>
+ </div>
  </div>
  </div>
  </WorksheetSection>
