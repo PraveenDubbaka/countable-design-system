@@ -33,8 +33,6 @@ export interface TimeEntry {
  tbSection: string; // 'general' | 'risk-assess' | 'risk-resp'
  hours: number;
  description: string;
- entryType?: 'Billable' | 'Non Billable';
- category?: string;
  userName?: string;
  costOverride?: number;
 }

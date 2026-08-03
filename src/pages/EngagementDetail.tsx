@@ -74,7 +74,7 @@ import VersionHistoryPanel from "@/components/luka/workspace/versionControl/Vers
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
 import { useTimeEntries, fmtElapsed, CURRENT_USER, type TimeEntry, type RoleKey } from "@/lib/useTimeEntries";
-import { TimeTrackerPanel } from "@/components/TimeTrackerPanel";
+import { TimeTrackerDrawer } from "@/components/TimeTrackerDrawer";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Assignee, Checklist, Question } from "@/types/checklist";
 import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
@@ -1049,15 +1049,16 @@ export default function EngagementDetail() {
  const [pbcNotificationCount, setPBCNotificationCount] = useState(() =>
  engagementId ? getPBCNotificationCount(engagementId) : 0
  );
- // ── Global timer ────────────────────────────────────────────────────────────
+ // ── Global timer + time tracker drawer ──────────────────────────────────────
+ const IDLE_MS = 15 * 60 * 1000;
  const [globalTimerSec, setGlobalTimerSec] = useState(0);
  const [globalTimerRunning, setGlobalTimerRunning] = useState(false);
+ const [trackerDrawerOpen, setTrackerDrawerOpen] = useState(false);
+ const [idleSec, setIdleSec] = useState(0);
  const globalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
  const globalActiveRef = useRef(false);
+ const lastActivityRef = useRef(Date.now());
  const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
- const [trackerPanelOpen, setTrackerPanelOpen] = useState(false);
- const [idleSec, setIdleSec] = useState(0);
- const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
  useEffect(() => {
  if (!priorYearFile) return;
@@ -1140,19 +1141,33 @@ export default function EngagementDetail() {
 
  useEffect(() => () => { if (globalTimerRef.current) clearInterval(globalTimerRef.current); }, []);
 
- // Idle detection — track inactivity for display in TimeTrackerPanel
+ // Auto-start timer 600ms after mount
  useEffect(() => {
-  let idleCounter = 0;
-  const idleInterval = setInterval(() => { idleCounter++; setIdleSec(idleCounter); }, 1000);
-  const resetIdle = () => { idleCounter = 0; setIdleSec(0); };
-  window.addEventListener('mousemove', resetIdle, { passive: true });
-  window.addEventListener('keydown', resetIdle, { passive: true });
-  return () => {
-   clearInterval(idleInterval);
-   window.removeEventListener('mousemove', resetIdle);
-   window.removeEventListener('keydown', resetIdle);
-   if (idleRef.current) clearTimeout(idleRef.current);
-  };
+   const t = setTimeout(() => {
+     if (!globalActiveRef.current) {
+       globalActiveRef.current = true;
+       setGlobalTimerRunning(true);
+       globalTimerRef.current = setInterval(() => {
+         if (document.visibilityState !== 'visible') return;
+         const idle = Date.now() - lastActivityRef.current >= IDLE_MS;
+         if (idle) setIdleSec(s => s + 1);
+         else setGlobalTimerSec(s => s + 1);
+       }, 1000);
+     }
+   }, 600);
+   return () => clearTimeout(t);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
+
+ // Idle detection
+ useEffect(() => {
+   const touch = () => { lastActivityRef.current = Date.now(); };
+   window.addEventListener('mousemove', touch);
+   window.addEventListener('keydown', touch);
+   return () => {
+     window.removeEventListener('mousemove', touch);
+     window.removeEventListener('keydown', touch);
+   };
  }, []);
  // ────────────────────────────────────────────────────────────────────────────
 
@@ -2359,28 +2374,14 @@ export default function EngagementDetail() {
  </div>
  {/* Action buttons row */}
  <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
- {/* Global timer — always visible on all pages */}
- <div className="flex items-center gap-2 shrink-0">
+ {/* Time tracker pill — opens TimeTrackerDrawer */}
  <button
-  onClick={() => setTrackerPanelOpen(true)}
-  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
-  title="View time tracker"
+ onClick={() => setTrackerDrawerOpen(true)}
+ className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-colors"
  >
-  <Timer className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-  <span className="text-xs font-mono font-medium text-emerald-700">
-   {fmtElapsed(globalTimerSec)}
-  </span>
+ <Timer className="h-3.5 w-3.5" />
+ <span className="font-mono tabular-nums">{fmtElapsed(globalTimerSec)}</span>
  </button>
- <Button
-  variant={globalTimerRunning ? 'destructive' : 'secondary'}
-  size="sm"
-  className="h-7 gap-1.5 text-xs"
-  onClick={globalTimerRunning ? toggleGlobalTimer : toggleGlobalTimer}
- >
-  {globalTimerRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-  {globalTimerRunning ? 'Stop & Log' : 'Start Time Log'}
- </Button>
- </div>
  <div className="flex items-center gap-1">
  {checklistKey?.startsWith('node-note-') && (
   <>
@@ -3311,36 +3312,30 @@ export default function EngagementDetail() {
  noteName={notePanel?.noteName ?? ''}
  engId={engagementId ?? ''}
  />
- <TimeTrackerPanel
- open={trackerPanelOpen}
- onClose={() => setTrackerPanelOpen(false)}
- engagementId={engagementId ?? 'AUD-NPM-Dec312025'}
- engagementLabel={engagementId ?? 'AUD-NPM-Dec312025'}
- clientName="Northline Precision Manufacturing"
+ <TimeTrackerDrawer
+ open={trackerDrawerOpen}
+ onClose={() => setTrackerDrawerOpen(false)}
+ engagementId={engagementId ?? ''}
+ clientName={clientName}
  activeSec={globalTimerSec}
  idleSec={idleSec}
  onLogTime={() => {
-  if (globalTimerRunning) {
-   clearInterval(globalTimerRef.current!);
-   globalActiveRef.current = false;
-   setGlobalTimerRunning(false);
    const hrs = Math.round(globalTimerSec / 900) / 4;
    if (hrs > 0) {
-    addTimeEntry({
-     id: `auto-${Date.now()}`,
-     date: new Date().toISOString().split('T')[0],
-     roleKey: CURRENT_USER.roleKey as RoleKey,
-     tbRowId: 'g4',
-     tbSection: 'general',
-     hours: hrs,
-     description: `Session logged (${fmtElapsed(globalTimerSec)})`,
-     entryType: 'Billable',
-     category: 'General',
-    } as TimeEntry);
-    setGlobalTimerSec(0);
+     addTimeEntry({
+       id: `e-${Date.now()}`,
+       date: new Date().toISOString().slice(0, 10),
+       roleKey: CURRENT_USER.roleKey as RoleKey,
+       userName: CURRENT_USER.name,
+       tbRowId: 'g1',
+       tbSection: 'general',
+       hours: hrs,
+       description: 'Time tracked via timer',
+     } as TimeEntry);
    }
-  }
-  setTrackerPanelOpen(false);
+   setGlobalTimerSec(0);
+   setIdleSec(0);
+   setTrackerDrawerOpen(false);
  }}
  />
  </>;
