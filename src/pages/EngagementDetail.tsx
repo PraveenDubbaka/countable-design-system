@@ -2268,13 +2268,7 @@ export default function EngagementDetail() {
  </span>
  )}
  </div>
- <ExpandableIconButton
- variant="secondary"
- size="sm"
- icon={<ClipboardList className="h-4 w-4" />}
- label="PBC List"
- onClick={() => setShowRequestPanel(true)}
- />
+ {/* PBC List button hidden */}
  {inlineHeaderActions.map(action => (
  <ExpandableIconButton
  key={action.id}
