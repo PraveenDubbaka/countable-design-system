@@ -1600,7 +1600,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  if (!engId) return;
  try {
  const raw = localStorage.getItem(`engagement-node-docs-${engId}`);
- setNodeDocuments(raw ? JSON.parse(raw) : {});
+ const defaultDocs = {
+ 'aud-pl-sec': [{ id: 'note-aud-pl-sec-default', name: 'PL-1-Planning Notes', type: 'note' as const }],
+ 'aud-us-pl-sec': [{ id: 'note-aud-us-pl-sec-default', name: 'PL-1-Planning Notes', type: 'note' as const }],
+ };
+ setNodeDocuments(raw ? JSON.parse(raw) : defaultDocs);
  } catch { setNodeDocuments({}); }
  };
  load();
