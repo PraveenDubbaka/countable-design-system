@@ -324,7 +324,13 @@ function EngagementProgressPanel({ progress }: {
     <div className="flex-1 min-w-0">
      <div className="flex items-center gap-2 flex-wrap">
       <span className="text-sm font-semibold text-foreground">File Progress</span>
-      <span className="text-xs text-muted-foreground">· {progress.totalCompleted} of {progress.totalItems} sections concluded</span>
+      <div className="flex items-center gap-3">
+       <span className="text-xs text-muted-foreground">· {progress.totalCompleted} of {progress.totalItems} concluded</span>
+       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block" />
+        {progress.totalItems - progress.totalCompleted} files pending
+       </span>
+      </div>
       {progress.pendingRequests > 0 && (
        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5 ml-1">
         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
@@ -467,13 +473,14 @@ export default function Dashboard() {
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Year End</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Integrations</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
+ <th className="text-left px-4 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Progress</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  {filteredDashboardEngagements.length === 0 && searchQuery.trim() && (
  <tr>
- <td colSpan={6} className="px-6 py-16 text-center">
+ <td colSpan={7} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
  <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
  <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
@@ -497,6 +504,22 @@ export default function Dashboard() {
  {engagement.status}
  </Badge>
  </td>
+ <td className="px-4 py-2 whitespace-nowrap">
+ {(() => {
+ const p = calcEngagementProgress(engagement.id);
+ return (
+ <div className="flex items-center gap-2">
+ <div className="w-20 h-1.5 rounded-full bg-muted overflow-hidden">
+ <div className="h-full rounded-full bg-violet-500 transition-all duration-700" style={{ width: `${p.overall}%` }} />
+ </div>
+ <span className="text-xs font-semibold text-violet-600 tabular-nums w-8">{p.overall}%</span>
+ {p.pendingRequests > 0 && (
+ <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" title={`${p.pendingRequests} requests pending`} />
+ )}
+ </div>
+ );
+ })()}
+ </td>
  <td className="px-6 py-2 whitespace-nowrap">
  <div className="flex items-center gap-2">
  <span className="text-xs font-medium text-muted-foreground px-2 py-1 bg-muted rounded-lg">EL</span>
@@ -509,7 +532,7 @@ export default function Dashboard() {
  <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/send">
  <Send className="h-4 w-4 text-primary group-hover/send:icon-external" />
  </button>
- <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/chev" onClick={e => { e.stopPropagation(); toggleExpand(engagement.id); }}>
+ <button className="p-1.5 hover:bg-muted rounded-lg transition-colors group/chev relative" onClick={e => { e.stopPropagation(); toggleExpand(engagement.id); }} title={expandedEngagement === engagement.id ? 'Hide detail' : 'View detail'}>
  <ChevronDown className={cn("h-4 w-4 text-primary transition-transform duration-200", expandedEngagement === engagement.id && "rotate-180")} />
  </button>
  </div>
@@ -519,7 +542,7 @@ export default function Dashboard() {
   const progress = calcEngagementProgress(engagement.id);
   return (
    <tr key={`${engagement.id}-progress`}>
-    <td colSpan={6} className="p-0">
+    <td colSpan={7} className="p-0">
      <EngagementProgressPanel progress={progress} />
     </td>
    </tr>
