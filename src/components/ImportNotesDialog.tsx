@@ -90,20 +90,55 @@ function makeDateStr(daysAgo: number): string {
 }
 
 const DEMO_MEETINGS: Record<string, DemoMeeting[]> = {
+ // Current month — recent
  [makeDateStr(1)]: [
   { id: "meeting-planning", title: "Team Planning Discussion — Northline Precision", duration: "1h 15m", attendeesPreview: "M. Thompson, L. Garcia +3" },
  ],
+ [makeDateStr(2)]: [
+  { id: "meeting-pbc", title: "PBC List Walkthrough — Client Kick-off", duration: "45m", attendeesPreview: "L. Garcia, J. Reyes (CFO)" },
+ ],
+ // Prior month — week 1
  [makeDateStr(3)]: [
-  { id: "meeting-status", title: "Engagement Status Update", duration: "30m", attendeesPreview: "L. Garcia, D. Okonkwo" },
+  { id: "meeting-fraud-mgmt", title: "Fraud Inquiry — Management Interview (Part A)", duration: "1h", attendeesPreview: "M. Thompson, J. Reyes, K. Osei (Controller)" },
+ ],
+ [makeDateStr(5)]: [
+  { id: "meeting-going-concern", title: "Going Concern Discussion — Management Inquiry", duration: "45m", attendeesPreview: "M. Thompson, L. Garcia, J. Reyes (CFO)" },
  ],
  [makeDateStr(7)]: [
-  { id: "meeting-board", title: "Board of Directors Meeting", duration: "2h", attendeesPreview: "J. Reyes + board members" },
+  { id: "meeting-board", title: "Board of Directors Meeting", duration: "2h", attendeesPreview: "J. Reyes + board (5 members)" },
+  { id: "meeting-audit-pre", title: "Audit Committee Pre-meeting Briefing", duration: "30m", attendeesPreview: "M. Thompson, Audit Committee Chair" },
+ ],
+ // Prior month — week 2
+ [makeDateStr(10)]: [
+  { id: "meeting-audit-committee", title: "Audit Committee Meeting", duration: "1h 30m", attendeesPreview: "M. Thompson, J. Reyes +4" },
+ ],
+ [makeDateStr(13)]: [
+  { id: "meeting-it-walkthrough", title: "IT Environment Walkthrough — NetSuite Migration", duration: "1h", attendeesPreview: "D. Okonkwo, IT Manager" },
  ],
  [makeDateStr(14)]: [
-  { id: "meeting-audit-committee", title: "Audit Committee Meeting", duration: "1h 30m", attendeesPreview: "M. Thompson, J. Reyes +4" },
+  { id: "meeting-revenue-wt", title: "Revenue Recognition Walkthrough", duration: "1h 30m", attendeesPreview: "Senior 1, Controller" },
+  { id: "meeting-fraud-tcwg", title: "Fraud Inquiry — TCWG Interview (Part B)", duration: "45m", attendeesPreview: "M. Thompson, Audit Committee Chair" },
+ ],
+ // Prior month — week 3
+ [makeDateStr(17)]: [
+  { id: "meeting-payroll-wt", title: "Payroll Process Walkthrough — Ceridian", duration: "1h", attendeesPreview: "Senior 2, Payroll Manager" },
+ ],
+ [makeDateStr(21)]: [
+  { id: "meeting-prior-file", title: "Prior Year File Review Discussion", duration: "45m", attendeesPreview: "M. Thompson, L. Garcia, S. Whitfield" },
+ ],
+ // Prior month — week 4
+ [makeDateStr(24)]: [
+  { id: "meeting-partner-call", title: "Partner/Client Planning Call", duration: "30m", attendeesPreview: "R. Chandra (Partner), J. Reyes (CFO)" },
  ],
  [makeDateStr(28)]: [
   { id: "meeting-agm", title: "Shareholders / Annual General Meeting", duration: "3h", attendeesPreview: "Management + shareholders" },
+ ],
+ // Two months prior
+ [makeDateStr(33)]: [
+  { id: "meeting-initial", title: "Initial Client Meeting — Northline Precision", duration: "1h", attendeesPreview: "R. Chandra, M. Thompson, J. Reyes" },
+ ],
+ [makeDateStr(40)]: [
+  { id: "meeting-eng-letter", title: "Engagement Letter Discussion & Acceptance", duration: "30m", attendeesPreview: "R. Chandra (Partner), J. Reyes (CFO)" },
  ],
 };
 
