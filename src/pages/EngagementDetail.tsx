@@ -791,14 +791,14 @@ const WORKSHEET_KEYS = new Set([
 ]);
 
 const FS_PAGE_KEYS = new Set([
- 'aud-fs-cover', 'aud-fs-toc', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
+ 'aud-fs-cover', 'aud-fs-toc', 'aud-fs-iar', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
  'aud-us-fs-cover', 'aud-us-fs-toc', 'aud-us-fs-bs', 'aud-us-fs-is', 'aud-us-fs-cf', 'aud-us-fs-eq', 'aud-us-fs-notes',
  // Compilation / Review FS
  'fs-cover', 'fs-toc', 'fs-comp', 'fs-bs', 'fs-is', 'fs-cf', 'fs-notes',
 ]);
 const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
- 'aud-fs-cover': 'cover', 'aud-fs-toc': 'toc', 'aud-fs-bs': 'bs',
- 'aud-fs-is': 'is', 'aud-fs-cf': 'cf', 'aud-fs-eq': 'eq', 'aud-fs-notes': 'notes',
+ 'aud-fs-cover': 'cover', 'aud-fs-toc': 'toc', 'aud-fs-iar': 'auditor-report',
+ 'aud-fs-bs': 'bs', 'aud-fs-is': 'is', 'aud-fs-cf': 'cf', 'aud-fs-eq': 'eq', 'aud-fs-notes': 'notes',
  'aud-us-fs-cover': 'cover', 'aud-us-fs-toc': 'toc', 'aud-us-fs-bs': 'bs',
  'aud-us-fs-is': 'is', 'aud-us-fs-cf': 'cf', 'aud-us-fs-eq': 'eq', 'aud-us-fs-notes': 'notes',
  // Compilation / Review FS
@@ -809,6 +809,7 @@ const FS_SCREEN_NAMES: Record<FSPageType, string> = {
  'cover': 'Cover Page', 'toc': 'Table of Contents',
  'bs': 'Balance Sheet', 'is': 'Statement of Income Loss',
  'cf': 'Statement of Cash Flows', 'eq': 'Statement of Equity',
+ 'auditor-report': "Independent Auditor's Report",
  'notes': 'Notes to Financial Information', 'comp-report': 'Compilation Report',
 };
 

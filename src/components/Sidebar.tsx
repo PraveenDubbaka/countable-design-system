@@ -2473,6 +2473,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  children: [
  { id: "aud-fs-cover", label: "Cover Page", icon: "doc", route: "checklist/aud-fs-cover" },
  { id: "aud-fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/aud-fs-toc" },
+ { id: "aud-fs-iar", label: "Independent Auditor's Report", icon: "doc", route: "checklist/aud-fs-iar" },
  { id: "aud-fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/aud-fs-bs" },
  { id: "aud-fs-is", label: "Statement of Income (Loss) and Retained Earnings (Deficit)", icon: "doc", route: "checklist/aud-fs-is" },
  { id: "aud-fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/aud-fs-cf" },

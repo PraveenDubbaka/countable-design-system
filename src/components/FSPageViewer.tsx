@@ -1,12 +1,13 @@
 import CoverPagePreview from "@/components/dashboard/workspace/CoverPagePreview";
 import TableOfContentsPreview from "@/components/dashboard/workspace/TableOfContentsPreview";
 import CompilationReportPreview from "@/components/dashboard/workspace/CompilationReportPreview";
+import AuditorReportPreview from "@/components/dashboard/workspace/AuditorReportPreview";
 import BalanceSheetPreview from "@/components/dashboard/workspace/BalanceSheetPreview";
 import IncomeStatementPreview from "@/components/dashboard/workspace/IncomeStatementPreview";
 import CashFlowsPreview from "@/components/dashboard/workspace/CashFlowsPreview";
 import NotesPreview from "@/components/dashboard/workspace/NotesPreview";
 
-export type FSPageType = 'cover' | 'toc' | 'bs' | 'is' | 'cf' | 'eq' | 'notes' | 'comp-report';
+export type FSPageType = 'cover' | 'toc' | 'bs' | 'is' | 'cf' | 'eq' | 'notes' | 'comp-report' | 'auditor-report';
 
 interface FSPageViewerProps {
  pageType: FSPageType;
@@ -26,6 +27,8 @@ const FSPageContent = ({ pageType, isEditing, isCompilation }: FSPageViewerProps
  return <TableOfContentsPreview />;
  case 'comp-report':
  return <CompilationReportPreview isEditMode={isEditing} />;
+ case 'auditor-report':
+ return <AuditorReportPreview />;
  case 'bs':
  return <BalanceSheetPreview isEditMode={isEditing} />;
  case 'is':
