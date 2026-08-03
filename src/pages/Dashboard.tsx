@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { Search, ChevronDown, MessageSquare, Send, AlertCircle, Layers, Briefcase, Loader, CheckCircle2, Archive } from "lucide-react";
@@ -293,6 +293,91 @@ function calcEngagementProgress(engagementId: string): { sections: SectionProgre
  return { sections, overall: totalItems === 0 ? 0 : Math.round((totalCompleted / totalItems) * 100), totalCompleted, totalItems, pendingRequests: 0 };
 }
 
+function EngagementProgressPanel({ progress }: {
+ progress: ReturnType<typeof calcEngagementProgress>
+}) {
+ const [animated, setAnimated] = useState(false);
+
+ useEffect(() => {
+  const t = requestAnimationFrame(() => setAnimated(true));
+  return () => cancelAnimationFrame(t);
+ }, []);
+
+ const circumference = 2 * Math.PI * 20;
+
+ return (
+  <div className="px-6 pb-5 pt-2" style={{ background: 'linear-gradient(to bottom, hsl(var(--muted)/0.4), transparent)' }}>
+   <div className="flex items-center gap-4 mb-4 px-1">
+    <div className="relative w-14 h-14 shrink-0">
+     <svg className="w-14 h-14 -rotate-90" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="hsl(var(--muted))" strokeWidth="3.5" />
+      <circle cx="24" cy="24" r="20" fill="none" stroke="#7C3AED" strokeWidth="3.5" strokeLinecap="round"
+       strokeDasharray={circumference}
+       strokeDashoffset={circumference * (1 - (animated ? progress.overall / 100 : 0))}
+       style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)' }}
+      />
+     </svg>
+     <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <span className="text-sm font-bold text-violet-600 leading-none">{progress.overall}%</span>
+     </div>
+    </div>
+    <div className="flex-1 min-w-0">
+     <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-sm font-semibold text-foreground">File Progress</span>
+      <span className="text-xs text-muted-foreground">· {progress.totalCompleted} of {progress.totalItems} sections concluded</span>
+      {progress.pendingRequests > 0 && (
+       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5 ml-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+        {progress.pendingRequests} requests pending
+       </span>
+      )}
+     </div>
+     <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden w-full max-w-xs">
+      <div className="h-full rounded-full bg-violet-500"
+       style={{ width: animated ? `${progress.overall}%` : '0%', transition: 'width 1s cubic-bezier(0.4,0,0.2,1)' }}
+      />
+     </div>
+    </div>
+   </div>
+   <div className="space-y-2">
+    {progress.sections.map((section, idx) => (
+     <div key={section.key} className="flex items-center gap-3"
+      style={{
+       opacity: animated ? 1 : 0,
+       transform: animated ? 'translateY(0)' : 'translateY(6px)',
+       transition: `opacity 0.4s ease ${0.1 + idx * 0.06}s, transform 0.4s ease ${0.1 + idx * 0.06}s`,
+      }}
+     >
+      <span className="text-[11px] font-medium text-muted-foreground w-36 shrink-0 truncate">{section.label}</span>
+      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+       <div className="h-full rounded-full"
+        style={{
+         width: animated ? `${section.pct}%` : '0%',
+         backgroundColor: section.color,
+         transition: `width 0.9s cubic-bezier(0.4,0,0.2,1) ${0.15 + idx * 0.07}s`,
+        }}
+       />
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+       <span className="text-[11px] font-semibold w-8 text-right" style={{ color: section.pct === 100 ? section.color : undefined }}>
+        {section.pct === 100 ? '✓' : `${section.pct}%`}
+       </span>
+       <span className="text-[10px] text-muted-foreground w-8 text-right">{section.completed}/{section.total}</span>
+       {section.pendingRequests > 0 ? (
+        <span className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-1.5 py-px font-medium w-16 text-center">
+         {section.pendingRequests} pending
+        </span>
+       ) : (
+        <span className="w-16" />
+       )}
+      </div>
+     </div>
+    ))}
+   </div>
+  </div>
+ );
+}
+
 export default function Dashboard() {
  const navigate = useNavigate();
  const { engagements: allEngagementsRaw } = useEngagements();
@@ -434,54 +519,8 @@ export default function Dashboard() {
   const progress = calcEngagementProgress(engagement.id);
   return (
    <tr key={`${engagement.id}-progress`}>
-    <td colSpan={6} className="px-0 pb-0 pt-0 bg-muted/30">
-     <div className="mx-6 mb-4 mt-1 rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/40">
-       <div className="flex items-center gap-3">
-        <span className="text-sm font-semibold text-foreground">File Progress</span>
-        <span className="text-xs text-muted-foreground">{progress.totalCompleted} of {progress.totalItems} sections concluded</span>
-       </div>
-       <div className="flex items-center gap-4">
-        {progress.pendingRequests > 0 && (
-         <div className="flex items-center gap-1.5">
-          <div className="h-2 w-2 rounded-full bg-amber-400" />
-          <span className="text-xs font-medium text-amber-600">{progress.pendingRequests} requests pending</span>
-         </div>
-        )}
-        <div className="flex items-center gap-2">
-         <div className="w-32 h-2 rounded-full bg-muted overflow-hidden">
-          <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${progress.overall}%` }} />
-         </div>
-         <span className="text-sm font-bold text-primary w-10 text-right">{progress.overall}%</span>
-        </div>
-       </div>
-      </div>
-      <div className="grid grid-cols-7 divide-x divide-border">
-       {progress.sections.map(section => (
-        <div key={section.key} className="flex flex-col items-center px-3 py-3 gap-2 hover:bg-muted/30 transition-colors">
-         <div className="relative w-11 h-11">
-          <svg className="w-11 h-11 -rotate-90" viewBox="0 0 44 44">
-           <circle cx="22" cy="22" r="18" fill="none" stroke="currentColor" strokeWidth="3.5" className="text-muted" />
-           <circle cx="22" cy="22" r="18" fill="none" stroke={section.color} strokeWidth="3.5" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 18}`} strokeDashoffset={`${2 * Math.PI * 18 * (1 - section.pct / 100)}`} className="transition-all duration-700" />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-           <span className="text-[10px] font-bold" style={{ color: section.pct === 100 ? section.color : undefined }}>
-            {section.pct === 100 ? '✓' : `${section.pct}%`}
-           </span>
-          </div>
-         </div>
-         <span className="text-[10px] font-medium text-foreground text-center leading-tight">{section.label}</span>
-         <span className="text-[9px] text-muted-foreground">{section.completed}/{section.total}</span>
-         {section.pendingRequests > 0 && (
-          <div className="flex items-center gap-1">
-           <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-           <span className="text-[9px] text-amber-600 font-medium">{section.pendingRequests} pending</span>
-          </div>
-         )}
-        </div>
-       ))}
-      </div>
-     </div>
+    <td colSpan={6} className="p-0">
+     <EngagementProgressPanel progress={progress} />
     </td>
    </tr>
   );
