@@ -1162,6 +1162,20 @@ ${note.blocks.map(b => {
   className="fixed bottom-16 left-1/2 -translate-x-1/2 w-[520px] max-w-[calc(100%-3rem)] z-50 shadow-xl"
   style={{ padding: '1.5px', borderRadius: '14px', background: 'linear-gradient(135deg, #8649F1, #B084FF)' }}
  >
+  {/* Close button attached to top-right corner */}
+  <button
+   onClick={() => { setShowAiFloating(false); setAiInput(''); }}
+   style={{
+    position: 'absolute', top: -10, right: -10,
+    width: 22, height: 22, borderRadius: '50%',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: 'linear-gradient(135deg, #8649F1, #B084FF)',
+    border: '1.5px solid hsl(var(--background))',
+    cursor: 'pointer', zIndex: 1,
+    color: '#fff',
+   }}>
+   <X width={11} height={11} strokeWidth={2.5} />
+  </button>
   <div className="luka-input-wrapper" style={{ border: 'none', borderRadius: '12.5px', padding: '0.75rem' }}>
    <textarea
     autoFocus
@@ -1176,27 +1190,24 @@ ${note.blocks.map(b => {
     className="luka-input luka-input-autoresize"
     style={{ maxHeight: 120 }}
    />
-   <div className="flex items-center justify-between pt-1 px-1">
-    <button onClick={() => { setShowAiFloating(false); setAiInput(''); }} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-1">Cancel</button>
-    <div className="flex items-center gap-1.5">
-     <motion.button
-      whileHover={aiInput.trim() ? { scale: 1.06 } : {}}
-      whileTap={aiInput.trim() ? { scale: 0.9 } : {}}
-      onClick={() => { handleAiSend(); setShowAiFloating(false); }}
-      disabled={!aiInput.trim() || isAiLoading}
-      style={{
-       width: 30, height: 30, borderRadius: 8,
-       display: 'flex', alignItems: 'center', justifyContent: 'center',
-       background: 'hsl(var(--background))',
-       border: '1px solid hsl(var(--border) / 0.6)',
-       boxShadow: 'rgba(0,0,0,0.06) 0px 1px 3px',
-       cursor: aiInput.trim() ? 'pointer' : 'default',
-       color: aiInput.trim() ? '#8649F1' : 'hsl(var(--muted-foreground))',
-       opacity: aiInput.trim() ? 1 : 0.45,
-      }}>
-      {isAiLoading ? <Loader2 width={15} height={15} className="animate-spin" style={{ color: '#8649F1' }} /> : <Wand2 width={15} height={15} />}
-     </motion.button>
-    </div>
+   <div className="flex items-center justify-end pt-1 px-1">
+    <motion.button
+     whileHover={aiInput.trim() ? { scale: 1.06 } : {}}
+     whileTap={aiInput.trim() ? { scale: 0.9 } : {}}
+     onClick={() => { handleAiSend(); setShowAiFloating(false); }}
+     disabled={!aiInput.trim() || isAiLoading}
+     style={{
+      width: 30, height: 30, borderRadius: 8,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'hsl(var(--background))',
+      border: '1px solid hsl(var(--border) / 0.6)',
+      boxShadow: 'rgba(0,0,0,0.06) 0px 1px 3px',
+      cursor: aiInput.trim() ? 'pointer' : 'default',
+      color: aiInput.trim() ? '#8649F1' : 'hsl(var(--muted-foreground))',
+      opacity: aiInput.trim() ? 1 : 0.45,
+     }}>
+     {isAiLoading ? <Loader2 width={15} height={15} className="animate-spin" style={{ color: '#8649F1' }} /> : <Wand2 width={15} height={15} />}
+    </motion.button>
    </div>
   </div>
  </motion.div>
