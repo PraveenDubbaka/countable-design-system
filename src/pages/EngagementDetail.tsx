@@ -2423,7 +2423,7 @@ export default function EngagementDetail() {
   </div>
  </div>
  )}
- <div className="flex items-center gap-1">
+ <div className="flex items-center gap-1 ml-auto">
  {checklistKey?.startsWith('node-note-') && (
   <>
   <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5"
