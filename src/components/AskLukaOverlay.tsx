@@ -830,7 +830,8 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  setPBCViewingDoc(null);
  setPBCEditing(false);
  setPBCEditDirty(false);
- setThreadsSidebarCollapsed(false);
+ setIsFullscreen(false);
+ setThreadsSidebarCollapsed(true);
  }
  if (config.flow === "pbc-request") {
  if (config.engagementId) {
