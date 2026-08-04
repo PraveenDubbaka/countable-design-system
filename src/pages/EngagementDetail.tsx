@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Pause, Play } from "lucide-react";
 import { getEnabled, subscribeEnabled, registerEngagement, unregisterEngagement, updateEngagementTime } from "@/lib/timeTrackerStore";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
@@ -1061,6 +1061,8 @@ export default function EngagementDetail() {
  const isIdleRef = useRef(false);
  const activeSecRef = useRef(0);
  const idleSecRef = useRef(0);
+ const [isPaused, setIsPaused] = useState(false);
+ const isPausedRef = useRef(false);
  const [budgetHrs, setBudgetHrs] = useState(0);
  const [budgetBySection, setBudgetBySection] = useState<Record<string, number>>({});
  const { entries } = useTimeEntries(engagementId ?? "default");
@@ -1115,6 +1117,28 @@ export default function EngagementDetail() {
  return () => window.removeEventListener('open-note-panel', handler);
  }, [engagementId]);
 
+ function handlePauseResume() {
+ if (isPausedRef.current) {
+  isPausedRef.current = false;
+  setIsPaused(false);
+  isIdleRef.current = false;
+  setIsIdle(false);
+  lastActivityRef.current = Date.now();
+  activeTimerRef.current = setInterval(() => {
+   activeSecRef.current += 1;
+   setActiveSec(activeSecRef.current);
+   if (engagementId) updateEngagementTime(engagementId, activeSecRef.current, idleSecRef.current, false);
+  }, 1000);
+ } else {
+  isPausedRef.current = true;
+  setIsPaused(true);
+  if (activeTimerRef.current) { clearInterval(activeTimerRef.current); activeTimerRef.current = null; }
+  if (idleTimerRef.current) { clearInterval(idleTimerRef.current); idleTimerRef.current = null; }
+  isIdleRef.current = false;
+  setIsIdle(false);
+ }
+ }
+
  useEffect(() => subscribeEnabled(setTtEnabled), []);
 
  // Auto-start time tracking when engagement mounts (only when enabled in Settings)
@@ -1158,6 +1182,7 @@ export default function EngagementDetail() {
  }
  }, 1000);
  const resetActivity = () => {
+ if (isPausedRef.current) return;
  lastActivityRef.current = Date.now();
  if (isIdleRef.current) {
  isIdleRef.current = false;
@@ -2410,8 +2435,8 @@ export default function EngagementDetail() {
  {/* Time tracker pill */}
  {ttEnabled && (
  <div className="flex items-center gap-2 shrink-0">
-  <div className={`flex items-center gap-1.5 h-7 px-3 rounded-full border text-xs font-medium whitespace-nowrap font-mono tabular-nums ${isIdle ? 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400' : 'bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-400'}`}>
-   <span className={`w-1.5 h-1.5 rounded-full shrink-0 animate-pulse ${isIdle ? 'bg-amber-500' : 'bg-red-500'}`} />
+  <div className={`flex items-center gap-1.5 h-7 px-3 rounded-full border text-xs font-medium whitespace-nowrap font-mono tabular-nums ${isPaused ? 'bg-muted border-border text-muted-foreground' : isIdle ? 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400' : 'bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-400'}`}>
+   {!isPaused && <span className={`w-1.5 h-1.5 rounded-full shrink-0 animate-pulse ${isIdle ? 'bg-amber-500' : 'bg-red-500'}`} />}
    {(() => {
     const s = isIdle ? idleSec : activeSec;
     const h = Math.floor(s / 3600).toString().padStart(2, '0');
@@ -2419,7 +2444,15 @@ export default function EngagementDetail() {
     const sec = (s % 60).toString().padStart(2, '0');
     return `${h}h:${m}m:${sec}s`;
    })()}
-   {isIdle && <span className="font-sans font-normal opacity-70 ml-0.5">idle</span>}
+   {isPaused && <span className="font-sans font-normal opacity-60 ml-0.5">paused</span>}
+   {!isPaused && isIdle && <span className="font-sans font-normal opacity-70 ml-0.5">idle</span>}
+   <button
+    onClick={handlePauseResume}
+    title={isPaused ? 'Resume timer' : 'Pause timer'}
+    className="ml-1 -mr-1 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+   >
+    {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+   </button>
   </div>
  </div>
  )}
