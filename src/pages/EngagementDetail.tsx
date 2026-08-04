@@ -81,7 +81,7 @@ import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
 import { AssignmentDialog } from "@/components/AssignmentDialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { exportWorksheetAsPDF, exportWorksheetAsWord } from "@/lib/worksheetExport";
-import { openLukaWithConfig } from "@/lib/lukaOpenStore";
+import { openLukaWithConfig, setLukaOpen as setStoreLukaOpen } from "@/lib/lukaOpenStore";
 import { clearPBCNotifications, getPBCNotificationCount } from "@/lib/pbcRequestStore";
 import { subscribeToChecklistSync, dispatchChecklistSync } from "@/lib/checklistSync";
 import { toast } from "sonner";
@@ -1102,6 +1102,7 @@ export default function EngagementDetail() {
  const client = engagementId ? engagementsData[engagementId]?.client : undefined;
  const engLabel = [client, engagementId].filter(Boolean).join(' · ');
  setLukaPap501Config({ engLabel, sources: ce.detail.sources, isRegenerate: ce.detail.isRegenerate });
+ setStoreLukaOpen(false);
  setLukaOpen(true);
  };
  window.addEventListener('pap501-generate', handler);
@@ -1617,6 +1618,7 @@ export default function EngagementDetail() {
  } else {
  setLukaFillSummary(result);
  setLukaAutoFillConfig(null);
+ setStoreLukaOpen(false);
  setLukaOpen(true);
  }
  return;
@@ -1743,6 +1745,7 @@ export default function EngagementDetail() {
  : ["/Review changes", "/Sign off this section", "/Go to next workpaper"]
  );
  setLukaInitialTab("threads");
+ setStoreLukaOpen(false);
  setLukaOpen(true);
  });
  };
@@ -1766,6 +1769,7 @@ export default function EngagementDetail() {
  status: (s.code === firstSidebarSection ? 'running' : 'pending') as AutoFillProgressItem['status'],
  }));
  setLukaAutoFillProgress(initProgress);
+ setStoreLukaOpen(false);
  setLukaAutoFillConfig({ label: checklist?.title ?? 'Engagement Fill', sources: ['Xero connection', 'Predecessor file'], engagementLabel: [engagement?.client, engagementId].filter(Boolean).join(' · ') });
  setLukaOpen(true);
 
@@ -1820,6 +1824,7 @@ export default function EngagementDetail() {
  totalFields: results.reduce((s, t) => s + t.totalCount, 0),
  engagementLabel: engLabel,
  });
+ setStoreLukaOpen(false);
  setLukaOpen(true);
  };
 
@@ -2351,6 +2356,8 @@ export default function EngagementDetail() {
  }
  if (engagementId) {
  openLukaWithConfig({ tab: 'threads', flow: 'pbc-request', engagementId });
+ setStoreLukaOpen(false);
+ setLukaOpen(true);
  }
  }}
  />
@@ -2482,6 +2489,7 @@ export default function EngagementDetail() {
  setLukaInitialTab("threads");
  setLukaInitialAiMessage(`What would you like to do in the "${checklist?.title ?? CUSTOM_WORKSHEET_TITLES[checklistKey ?? ''] ?? checklistKey}" workpaper? I can help you understand requirements, fill in fields, review responses, or answer questions about this section.`);
  setLukaInitialAiMessagePrompts(["/Explain requirements", "/Auto-fill this section", "/Review my responses", "/What are the risks?"]);
+ setStoreLukaOpen(false);
  setLukaOpen(true);
  }}
  className="inline-flex items-center gap-1.5 h-7 px-3 rounded-[8px] text-xs font-semibold text-white shadow-sm bg-gradient-to-br from-[#8649F1] to-[#2355A4] hover:opacity-90 transition-opacity"
