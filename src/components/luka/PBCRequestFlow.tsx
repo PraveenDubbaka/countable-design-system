@@ -93,7 +93,7 @@ const TEMPLATE_META: Record<string, { description: string; sections: string[] }>
  sections: ["Software & Apps", "Third-Party Providers", "Access Controls", "Physical / Backup", "Information Flow", "Cybersecurity", "Communication"],
  },
  "memo-510": {
- description: "34-question MEMO covering company operations, fraud risk, related parties, and corporate-level controls.",
+ description: "Generate a memo covering company operations, fraud risk, related parties, and corporate-level controls across multiple worksheets.",
  sections: ["Company Operations", "Fraud Assessment", "Related Parties", "Internal Controls"],
  },
 };
