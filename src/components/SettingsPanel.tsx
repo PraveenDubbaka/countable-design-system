@@ -523,13 +523,14 @@ function UserAccessContent() {
  type Member = { id: string; title: string; name: string; email: string; accessType: string; lastLoggedIn: string; };
 
  const MEMBERS: Member[] = [
-  { id: '1', title: 'dev',          name: 'a b',             email: 'bb@gmail.com',                    accessType: 'General', lastLoggedIn: '-' },
-  { id: '2', title: 'dev',          name: 'notify test',     email: 'ptgarv+1228@gmail.com',           accessType: 'General', lastLoggedIn: '-' },
-  { id: '3', title: 'dev',          name: 'test notify',     email: 'ptgarv+ntf@gmail.com',            accessType: 'General', lastLoggedIn: '-' },
-  { id: '4', title: 'Mr',           name: 'Naveen D',        email: 'praveen_dk2002@yahoo.com',        accessType: 'General', lastLoggedIn: '-' },
-  { id: '5', title: 'Partner Test', name: 'Mo Test',         email: 'mohamade+uat-p-t1@countable.co', accessType: 'General', lastLoggedIn: '-' },
-  { id: '6', title: 'dev',          name: 'Arshdeep Kumar',  email: 'arshdeepk@countable.co',          accessType: 'Admin',   lastLoggedIn: '-' },
-  { id: '7', title: 'ADD',          name: 'add team member', email: 'addteasdmv42fail@yopmail.com',    accessType: 'General', lastLoggedIn: '-' },
+  { id: '1', title: 'Partner',        name: 'Michael Thornton',  email: 'm.thornton@harrisoncpa.com',   accessType: 'Admin',   lastLoggedIn: 'Jul 28, 2026' },
+  { id: '2', title: 'Senior Manager', name: 'Priya Patel',       email: 'p.patel@harrisoncpa.com',      accessType: 'Admin',   lastLoggedIn: 'Aug 01, 2026' },
+  { id: '3', title: 'Manager',        name: 'James Kowalski',    email: 'j.kowalski@harrisoncpa.com',   accessType: 'General', lastLoggedIn: 'Aug 03, 2026' },
+  { id: '4', title: 'Manager',        name: 'Sarah Lindqvist',   email: 's.lindqvist@harrisoncpa.com',  accessType: 'General', lastLoggedIn: 'Jul 30, 2026' },
+  { id: '5', title: 'Senior',         name: 'David Okonkwo',     email: 'd.okonkwo@harrisoncpa.com',    accessType: 'General', lastLoggedIn: 'Aug 02, 2026' },
+  { id: '6', title: 'Senior',         name: 'Emily Marchetti',   email: 'e.marchetti@harrisoncpa.com',  accessType: 'General', lastLoggedIn: 'Aug 01, 2026' },
+  { id: '7', title: 'Staff',          name: 'Ryan Beaumont',     email: 'r.beaumont@harrisoncpa.com',   accessType: 'General', lastLoggedIn: 'Jul 29, 2026' },
+  { id: '8', title: 'Staff',          name: 'Anika Sharma',      email: 'a.sharma@harrisoncpa.com',     accessType: 'General', lastLoggedIn: 'Aug 04, 2026' },
  ];
 
  const ENGAGEMENTS = [
