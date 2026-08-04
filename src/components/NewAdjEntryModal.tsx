@@ -39,8 +39,8 @@ export function mkAdjLine(): AdjLine {
   return { id: Math.random().toString(36).slice(2, 9), accNo: "", description: "", debit: "", credit: "" };
 }
 
-export const ENTRY_TYPES = ["Journal", "Adjusting", "Reclassification"] as const;
-export const ENTRY_PREFIX: Record<string, string> = { Journal: "JE", Adjusting: "AJE", Reclassification: "RE" };
+export const ENTRY_TYPES = ["Journal", "Adjusting", "Reclassification", "Proposed"] as const;
+export const ENTRY_PREFIX: Record<string, string> = { Journal: "JE", Adjusting: "AJE", Reclassification: "RE", Proposed: "PE" };
 
 export function parseYearEndToDate(yearEnd: string): string {
   const months: Record<string, string> = {
@@ -321,16 +321,24 @@ export function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yea
                       <DescSearch value={line.description} onChange={(d, a) => setLineAccDesc(line.id, a, d)} />
                     </td>
                     <td className="px-2 py-1.5">
-                      <Input type="number" value={line.debit} min="0" step="0.01" placeholder="0.00"
-                        onChange={e => updateLine(line.id, "debit", e.target.value)}
-                        onFocus={e => (e.target as HTMLInputElement).select()}
-                        className="h-8 text-right" />
+                      {parseFloat(line.credit) > 0 ? (
+                        <span className="flex h-8 items-center justify-end px-1 text-sm text-muted-foreground">—</span>
+                      ) : (
+                        <Input type="number" value={line.debit} min="0" step="0.01" placeholder="0.00"
+                          onChange={e => updateLine(line.id, "debit", e.target.value)}
+                          onFocus={e => (e.target as HTMLInputElement).select()}
+                          className="h-8 text-right" />
+                      )}
                     </td>
                     <td className="px-2 py-1.5">
-                      <Input type="number" value={line.credit} min="0" step="0.01" placeholder="0.00"
-                        onChange={e => updateLine(line.id, "credit", e.target.value)}
-                        onFocus={e => (e.target as HTMLInputElement).select()}
-                        className="h-8 text-right" />
+                      {parseFloat(line.debit) > 0 ? (
+                        <span className="flex h-8 items-center justify-end px-1 text-sm text-muted-foreground">—</span>
+                      ) : (
+                        <Input type="number" value={line.credit} min="0" step="0.01" placeholder="0.00"
+                          onChange={e => updateLine(line.id, "credit", e.target.value)}
+                          onFocus={e => (e.target as HTMLInputElement).select()}
+                          className="h-8 text-right" />
+                      )}
                     </td>
                     <td className="px-2 py-1.5">
                       <div className="flex items-center justify-start gap-0.5">
