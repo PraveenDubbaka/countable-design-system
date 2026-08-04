@@ -2841,7 +2841,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   'aud-mat',        // 420 Materiality
   'aud-plan',       // 436 Team Planning Discussions
   'aud-ra-pap501bc', // 501-A Preliminary Analytical
+  'aud-ra-506',     // 506 Fraud
+  'aud-ra-507',     // 507 Governance Minutes
   'aud-ra-520',     // 520 Risk Register
+  'aud-ra-525',     // 525 Going Concern
   'aud-ra-590',     // 590 Engagement Scoping
   'gca-ws-proc-ar', // B-1 AR Audit Procedures
  ]);
