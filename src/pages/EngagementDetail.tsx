@@ -2446,14 +2446,14 @@ export default function EngagementDetail() {
    })()}
    {isPaused && <span className="font-sans font-normal opacity-60 ml-0.5">paused</span>}
    {!isPaused && isIdle && <span className="font-sans font-normal opacity-70 ml-0.5">idle</span>}
-   <button
-    onClick={handlePauseResume}
-    title={isPaused ? 'Resume timer' : 'Pause timer'}
-    className="ml-1 -mr-1 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-   >
-    {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
-   </button>
   </div>
+  <button
+   onClick={handlePauseResume}
+   title={isPaused ? 'Resume timer' : 'Pause timer'}
+   className={`flex items-center justify-center h-7 w-7 rounded-full border font-medium transition-colors ${isPaused ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' : isIdle ? 'bg-amber-500/20 border-amber-500/50 text-amber-700 hover:bg-amber-500/30 dark:text-amber-400' : 'bg-red-500/20 border-red-500/40 text-red-700 hover:bg-red-500/30 dark:text-red-400'}`}
+  >
+   {isPaused ? <Play className="h-3.5 w-3.5 ml-0.5" /> : <Pause className="h-3.5 w-3.5" />}
+  </button>
  </div>
  )}
  <div className="flex items-center gap-1 ml-auto">
