@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import userAvatar from "@/assets/user-avatar.png";
-import { Bell, User, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid } from "lucide-react";
+import { Bell, User, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid, Clock, Eye } from "lucide-react";
+import { subscribeEnabled, getEnabled, subscribeEngagements, getEngagements, type TrackedEngagement, logEngagementTime } from "@/lib/timeTrackerStore";
+import { toast } from "sonner";
 import { LukaIcon } from "@/components/LukaIcon";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -26,6 +28,10 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
  const [notifSearch, setNotifSearch] = useState("");
  const [notifOpen, setNotifOpen] = useState(false);
+ const [ttEnabled, setTtEnabled] = useState(() => getEnabled());
+ const [ttEngagements, setTtEngagements] = useState<Map<string, TrackedEngagement>>(() => getEngagements());
+ const [ttOpen, setTtOpen] = useState(false);
+ const [ttSelected, setTtSelected] = useState<Set<string>>(new Set());
  
  // Font size accessibility state
  type FontSize = 'A' | 'AA' | 'AAA';
@@ -47,6 +53,19 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  useEffect(() => {
  return subscribeLukaOpen((open) => setAskLukaOpen(open));
  }, []);
+
+ useEffect(() => subscribeEnabled(setTtEnabled), []);
+ useEffect(() => subscribeEngagements(setTtEngagements), []);
+
+ const fmtTrackerTime = (s: number) => {
+ const h = Math.floor(s / 3600).toString().padStart(2, '0');
+ const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+ const sec = (s % 60).toString().padStart(2, '0');
+ return `${h}h:${m}m:${sec}s`;
+ };
+
+ const ttList = Array.from(ttEngagements.values());
+ const trackedCount = ttList.length;
 
  const cycleFontSize = () => {
  setFontSize(prev => {
@@ -179,6 +198,128 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  </TooltipTrigger>
  <TooltipContent>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</TooltipContent>
  </Tooltip>
+
+ {/* Time Tracker — shown only when enabled */}
+ {ttEnabled && (
+ <Popover open={ttOpen} onOpenChange={setTtOpen}>
+ <PopoverTrigger asChild>
+ <div
+ className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-white/10 transition-colors relative"
+ style={{ borderRadius: '12px' }}
+ >
+ <Clock className="h-5 w-5 text-white/80" />
+ {trackedCount > 0 && (
+ <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-400 text-[9px] text-[#0C2D55] flex items-center justify-center font-bold">{trackedCount}</span>
+ )}
+ </div>
+ </PopoverTrigger>
+ <PopoverContent align="end" className="w-[580px] p-0 bg-card border border-border shadow-xl" style={{ borderRadius: '12px' }}>
+ {/* Header */}
+ <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+ <span className="text-sm font-semibold text-foreground">Time Tracker</span>
+ <button
+ onClick={() => {
+ const first = ttList[0];
+ if (first) { navigate(`/engagements/${first.id}/checklist/aud-tt`); setTtOpen(false); }
+ }}
+ className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+ >
+ <Eye className="h-3.5 w-3.5" />
+ View Time Tracker ({trackedCount})
+ </button>
+ </div>
+ {/* Column headers */}
+ <div className="grid grid-cols-[1fr_130px_130px_130px_90px] items-center gap-2 px-4 py-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+ <span>Client Name</span>
+ <span className="text-center">Engagement ID</span>
+ <span className="text-center">Active Time</span>
+ <span className="text-center">Idle Time</span>
+ <span />
+ </div>
+ {/* Rows */}
+ <div className="max-h-64 overflow-y-auto">
+ {ttList.length === 0 ? (
+ <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+ No engagements being tracked. Open an engagement to start tracking.
+ </div>
+ ) : (
+ ttList.map(eng => (
+ <div
+ key={eng.id}
+ className="grid grid-cols-[1fr_130px_130px_130px_90px] items-center gap-2 px-4 py-3 border-b border-border/50 hover:bg-muted/30 transition-colors"
+ >
+ <div className="flex items-center gap-2 min-w-0">
+ <input
+ type="checkbox"
+ checked={ttSelected.has(eng.id)}
+ onChange={(e) => {
+ setTtSelected(prev => {
+ const next = new Set(prev);
+ e.target.checked ? next.add(eng.id) : next.delete(eng.id);
+ return next;
+ });
+ }}
+ className="h-3.5 w-3.5 rounded shrink-0 cursor-pointer"
+ />
+ <div className="min-w-0">
+ <p className="text-sm font-medium text-foreground truncate">{eng.clientName}</p>
+ {eng.isRecording && <span className="text-[10px] text-emerald-500 font-medium">● Recording</span>}
+ </div>
+ </div>
+ <p className="text-xs text-center text-muted-foreground font-mono truncate">{eng.id}</p>
+ <div className="flex items-center justify-center gap-1.5">
+ {!eng.isIdle && eng.isRecording && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />}
+ <span className={`font-mono text-xs font-semibold tabular-nums ${!eng.isIdle && eng.isRecording ? 'text-red-500' : 'text-foreground'}`}>
+ {fmtTrackerTime(eng.activeSec)}
+ </span>
+ </div>
+ <div className="flex items-center justify-center gap-1.5">
+ {eng.isIdle && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />}
+ <span className={`font-mono text-xs font-semibold tabular-nums ${eng.isIdle ? 'text-red-500' : 'text-foreground'}`}>
+ {fmtTrackerTime(eng.idleSec)}
+ </span>
+ </div>
+ <Button
+ size="sm"
+ className="h-7 text-xs bg-primary text-primary-foreground hover:bg-primary/90 px-2"
+ onClick={() => {
+ logEngagementTime(eng.id);
+ setTtSelected(prev => { const n = new Set(prev); n.delete(eng.id); return n; });
+ toast.success('Time entry logged');
+ }}
+ >
+ Log Time
+ </Button>
+ </div>
+ ))
+ )}
+ </div>
+ {/* Log All */}
+ {ttSelected.size > 0 && (
+ <div className="flex items-center justify-between px-4 py-2.5 border-t border-border bg-primary/5">
+ <span className="text-xs text-muted-foreground">{ttSelected.size} selected</span>
+ <Button
+ size="sm"
+ className="h-7 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+ onClick={() => {
+ Array.from(ttSelected).forEach(id => logEngagementTime(id));
+ setTtSelected(new Set());
+ toast.success('All time entries logged');
+ }}
+ >
+ Log All
+ </Button>
+ </div>
+ )}
+ {/* Footer */}
+ <div className="px-4 py-2.5 border-t border-border/50 bg-muted/30">
+ <p className="text-[11px] text-muted-foreground">
+ <span className="font-semibold">Note*:</span> All outstanding accumulated time will be automatically logged into the time-tracker at 11:59 PM.
+ </p>
+ </div>
+ </PopoverContent>
+ </Popover>
+ )}
 
  {/* Notifications */}
  <Popover open={notifOpen} onOpenChange={setNotifOpen}>

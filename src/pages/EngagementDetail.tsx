@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Hourglass, Eye } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
+import { getEnabled, registerEngagement, unregisterEngagement, updateEngagementTime } from "@/lib/timeTrackerStore";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,7 @@ import { WorksheetSignOff } from "@/components/WorksheetSignOff";
 import VersionHistoryPanel from "@/components/luka/workspace/versionControl/VersionHistoryPanel";
 import { AskLukaOverlay, AllTemplateSummary, AutoFillProgressItem } from "@/components/AskLukaOverlay";
 import { FloatingActionBar } from "@/components/FloatingActionBar";
-import { useTimeEntries, fmtElapsed, CURRENT_USER, type TimeEntry } from "@/lib/useTimeEntries";
+import { useTimeEntries } from "@/lib/useTimeEntries";
 import { EngagementRightPanel } from "@/components/EngagementRightPanel";
 import { Assignee, Checklist, Question } from "@/types/checklist";
 import { useChecklistAssignments } from "@/hooks/useChecklistAssignments";
@@ -1050,7 +1051,6 @@ export default function EngagementDetail() {
  engagementId ? getPBCNotificationCount(engagementId) : 0
  );
  // ── Time tracker ─────────────────────────────────────────────────────────────
- const [trackerPanelOpen, setTrackerPanelOpen] = useState(false);
  const [activeSec, setActiveSec] = useState(0);
  const [idleSec, setIdleSec] = useState(0);
  const [isIdle, setIsIdle] = useState(false);
@@ -1058,9 +1058,11 @@ export default function EngagementDetail() {
  const idleTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
  const lastActivityRef = useRef<number>(Date.now());
  const isIdleRef = useRef(false);
+ const activeSecRef = useRef(0);
+ const idleSecRef = useRef(0);
  const [budgetHrs, setBudgetHrs] = useState(0);
  const [budgetBySection, setBudgetBySection] = useState<Record<string, number>>({});
- const { addEntry: addTimeEntry, entries } = useTimeEntries(engagementId ?? "default");
+ const { entries } = useTimeEntries(engagementId ?? "default");
 
  useEffect(() => {
  if (!priorYearFile) return;
@@ -1112,30 +1114,44 @@ export default function EngagementDetail() {
  return () => window.removeEventListener('open-note-panel', handler);
  }, [engagementId]);
 
- // Auto-start time tracking when engagement mounts
+ // Auto-start time tracking when engagement mounts (only when enabled in Settings)
  useEffect(() => {
+ if (!getEnabled()) return;
  const delay = setTimeout(() => {
  isIdleRef.current = false;
  setIsIdle(false);
- activeTimerRef.current = setInterval(() => setActiveSec(s => s + 1), 1000);
+ activeSecRef.current = 0;
+ idleSecRef.current = 0;
+ if (engagementId) registerEngagement(engagementId, clientName);
+ activeTimerRef.current = setInterval(() => {
+ activeSecRef.current += 1;
+ setActiveSec(activeSecRef.current);
+ if (engagementId) updateEngagementTime(engagementId, activeSecRef.current, idleSecRef.current, false);
+ }, 1000);
  toast.success(`Time tracking started for engagement ${engagementId ?? ''}`);
  }, 600);
  return () => {
  clearTimeout(delay);
  if (activeTimerRef.current) clearInterval(activeTimerRef.current);
  if (idleTimerRef.current) clearInterval(idleTimerRef.current);
+ if (engagementId) unregisterEngagement(engagementId, activeSecRef.current, idleSecRef.current);
  };
  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
  // Idle detection — after 15 min of inactivity, switch active → idle
  useEffect(() => {
+ if (!getEnabled()) return;
  const IDLE_MS = 15 * 60 * 1000;
  const checkIdle = setInterval(() => {
  if (Date.now() - lastActivityRef.current >= IDLE_MS && !isIdleRef.current) {
  isIdleRef.current = true;
  setIsIdle(true);
  if (activeTimerRef.current) { clearInterval(activeTimerRef.current); activeTimerRef.current = null; }
- idleTimerRef.current = setInterval(() => setIdleSec(s => s + 1), 1000);
+ idleTimerRef.current = setInterval(() => {
+ idleSecRef.current += 1;
+ setIdleSec(idleSecRef.current);
+ if (engagementId) updateEngagementTime(engagementId, activeSecRef.current, idleSecRef.current, true);
+ }, 1000);
  }
  }, 1000);
  const resetActivity = () => {
@@ -1144,7 +1160,11 @@ export default function EngagementDetail() {
  isIdleRef.current = false;
  setIsIdle(false);
  if (idleTimerRef.current) { clearInterval(idleTimerRef.current); idleTimerRef.current = null; }
- activeTimerRef.current = setInterval(() => setActiveSec(s => s + 1), 1000);
+ activeTimerRef.current = setInterval(() => {
+ activeSecRef.current += 1;
+ setActiveSec(activeSecRef.current);
+ if (engagementId) updateEngagementTime(engagementId, activeSecRef.current, idleSecRef.current, false);
+ }, 1000);
  }
  };
  window.addEventListener('mousemove', resetActivity);
@@ -1171,27 +1191,6 @@ export default function EngagementDetail() {
  }
  } catch { /* ignore */ }
  }, [engagementId]);
-
- const logTrackedTime = () => {
- const totalSec = activeSec + idleSec;
- const hrs = Math.round(totalSec / 900) / 4;
- if (hrs > 0) {
- addTimeEntry({
- id: `e-${Date.now()}`,
- date: new Date().toISOString().slice(0, 10),
- roleKey: CURRENT_USER.roleKey,
- userName: CURRENT_USER.name,
- tbRowId: 'g1',
- tbSection: 'general',
- hours: hrs,
- description: 'Time tracked via timer',
- } as TimeEntry);
- toast.success('Time entry logged successfully');
- }
- setActiveSec(0);
- setIdleSec(0);
- lastActivityRef.current = Date.now();
- };
 
  const totalActualHrs = useMemo(() => entries.reduce((s, e) => s + e.hours, 0), [entries]);
  const actualsBySection = useMemo(() => {
@@ -2405,18 +2404,8 @@ export default function EngagementDetail() {
  </div>
  {/* Action buttons row */}
  <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
- {/* Time tracker pill + budget pill */}
+ {/* Budget pill */}
  <div className="flex items-center gap-2 shrink-0">
- <button
- onClick={() => setTrackerPanelOpen(true)}
- className={`flex items-center gap-2 h-7 px-3 rounded-full border text-xs font-medium transition-colors ${isIdle ? 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/20'}`}
- >
- <Hourglass className="h-3 w-3" />
- <span className="font-mono font-semibold tabular-nums">
- {isIdle ? fmtElapsed(idleSec) : fmtElapsed(activeSec)}
- </span>
- <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isIdle ? 'bg-amber-500' : 'bg-green-500'}`} />
- </button>
  <Popover>
  <PopoverTrigger asChild>
  <button className="flex items-center gap-1.5 h-7 px-3 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-400 hover:bg-blue-500/20 transition-colors text-xs font-medium whitespace-nowrap">
@@ -3402,69 +3391,5 @@ export default function EngagementDetail() {
  engId={engagementId ?? ''}
  />
 
- {/* Time Tracker summary panel */}
- <Sheet open={trackerPanelOpen} onOpenChange={setTrackerPanelOpen}>
- <SheetContent side="right" className="w-[480px] p-0 flex flex-col gap-0">
- <SheetHeader className="px-5 py-4 border-b border-border flex-row items-center justify-between">
- <SheetTitle className="text-sm font-semibold">Time Tracker</SheetTitle>
- <button
- onClick={() => {
- if (engagementId) navigate(`/engagements/${engagementId}/checklist/aud-tt`);
- setTrackerPanelOpen(false);
- }}
- className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
- >
- <Eye className="h-3.5 w-3.5" />
- View Time Tracker ({entries.length})
- </button>
- </SheetHeader>
-
- {/* Column headers */}
- <div className="grid grid-cols-[1fr_120px_120px_100px] items-center gap-2 px-5 py-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
- <span>Client Name</span>
- <span className="text-center">Active Time</span>
- <span className="text-center">Idle Time</span>
- <span />
- </div>
-
- {/* Single engagement row */}
- <div className="flex-1 overflow-y-auto">
- <div className="grid grid-cols-[1fr_120px_120px_100px] items-center gap-2 px-5 py-3 border-b border-border/50">
- <div>
- <p className="text-sm font-medium text-foreground truncate">
- {engagementId ? (engagementsData[engagementId]?.client ?? engagementId) : '—'}
- </p>
- <p className="text-xs text-muted-foreground">{engagementId}</p>
- </div>
- <div className="flex items-center justify-center gap-1.5">
- {!isIdle && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />}
- <span className={`font-mono text-sm font-semibold tabular-nums ${!isIdle ? 'text-red-500' : 'text-muted-foreground'}`}>
- {fmtElapsed(activeSec)}
- </span>
- </div>
- <div className="flex items-center justify-center gap-1.5">
- {isIdle && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />}
- <span className={`font-mono text-sm font-semibold tabular-nums ${isIdle ? 'text-red-500' : 'text-muted-foreground'}`}>
- {fmtElapsed(idleSec)}
- </span>
- </div>
- <Button
- size="sm"
- className="h-7 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
- onClick={() => { logTrackedTime(); setTrackerPanelOpen(false); }}
- >
- Log Time
- </Button>
- </div>
- </div>
-
- {/* Footer */}
- <div className="px-5 py-3 border-t border-border/50 bg-muted/30">
- <p className="text-[11px] text-muted-foreground">
- <span className="font-semibold">Note*:</span> All outstanding accumulated time will be automatically logged into the time-tracker at 11:59 PM.
- </p>
- </div>
- </SheetContent>
- </Sheet>
  </>;
 }

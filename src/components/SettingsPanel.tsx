@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock } from "lucide-react";
+import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
+import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +24,7 @@ const settingsNavItems = [
  { id: "user-access", label: "User & Access", icon: Users },
  { id: "privacy", label: "Privacy & Security", icon: Shield },
  { id: "export", label: "Export Data", icon: Download },
+ { id: "time-tracking", label: "Time Tracking", icon: Clock },
 ];
 
 export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
@@ -90,6 +93,7 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
  {activeSection === "user-access" && <PlaceholderContent title="User & Access" />}
  {activeSection === "privacy" && <PlaceholderContent title="Privacy & Security" />}
  {activeSection === "export" && <PlaceholderContent title="Export Data" />}
+ {activeSection === "time-tracking" && <TimeTrackingContent />}
  </div>
  </div>
  </SheetContent>
@@ -432,6 +436,74 @@ function PlaceholderContent({ title }: { title: string }) {
  return (
  <div className="flex items-center justify-center h-64 text-muted-foreground">
  <p>{title} content coming soon...</p>
+ </div>
+ );
+}
+
+function TimeTrackingContent() {
+ const [enabled, setEnabledState] = useState(() => getEnabled());
+
+ useEffect(() => subscribeEnabled(setEnabledState), []);
+
+ const handleToggle = (val: boolean) => {
+ setEnabled(val);
+ toast.success(val ? 'Time tracking is now ON' : 'Time tracking is now OFF');
+ };
+
+ return (
+ <div className="space-y-6">
+ <div className="flex items-start gap-3">
+ <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+ <Clock className="h-5 w-5 text-primary" />
+ </div>
+ <div>
+ <h3 className="font-semibold text-lg">Time Tracking</h3>
+ <p className="text-sm text-muted-foreground">Manage automatic time tracking for engagements.</p>
+ </div>
+ </div>
+
+ <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-border bg-muted/20">
+ <div className="flex-1">
+ <p className="text-sm font-medium text-foreground">Enable Auto Time Tracker</p>
+ <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+ The automatic time tracker records and reports the time you spend working on engagements,
+ by tracking individual active time and idle time. Active time is when you are actively working
+ and idle time is when you are away from the engagement for longer than 15 minutes.
+ </p>
+ </div>
+ <Switch
+ checked={enabled}
+ onCheckedChange={handleToggle}
+ className="mt-0.5 shrink-0"
+ />
+ </div>
+
+ {enabled && (
+ <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+ <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+ <p className="text-sm text-emerald-700 dark:text-emerald-300">
+ Time tracking is active. A timer icon will appear in the top navigation bar.
+ </p>
+ </div>
+ )}
+
+ <div className="space-y-3">
+ <p className="text-sm font-medium text-foreground">How it works</p>
+ {[
+ 'Timer starts automatically when you open an engagement',
+ 'After 15 minutes of inactivity, time moves from Active to Idle',
+ 'Click the timer icon in the top bar to view all tracked time',
+ 'Log your time directly from the header panel',
+ 'All outstanding time is automatically logged at 11:59 PM',
+ ].map((item, i) => (
+ <div key={i} className="flex items-start gap-2.5">
+ <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+ <span className="text-[10px] font-bold text-primary">{i + 1}</span>
+ </div>
+ <p className="text-sm text-muted-foreground">{item}</p>
+ </div>
+ ))}
+ </div>
  </div>
  );
 }
