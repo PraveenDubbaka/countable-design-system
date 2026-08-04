@@ -229,9 +229,8 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  </button>
  </div>
  {/* Column headers */}
- <div className="grid grid-cols-[1fr_130px_130px_130px_90px] items-center gap-2 px-4 py-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+ <div className="grid grid-cols-[1fr_110px_110px_85px] items-center gap-3 px-4 py-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
  <span>Client Name</span>
- <span className="text-center">Engagement ID</span>
  <span className="text-center">Active Time</span>
  <span className="text-center">Idle Time</span>
  <span />
@@ -246,7 +245,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  ttList.map(eng => (
  <div
  key={eng.id}
- className="grid grid-cols-[1fr_130px_130px_130px_90px] items-center gap-2 px-4 py-3 border-b border-border/50 hover:bg-muted/30 transition-colors"
+ className="grid grid-cols-[1fr_110px_110px_85px] items-center gap-3 px-4 py-3 border-b border-border/50 hover:bg-muted/30 transition-colors"
  >
  <div className="flex items-center gap-2 min-w-0">
  <input
@@ -263,10 +262,12 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  />
  <div className="min-w-0">
  <p className="text-sm font-medium text-foreground truncate">{eng.clientName}</p>
+ <div className="flex items-center gap-2">
+ <span className="text-[10px] text-muted-foreground font-mono">{eng.id}</span>
  {eng.isRecording && <span className="text-[10px] text-emerald-500 font-medium">● Recording</span>}
  </div>
  </div>
- <p className="text-xs text-center text-muted-foreground font-mono truncate">{eng.id}</p>
+ </div>
  <div className="flex items-center justify-center gap-1.5">
  {!eng.isIdle && eng.isRecording && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />}
  <span className={`font-mono text-xs font-semibold tabular-nums ${!eng.isIdle && eng.isRecording ? 'text-red-500' : 'text-foreground'}`}>
