@@ -246,12 +246,7 @@ function TemplateCardGrid({
  >
  {template.label}
  </span>
- <span
- className="shrink-0 rounded-full text-[10px] px-2 py-0.5 font-semibold"
- style={{ background: "hsl(var(--primary) / 0.09)", color: "hsl(var(--primary))" }}
- >
- WP {template.wpRef}
- </span>
+
  </div>
  {meta && (
  <>
