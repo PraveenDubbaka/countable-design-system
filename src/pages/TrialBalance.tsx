@@ -155,9 +155,10 @@ const baseTrialBalanceData = [
 
 const formatNumber = (val: number | string) => {
  if (typeof val === "string") return val;
+ const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
  if (val === 0) return "0.00";
- if (val < 0) return `(${Math.abs(val).toFixed(2)})`;
- return val.toFixed(2);
+ if (val < 0) return `(${fmt(Math.abs(val))})`;
+ return fmt(val);
 };
 
 // trialBalanceData is managed as state inside the TrialBalance component
