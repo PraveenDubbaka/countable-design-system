@@ -2837,8 +2837,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Sidebar items with Luka automation — demo indicators for Atin
  const LUKA_AUTO_IDS = new Set([
-  'aud-410', 'aud-mat', 'aud-asm', 'aud-plan-428', 'aud-pap501',
-  'aud-520', 'aud-590', 'aud-625', 'gca-ws-proc-cash', 'gca-ws-proc-ar',
+  'aud-410',        // 410 New Engagement — Acceptance/Continuance
+  'aud-plan',       // 436 Team Planning Discussions
+  'aud-ra-pap501a', // 501-B Preliminary Analytical
+  'aud-520',        // 520 Risk Register
+  'aud-590',        // 590 Engagement Scoping
  ]);
 
  const renderNode = (node: SectionNode, depth: number = 0, parentLabel?: string): React.ReactNode => {
@@ -2959,7 +2962,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}><SidebarHighlight text={node.label} query={engSidebarSearchQuery} /></span>
  {/* Luka automation indicator — demo nav aid for Atin */}
  {LUKA_AUTO_IDS.has(node.id) && engId === 'AUD-NPM-Dec312025' && (
-  <span className="flex-shrink-0 ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500" title="Luka automation available">
+  <span className="flex-shrink-0 ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full" style={{background: 'linear-gradient(to right, #1C63A6, #7A31D8)'}} title="Luka automation available">
    <svg width="6" height="7" viewBox="0 0 6 7" fill="none"><path d="M1 1L5 3.5L1 6V1Z" fill="white" /></svg>
   </span>
  )}
