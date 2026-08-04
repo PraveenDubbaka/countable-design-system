@@ -229,7 +229,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  </div>
  {/* Column headers */}
  <div className="grid grid-cols-[1fr_110px_110px_85px] items-center gap-3 px-4 py-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
- <span>Client Name</span>
+ <span>Team Member</span>
  <span className="text-center">Active Time</span>
  <span className="text-center">Idle Time</span>
  <span />
@@ -260,7 +260,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  className="h-3.5 w-3.5 rounded shrink-0 cursor-pointer"
  />
  <div className="min-w-0">
- <p className="text-sm font-medium text-foreground truncate">{eng.clientName}</p>
+ <p className="text-sm font-medium text-foreground truncate">Praveen D.</p>
  <div className="flex items-center gap-2">
  <span className="text-[10px] text-muted-foreground font-mono">{eng.id}</span>
  {eng.isRecording && <span className="text-[10px] text-emerald-500 font-medium">● Recording</span>}

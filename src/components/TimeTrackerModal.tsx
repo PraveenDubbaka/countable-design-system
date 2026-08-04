@@ -1,6 +1,12 @@
 import { useState, Fragment } from 'react';
 import { X, Minus, Maximize2, Plus, Pencil, Trash2, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import {
   loadTrackerEntries,
   saveTrackerEntries,
@@ -55,7 +61,6 @@ function EntryForm({ initial, onClose, onSave }: EntryFormProps) {
   const [eAp, setEAp] = useState<'AM' | 'PM'>(pe.ap);
   const [notes, setNotes] = useState(initial?.notes ?? '');
 
-  // Edit mode: duration fields derived from existing times
   const existingDur = isEdit && initial ? calcDuration(initial.startTime, initial.endTime) : '00h:00m:00s';
   const [durH, setDurH] = useState(existingDur.split('h:')[0] ?? '00');
   const [durM, setDurM] = useState(existingDur.split('h:')[1]?.split('m:')[0] ?? '00');
@@ -80,7 +85,6 @@ function EntryForm({ initial, onClose, onSave }: EntryFormProps) {
     let endTime = isEdit ? (initial?.endTime ?? end24) : end24;
 
     if (isEdit && initial) {
-      // Rebuild end time from existing start + edited duration
       const [sh, sm] = initial.startTime.split(':').map(Number);
       const totalMin = parseInt(durH) * 60 + parseInt(durM);
       const endMin = sh * 60 + sm + totalMin;
@@ -98,22 +102,23 @@ function EntryForm({ initial, onClose, onSave }: EntryFormProps) {
       startTime,
       endTime,
       notes,
+      userName: CURRENT_USER.name,
       isIdle: isEdit ? initial?.isIdle : undefined,
     });
   }
 
-  const fieldCls = "border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 w-full focus:outline-none focus:ring-1 focus:ring-blue-500";
-  const labelCls = "text-xs font-medium text-gray-600 mb-1 block";
+  const smallInput = "w-12 text-center px-1";
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-[580px] max-w-[95vw] overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-card rounded-xl shadow-2xl border border-border w-[580px] max-w-[95vw] overflow-hidden flex flex-col max-h-[90vh]">
+
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-base font-semibold text-gray-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h2 className="text-base font-semibold text-foreground">
             {isEdit ? 'Edit Automatic Time Entry' : 'Add Manual Time Entry'}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -121,131 +126,136 @@ function EntryForm({ initial, onClose, onSave }: EntryFormProps) {
         {/* Body */}
         <div className="overflow-y-auto px-6 py-5 flex-1">
           <div className="grid grid-cols-2 gap-4">
+
             {/* Date */}
-            <div>
-              <label className={labelCls}>Date <span className="text-red-500">*</span></label>
-              <input type="date" value={date} onChange={e => setDate(e.target.value)} className={fieldCls} />
+            <div className="flex flex-col gap-1.5">
+              <Label>Date <span className="text-destructive">*</span></Label>
+              <Input type="date" value={date} onChange={e => setDate(e.target.value)} />
             </div>
 
             {/* Entry Type */}
-            <div>
-              <label className={labelCls}>Entry Type <span className="text-red-500">*</span></label>
-              <select value={entryType} onChange={e => { setEntryType(e.target.value as 'Billable' | 'Non Billable'); setCategory(''); }} className={fieldCls}>
-                <option value="Billable">Billable</option>
-                <option value="Non Billable">Non Billable</option>
-              </select>
+            <div className="flex flex-col gap-1.5">
+              <Label>Entry Type <span className="text-destructive">*</span></Label>
+              <Select value={entryType} onValueChange={v => { setEntryType(v as 'Billable' | 'Non Billable'); setCategory(''); }}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Billable">Billable</SelectItem>
+                  <SelectItem value="Non Billable">Non Billable</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Team Member */}
-            <div>
-              <label className={labelCls}>Team Member <span className="text-red-500">*</span></label>
-              <input type="text" value={`${CURRENT_USER.name} (${CURRENT_USER.role})`} disabled
-                className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-400 cursor-not-allowed w-full" />
+            <div className="flex flex-col gap-1.5">
+              <Label>Team Member <span className="text-destructive">*</span></Label>
+              <Input value={`${CURRENT_USER.name} (${CURRENT_USER.role})`} disabled />
             </div>
 
             {/* Client Name */}
-            <div>
-              <label className={labelCls}>Client Name</label>
-              <select value={clientName} onChange={e => { setClientName(e.target.value); setEngId(''); }} className={fieldCls}>
-                <option value="">Select</option>
-                {clientList.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+            <div className="flex flex-col gap-1.5">
+              <Label>Client Name</Label>
+              <Select value={clientName || undefined} onValueChange={v => { setClientName(v); setEngId(''); }}>
+                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectContent>
+                  {clientList.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Engagement ID */}
-            <div>
-              <label className={labelCls}>Engagement ID</label>
-              <select value={engId} onChange={e => setEngId(e.target.value)}
-                disabled={!clientName || isEdit}
-                className={`${fieldCls} disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed`}>
-                <option value="">Select</option>
-                {engList.map(e => <option key={e} value={e}>{e}</option>)}
-              </select>
+            <div className="flex flex-col gap-1.5">
+              <Label>Engagement ID</Label>
+              <Select value={engId || undefined} onValueChange={setEngId} disabled={!clientName || isEdit}>
+                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectContent>
+                  {engList.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Category */}
-            <div>
-              <label className={labelCls}>Category <span className="text-red-500">*</span></label>
-              <select value={category} onChange={e => setCategory(e.target.value)} className={fieldCls}>
-                <option value="">Select</option>
-                {cats.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+            <div className="flex flex-col gap-1.5">
+              <Label>Category <span className="text-destructive">*</span></Label>
+              <Select value={category || undefined} onValueChange={setCategory}>
+                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectContent>
+                  {cats.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Start + End (Add) or Duration (Edit) */}
             {isEdit ? (
-              <div className="col-span-2">
-                <label className={labelCls}>Duration <span className="text-red-500">*</span></label>
+              <div className="col-span-2 flex flex-col gap-1.5">
+                <Label>Duration <span className="text-destructive">*</span></Label>
                 <div className="flex items-center gap-2">
-                  <input type="text" value={durH} maxLength={2} placeholder="00"
-                    onChange={e => setDurH(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                    className="w-14 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                  <span className="text-sm text-gray-500">h :</span>
-                  <input type="text" value={durM} maxLength={2} placeholder="05"
-                    onChange={e => setDurM(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                    className="w-14 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                  <span className="text-sm text-gray-500">m : 00 s</span>
+                  <Input value={durH} maxLength={2} placeholder="00" onChange={e => setDurH(e.target.value.replace(/\D/g, '').slice(0, 2))} className={smallInput} />
+                  <span className="text-sm text-muted-foreground">h :</span>
+                  <Input value={durM} maxLength={2} placeholder="05" onChange={e => setDurM(e.target.value.replace(/\D/g, '').slice(0, 2))} className={smallInput} />
+                  <span className="text-sm text-muted-foreground">m : 00 s</span>
                 </div>
               </div>
             ) : (
               <>
                 {/* Start Time */}
-                <div>
-                  <label className={labelCls}>Start Time <span className="text-red-500">*</span></label>
+                <div className="flex flex-col gap-1.5">
+                  <Label>Start Time <span className="text-destructive">*</span></Label>
                   <div className="flex items-center gap-1">
-                    <input type="text" value={sH} maxLength={2} placeholder="hh"
-                      onChange={e => setSH(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                      className="w-12 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    <span className="text-gray-400 text-sm">:</span>
-                    <input type="text" value={sM} maxLength={2} placeholder="mm"
-                      onChange={e => setSM(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                      className="w-12 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    <select value={sAp} onChange={e => setSAp(e.target.value as 'AM' | 'PM')}
-                      className="border border-gray-300 rounded-lg px-2 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                      <option>AM</option><option>PM</option>
-                    </select>
+                    <Input value={sH} maxLength={2} placeholder="hh" onChange={e => setSH(e.target.value.replace(/\D/g, '').slice(0, 2))} className={smallInput} />
+                    <span className="text-muted-foreground">:</span>
+                    <Input value={sM} maxLength={2} placeholder="mm" onChange={e => setSM(e.target.value.replace(/\D/g, '').slice(0, 2))} className={smallInput} />
+                    <Select value={sAp} onValueChange={v => setSAp(v as 'AM' | 'PM')}>
+                      <SelectTrigger className="w-[70px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
                 {/* End Time */}
-                <div>
-                  <label className={labelCls}>End Time <span className="text-red-500">*</span></label>
+                <div className="flex flex-col gap-1.5">
+                  <Label>End Time <span className="text-destructive">*</span></Label>
                   <div className="flex items-center gap-1">
-                    <input type="text" value={eH} maxLength={2} placeholder="hh"
-                      onChange={e => setEH(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                      className="w-12 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    <span className="text-gray-400 text-sm">:</span>
-                    <input type="text" value={eM} maxLength={2} placeholder="mm"
-                      onChange={e => setEM(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                      className="w-12 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    <select value={eAp} onChange={e => setEAp(e.target.value as 'AM' | 'PM')}
-                      className="border border-gray-300 rounded-lg px-2 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                      <option>AM</option><option>PM</option>
-                    </select>
+                    <Input value={eH} maxLength={2} placeholder="hh" onChange={e => setEH(e.target.value.replace(/\D/g, '').slice(0, 2))} className={smallInput} />
+                    <span className="text-muted-foreground">:</span>
+                    <Input value={eM} maxLength={2} placeholder="mm" onChange={e => setEM(e.target.value.replace(/\D/g, '').slice(0, 2))} className={smallInput} />
+                    <Select value={eAp} onValueChange={v => setEAp(v as 'AM' | 'PM')}>
+                      <SelectTrigger className="w-[70px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
                 {/* Duration display */}
-                <div className="col-span-2">
-                  <label className={labelCls}>Duration</label>
-                  <p className="text-sm font-semibold text-gray-900 font-mono">{duration}</p>
+                <div className="col-span-2 flex flex-col gap-1.5">
+                  <Label>Duration</Label>
+                  <p className="text-sm font-semibold text-foreground font-mono">{duration}</p>
                 </div>
               </>
             )}
 
             {/* Notes */}
-            <div className="col-span-2">
-              <label className={labelCls}>Notes <span className="text-red-500">*</span></label>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Add details"
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none bg-white text-gray-900 w-full focus:outline-none focus:ring-1 focus:ring-blue-500" />
+            <div className="col-span-2 flex flex-col gap-1.5">
+              <Label>Notes <span className="text-destructive">*</span></Label>
+              <Textarea
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+                placeholder="Add details"
+                className="min-h-[80px] resize-none"
+              />
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-center gap-3 px-6 py-4 border-t border-gray-200">
+        <div className="flex items-center justify-center gap-3 px-6 py-4 border-t border-border">
           <Button variant="outline" onClick={onClose} className="min-w-[90px]">Cancel</Button>
-          <Button onClick={handleSave} className="min-w-[90px] text-white" style={{ background: '#1C63A6' }}>
+          <Button onClick={handleSave} className="min-w-[90px]" style={{ background: '#1C63A6' }}>
             {isEdit ? 'Update' : 'Add'}
           </Button>
         </div>
@@ -308,7 +318,8 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
     });
   }
 
-  const COLS = ['CLIENT NAME', 'ENGAGEMENT ID', 'CATEGORY', 'TYPE', 'BILLABLE', 'START TIME', 'END TIME', 'DURATION', 'NOTES', 'ACTIONS'];
+  const COLS = ['TEAM MEMBER', 'ENGAGEMENT ID', 'CATEGORY', 'TYPE', 'BILLABLE', 'START TIME', 'END TIME', 'DURATION', 'NOTES', 'ACTIONS'];
+  const SORTABLE = new Set(['TEAM MEMBER', 'ENGAGEMENT ID', 'CATEGORY', 'TYPE', 'BILLABLE']);
 
   return (
     <>
@@ -317,7 +328,7 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
 
       {/* Window */}
       <div
-        className="fixed inset-x-4 top-14 z-[150] mx-auto max-w-[1100px] rounded-xl overflow-hidden shadow-2xl flex flex-col"
+        className="fixed inset-x-4 top-14 z-[150] mx-auto max-w-[1100px] rounded-xl overflow-hidden shadow-2xl flex flex-col border border-border"
         style={{ maxHeight: 'calc(100vh - 72px)' }}
       >
         {/* Window chrome — Countable dark blue */}
@@ -330,30 +341,26 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
             <span className="text-white text-sm font-semibold tracking-wide">Countable</span>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setMinimized(v => !v)}
-              className="w-6 h-6 rounded flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-              title="Minimize">
+            <button onClick={() => setMinimized(v => !v)} className="w-6 h-6 rounded flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors" title="Minimize">
               <Minus className="h-3.5 w-3.5" />
             </button>
-            <button className="w-6 h-6 rounded flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-              title="Maximize">
+            <button className="w-6 h-6 rounded flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors" title="Maximize">
               <Maximize2 className="h-3.5 w-3.5" />
             </button>
-            <button onClick={onClose}
-              className="w-6 h-6 rounded flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-              title="Close">
+            <button onClick={onClose} className="w-6 h-6 rounded flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors" title="Close">
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
 
         {!minimized && (
-          <div className="flex flex-col flex-1 overflow-hidden bg-white">
+          <div className="flex flex-col flex-1 overflow-hidden bg-card">
+
             {/* Sub-header */}
-            <div className="flex items-center gap-4 px-5 py-3.5 border-b border-gray-200 shrink-0">
-              <h1 className="text-lg font-bold text-gray-900 flex-1">Time Tracker</h1>
+            <div className="flex items-center gap-4 px-5 py-3.5 border-b border-border shrink-0">
+              <h1 className="text-lg font-bold text-foreground flex-1">Time Tracker</h1>
               {successMsg && (
-                <div className="flex items-center gap-2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg animate-in fade-in duration-200 shrink-0">
+                <div className="flex items-center gap-2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shrink-0">
                   <Check className="h-3.5 w-3.5 shrink-0" />
                   The activity has been added to your time tracker
                 </div>
@@ -361,7 +368,7 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
             </div>
 
             {/* Actions bar */}
-            <div className="flex items-center gap-3 px-5 py-2.5 border-b border-gray-200 shrink-0">
+            <div className="flex items-center gap-3 px-5 py-2.5 border-b border-border shrink-0">
               <Button variant="outline" size="sm" className="h-8 gap-1.5 text-sm border-dashed" onClick={() => setShowAdd(true)}>
                 <Plus className="h-4 w-4" />
                 Manual Time Entry
@@ -370,27 +377,25 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
 
             {/* Table */}
             <div className="flex-1 overflow-auto">
-              <table className="w-full text-xs border-collapse" style={{ minWidth: '960px' }}>
-                <thead>
-                  <tr className="sticky top-0 z-10 bg-gray-50 border-b border-gray-200">
-                    <th className="w-9 px-3 py-2.5">
+              <table className="w-full caption-bottom text-sm" style={{ minWidth: '960px' }}>
+                <TableHeader className="sticky top-0 z-10 bg-muted/40">
+                  <tr>
+                    <TableHead className="w-9 px-3 py-2.5 h-auto">
                       <input type="checkbox" className="h-3.5 w-3.5 rounded cursor-pointer" />
-                    </th>
+                    </TableHead>
                     {COLS.map(h => (
-                      <th key={h} className="px-3 py-2.5 text-left font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap text-[11px]">
+                      <TableHead key={h} className="px-3 py-2.5 h-auto whitespace-nowrap">
                         {h}
-                        {['CLIENT NAME', 'ENGAGEMENT ID', 'CATEGORY', 'TYPE', 'BILLABLE'].includes(h) && (
-                          <span className="ml-1 opacity-40">⇅</span>
-                        )}
+                        {SORTABLE.has(h) && <span className="ml-1 opacity-40">⇅</span>}
                         {h === 'ACTIONS' && <span className="ml-1 opacity-40">↕</span>}
-                      </th>
+                      </TableHead>
                     ))}
                   </tr>
-                </thead>
-                <tbody>
+                </TableHeader>
+                <TableBody>
                   {entries.length === 0 ? (
                     <tr>
-                      <td colSpan={11} className="text-center py-20 text-gray-400 text-sm">
+                      <td colSpan={11} className="text-center py-20 text-muted-foreground text-sm">
                         Time has not yet been logged
                       </td>
                     </tr>
@@ -398,15 +403,15 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
                     dateGroups.map(([date, grp]) => (
                       <Fragment key={date}>
                         {/* Group header */}
-                        <tr className="bg-gray-50/80">
+                        <tr className="bg-muted/30">
                           <td colSpan={11} className="px-4 py-2">
                             <button onClick={() => toggleCollapse(date)}
-                              className="flex items-center gap-2 text-xs font-semibold text-gray-700 hover:text-gray-900">
+                              className="flex items-center gap-2 text-xs font-semibold text-foreground hover:text-foreground/80 transition-colors">
                               <span className="text-sm">📅</span>
                               {dateLabel(date, grp.length)}
                               {collapsed.has(date)
-                                ? <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
-                                : <ChevronUp className="h-3.5 w-3.5 text-gray-400" />
+                                ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                                : <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
                               }
                             </button>
                           </td>
@@ -414,58 +419,58 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
 
                         {/* Entry rows */}
                         {!collapsed.has(date) && grp.map(entry => (
-                          <tr key={entry.id} className="border-b border-gray-100 hover:bg-gray-50/60 transition-colors">
-                            <td className="px-3 py-2.5 w-9">
+                          <TableRow key={entry.id}>
+                            <TableCell className="px-3 py-2.5 w-9">
                               <input type="checkbox" className="h-3.5 w-3.5 rounded cursor-pointer" />
-                            </td>
-                            <td className="px-3 py-2.5 text-sm text-gray-900 whitespace-nowrap">{entry.clientName}</td>
-                            <td className="px-3 py-2.5 whitespace-nowrap">
-                              <span className="font-mono text-[11px] text-gray-500">{entry.engagementId}</span>
-                            </td>
-                            <td className="px-3 py-2.5 text-sm text-gray-700 whitespace-nowrap">{entry.category}</td>
-                            <td className="px-3 py-2.5 whitespace-nowrap">
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">
+                              {entry.userName ?? CURRENT_USER.name}
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">
+                              <span className="font-mono text-[11px] text-muted-foreground">{entry.engagementId}</span>
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">{entry.category}</TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-sm text-gray-700">{entry.type}</span>
+                                <span>{entry.type}</span>
                                 {entry.isIdle && (
-                                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-orange-500 text-white">Idle</span>
+                                  <Badge className="px-1.5 py-0 text-[10px] rounded-sm" variant="warning">Idle</Badge>
                                 )}
                               </div>
-                            </td>
-                            <td className="px-3 py-2.5 whitespace-nowrap">
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">
                               {entry.billable
-                                ? <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">Billable</span>
-                                : <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">Non Billable</span>
+                                ? <Badge variant="inProgress" className="py-0 text-[10px] rounded-sm">Billable</Badge>
+                                : <Badge variant="notStarted" className="py-0 text-[10px] rounded-sm">Non Billable</Badge>
                               }
-                            </td>
-                            <td className="px-3 py-2.5 text-sm text-gray-700 whitespace-nowrap">{fmtTime12(entry.startTime)}</td>
-                            <td className="px-3 py-2.5 text-sm text-gray-700 whitespace-nowrap">{fmtTime12(entry.endTime)}</td>
-                            <td className="px-3 py-2.5 whitespace-nowrap">
-                              <span className="font-mono text-xs text-gray-700">{calcDuration(entry.startTime, entry.endTime)}</span>
-                            </td>
-                            <td className="px-3 py-2.5 max-w-[200px]">
-                              <span className="text-sm text-gray-600 truncate block">{entry.notes || '—'}</span>
-                            </td>
-                            <td className="px-3 py-2.5">
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">{fmtTime12(entry.startTime)}</TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">{fmtTime12(entry.endTime)}</TableCell>
+                            <TableCell className="px-3 py-2.5 whitespace-nowrap">
+                              <span className="font-mono text-xs">{calcDuration(entry.startTime, entry.endTime)}</span>
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5 max-w-[200px]">
+                              <span className="text-sm text-muted-foreground truncate block">{entry.notes || '—'}</span>
+                            </TableCell>
+                            <TableCell className="px-3 py-2.5">
                               <div className="flex items-center gap-2">
-                                <button onClick={() => setEditEntry(entry)}
-                                  className="text-gray-400 hover:text-gray-700 transition-colors" title="Edit">
+                                <button onClick={() => setEditEntry(entry)} className="text-muted-foreground hover:text-foreground transition-colors" title="Edit">
                                   <Pencil className="h-3.5 w-3.5" />
                                 </button>
-                                <button onClick={() => handleDelete(entry.id)}
-                                  className="text-gray-400 hover:text-red-500 transition-colors" title="Delete">
+                                <button onClick={() => handleDelete(entry.id)} className="text-muted-foreground hover:text-destructive transition-colors" title="Delete">
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
-                                <button className="text-gray-400 hover:text-green-600 transition-colors" title="Approve">
+                                <button className="text-muted-foreground hover:text-green-600 transition-colors" title="Approve">
                                   <Check className="h-3.5 w-3.5" />
                                 </button>
                               </div>
-                            </td>
-                          </tr>
+                            </TableCell>
+                          </TableRow>
                         ))}
                       </Fragment>
                     ))
                   )}
-                </tbody>
+                </TableBody>
               </table>
             </div>
           </div>

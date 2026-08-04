@@ -9,6 +9,7 @@ export interface TrackerEntry {
   startTime: string;
   endTime: string;
   notes: string;
+  userName?: string;
   isIdle?: boolean;
 }
 
@@ -34,12 +35,12 @@ const STORAGE_KEY = 'tracker-modal-entries';
 function makeSeed(): TrackerEntry[] {
   const d = new Date().toISOString().slice(0, 10);
   return [
-    { id: 'tm-seed-1', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Client Onboarding', type: 'Automatic', billable: true, startTime: '09:00', endTime: '09:50', notes: 'Client Onboarding completed' },
-    { id: 'tm-seed-2', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Documents', type: 'Automatic', billable: true, startTime: '10:00', endTime: '10:40', notes: 'Document addition completed' },
-    { id: 'tm-seed-3', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Financial Statements', type: 'Automatic', billable: true, startTime: '11:00', endTime: '11:40', notes: 'Financial Statements reviewed' },
-    { id: 'tm-seed-4', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Procedures', type: 'Automatic', billable: true, startTime: '13:00', endTime: '13:05', notes: 'Procedures leadsheet completed' },
-    { id: 'tm-seed-5', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Procedures', type: 'Automatic', billable: false, startTime: '13:05', endTime: '13:35', notes: '', isIdle: true },
-    { id: 'tm-seed-6', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Procedures', type: 'Automatic', billable: true, startTime: '14:00', endTime: '14:15', notes: 'Procedures leadsheet completed' },
+    { id: 'tm-seed-1', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Client Onboarding', type: 'Automatic', billable: true, startTime: '09:00', endTime: '09:50', notes: 'Client Onboarding completed', userName: 'Praveen D.' },
+    { id: 'tm-seed-2', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Documents', type: 'Automatic', billable: true, startTime: '10:00', endTime: '10:40', notes: 'Document addition completed', userName: 'Praveen D.' },
+    { id: 'tm-seed-3', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Financial Statements', type: 'Automatic', billable: true, startTime: '11:00', endTime: '11:40', notes: 'Financial Statements reviewed', userName: 'Praveen D.' },
+    { id: 'tm-seed-4', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Procedures', type: 'Automatic', billable: true, startTime: '13:00', endTime: '13:05', notes: 'Procedures leadsheet completed', userName: 'Praveen D.' },
+    { id: 'tm-seed-5', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Procedures', type: 'Automatic', billable: false, startTime: '13:05', endTime: '13:35', notes: '', isIdle: true, userName: 'Praveen D.' },
+    { id: 'tm-seed-6', date: d, clientName: 'Northline Precision', engagementId: 'AUD-NPM-Dec312025', category: 'Procedures', type: 'Automatic', billable: true, startTime: '14:00', endTime: '14:15', notes: 'Procedures leadsheet completed', userName: 'Praveen D.' },
   ];
 }
 
