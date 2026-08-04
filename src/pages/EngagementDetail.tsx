@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, Play, Square, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Hourglass, Eye } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -95,6 +95,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DeleteChecklistDialog } from "@/components/DeleteChecklistDialog";
 import { AddChecklistSheet } from "@/components/AddChecklistSheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AuditASMImportBanner } from "@/components/AuditASMImportBanner";
 import { Audit506ImportBanner } from "@/components/Audit506ImportBanner";
 import { Audit525ImportBanner } from "@/components/Audit525ImportBanner";
@@ -1048,12 +1049,18 @@ export default function EngagementDetail() {
  const [pbcNotificationCount, setPBCNotificationCount] = useState(() =>
  engagementId ? getPBCNotificationCount(engagementId) : 0
  );
- // ── Global timer ────────────────────────────────────────────────────────────
- const [globalTimerSec, setGlobalTimerSec] = useState(0);
- const [globalTimerRunning, setGlobalTimerRunning] = useState(false);
- const globalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
- const globalActiveRef = useRef(false);
- const { addEntry: addTimeEntry } = useTimeEntries(engagementId ?? "default");
+ // ── Time tracker ─────────────────────────────────────────────────────────────
+ const [trackerPanelOpen, setTrackerPanelOpen] = useState(false);
+ const [activeSec, setActiveSec] = useState(0);
+ const [idleSec, setIdleSec] = useState(0);
+ const [isIdle, setIsIdle] = useState(false);
+ const activeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+ const idleTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+ const lastActivityRef = useRef<number>(Date.now());
+ const isIdleRef = useRef(false);
+ const [budgetHrs, setBudgetHrs] = useState(0);
+ const [budgetBySection, setBudgetBySection] = useState<Record<string, number>>({});
+ const { addEntry: addTimeEntry, entries } = useTimeEntries(engagementId ?? "default");
 
  useEffect(() => {
  if (!priorYearFile) return;
@@ -1105,12 +1112,69 @@ export default function EngagementDetail() {
  return () => window.removeEventListener('open-note-panel', handler);
  }, [engagementId]);
 
- const toggleGlobalTimer = () => {
- if (globalActiveRef.current) {
- clearInterval(globalTimerRef.current!);
- globalActiveRef.current = false;
- setGlobalTimerRunning(false);
- const hrs = Math.round(globalTimerSec / 900) / 4;
+ // Auto-start time tracking when engagement mounts
+ useEffect(() => {
+ const delay = setTimeout(() => {
+ isIdleRef.current = false;
+ setIsIdle(false);
+ activeTimerRef.current = setInterval(() => setActiveSec(s => s + 1), 1000);
+ toast.success(`Time tracking started for engagement ${engagementId ?? ''}`);
+ }, 600);
+ return () => {
+ clearTimeout(delay);
+ if (activeTimerRef.current) clearInterval(activeTimerRef.current);
+ if (idleTimerRef.current) clearInterval(idleTimerRef.current);
+ };
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+ // Idle detection — after 15 min of inactivity, switch active → idle
+ useEffect(() => {
+ const IDLE_MS = 15 * 60 * 1000;
+ const checkIdle = setInterval(() => {
+ if (Date.now() - lastActivityRef.current >= IDLE_MS && !isIdleRef.current) {
+ isIdleRef.current = true;
+ setIsIdle(true);
+ if (activeTimerRef.current) { clearInterval(activeTimerRef.current); activeTimerRef.current = null; }
+ idleTimerRef.current = setInterval(() => setIdleSec(s => s + 1), 1000);
+ }
+ }, 1000);
+ const resetActivity = () => {
+ lastActivityRef.current = Date.now();
+ if (isIdleRef.current) {
+ isIdleRef.current = false;
+ setIsIdle(false);
+ if (idleTimerRef.current) { clearInterval(idleTimerRef.current); idleTimerRef.current = null; }
+ activeTimerRef.current = setInterval(() => setActiveSec(s => s + 1), 1000);
+ }
+ };
+ window.addEventListener('mousemove', resetActivity);
+ window.addEventListener('keydown', resetActivity);
+ return () => {
+ clearInterval(checkIdle);
+ window.removeEventListener('mousemove', resetActivity);
+ window.removeEventListener('keydown', resetActivity);
+ };
+ }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+ // Load budget data from localStorage for budget pill
+ useEffect(() => {
+ if (!engagementId) return;
+ const stored = localStorage.getItem(`audit-time-budget-${engagementId}`);
+ if (!stored) return;
+ try {
+ const data = JSON.parse(stored) as { totalHrs?: string; bySection?: Record<string, string> };
+ setBudgetHrs(parseFloat(data.totalHrs ?? '') || 0);
+ if (data.bySection) {
+ const secs: Record<string, number> = {};
+ for (const [k, v] of Object.entries(data.bySection)) secs[k] = parseFloat(v) || 0;
+ setBudgetBySection(secs);
+ }
+ } catch { /* ignore */ }
+ }, [engagementId]);
+
+ const logTrackedTime = () => {
+ const totalSec = activeSec + idleSec;
+ const hrs = Math.round(totalSec / 900) / 4;
  if (hrs > 0) {
  addTimeEntry({
  id: `e-${Date.now()}`,
@@ -1122,19 +1186,19 @@ export default function EngagementDetail() {
  hours: hrs,
  description: 'Time tracked via timer',
  } as TimeEntry);
+ toast.success('Time entry logged successfully');
  }
- setGlobalTimerSec(0);
- } else {
- setGlobalTimerSec(0);
- globalActiveRef.current = true;
- setGlobalTimerRunning(true);
- globalTimerRef.current = setInterval(() => {
- if (document.visibilityState === 'visible') setGlobalTimerSec(s => s + 1);
- }, 1000);
- }
+ setActiveSec(0);
+ setIdleSec(0);
+ lastActivityRef.current = Date.now();
  };
 
- useEffect(() => () => { if (globalTimerRef.current) clearInterval(globalTimerRef.current); }, []);
+ const totalActualHrs = useMemo(() => entries.reduce((s, e) => s + e.hours, 0), [entries]);
+ const actualsBySection = useMemo(() => {
+ const m: Record<string, number> = {};
+ for (const e of entries) m[e.tbSection] = (m[e.tbSection] ?? 0) + e.hours;
+ return m;
+ }, [entries]);
 
  // ────────────────────────────────────────────────────────────────────────────
 
@@ -2341,28 +2405,71 @@ export default function EngagementDetail() {
  </div>
  {/* Action buttons row */}
  <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
- {/* Global timer — always visible on all pages */}
- <div className="flex items-center gap-4 shrink-0">
- <div className="flex items-center gap-2">
- {globalTimerRunning && (
- <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
- <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
- Recording
+ {/* Time tracker pill + budget pill */}
+ <div className="flex items-center gap-2 shrink-0">
+ <button
+ onClick={() => setTrackerPanelOpen(true)}
+ className={`flex items-center gap-2 h-7 px-3 rounded-full border text-xs font-medium transition-colors ${isIdle ? 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20' : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/20'}`}
+ >
+ <Hourglass className="h-3 w-3" />
+ <span className="font-mono font-semibold tabular-nums">
+ {isIdle ? fmtElapsed(idleSec) : fmtElapsed(activeSec)}
  </span>
+ <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isIdle ? 'bg-amber-500' : 'bg-green-500'}`} />
+ </button>
+ <Popover>
+ <PopoverTrigger asChild>
+ <button className="flex items-center gap-1.5 h-7 px-3 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-400 hover:bg-blue-500/20 transition-colors text-xs font-medium whitespace-nowrap">
+ {budgetHrs > 0 ? (
+ <>{budgetHrs}h allocated · <span className={totalActualHrs > budgetHrs ? 'text-red-500' : ''}>{totalActualHrs.toFixed(1)}h used</span></>
+ ) : (
+ <span>No budget set</span>
  )}
- <span className="font-mono text-sm font-semibold tabular-nums text-foreground w-16 text-center">
- {fmtElapsed(globalTimerSec)}
+ </button>
+ </PopoverTrigger>
+ <PopoverContent align="start" className="w-72 p-3 space-y-2">
+ <p className="text-xs font-semibold text-foreground">Budget vs Actual</p>
+ {[
+ { key: 'general', label: 'General / Planning' },
+ { key: 'risk-assess', label: 'Risk Assessment' },
+ { key: 'risk-resp', label: 'Risk Response' },
+ { key: 'reporting', label: 'Reporting / Completion' },
+ ].map(sec => {
+ const bh = budgetBySection[sec.key] ?? 0;
+ const ah = actualsBySection[sec.key] ?? 0;
+ const over = bh > 0 && ah > bh;
+ return (
+ <div key={sec.key} className="flex items-center justify-between gap-2">
+ <span className="text-xs text-muted-foreground truncate">{sec.label}</span>
+ <span className={`text-xs font-medium tabular-nums whitespace-nowrap ${over ? 'text-red-500' : 'text-foreground'}`}>
+ {ah.toFixed(1)}h{bh > 0 ? ` / ${bh.toFixed(0)}h` : ''}
  </span>
  </div>
+ );
+ })}
+ <div className="border-t border-border pt-2 flex items-center justify-between gap-2">
+ <span className="text-xs font-semibold text-foreground">Total</span>
+ <span className={`text-xs font-semibold tabular-nums ${budgetHrs > 0 && totalActualHrs > budgetHrs ? 'text-red-500' : 'text-foreground'}`}>
+ {totalActualHrs.toFixed(1)}h{budgetHrs > 0 ? ` / ${budgetHrs.toFixed(0)}h` : ''}
+ </span>
+ </div>
+ {budgetHrs > 0 && (
+ <p className={`text-xs ${totalActualHrs > budgetHrs ? 'text-red-500' : 'text-green-600 dark:text-green-400'}`}>
+ {totalActualHrs > budgetHrs
+ ? `${(totalActualHrs - budgetHrs).toFixed(1)}h over budget`
+ : `${(budgetHrs - totalActualHrs).toFixed(1)}h remaining`}
+ </p>
+ )}
  <Button
- onClick={toggleGlobalTimer}
- variant={globalTimerRunning ? 'destructive' : 'secondary'}
  size="sm"
- className="h-7 px-2.5 text-xs gap-1.5"
+ variant="outline"
+ className="w-full h-7 text-xs"
+ onClick={() => { if (engagementId) navigate(`/engagements/${engagementId}/checklist/aud-tt`); }}
  >
- {globalTimerRunning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
- {globalTimerRunning ? 'Stop & Log' : 'Start Time Log'}
+ View Time Tracker
  </Button>
+ </PopoverContent>
+ </Popover>
  </div>
  <div className="flex items-center gap-1">
  {checklistKey?.startsWith('node-note-') && (
@@ -3294,5 +3401,70 @@ export default function EngagementDetail() {
  noteName={notePanel?.noteName ?? ''}
  engId={engagementId ?? ''}
  />
+
+ {/* Time Tracker summary panel */}
+ <Sheet open={trackerPanelOpen} onOpenChange={setTrackerPanelOpen}>
+ <SheetContent side="right" className="w-[480px] p-0 flex flex-col gap-0">
+ <SheetHeader className="px-5 py-4 border-b border-border flex-row items-center justify-between">
+ <SheetTitle className="text-sm font-semibold">Time Tracker</SheetTitle>
+ <button
+ onClick={() => {
+ if (engagementId) navigate(`/engagements/${engagementId}/checklist/aud-tt`);
+ setTrackerPanelOpen(false);
+ }}
+ className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+ >
+ <Eye className="h-3.5 w-3.5" />
+ View Time Tracker ({entries.length})
+ </button>
+ </SheetHeader>
+
+ {/* Column headers */}
+ <div className="grid grid-cols-[1fr_120px_120px_100px] items-center gap-2 px-5 py-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+ <span>Client Name</span>
+ <span className="text-center">Active Time</span>
+ <span className="text-center">Idle Time</span>
+ <span />
+ </div>
+
+ {/* Single engagement row */}
+ <div className="flex-1 overflow-y-auto">
+ <div className="grid grid-cols-[1fr_120px_120px_100px] items-center gap-2 px-5 py-3 border-b border-border/50">
+ <div>
+ <p className="text-sm font-medium text-foreground truncate">
+ {engagementId ? (engagementsData[engagementId]?.client ?? engagementId) : '—'}
+ </p>
+ <p className="text-xs text-muted-foreground">{engagementId}</p>
+ </div>
+ <div className="flex items-center justify-center gap-1.5">
+ {!isIdle && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />}
+ <span className={`font-mono text-sm font-semibold tabular-nums ${!isIdle ? 'text-red-500' : 'text-muted-foreground'}`}>
+ {fmtElapsed(activeSec)}
+ </span>
+ </div>
+ <div className="flex items-center justify-center gap-1.5">
+ {isIdle && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />}
+ <span className={`font-mono text-sm font-semibold tabular-nums ${isIdle ? 'text-red-500' : 'text-muted-foreground'}`}>
+ {fmtElapsed(idleSec)}
+ </span>
+ </div>
+ <Button
+ size="sm"
+ className="h-7 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+ onClick={() => { logTrackedTime(); setTrackerPanelOpen(false); }}
+ >
+ Log Time
+ </Button>
+ </div>
+ </div>
+
+ {/* Footer */}
+ <div className="px-5 py-3 border-t border-border/50 bg-muted/30">
+ <p className="text-[11px] text-muted-foreground">
+ <span className="font-semibold">Note*:</span> All outstanding accumulated time will be automatically logged into the time-tracker at 11:59 PM.
+ </p>
+ </div>
+ </SheetContent>
+ </Sheet>
  </>;
 }
