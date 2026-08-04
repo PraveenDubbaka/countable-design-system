@@ -825,6 +825,13 @@ const [workspaceLoading, setWorkspaceLoading] = useState(false);
  return subscribeLukaConfig((config) => {
  if (!config) return;
  if (config.tab) setActiveTab(config.tab);
+ if (config.flow !== "pbc-request") {
+ setActiveFlow(null);
+ setPBCViewingDoc(null);
+ setPBCEditing(false);
+ setPBCEditDirty(false);
+ setThreadsSidebarCollapsed(false);
+ }
  if (config.flow === "pbc-request") {
  if (config.engagementId) {
  const eng = ENGAGEMENTS.find(e => e.id === config.engagementId);
