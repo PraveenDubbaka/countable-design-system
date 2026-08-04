@@ -2837,11 +2837,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Sidebar items with Luka automation — demo indicators for Atin
  const LUKA_AUTO_IDS = new Set([
-  'aud-410',        // 410 New Engagement — Acceptance/Continuance
+  'aud-form-410',   // 410 New Engagement — Acceptance/Continuance
+  'aud-mat',        // 420 Materiality
   'aud-plan',       // 436 Team Planning Discussions
   'aud-ra-pap501bc', // 501-A Preliminary Analytical
-  'aud-520',        // 520 Risk Register
-  'aud-590',        // 590 Engagement Scoping
+  'aud-ra-520',     // 520 Risk Register
+  'aud-ra-590',     // 590 Engagement Scoping
+  'gca-ws-proc-ar', // B-1 AR Audit Procedures
  ]);
 
  const renderNode = (node: SectionNode, depth: number = 0, parentLabel?: string): React.ReactNode => {
