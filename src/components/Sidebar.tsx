@@ -2835,6 +2835,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  return n.children?.some(engSidebarNodeMatches) ?? false;
  };
 
+ // Sidebar items with Luka automation — demo indicators for Atin
+ const LUKA_AUTO_IDS = new Set([
+  'aud-410', 'aud-mat', 'aud-asm', 'aud-plan-428', 'aud-pap501',
+  'aud-520', 'aud-590', 'aud-625', 'gca-ws-proc-cash', 'gca-ws-proc-ar',
+ ]);
+
  const renderNode = (node: SectionNode, depth: number = 0, parentLabel?: string): React.ReactNode => {
  if (engSidebarQ && !engSidebarNodeMatches(node)) return null;
  const hasChildren = node.children && node.children.length > 0;
@@ -2951,6 +2957,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  )}
  {node.code && <span className="font-semibold text-primary">{node.code}</span>}
  <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}><SidebarHighlight text={node.label} query={engSidebarSearchQuery} /></span>
+ {/* Luka automation indicator — demo nav aid for Atin */}
+ {LUKA_AUTO_IDS.has(node.id) && engId === 'AUD-NPM-Dec312025' && (
+  <span className="flex-shrink-0 ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500" title="Luka automation available">
+   <svg width="6" height="7" viewBox="0 0 6 7" fill="none"><path d="M1 1L5 3.5L1 6V1Z" fill="white" /></svg>
+  </span>
+ )}
  {!isLeaf && sectionFillStatus[node.code ?? ''] && (
  <span className="w-2 h-2 rounded-full flex-shrink-0 ml-auto luka-dot-filled" title="Luka filled" />
  )}
