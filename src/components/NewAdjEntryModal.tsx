@@ -312,7 +312,14 @@ export function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yea
                 </tr>
               </thead>
               <tbody>
-                {lines.map((line, idx) => (
+                {lines.map((line, idx) => {
+                  const ownDebit = parseFloat(line.debit) > 0;
+                  const ownCredit = parseFloat(line.credit) > 0;
+                  const otherDebit = (totalDebit - (parseFloat(line.debit) || 0)) > 0;
+                  const otherCredit = (totalCredit - (parseFloat(line.credit) || 0)) > 0;
+                  const showDebit = !ownCredit && (ownDebit || !otherDebit);
+                  const showCredit = !ownDebit && (ownCredit || !otherCredit);
+                  return (
                   <tr key={line.id} className="border-b border-border/50">
                     <td className="px-2 py-1.5">
                       <AccSearch value={line.accNo} onChange={(a, d) => setLineAccDesc(line.id, a, d)} />
@@ -321,7 +328,7 @@ export function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yea
                       <DescSearch value={line.description} onChange={(d, a) => setLineAccDesc(line.id, a, d)} />
                     </td>
                     <td className="px-2 py-1.5">
-                      {parseFloat(line.credit) > 0 ? (
+                      {!showDebit ? (
                         <span className="flex h-8 items-center justify-end px-1 text-sm text-muted-foreground">—</span>
                       ) : (
                         <Input type="number" value={line.debit} min="0" step="0.01" placeholder="0.00"
@@ -331,7 +338,7 @@ export function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yea
                       )}
                     </td>
                     <td className="px-2 py-1.5">
-                      {parseFloat(line.debit) > 0 ? (
+                      {!showCredit ? (
                         <span className="flex h-8 items-center justify-end px-1 text-sm text-muted-foreground">—</span>
                       ) : (
                         <Input type="number" value={line.credit} min="0" step="0.01" placeholder="0.00"
@@ -355,7 +362,8 @@ export function NewAdjEntryModal({ open, onClose, onSave, engId, clientName, yea
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
               <tfoot>
                 <tr className="bg-muted border-t border-border">
