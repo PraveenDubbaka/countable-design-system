@@ -16,6 +16,7 @@ import { Input as SearchInput } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { AskLukaOverlay } from "@/components/AskLukaOverlay";
+import { TimeTrackerModal } from "@/components/TimeTrackerModal";
 import { subscribeLukaOpen, getLukaOpen, setLukaOpen, openLukaWithConfig } from "@/lib/lukaOpenStore";
 import { getGlobalPBCNotifications, markGlobalPBCNotificationRead, type GlobalPBCNotification } from "@/lib/pbcRequestStore";
 
@@ -32,6 +33,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  const [ttEngagements, setTtEngagements] = useState<Map<string, TrackedEngagement>>(() => getEngagements());
  const [ttOpen, setTtOpen] = useState(false);
  const [ttSelected, setTtSelected] = useState<Set<string>>(new Set());
+ const [ttModalOpen, setTtModalOpen] = useState(false);
  
  // Font size accessibility state
  type FontSize = 'A' | 'AA' | 'AAA';
@@ -218,10 +220,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  <div className="flex items-center justify-between px-4 py-3 border-b border-border">
  <span className="text-sm font-semibold text-foreground">Time Tracker</span>
  <button
- onClick={() => {
- const first = ttList[0];
- if (first) { navigate(`/engagements/${first.id}/checklist/aud-tt`); setTtOpen(false); }
- }}
+ onClick={() => { setTtModalOpen(true); setTtOpen(false); }}
  className="flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
  >
  <Eye className="h-3.5 w-3.5" />
@@ -476,6 +475,9 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
 
  {/* Ask Luka Overlay */}
  <AskLukaOverlay open={askLukaOpen} onOpenChange={(o) => { setAskLukaOpen(o); setLukaOpen(o); }} />
+
+ {/* Time Tracker Modal */}
+ {ttModalOpen && <TimeTrackerModal onClose={() => setTtModalOpen(false)} />}
  </>
  );
 }
