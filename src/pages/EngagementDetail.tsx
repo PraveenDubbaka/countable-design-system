@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare } from "lucide-react";
-import { getEnabled, registerEngagement, unregisterEngagement, updateEngagementTime } from "@/lib/timeTrackerStore";
+import { getEnabled, subscribeEnabled, registerEngagement, unregisterEngagement, updateEngagementTime } from "@/lib/timeTrackerStore";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { Button } from "@/components/ui/button";
@@ -1051,6 +1051,7 @@ export default function EngagementDetail() {
  engagementId ? getPBCNotificationCount(engagementId) : 0
  );
  // ── Time tracker ─────────────────────────────────────────────────────────────
+ const [ttEnabled, setTtEnabled] = useState(getEnabled);
  const [activeSec, setActiveSec] = useState(0);
  const [idleSec, setIdleSec] = useState(0);
  const [isIdle, setIsIdle] = useState(false);
@@ -1113,6 +1114,8 @@ export default function EngagementDetail() {
  window.addEventListener('open-note-panel', handler);
  return () => window.removeEventListener('open-note-panel', handler);
  }, [engagementId]);
+
+ useEffect(() => subscribeEnabled(setTtEnabled), []);
 
  // Auto-start time tracking when engagement mounts (only when enabled in Settings)
  useEffect(() => {
@@ -2404,62 +2407,22 @@ export default function EngagementDetail() {
  </div>
  {/* Action buttons row */}
  <div className="flex items-center justify-between gap-2 px-4 py-1.5 border-t border-border/50">
- {/* Budget pill */}
+ {/* Time tracker pill */}
+ {ttEnabled && (
  <div className="flex items-center gap-2 shrink-0">
- <Popover>
- <PopoverTrigger asChild>
- <button className="flex items-center gap-1.5 h-7 px-3 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-400 hover:bg-blue-500/20 transition-colors text-xs font-medium whitespace-nowrap">
- {budgetHrs > 0 ? (
- <>{budgetHrs}h allocated · <span className={totalActualHrs > budgetHrs ? 'text-red-500' : ''}>{totalActualHrs.toFixed(1)}h used</span></>
- ) : (
- <span>No budget set</span>
+  <div className={`flex items-center gap-1.5 h-7 px-3 rounded-full border text-xs font-medium whitespace-nowrap font-mono tabular-nums ${isIdle ? 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400' : 'bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-400'}`}>
+   <span className={`w-1.5 h-1.5 rounded-full shrink-0 animate-pulse ${isIdle ? 'bg-amber-500' : 'bg-red-500'}`} />
+   {(() => {
+    const s = isIdle ? idleSec : activeSec;
+    const h = Math.floor(s / 3600).toString().padStart(2, '0');
+    const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+    const sec = (s % 60).toString().padStart(2, '0');
+    return `${h}h:${m}m:${sec}s`;
+   })()}
+   {isIdle && <span className="font-sans font-normal opacity-70 ml-0.5">idle</span>}
+  </div>
+ </div>
  )}
- </button>
- </PopoverTrigger>
- <PopoverContent align="start" className="w-72 p-3 space-y-2">
- <p className="text-xs font-semibold text-foreground">Budget vs Actual</p>
- {[
- { key: 'general', label: 'General / Planning' },
- { key: 'risk-assess', label: 'Risk Assessment' },
- { key: 'risk-resp', label: 'Risk Response' },
- { key: 'reporting', label: 'Reporting / Completion' },
- ].map(sec => {
- const bh = budgetBySection[sec.key] ?? 0;
- const ah = actualsBySection[sec.key] ?? 0;
- const over = bh > 0 && ah > bh;
- return (
- <div key={sec.key} className="flex items-center justify-between gap-2">
- <span className="text-xs text-muted-foreground truncate">{sec.label}</span>
- <span className={`text-xs font-medium tabular-nums whitespace-nowrap ${over ? 'text-red-500' : 'text-foreground'}`}>
- {ah.toFixed(1)}h{bh > 0 ? ` / ${bh.toFixed(0)}h` : ''}
- </span>
- </div>
- );
- })}
- <div className="border-t border-border pt-2 flex items-center justify-between gap-2">
- <span className="text-xs font-semibold text-foreground">Total</span>
- <span className={`text-xs font-semibold tabular-nums ${budgetHrs > 0 && totalActualHrs > budgetHrs ? 'text-red-500' : 'text-foreground'}`}>
- {totalActualHrs.toFixed(1)}h{budgetHrs > 0 ? ` / ${budgetHrs.toFixed(0)}h` : ''}
- </span>
- </div>
- {budgetHrs > 0 && (
- <p className={`text-xs ${totalActualHrs > budgetHrs ? 'text-red-500' : 'text-green-600 dark:text-green-400'}`}>
- {totalActualHrs > budgetHrs
- ? `${(totalActualHrs - budgetHrs).toFixed(1)}h over budget`
- : `${(budgetHrs - totalActualHrs).toFixed(1)}h remaining`}
- </p>
- )}
- <Button
- size="sm"
- variant="outline"
- className="w-full h-7 text-xs"
- onClick={() => { if (engagementId) navigate(`/engagements/${engagementId}/checklist/aud-tt`); }}
- >
- View Time Tracker
- </Button>
- </PopoverContent>
- </Popover>
- </div>
  <div className="flex items-center gap-1">
  {checklistKey?.startsWith('node-note-') && (
   <>
