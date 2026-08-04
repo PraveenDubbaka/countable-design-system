@@ -2966,7 +2966,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {node.code && <span className="font-semibold text-primary">{node.code}</span>}
  <span className={cn("truncate flex-1 text-black dark:text-white", isLeaf ? "font-medium" : "font-semibold")}><SidebarHighlight text={node.label} query={engSidebarSearchQuery} /></span>
  {/* Luka automation indicator */}
- {LUKA_AUTO_IDS.has(node.id) && node.id !== 'aud-form-410' && engId === 'AUD-NPM-Dec312025' && (
+ {LUKA_AUTO_IDS.has(node.id) && engId === 'AUD-NPM-Dec312025' && (
   <span className="flex-shrink-0 ml-1 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full" style={{background: 'linear-gradient(to right, #1C63A6, #7A31D8)'}} title="Luka automation available">
    <svg width="6" height="7" viewBox="0 0 6 7" fill="none"><path d="M1 1L5 3.5L1 6V1Z" fill="white" /></svg>
   </span>
