@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock } from "lucide-react";
 import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
@@ -512,108 +512,306 @@ function UserAccessContent() {
  const [ttEnabled, setTtEnabled] = useState(() => getEnabled());
  useEffect(() => subscribeEnabled(setTtEnabled), []);
 
- const [ttPerms, setTtPerms] = useState({ editSummary: false, exportSummary: false, toggleTracking: true });
- const togglePerm = (key: keyof typeof ttPerms) =>
-  setTtPerms(prev => ({ ...prev, [key]: !prev[key] }));
+ type UAView = 'list' | 'permissions' | 'engagement-access';
+ type Perms = {
+  addTeam: boolean; modifyTeam: boolean; deleteTeam: boolean;
+  addClient: boolean; viewClients: boolean; modifyClients: boolean; deleteClient: boolean;
+  viewEngagements: boolean; createEngagement: boolean; modifyEngagement: boolean;
+  deleteEngagement: boolean; archiveEngagement: boolean; reopenEngagement: boolean;
+  editTimeSummary: boolean; exportTimeSummary: boolean; toggleTracking: boolean;
+ };
+ type Member = { id: string; title: string; name: string; email: string; accessType: string; lastLoggedIn: string; };
 
- const members = [
-  { initials: 'JD', name: 'John Doe',      email: 'johndoe@firm.ca',    role: 'Manager', access: 'Full Access', tt: true },
-  { initials: 'SM', name: 'Sarah McKnight', email: 's.mcknight@firm.ca', role: 'Senior',  access: 'View & Edit', tt: false },
-  { initials: 'PK', name: 'Peter Kim',      email: 'p.kim@firm.ca',      role: 'Partner', access: 'Full Access', tt: true },
-  { initials: 'AL', name: 'Amy Lin',        email: 'a.lin@firm.ca',      role: 'Staff',   access: 'View Only',   tt: false },
+ const MEMBERS: Member[] = [
+  { id: '1', title: 'dev',          name: 'a b',             email: 'bb@gmail.com',                    accessType: 'General', lastLoggedIn: '-' },
+  { id: '2', title: 'dev',          name: 'notify test',     email: 'ptgarv+1228@gmail.com',           accessType: 'General', lastLoggedIn: '-' },
+  { id: '3', title: 'dev',          name: 'test notify',     email: 'ptgarv+ntf@gmail.com',            accessType: 'General', lastLoggedIn: '-' },
+  { id: '4', title: 'Mr',           name: 'Naveen D',        email: 'praveen_dk2002@yahoo.com',        accessType: 'General', lastLoggedIn: '-' },
+  { id: '5', title: 'Partner Test', name: 'Mo Test',         email: 'mohamade+uat-p-t1@countable.co', accessType: 'General', lastLoggedIn: '-' },
+  { id: '6', title: 'dev',          name: 'Arshdeep Kumar',  email: 'arshdeepk@countable.co',          accessType: 'Admin',   lastLoggedIn: '-' },
+  { id: '7', title: 'ADD',          name: 'add team member', email: 'addteasdmv42fail@yopmail.com',    accessType: 'General', lastLoggedIn: '-' },
  ];
- const [memberTt, setMemberTt] = useState<Record<string, boolean>>(
-  Object.fromEntries(members.map(m => [m.email, m.tt]))
+
+ const ENGAGEMENTS = [
+  { id: 'NTR-NEW-Sep302020',   client: 'Penguin Inc',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Dec312019',   client: 'Penguin Inc',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Sep302020-B', client: 'Penguin Inc',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-PEO-Aug172020',   client: 'Penguin Inc',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Sep302020-C', client: 'ABC LTD.',     yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Dec312019-C', client: 'ABC LTD.',     yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Sep302020-D', client: 'ABC LTD.',     yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-PEO-Aug172020-D', client: 'ABC LTD.',     yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Sep302020-E', client: 'Udemy group',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Dec312019-E', client: 'Udemy group',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-NEW-Sep302020-F', client: 'Udemy group',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+  { id: 'NTR-PEO-Aug172020-F', client: 'Udemy group',  yearEnd: 'Dec 31, 2022', dateCreated: 'Jan 28, 2021' },
+ ];
+
+ const DEFAULT_PERMS: Perms = {
+  addTeam: false, modifyTeam: false, deleteTeam: false,
+  addClient: false, viewClients: true, modifyClients: true, deleteClient: false,
+  viewEngagements: true, createEngagement: false, modifyEngagement: true,
+  deleteEngagement: false, archiveEngagement: false, reopenEngagement: false,
+  editTimeSummary: false, exportTimeSummary: false, toggleTracking: true,
+ };
+
+ const [view, setView] = useState<UAView>('list');
+ const [selected, setSelected] = useState<Member | null>(null);
+ const [allPerms, setAllPerms] = useState<Record<string, Perms>>({});
+ const [engAccess, setEngAccess] = useState<Record<string, { access: boolean; tt: boolean }>>(
+  Object.fromEntries(ENGAGEMENTS.map((e, i) => [e.id, { access: [0, 2, 4, 5, 8].includes(i), tt: false }]))
  );
 
- return (
-  <div className="space-y-6">
-   <div className="flex items-start gap-3">
-    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-     <Users className="h-5 w-5 text-primary" />
-    </div>
-    <div>
-     <h3 className="font-semibold text-lg">User & Access</h3>
-     <p className="text-sm text-muted-foreground">Manage team member access and permissions.</p>
-    </div>
-   </div>
+ const getPerms = (id: string): Perms => allPerms[id] ?? DEFAULT_PERMS;
+ const togglePerm = (id: string, key: keyof Perms) =>
+  setAllPerms(prev => ({ ...prev, [id]: { ...getPerms(id), [key]: !getPerms(id)[key] } }));
 
-   <div>
-    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-3">Team Members</p>
-    <div className="border border-border rounded-xl overflow-hidden">
-     <table className="w-full text-sm">
+ const SectionHeader = ({ title, icon }: { title: string; icon?: ReactNode }) => (
+  <div className="px-4 py-2 bg-muted/40 flex items-center justify-between">
+   <div className="flex items-center gap-1.5">{icon}<span className="text-sm font-semibold">{title}</span></div>
+   <span className="text-primary font-bold text-base leading-none select-none">−</span>
+  </div>
+ );
+
+ const PRow = ({ id, k, label, disabled = false, extra }: { id: string; k: keyof Perms; label: string; disabled?: boolean; extra?: ReactNode }) => {
+  const p = getPerms(id);
+  return (
+   <div className={cn("flex items-center justify-between px-4 py-2.5 border-b border-border/40 last:border-b-0", disabled && "opacity-40")}>
+    <div className="flex items-center gap-2 flex-1 min-w-0">
+     <span className="text-sm">{label}</span>
+     {extra}
+    </div>
+    <input
+     type="checkbox"
+     checked={p[k]}
+     disabled={disabled}
+     onChange={() => !disabled && togglePerm(id, k)}
+     className="h-4 w-4 accent-primary cursor-pointer disabled:cursor-not-allowed shrink-0 ml-3"
+    />
+   </div>
+  );
+ };
+
+ // ── Modify Engagement Access view ─────────────────────────────────────────
+ if (view === 'engagement-access') {
+  return (
+   <div className="space-y-4">
+    <button onClick={() => setView('permissions')} className="flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
+     <ArrowLeft className="h-4 w-4" />
+     Modify Engagement Access
+    </button>
+    <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 px-3 py-2 text-xs text-amber-800 dark:text-amber-200 leading-relaxed">
+     Once engagement access is provided, time tracking can be enabled for that engagement.
+     {ttEnabled && ' When the TIME TRACKING column is active, only engagements where Access is checked can have time tracking turned on.'}
+    </div>
+    <div className="border border-border rounded-xl overflow-x-auto">
+     <table className="w-full text-xs">
       <thead className="bg-muted/30">
        <tr>
-        <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Member</th>
-        <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Role</th>
-        <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Access</th>
+        <th className="text-left px-3 py-2.5 font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Engagement ID</th>
+        <th className="text-left px-3 py-2.5 font-semibold text-muted-foreground uppercase tracking-wide">Client Name</th>
+        <th className="text-left px-3 py-2.5 font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Period / Year End</th>
+        <th className="text-left px-3 py-2.5 font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Date Created</th>
+        <th className="px-3 py-2.5 text-center">
+         <div className="flex flex-col items-center gap-0.5">
+          <input type="checkbox" className="h-3.5 w-3.5 accent-primary cursor-pointer" onChange={e => {
+           const checked = e.target.checked;
+           setEngAccess(prev => Object.fromEntries(Object.entries(prev).map(([k, v]) => [k, { ...v, access: checked, tt: checked ? v.tt : false }])));
+          }} />
+          <span className="font-semibold text-muted-foreground uppercase tracking-wide">Access</span>
+         </div>
+        </th>
         {ttEnabled && (
-         <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
-          <div className="flex items-center gap-1.5"><Clock className="h-3 w-3" />Time Tracking</div>
+         <th className="px-3 py-2.5 text-center">
+          <div className="flex flex-col items-center gap-0.5">
+           <input type="checkbox" className="h-3.5 w-3.5 accent-primary opacity-30 cursor-not-allowed" disabled />
+           <span className="font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">Time Tracking</span>
+          </div>
          </th>
         )}
        </tr>
       </thead>
       <tbody>
-       {members.map((m, i) => (
-        <tr key={m.email} className={i < members.length - 1 ? "border-t border-border" : "border-t border-border"}>
-         <td className="px-4 py-3">
-          <div className="flex items-center gap-2.5">
-           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">{m.initials}</div>
-           <div>
-            <p className="font-medium text-foreground">{m.name}</p>
-            <p className="text-[11px] text-muted-foreground">{m.email}</p>
-           </div>
-          </div>
-         </td>
-         <td className="px-4 py-3 text-muted-foreground text-sm">{m.role}</td>
-         <td className="px-4 py-3">
-          <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-muted text-muted-foreground">{m.access}</span>
-         </td>
-         {ttEnabled && (
-          <td className="px-4 py-3">
-           <Switch
-            checked={memberTt[m.email]}
-            onCheckedChange={() => setMemberTt(prev => ({ ...prev, [m.email]: !prev[m.email] }))}
+       {ENGAGEMENTS.map(eng => {
+        const ea = engAccess[eng.id] ?? { access: false, tt: false };
+        return (
+         <tr key={eng.id} className="border-t border-border hover:bg-muted/10 transition-colors">
+          <td className="px-3 py-2.5 font-mono text-[11px]">{eng.id}</td>
+          <td className="px-3 py-2.5">{eng.client}</td>
+          <td className="px-3 py-2.5 whitespace-nowrap">{eng.yearEnd}</td>
+          <td className="px-3 py-2.5 whitespace-nowrap">{eng.dateCreated}</td>
+          <td className="px-3 py-2.5 text-center">
+           <input
+            type="checkbox"
+            checked={ea.access}
+            onChange={() => setEngAccess(prev => ({ ...prev, [eng.id]: { access: !ea.access, tt: ea.access ? false : ea.tt } }))}
+            className="h-3.5 w-3.5 accent-primary cursor-pointer"
            />
           </td>
-         )}
-        </tr>
-       ))}
+          {ttEnabled && (
+           <td className="px-3 py-2.5 text-center">
+            <input
+             type="checkbox"
+             checked={ea.tt}
+             disabled={!ea.access}
+             onChange={() => setEngAccess(prev => ({ ...prev, [eng.id]: { ...ea, tt: !ea.tt } }))}
+             className="h-3.5 w-3.5 accent-primary cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            />
+           </td>
+          )}
+         </tr>
+        );
+       })}
       </tbody>
      </table>
     </div>
    </div>
+  );
+ }
 
-   {ttEnabled && (
-    <div className="space-y-1">
-     <div className="flex items-center gap-2 mb-1">
-      <Clock className="h-3.5 w-3.5 text-primary" />
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Time Tracking Permissions</p>
+ // ── User permissions view ─────────────────────────────────────────────────
+ if (view === 'permissions' && selected) {
+  const p = getPerms(selected.id);
+  const initials = selected.name.split(' ').map((n: string) => n[0]).filter(Boolean).join('').slice(0, 2).toUpperCase();
+  return (
+   <div className="space-y-4">
+    <button onClick={() => setView('list')} className="flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
+     <ArrowLeft className="h-4 w-4" />
+     Back to Users
+    </button>
+    <div className="flex items-center gap-3 pb-3 border-b border-border">
+     <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">{initials}</div>
+     <div>
+      <p className="font-semibold text-sm">{selected.name}</p>
+      <p className="text-xs text-muted-foreground">{selected.email} · {selected.accessType}</p>
      </div>
-     <p className="text-xs text-muted-foreground mb-3">Default permissions applied to all team members.</p>
-     {([
-      { key: 'editSummary', label: 'Edit time summary for assigned engagements', gold: false },
-      { key: 'exportSummary', label: 'Export time summary for assigned engagements', gold: false },
-      { key: 'toggleTracking', label: 'Can turn time-tracking on/off for future engagements', gold: true },
-     ] as { key: keyof typeof ttPerms; label: string; gold: boolean }[]).map(item => (
-      <div key={item.key} className="flex items-center gap-3 py-3 border-b border-border/50">
-       <input
-        type="checkbox"
-        checked={ttPerms[item.key]}
-        onChange={() => togglePerm(item.key)}
-        className="h-4 w-4 rounded cursor-pointer accent-primary"
-       />
-       <span className="text-sm flex-1 text-foreground">{item.label}</span>
-       {item.gold && (
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-700 shrink-0">
-         Manager+
-        </span>
-       )}
-      </div>
-     ))}
     </div>
-   )}
+    <div className="border border-border rounded-xl overflow-hidden">
+     <SectionHeader title="Team Members" />
+     <PRow id={selected.id} k="addTeam"    label="Add Team member" />
+     <PRow id={selected.id} k="modifyTeam" label="Modify other team members" />
+     <PRow id={selected.id} k="deleteTeam" label="Delete Team member" />
+
+     <SectionHeader title="Clients" />
+     <PRow id={selected.id} k="addClient"    label="Add Client" />
+     <PRow id={selected.id} k="viewClients"  label="View Clients" extra={p.viewClients ? (
+      <button className="text-xs text-primary hover:underline ml-1 shrink-0">Modify Client Access</button>
+     ) : undefined} />
+     <PRow id={selected.id} k="modifyClients" label="Modify Clients"  disabled={!p.viewClients} />
+     <PRow id={selected.id} k="deleteClient"  label="Delete Client"   disabled={!p.viewClients} />
+
+     <SectionHeader title="Engagements" />
+     <PRow id={selected.id} k="viewEngagements"   label="View engagements" extra={p.viewEngagements ? (
+      <button className="text-xs text-primary hover:underline ml-1 shrink-0" onClick={() => setView('engagement-access')}>
+       Modify Engagement Access
+      </button>
+     ) : undefined} />
+     <PRow id={selected.id} k="createEngagement"  label="Create engagement"  disabled={!p.viewEngagements} />
+     <PRow id={selected.id} k="modifyEngagement"  label="Modify engagement"  disabled={!p.viewEngagements} />
+     <PRow id={selected.id} k="deleteEngagement"  label="Delete engagement"  disabled={!p.viewEngagements} />
+     <PRow id={selected.id} k="archiveEngagement" label="Archive engagement" disabled={!p.viewEngagements} />
+     <PRow id={selected.id} k="reopenEngagement"  label="Reopen engagement"  disabled={!p.viewEngagements} />
+
+     {ttEnabled && (
+      <>
+       <SectionHeader title="Time Tracking" icon={<Clock className="h-3.5 w-3.5 text-primary" />} />
+       <PRow id={selected.id} k="editTimeSummary"   label="Edit time summary for assigned engagements" />
+       <PRow id={selected.id} k="exportTimeSummary" label="Export time summary for assigned engagements" />
+       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/40 last:border-b-0">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+         <span className="text-sm">Can turn time-tracking on/off for future engagements</span>
+         <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-700 shrink-0">
+          Manager+
+         </span>
+        </div>
+        <input
+         type="checkbox"
+         checked={p.toggleTracking}
+         onChange={() => togglePerm(selected.id, 'toggleTracking')}
+         className="h-4 w-4 accent-primary cursor-pointer shrink-0 ml-3"
+        />
+       </div>
+      </>
+     )}
+    </div>
+   </div>
+  );
+ }
+
+ // ── Main member list ───────────────────────────────────────────────────────
+ return (
+  <div className="space-y-4">
+   <div className="flex items-start justify-between gap-3">
+    <div className="flex items-start gap-3">
+     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+      <Users className="h-5 w-5 text-primary" />
+     </div>
+     <div>
+      <h3 className="font-semibold text-lg">User & Access</h3>
+      <p className="text-sm text-muted-foreground">Manage team member access and permissions.</p>
+     </div>
+    </div>
+    <Button size="sm" className="shrink-0 flex items-center gap-1">
+     Add User <ChevronDown className="h-3.5 w-3.5" />
+    </Button>
+   </div>
+
+   <div className="grid grid-cols-4 gap-3">
+    {[{ v: 16, l: 'Active Firm Member(s)' }, { v: 31, l: 'Client(s)' }, { v: 31, l: 'Client(s)' }, { v: 47, l: 'Total' }].map((s, i) => (
+     <div key={i} className="border border-border rounded-xl p-3 flex items-center gap-2.5">
+      <Database className="h-4 w-4 text-muted-foreground shrink-0" />
+      <div>
+       <p className="text-base font-bold leading-tight">{s.v}</p>
+       <p className="text-[11px] text-muted-foreground leading-tight">{s.l}</p>
+      </div>
+     </div>
+    ))}
+   </div>
+
+   <div className="flex gap-2">
+    <Button variant="default" size="sm" className="rounded-full px-5">Firm</Button>
+    <Button variant="outline" size="sm" className="rounded-full px-5">Client</Button>
+   </div>
+
+   <div className="border border-border rounded-xl overflow-hidden">
+    <table className="w-full text-sm">
+     <thead className="bg-muted/30">
+      <tr>
+       {['Title', 'Name', 'Email', 'Access Type', 'Last Logged In', 'Status', 'Actions'].map(h => (
+        <th key={h} className="text-left px-3 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
+       ))}
+      </tr>
+     </thead>
+     <tbody>
+      {MEMBERS.map(m => (
+       <tr key={m.id} className="border-t border-border hover:bg-muted/10 transition-colors">
+        <td className="px-3 py-2.5 text-xs text-muted-foreground">{m.title}</td>
+        <td className="px-3 py-2.5 font-medium">{m.name}</td>
+        <td className="px-3 py-2.5 text-xs text-primary">{m.email}</td>
+        <td className="px-3 py-2.5 text-xs text-muted-foreground">{m.accessType}</td>
+        <td className="px-3 py-2.5 text-xs text-muted-foreground">{m.lastLoggedIn}</td>
+        <td className="px-3 py-2.5">
+         <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800">
+          Active
+         </span>
+        </td>
+        <td className="px-3 py-2.5">
+         <div className="flex items-center gap-2.5">
+          <button className="text-muted-foreground hover:text-foreground transition-colors" title="Invite user"><User className="h-3.5 w-3.5" /></button>
+          <button
+           onClick={() => { setSelected(m); setView('permissions'); }}
+           className="text-muted-foreground hover:text-foreground transition-colors"
+           title="Edit permissions"
+          ><Shield className="h-3.5 w-3.5" /></button>
+          <button className="text-destructive/60 hover:text-destructive transition-colors" title="Remove"><X className="h-3.5 w-3.5" /></button>
+         </div>
+        </td>
+       </tr>
+      ))}
+     </tbody>
+    </table>
+   </div>
   </div>
  );
 }
