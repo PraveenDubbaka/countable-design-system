@@ -89,7 +89,7 @@ const TEMPLATE_META: Record<string, { description: string; sections: string[] }>
  sections: ["Entity Level Controls", "IT General Controls", "Financial Reporting", "Revenue", "Expenses / A/P", "Treasury"],
  },
  "it-questionnaire": {
- description: "Generate a client questionnaire — 16 open-ended questions across 7 sections for the client’s IT team.",
+ description: "Generate a client questionnaire for the client’s IT team across selected worksheets.",
  sections: ["Software & Apps", "Third-Party Providers", "Access Controls", "Physical / Backup", "Information Flow", "Cybersecurity", "Communication"],
  },
  "memo-510": {
