@@ -2839,7 +2839,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const LUKA_AUTO_IDS = new Set([
   'aud-410',        // 410 New Engagement — Acceptance/Continuance
   'aud-plan',       // 436 Team Planning Discussions
-  'aud-ra-pap501a', // 501-B Preliminary Analytical
+  'aud-ra-pap501bc', // 501-A Preliminary Analytical
   'aud-520',        // 520 Risk Register
   'aud-590',        // 590 Engagement Scoping
  ]);
