@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock } from "lucide-react";
+import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2 } from "lucide-react";
 import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -804,8 +804,8 @@ function UserAccessContent() {
            onClick={() => { setSelected(m); setView('permissions'); }}
            className="text-muted-foreground hover:text-foreground transition-colors"
            title="Edit permissions"
-          ><Shield className="h-3.5 w-3.5" /></button>
-          <button className="text-destructive/60 hover:text-destructive transition-colors" title="Remove"><X className="h-3.5 w-3.5" /></button>
+          ><Pencil className="h-3.5 w-3.5" /></button>
+          <button className="text-destructive/60 hover:text-destructive transition-colors" title="Remove"><Trash2 className="h-3.5 w-3.5" /></button>
          </div>
         </td>
        </tr>
