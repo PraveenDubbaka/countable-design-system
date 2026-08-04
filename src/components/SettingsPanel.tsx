@@ -89,8 +89,8 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
  {activeSection === "my-account" && <MyAccountContent />}
  {activeSection === "letterhead" && <PlaceholderContent title="Letterhead & Signature" />}
  {activeSection === "luka" && <LukaContent />}
- {activeSection === "notifications" && <PlaceholderContent title="Notifications" />}
- {activeSection === "user-access" && <PlaceholderContent title="User & Access" />}
+ {activeSection === "notifications" && <NotificationsContent />}
+ {activeSection === "user-access" && <UserAccessContent />}
  {activeSection === "privacy" && <PlaceholderContent title="Privacy & Security" />}
  {activeSection === "export" && <PlaceholderContent title="Export Data" />}
  {activeSection === "time-tracking" && <TimeTrackingContent />}
@@ -429,6 +429,192 @@ function MyAccountContent() {
  </TabsContent>
  </Tabs>
  </div>
+ );
+}
+
+function NotificationsContent() {
+ const [ttEnabled, setTtEnabled] = useState(() => getEnabled());
+ useEffect(() => subscribeEnabled(setTtEnabled), []);
+
+ const [notifs, setNotifs] = useState({
+  pbcRequest: true,
+  reviewRequest: true,
+  mention: true,
+  engagementUpdate: false,
+  ttStarted: true,
+  ttStopped: true,
+  ttDailySummary: true,
+  ttAutoLog: true,
+  ttIdleAlert: true,
+ });
+
+ const toggle = (key: keyof typeof notifs) =>
+  setNotifs(prev => ({ ...prev, [key]: !prev[key] }));
+
+ return (
+  <div className="space-y-6">
+   <div className="flex items-start gap-3">
+    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+     <Bell className="h-5 w-5 text-primary" />
+    </div>
+    <div>
+     <h3 className="font-semibold text-lg">Notifications</h3>
+     <p className="text-sm text-muted-foreground">Control which updates you receive.</p>
+    </div>
+   </div>
+
+   <div className="space-y-1">
+    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-3">General</p>
+    {([
+     { key: 'pbcRequest', label: 'PBC request responses', desc: 'When a client responds to a PBC request' },
+     { key: 'reviewRequest', label: 'Review requests', desc: 'When someone requests your review' },
+     { key: 'mention', label: 'Mentions', desc: 'When you are @mentioned in a comment' },
+     { key: 'engagementUpdate', label: 'Engagement updates', desc: 'Status changes and team updates' },
+    ] as { key: keyof typeof notifs; label: string; desc: string }[]).map(item => (
+     <div key={item.key} className="flex items-start justify-between gap-4 py-3 border-b border-border/50">
+      <div>
+       <p className="text-sm font-medium">{item.label}</p>
+       <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+      </div>
+      <Switch checked={notifs[item.key]} onCheckedChange={() => toggle(item.key)} className="shrink-0 mt-0.5" />
+     </div>
+    ))}
+   </div>
+
+   {ttEnabled && (
+    <div className="space-y-1">
+     <div className="flex items-center gap-2 mb-3">
+      <Clock className="h-3.5 w-3.5 text-primary" />
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Time Tracking</p>
+     </div>
+     {([
+      { key: 'ttStarted', label: 'Tracking started', desc: 'When time tracking begins for an engagement' },
+      { key: 'ttStopped', label: 'Tracking stopped', desc: 'When time tracking is paused or stopped' },
+      { key: 'ttDailySummary', label: 'Daily time summary', desc: 'End-of-day summary of all tracked time' },
+      { key: 'ttAutoLog', label: 'Auto-log reminder', desc: 'Before accumulated time is logged at 11:59 PM' },
+      { key: 'ttIdleAlert', label: 'Idle time alert', desc: 'When your session transitions from active to idle' },
+     ] as { key: keyof typeof notifs; label: string; desc: string }[]).map(item => (
+      <div key={item.key} className="flex items-start justify-between gap-4 py-3 border-b border-border/50">
+       <div>
+        <p className="text-sm font-medium">{item.label}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+       </div>
+       <Switch checked={notifs[item.key]} onCheckedChange={() => toggle(item.key)} className="shrink-0 mt-0.5" />
+      </div>
+     ))}
+    </div>
+   )}
+  </div>
+ );
+}
+
+function UserAccessContent() {
+ const [ttEnabled, setTtEnabled] = useState(() => getEnabled());
+ useEffect(() => subscribeEnabled(setTtEnabled), []);
+
+ const [ttPerms, setTtPerms] = useState({ editSummary: false, exportSummary: false, toggleTracking: true });
+ const togglePerm = (key: keyof typeof ttPerms) =>
+  setTtPerms(prev => ({ ...prev, [key]: !prev[key] }));
+
+ const members = [
+  { initials: 'JD', name: 'John Doe',      email: 'johndoe@firm.ca',    role: 'Manager', access: 'Full Access', tt: true },
+  { initials: 'SM', name: 'Sarah McKnight', email: 's.mcknight@firm.ca', role: 'Senior',  access: 'View & Edit', tt: false },
+  { initials: 'PK', name: 'Peter Kim',      email: 'p.kim@firm.ca',      role: 'Partner', access: 'Full Access', tt: true },
+  { initials: 'AL', name: 'Amy Lin',        email: 'a.lin@firm.ca',      role: 'Staff',   access: 'View Only',   tt: false },
+ ];
+ const [memberTt, setMemberTt] = useState<Record<string, boolean>>(
+  Object.fromEntries(members.map(m => [m.email, m.tt]))
+ );
+
+ return (
+  <div className="space-y-6">
+   <div className="flex items-start gap-3">
+    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+     <Users className="h-5 w-5 text-primary" />
+    </div>
+    <div>
+     <h3 className="font-semibold text-lg">User & Access</h3>
+     <p className="text-sm text-muted-foreground">Manage team member access and permissions.</p>
+    </div>
+   </div>
+
+   <div>
+    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-3">Team Members</p>
+    <div className="border border-border rounded-xl overflow-hidden">
+     <table className="w-full text-sm">
+      <thead className="bg-muted/30">
+       <tr>
+        <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Member</th>
+        <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Role</th>
+        <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Access</th>
+        {ttEnabled && (
+         <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+          <div className="flex items-center gap-1.5"><Clock className="h-3 w-3" />Time Tracking</div>
+         </th>
+        )}
+       </tr>
+      </thead>
+      <tbody>
+       {members.map((m, i) => (
+        <tr key={m.email} className={i < members.length - 1 ? "border-t border-border" : "border-t border-border"}>
+         <td className="px-4 py-3">
+          <div className="flex items-center gap-2.5">
+           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">{m.initials}</div>
+           <div>
+            <p className="font-medium text-foreground">{m.name}</p>
+            <p className="text-[11px] text-muted-foreground">{m.email}</p>
+           </div>
+          </div>
+         </td>
+         <td className="px-4 py-3 text-muted-foreground text-sm">{m.role}</td>
+         <td className="px-4 py-3">
+          <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-muted text-muted-foreground">{m.access}</span>
+         </td>
+         {ttEnabled && (
+          <td className="px-4 py-3">
+           <Switch
+            checked={memberTt[m.email]}
+            onCheckedChange={() => setMemberTt(prev => ({ ...prev, [m.email]: !prev[m.email] }))}
+           />
+          </td>
+         )}
+        </tr>
+       ))}
+      </tbody>
+     </table>
+    </div>
+   </div>
+
+   {ttEnabled && (
+    <div className="space-y-1">
+     <div className="flex items-center gap-2 mb-1">
+      <Clock className="h-3.5 w-3.5 text-primary" />
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Time Tracking Permissions</p>
+     </div>
+     <p className="text-xs text-muted-foreground mb-3">Default permissions applied to all team members.</p>
+     {([
+      { key: 'editSummary', label: 'Edit time summary for assigned engagements', gold: false },
+      { key: 'exportSummary', label: 'Export time summary for assigned engagements', gold: false },
+      { key: 'toggleTracking', label: 'Can turn time-tracking on/off for future engagements', gold: true },
+     ] as { key: keyof typeof ttPerms; label: string; gold: boolean }[]).map(item => (
+      <div key={item.key} className="flex items-center gap-3 py-3 border-b border-border/50">
+       <input
+        type="checkbox"
+        checked={ttPerms[item.key]}
+        onChange={() => togglePerm(item.key)}
+        className="h-4 w-4 rounded cursor-pointer accent-primary"
+       />
+       <span className="text-sm flex-1 text-foreground">{item.label}</span>
+       {item.gold && (
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-700 shrink-0">
+         Manager+
+        </span>
+       )}
+      </div>
+     ))}
+    </div>
+   )}
+  </div>
  );
 }
 
