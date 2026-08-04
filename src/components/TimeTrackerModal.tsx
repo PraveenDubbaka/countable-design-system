@@ -1,5 +1,5 @@
 import { useState, Fragment } from 'react';
-import { X, Minus, Maximize2, Plus, Pencil, Trash2, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Minus, Maximize2, Plus, Pencil, Trash2, Check, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -118,7 +118,7 @@ function EntryForm({ initial, onClose, onSave }: EntryFormProps) {
           <h2 className="text-base font-semibold text-foreground">
             {isEdit ? 'Edit Automatic Time Entry' : 'Add Manual Time Entry'}
           </h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={onClose} className="action-icon">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -384,10 +384,13 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
                       <input type="checkbox" className="h-3.5 w-3.5 rounded cursor-pointer" />
                     </TableHead>
                     {COLS.map(h => (
-                      <TableHead key={h} className="px-3 py-2.5 h-auto whitespace-nowrap">
-                        {h}
-                        {SORTABLE.has(h) && <span className="ml-1 opacity-40">⇅</span>}
-                        {h === 'ACTIONS' && <span className="ml-1 opacity-40">↕</span>}
+                      <TableHead key={h} className="px-3 py-2 h-auto whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1">
+                          {h}
+                          {(SORTABLE.has(h) || h === 'ACTIONS') && (
+                            <ArrowUpDown className="h-3 w-3 opacity-40 shrink-0" />
+                          )}
+                        </span>
                       </TableHead>
                     ))}
                   </tr>
@@ -427,41 +430,41 @@ export function TimeTrackerModal({ onClose }: { onClose: () => void }) {
                               {entry.userName ?? CURRENT_USER.name}
                             </TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">
-                              <span className="font-mono text-[11px] text-muted-foreground">{entry.engagementId}</span>
+                              <span className="font-mono text-muted-foreground">{entry.engagementId}</span>
                             </TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">{entry.category}</TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">
                               <div className="flex items-center gap-1.5">
                                 <span>{entry.type}</span>
                                 {entry.isIdle && (
-                                  <Badge className="px-1.5 py-0 text-[10px] rounded-sm" variant="warning">Idle</Badge>
+                                  <Badge variant="warning">Idle</Badge>
                                 )}
                               </div>
                             </TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">
                               {entry.billable
-                                ? <Badge variant="inProgress" className="py-0 text-[10px] rounded-sm">Billable</Badge>
-                                : <Badge variant="notStarted" className="py-0 text-[10px] rounded-sm">Non Billable</Badge>
+                                ? <Badge variant="inProgress">Billable</Badge>
+                                : <Badge variant="notStarted">Non Billable</Badge>
                               }
                             </TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">{fmtTime12(entry.startTime)}</TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">{fmtTime12(entry.endTime)}</TableCell>
                             <TableCell className="px-3 py-2.5 whitespace-nowrap">
-                              <span className="font-mono text-xs">{calcDuration(entry.startTime, entry.endTime)}</span>
+                              <span className="font-mono">{calcDuration(entry.startTime, entry.endTime)}</span>
                             </TableCell>
                             <TableCell className="px-3 py-2.5 max-w-[200px]">
                               <span className="text-sm text-muted-foreground truncate block">{entry.notes || '—'}</span>
                             </TableCell>
                             <TableCell className="px-3 py-2.5">
-                              <div className="flex items-center gap-2">
-                                <button onClick={() => setEditEntry(entry)} className="text-muted-foreground hover:text-foreground transition-colors" title="Edit">
-                                  <Pencil className="h-3.5 w-3.5" />
+                              <div className="flex items-center gap-0.5">
+                                <button onClick={() => setEditEntry(entry)} className="action-icon" title="Edit">
+                                  <Pencil className="h-4 w-4" />
                                 </button>
-                                <button onClick={() => handleDelete(entry.id)} className="text-muted-foreground hover:text-destructive transition-colors" title="Delete">
-                                  <Trash2 className="h-3.5 w-3.5" />
+                                <button onClick={() => handleDelete(entry.id)} className="action-icon hover:!text-destructive" title="Delete">
+                                  <Trash2 className="h-4 w-4" />
                                 </button>
-                                <button className="text-muted-foreground hover:text-green-600 transition-colors" title="Approve">
-                                  <Check className="h-3.5 w-3.5" />
+                                <button className="action-icon hover:!text-green-600" title="Approve">
+                                  <Check className="h-4 w-4" />
                                 </button>
                               </div>
                             </TableCell>
