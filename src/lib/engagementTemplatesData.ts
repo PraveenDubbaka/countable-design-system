@@ -318,7 +318,7 @@ const audit5100: TemplateView = {
  name: "Planning",
  rows: [
  { section: "420 Materiality", category: "worksheet", mappedTemplate: "Materiality Section 5100" },
- { section: "428 Auditor's Expert (CAS 620)", category: "worksheet", mappedTemplate: "Auditor's expert Section 5100" },
+ { section: "428 Auditor's Expert", category: "worksheet", mappedTemplate: "Auditor's expert Section 5100" },
  { section: "430 Overall Audit Strategy", category: "worksheet", mappedTemplate: "Audit strategy Section 5100" },
  { section: "436 Team Planning Discussions", category: "worksheet", mappedTemplate: "Team planning Section 5100" },
  { section: "450 Time Tracker", category: "worksheet", mappedTemplate: "Time tracker Section 5100" },
@@ -335,11 +335,11 @@ const audit5100: TemplateView = {
  { section: "510 Entity Understanding", category: "worksheet", mappedTemplate: "Entity understanding Section 5100" },
  { section: "511 IT Environment", category: "worksheet", mappedTemplate: "IT environment Section 5100" },
  { section: "514 Prior Period Estimates", category: "worksheet", mappedTemplate: "Prior period estimates Section 5100" },
- { section: "506 Fraud (CAS 240)", category: "checklist", mappedTemplate: "Fraud risk Section 5100" },
+ { section: "506 Fraud", category: "checklist", mappedTemplate: "Fraud risk Section 5100" },
  { section: "580 Revenue Recognition", category: "worksheet", mappedTemplate: "Revenue recognition Section 5100" },
- { section: "513 Accounting Estimates (CAS 540)", category: "worksheet", mappedTemplate: "Accounting estimates Section 5100" },
- { section: "515 Related Parties (CAS 550)", category: "worksheet", mappedTemplate: "Related parties RA Section 5100" },
- { section: "525 Going Concern (CAS 570)", category: "checklist", mappedTemplate: "Going concern initial Section 5100" },
+ { section: "513 Accounting Estimates", category: "worksheet", mappedTemplate: "Accounting estimates Section 5100" },
+ { section: "515 Related Parties", category: "worksheet", mappedTemplate: "Related parties RA Section 5100" },
+ { section: "525 Going Concern", category: "checklist", mappedTemplate: "Going concern initial Section 5100" },
  { section: "530 Entity Level — Risks and Controls", category: "checklist", mappedTemplate: "Entity level risks Section 5100" },
  { section: "520 Risk Register", category: "worksheet", mappedTemplate: "Risk register Section 5100" },
  { section: "590 Engagement Scoping", category: "worksheet", mappedTemplate: "Engagement scoping Section 5100" },
@@ -353,10 +353,10 @@ const audit5100: TemplateView = {
  {
  name: "Response to Assessed Risks",
  rows: [
- { section: "605 Risk Responses (CAS 330)", category: "worksheet", mappedTemplate: "Risk responses Section 5100" },
+ { section: "605 Risk Responses", category: "worksheet", mappedTemplate: "Risk responses Section 5100" },
  { section: "610 Sampling — Tests of Details", category: "worksheet", mappedTemplate: "Sampling Section 5100" },
  { section: "625 Going Concern", category: "worksheet", mappedTemplate: "Going concern response Section 5100" },
- { section: "630 Confirmations (CAS 505)", category: "worksheet", mappedTemplate: "Confirmations Section 5100" },
+ { section: "630 Confirmations", category: "worksheet", mappedTemplate: "Confirmations Section 5100" },
  { section: "635 Accounting Estimates", category: "worksheet", mappedTemplate: "Accounting estimates RP Section 5100" },
  { section: "645 Litigation, Claims and Non-Compliance", category: "worksheet", mappedTemplate: "Litigation Section 5100" },
  { section: "666 Related Parties", category: "worksheet", mappedTemplate: "Related parties RP Section 5100" },
@@ -393,7 +393,7 @@ const audit5100: TemplateView = {
  rows: [
  { section: "Cover Page", category: "financial-statement", mappedTemplate: "Audit template" },
  { section: "Table of Contents", category: "financial-statement", mappedTemplate: "Audit template" },
- { section: "Independent Auditor's Report (CAS 700)", category: "report", mappedTemplate: "Auditor's Report Section 5100" },
+ { section: "Independent Auditor's Report", category: "report", mappedTemplate: "Auditor's Report Section 5100" },
  { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "Audit template" },
  { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "Audit template" },
  { section: "Statement of Cash Flows", category: "financial-statement", mappedTemplate: "Audit template" },
@@ -404,9 +404,9 @@ const audit5100: TemplateView = {
  name: "Completion & Signoffs",
  rows: [
  { section: "655 Final Analytics", category: "worksheet", mappedTemplate: "Final analytics Section 5100" },
- { section: "AIM Misstatements (CAS 450)", category: "module", mappedTemplate: "Automated" },
- { section: "314 Mgmt Representations (CAS 580)", category: "checklist", mappedTemplate: "Management representations Section 5100" },
- { section: "650 Subsequent Events (CAS 560)", category: "worksheet", mappedTemplate: "Subsequent events Section 5100" },
+ { section: "AIM Misstatements", category: "module", mappedTemplate: "Automated" },
+ { section: "314 Mgmt Representations", category: "checklist", mappedTemplate: "Management representations Section 5100" },
+ { section: "650 Subsequent Events", category: "worksheet", mappedTemplate: "Subsequent events Section 5100" },
  { section: "DC Disclosure Checklist", category: "checklist", mappedTemplate: "ASPE – General disclosure checklist" },
  { section: "SO Signoffs", category: "module", mappedTemplate: "Automated" },
  { section: "FR Final Review", category: "module", mappedTemplate: "Automated" },
@@ -430,9 +430,9 @@ const audit5101: TemplateView = {
  {
  name: "Client Onboarding",
  rows: [
- { section: "New engagement acceptance (CAS 220)", category: "checklist", mappedTemplate: "New engagement acceptance Section 5101" },
- { section: "Independence & Ethical Requirements (CAS 220 / CSQC 1)", category: "checklist", mappedTemplate: "Independence Section 5101" },
- { section: "Engagement Letter (CAS 210)", category: "letter", mappedTemplate: "NFP audit engagement letter Section 5101" },
+ { section: "New engagement acceptance", category: "checklist", mappedTemplate: "New engagement acceptance Section 5101" },
+ { section: "Independence & Ethical Requirements", category: "checklist", mappedTemplate: "Independence Section 5101" },
+ { section: "Engagement Letter", category: "letter", mappedTemplate: "NFP audit engagement letter Section 5101" },
  { section: "Understanding of NFP Governance Structure", category: "checklist", mappedTemplate: "NFP governance Section 5101" },
  { section: "Grant & Funding Source Identification", category: "folder", mappedTemplate: "No Selection required" },
  ],
@@ -440,31 +440,31 @@ const audit5101: TemplateView = {
  {
  name: "Planning",
  rows: [
- { section: "Understanding the Entity — NFP Operations (CAS 315)", category: "checklist", mappedTemplate: "NFP understanding Section 5101" },
- { section: "Materiality — ASNPO Basis (CAS 320)", category: "worksheet", mappedTemplate: "Materiality Section 5101" },
+ { section: "Understanding the Entity — NFP Operations", category: "checklist", mappedTemplate: "NFP understanding Section 5101" },
+ { section: "Materiality — ASNPO Basis", category: "worksheet", mappedTemplate: "Materiality Section 5101" },
  { section: "Fund Accounting & Restricted Net Assets (ASNPO s.4400)", category: "checklist", mappedTemplate: "Fund accounting Section 5101" },
- { section: "Audit Strategy Memorandum (CAS 300)", category: "checklist", mappedTemplate: "Audit strategy memo Section 5101" },
- { section: "Preliminary Analytical Procedures (CAS 520)", category: "worksheet", mappedTemplate: "Preliminary analytics Section 5101" },
+ { section: "Audit Strategy Memorandum", category: "checklist", mappedTemplate: "Audit strategy memo Section 5101" },
+ { section: "Preliminary Analytical Procedures", category: "worksheet", mappedTemplate: "Preliminary analytics Section 5101" },
  ],
  },
  {
  name: "Risk Assessment",
  rows: [
- { section: "Risk Assessment Procedures (CAS 315)", category: "checklist", mappedTemplate: "Risk assessment Section 5101" },
- { section: "Fraud Risk Assessment (CAS 240)", category: "checklist", mappedTemplate: "Fraud risk Section 5101" },
- { section: "Significant Risks Register (CAS 315)", category: "worksheet", mappedTemplate: "Significant risks Section 5101" },
+ { section: "Risk Assessment Procedures", category: "checklist", mappedTemplate: "Risk assessment Section 5101" },
+ { section: "Fraud Risk Assessment", category: "checklist", mappedTemplate: "Fraud risk Section 5101" },
+ { section: "Significant Risks Register", category: "worksheet", mappedTemplate: "Significant risks Section 5101" },
  { section: "Revenue & Grant Recognition Risk (ASNPO s.4210)", category: "checklist", mappedTemplate: "Grant revenue risk Section 5101" },
- { section: "Internal Controls — Volunteer Environment (CAS 315)", category: "checklist", mappedTemplate: "IC volunteer Section 5101" },
+ { section: "Internal Controls — Volunteer Environment", category: "checklist", mappedTemplate: "IC volunteer Section 5101" },
  ],
  },
  {
  name: "Response to Assessed Risks",
  rows: [
- { section: "Overall Audit Response (CAS 330)", category: "checklist", mappedTemplate: "Overall response Section 5101" },
- { section: "Test of Controls (CAS 330)", category: "module", mappedTemplate: "Automated" },
- { section: "Substantive Analytical Procedures (CAS 520)", category: "worksheet", mappedTemplate: "SAP Section 5101" },
- { section: "Journal Entry Testing (CAS 240)", category: "worksheet", mappedTemplate: "Journal entry testing Section 5101" },
- { section: "Audit Procedures Summary (CAS 330)", category: "module", mappedTemplate: "Automated" },
+ { section: "Overall Audit Response", category: "checklist", mappedTemplate: "Overall response Section 5101" },
+ { section: "Test of Controls", category: "module", mappedTemplate: "Automated" },
+ { section: "Substantive Analytical Procedures", category: "worksheet", mappedTemplate: "SAP Section 5101" },
+ { section: "Journal Entry Testing", category: "worksheet", mappedTemplate: "Journal entry testing Section 5101" },
+ { section: "Audit Procedures Summary", category: "module", mappedTemplate: "Automated" },
  ],
  },
  {
@@ -500,7 +500,7 @@ const audit5101: TemplateView = {
  name: "Financial Statements",
  rows: [
  { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "NFP audit template" },
- { section: "Independent Auditor's Report (CAS 700)", category: "report", mappedTemplate: "Auditor's Report NFP Section 5101" },
+ { section: "Independent Auditor's Report", category: "report", mappedTemplate: "Auditor's Report NFP Section 5101" },
  { section: "Statement of Financial Position", category: "financial-statement", mappedTemplate: "NFP audit template" },
  { section: "Statement of Operations", category: "financial-statement", mappedTemplate: "NFP audit template" },
  { section: "Statement of Changes in Net Assets", category: "financial-statement", mappedTemplate: "NFP audit template" },
@@ -511,12 +511,12 @@ const audit5101: TemplateView = {
  {
  name: "Completion & Signoffs",
  rows: [
- { section: "Accumulation of Identified Misstatements — AIM (CAS 450)", category: "worksheet", mappedTemplate: "AIM Section 5101" },
- { section: "Subsequent Events (CAS 560)", category: "checklist", mappedTemplate: "Subsequent events Section 5101" },
- { section: "Going Concern (CAS 570)", category: "checklist", mappedTemplate: "Going concern Section 5101" },
- { section: "Management Representation Letter (CAS 580)", category: "letter", mappedTemplate: "Management representation Section 5101" },
+ { section: "Accumulation of Identified Misstatements — AIM", category: "worksheet", mappedTemplate: "AIM Section 5101" },
+ { section: "Subsequent Events", category: "checklist", mappedTemplate: "Subsequent events Section 5101" },
+ { section: "Going Concern", category: "checklist", mappedTemplate: "Going concern Section 5101" },
+ { section: "Management Representation Letter", category: "letter", mappedTemplate: "Management representation Section 5101" },
  { section: "Charitable Compliance & T3010 Review", category: "checklist", mappedTemplate: "T3010 compliance Section 5101" },
- { section: "Completion Checklist (CAS 220)", category: "checklist", mappedTemplate: "Final completion Section 5101" },
+ { section: "Completion Checklist", category: "checklist", mappedTemplate: "Final completion Section 5101" },
  { section: "ASNPO Disclosure Checklist", category: "checklist", mappedTemplate: "ASNPO disclosure checklist" },
  { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
  { section: "Final Review", category: "module", mappedTemplate: "Automated" },
@@ -850,10 +850,10 @@ const ca313: TemplateView = {
  standardsBanner: { label: "Standard:", standards: "CAS 700 · CAS 705 · CAS 706 · CAS 720", badge: "CPA Canada", color: "blue" },
  sections: [{ name: "Auditor's Report", rows: [
  { section: "Unmodified opinion — standard report", category: "report", mappedTemplate: "Unmodified auditor's report ASPE" },
- { section: "Modified opinion — qualified (CAS 705)", category: "report", mappedTemplate: "Qualified opinion report" },
- { section: "Modified opinion — adverse (CAS 705)", category: "report", mappedTemplate: "Adverse opinion report" },
- { section: "Emphasis of matter / other matter paragraphs (CAS 706)", category: "report", mappedTemplate: "Emphasis of matter paragraph" },
- { section: "Reporting on comparative information (CAS 710)", category: "checklist", mappedTemplate: "Comparative information checklist" },
+ { section: "Modified opinion — qualified", category: "report", mappedTemplate: "Qualified opinion report" },
+ { section: "Modified opinion — adverse", category: "report", mappedTemplate: "Adverse opinion report" },
+ { section: "Emphasis of matter / other matter paragraphs", category: "report", mappedTemplate: "Emphasis of matter paragraph" },
+ { section: "Reporting on comparative information", category: "checklist", mappedTemplate: "Comparative information checklist" },
  ]}],
 };
 const ca314: TemplateView = {
@@ -880,7 +880,7 @@ const ca408: TemplateView = {
  sections: [{ name: "Engagement Letter", rows: [
  { section: "Engagement letter — new client", category: "letter", mappedTemplate: "New client audit engagement letter" },
  { section: "Engagement letter — recurring client", category: "letter", mappedTemplate: "Recurring client audit engagement letter" },
- { section: "Changes to engagement terms (CAS 210.14)", category: "letter", mappedTemplate: "Engagement terms change letter" },
+ { section: "Changes to engagement terms", category: "letter", mappedTemplate: "Engagement terms change letter" },
  ]}],
 };
 const ca410: TemplateView = {
@@ -903,7 +903,7 @@ const ca420: TemplateView = {
  { section: "Safeguards applied to threats", category: "checklist", mappedTemplate: "Safeguards assessment" },
  { section: "Non-assurance services — independence impact", category: "checklist", mappedTemplate: "Non-assurance services independence" },
  { section: "Fee arrangements & contingency fee review", category: "checklist", mappedTemplate: "Fee independence review" },
- { section: "Rotation requirements (CAS 220)", category: "checklist", mappedTemplate: "Partner rotation checklist" },
+ { section: "Rotation requirements", category: "checklist", mappedTemplate: "Partner rotation checklist" },
  ]}],
 };
 const ca428: TemplateView = {
@@ -912,7 +912,7 @@ const ca428: TemplateView = {
  standardsBanner: { label: "Standard:", standards: "CAS 510 · CAS 300", badge: "CPA Canada", color: "blue" },
  sections: [{ name: "Predecessor Auditor", rows: [
  { section: "Request to access predecessor's working papers", category: "letter", mappedTemplate: "Predecessor access request letter" },
- { section: "Opening balances — audit procedures (CAS 510)", category: "checklist", mappedTemplate: "Opening balances checklist" },
+ { section: "Opening balances — audit procedures", category: "checklist", mappedTemplate: "Opening balances checklist" },
  { section: "Prior year audit opinion review", category: "checklist", mappedTemplate: "Prior year opinion review" },
  ]}],
 };
@@ -991,8 +991,8 @@ const ca500: TemplateView = {
  sections: [{ name: "Fraud Risk Assessment", rows: [
  { section: "Fraud risk factors — management override", category: "checklist", mappedTemplate: "Management override risk" },
  { section: "Fraud risk factors — misappropriation of assets", category: "checklist", mappedTemplate: "Misappropriation risk factors" },
- { section: "Revenue recognition as fraud risk (CAS 240)", category: "checklist", mappedTemplate: "Revenue recognition fraud risk" },
- { section: "Engagement team fraud discussion (CAS 315)", category: "checklist", mappedTemplate: "Team fraud discussion" },
+ { section: "Revenue recognition as fraud risk", category: "checklist", mappedTemplate: "Revenue recognition fraud risk" },
+ { section: "Engagement team fraud discussion", category: "checklist", mappedTemplate: "Team fraud discussion" },
  { section: "Journal entry testing — risk identification", category: "checklist", mappedTemplate: "JE fraud risk assessment" },
  ]}],
 };
@@ -1003,7 +1003,7 @@ const ca501: TemplateView = {
  sections: [{ name: "Risk Assessment Summary", rows: [
  { section: "Financial statement level risks", category: "worksheet", mappedTemplate: "FS level risk summary" },
  { section: "Assertion level risks by significant account", category: "worksheet", mappedTemplate: "Assertion level risk worksheet" },
- { section: "Significant risks identified (CAS 315.27)", category: "worksheet", mappedTemplate: "Significant risks register" },
+ { section: "Significant risks identified", category: "worksheet", mappedTemplate: "Significant risks register" },
  { section: "Linkage to planned audit procedures", category: "worksheet", mappedTemplate: "Risk-procedure linkage" },
  ]}],
 };
@@ -1207,7 +1207,7 @@ const ca625: TemplateView = {
  { section: "Events or conditions raising significant doubt", category: "checklist", mappedTemplate: "GC significant doubt indicators" },
  { section: "Management's plans — feasibility assessment", category: "checklist", mappedTemplate: "GC management plans" },
  { section: "Cash flow projections — review & sensitivity", category: "worksheet", mappedTemplate: "GC cash flow review" },
- { section: "Disclosure adequacy review (CAS 570)", category: "checklist", mappedTemplate: "GC disclosure review" },
+ { section: "Disclosure adequacy review", category: "checklist", mappedTemplate: "GC disclosure review" },
  { section: "Impact on auditor's report", category: "checklist", mappedTemplate: "GC audit report impact" },
  ]}],
 };
@@ -1251,9 +1251,9 @@ const ca645: TemplateView = {
  subtitle: "CAS 250 · CAS 501 — Legal Matters and Regulatory Compliance",
  standardsBanner: { label: "Standard:", standards: "CAS 250 · CAS 501 · ASPE 3290", badge: "CPA Canada", color: "blue" },
  sections: [{ name: "Litigation & Compliance", rows: [
- { section: "Management inquiry — litigation & claims (CAS 501)", category: "checklist", mappedTemplate: "Litigation management inquiry" },
- { section: "Legal counsel confirmation (CAS 501)", category: "letter", mappedTemplate: "Legal counsel confirmation letter" },
- { section: "Non-compliance with laws & regulations (CAS 250)", category: "checklist", mappedTemplate: "Non-compliance checklist" },
+ { section: "Management inquiry — litigation & claims", category: "checklist", mappedTemplate: "Litigation management inquiry" },
+ { section: "Legal counsel confirmation", category: "letter", mappedTemplate: "Legal counsel confirmation letter" },
+ { section: "Non-compliance with laws & regulations", category: "checklist", mappedTemplate: "Non-compliance checklist" },
  { section: "Contingent liability disclosure review", category: "checklist", mappedTemplate: "Contingency disclosure review" },
  ]}],
 };
