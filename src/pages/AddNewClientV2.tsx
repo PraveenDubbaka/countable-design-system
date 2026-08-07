@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText, ChevronLeft, CalendarDays } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText, ChevronLeft, CalendarDays, UserPlus, RefreshCw, CheckCircle2, X } from "lucide-react";
+import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -596,17 +597,58 @@ const MonthDayPicker = ({
 
 // ── Component ────────────────────────────────────────────────────────────────
 
+type EntryMode = "choose" | "manual" | "source-select" | "source-connecting" | "source-connected";
+
+const SOURCE_CARDS = [
+  {
+    value: "qbo",
+    label: "QuickBooks Online",
+    logo: <img src={intuitQuickbooksLogo} alt="QuickBooks Online" className="h-8 object-contain" />,
+  },
+  {
+    value: "xero",
+    label: "Xero",
+    logo: <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center text-white font-bold text-sm">X</div>,
+  },
+  {
+    value: "sage",
+    label: "Sage",
+    logo: <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-sm">S</div>,
+  },
+];
+
 export default function AddNewClientV2() {
   const navigate = useNavigate();
+
+  // ── Flow state ──────────────────────────────────────────────────────────────
+  const [entryMode, setEntryMode] = useState<EntryMode>("choose");
+  const [selectedSource, setSelectedSource] = useState<string>("");
+  const [showPrefillBanner, setShowPrefillBanner] = useState(false);
+
+  // ── Entity Foundation ───────────────────────────────────────────────────────
   const [country, setCountry] = useState<string>("ca");
   const [entityType, setEntityType] = useState<string>("");
   const [subCorpType, setSubCorpType] = useState<string>("");
   const [showDba, setShowDba] = useState<boolean>(false);
   const [dbaName, setDbaName] = useState<string>("");
   const [dbaDisplay, setDbaDisplay] = useState<string>("legal-only");
+
+  // ── Primary Contact ─────────────────────────────────────────────────────────
+  const [legalEntityName, setLegalEntityName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [businessPhone, setBusinessPhone] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [website, setWebsite] = useState("");
+
+  // ── Business & Tax ──────────────────────────────────────────────────────────
   const [gstRegistered, setGstRegistered] = useState<string>("");
-  const [sourceConnection, setSourceConnection] = useState<string>("");
   const [fiscalYearEnd, setFiscalYearEnd] = useState<string>("");
+  const [businessNumber, setBusinessNumber] = useState("");
 
   const subTypeCfg = entityType ? (SUB_TYPE_CONFIG[`${country}-${entityType}`] ?? null) : null;
   const cfg = entityType ? ENTITY_CONFIG[entityType] : null;
@@ -621,9 +663,50 @@ export default function AddNewClientV2() {
     "sole-proprietor": "Date of Registration",
   };
 
+  // ── Source prefill simulation ────────────────────────────────────────────────
+  const applySourcePrefill = () => {
+    const sourceName = SOURCE_CARDS.find(s => s.value === selectedSource)?.label ?? selectedSource;
+    setCountry("ca");
+    setEntityType("corporation");
+    setShowDba(false);
+    setDbaName("");
+    setLegalEntityName("Northline Precision Manufacturing Inc.");
+    setFirstName("David");
+    setLastName("Chen");
+    setEmail("david.chen@northline.ca");
+    setBusinessPhone("6045550192");
+    setAddressLine1("120 Industrial Parkway");
+    setCity("Mississauga");
+    setProvince("on");
+    setPostalCode("L5T 2B3");
+    setWebsite("https://northlineprecision.ca");
+    setFiscalYearEnd("Dec 31");
+    setBusinessNumber("123456789");
+    setGstRegistered("yes");
+    setShowPrefillBanner(true);
+    toast.success(`Client information imported from ${sourceName}`);
+  };
+
+  useEffect(() => {
+    if (entryMode !== "source-connecting") return;
+    const t1 = setTimeout(() => { applySourcePrefill(); }, 2000);
+    const t2 = setTimeout(() => { setEntryMode("manual"); }, 2500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [entryMode]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleAdd = () => {
     toast.success("Client added");
     navigate("/clients");
+  };
+
+  // Header back action varies by screen
+  const handleHeaderBack = () => {
+    if (entryMode === "choose") { navigate("/clients"); return; }
+    if (entryMode === "source-select") { setEntryMode("choose"); return; }
+    if (entryMode === "source-connecting") { setEntryMode("source-select"); return; }
+    if (entryMode === "manual") {
+      if (legalEntityName) { setEntryMode("source-select"); } else { navigate("/clients"); }
+    }
   };
 
   return (
@@ -633,7 +716,7 @@ export default function AddNewClientV2() {
         {/* Sticky header bar */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 border-b border-border/60">
           <button
-            onClick={() => navigate("/clients")}
+            onClick={handleHeaderBack}
             className="flex items-center gap-2 text-link font-medium text-sm hover:underline"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -645,6 +728,7 @@ export default function AddNewClientV2() {
             </Button>
             <Button
               className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+              disabled={entryMode === "choose" || entryMode === "source-select" || entryMode === "source-connecting"}
               onClick={handleAdd}
             >
               Add Client
@@ -652,86 +736,197 @@ export default function AddNewClientV2() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto px-6 pb-8 pt-4 space-y-4">
-
-          {/* ── Section 1: Entity Foundation — always visible ─────────────────── */}
-          <SectionCard
-            icon={Building2}
-            title="Entity Foundation"
-            subtitle="Start with the legal identity — this drives which other fields appear"
-          >
-            <div className="space-y-4 max-w-[50%]">
-              <InlineField label="Country">
-                <Select value={country} onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ca">🇨🇦 Canada</SelectItem>
-                    <SelectItem value="us">🇺🇸 United States</SelectItem>
-                  </SelectContent>
-                </Select>
-              </InlineField>
-              <InlineField label="Client ID" hint="Leave blank to auto-generate.">
-                <Input placeholder="e.g., CLI-0042" />
-              </InlineField>
-              <InlineField label="Legal Entity Name" required>
-                <Input placeholder="e.g., Acme Holdings Inc." />
-              </InlineField>
-              {/* DBA toggle */}
-              <div className="flex items-start gap-4">
-                <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">
-                  {cfg ? cfg.dbaLabel : "Operating Name / DBA"}
-                </span>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <Switch
-                      checked={showDba}
-                      onCheckedChange={v => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }}
-                    />
-                    {showDba
-                      ? <Input className="flex-1" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
-                      : <p className="text-xs text-muted-foreground">{cfg ? cfg.dbaHint : "The branded name used in public-facing materials, if different from the registered legal name."}</p>
-                    }
-                  </div>
-                </div>
-              </div>
-              <InlineField label="Group Name" hint="Use to group related clients together.">
-                <Input placeholder="e.g., Smith Family Group" />
-              </InlineField>
-              <InlineField label="Entity Type" required>
-                <Select
-                  value={entityType}
-                  onValueChange={v => {
-                    setEntityType(v);
-                    setShowDba(false);
-                    setDbaName("");
-                    setDbaDisplay("legal-only");
-                    setGstRegistered("");
-                    setSubCorpType("");
-                  }}
+        {/* ── SCREEN: choose ─────────────────────────────────────────────────── */}
+        {entryMode === "choose" && (
+          <div className="flex-1 flex items-center justify-center px-6">
+            <div className="text-center max-w-xl w-full">
+              <h2 className="text-lg font-semibold text-foreground mb-2">How would you like to add this client?</h2>
+              <p className="text-sm text-muted-foreground mb-8">
+                You can fill in the details manually, or connect to an accounting source and we'll pull the information in for you.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <button
+                  type="button"
+                  onClick={() => setEntryMode("manual")}
+                  className="flex-1 max-w-xs cursor-pointer border rounded-xl p-6 text-left hover:border-primary transition-colors bg-card group"
                 >
-                  <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="corporation">Corporation</SelectItem>
-                    <SelectItem value="partnership">Partnership</SelectItem>
-                    <SelectItem value="sole-proprietor">Sole Proprietor</SelectItem>
-                    <SelectItem value="trust">Trust</SelectItem>
-                  </SelectContent>
-                </Select>
-              </InlineField>
-              {subTypeCfg && (
-                <InlineField label={subTypeCfg.label} required hint={subTypeCfg.hint}>
-                  <Select value={subCorpType} onValueChange={setSubCorpType}>
-                    <SelectTrigger><SelectValue placeholder={`Select ${subTypeCfg.label.toLowerCase()}`} /></SelectTrigger>
+                  <UserPlus className="h-8 w-8 text-primary mb-4" />
+                  <p className="text-sm font-semibold text-foreground mb-1">Add Manually</p>
+                  <p className="text-xs text-muted-foreground">Fill in client details yourself using the form.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEntryMode("source-select")}
+                  className="flex-1 max-w-xs cursor-pointer border rounded-xl p-6 text-left hover:border-primary transition-colors bg-card group"
+                >
+                  <RefreshCw className="h-8 w-8 text-primary mb-4" />
+                  <p className="text-sm font-semibold text-foreground mb-1">Connect from Source</p>
+                  <p className="text-xs text-muted-foreground">Link QuickBooks Online, Xero, or Sage and we'll import the client information automatically.</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── SCREEN: source-select ───────────────────────────────────────────── */}
+        {entryMode === "source-select" && (
+          <div className="flex-1 flex flex-col items-center justify-center px-6">
+            <div className="w-full max-w-xl">
+              <button
+                type="button"
+                onClick={() => setEntryMode("choose")}
+                className="flex items-center gap-1 text-sm text-link hover:underline mb-6"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back
+              </button>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Select your accounting source</h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                We'll connect to your client's accounting software and import their information.
+              </p>
+              <div className="flex gap-4 mb-6">
+                {SOURCE_CARDS.map(s => (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => setSelectedSource(s.value)}
+                    className={`flex-1 border rounded-xl p-5 cursor-pointer text-left transition-colors ${
+                      selectedSource === s.value
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary bg-card"
+                    }`}
+                  >
+                    <div className="mb-3">{s.logo}</div>
+                    <p className="text-sm font-medium text-foreground">{s.label}</p>
+                  </button>
+                ))}
+              </div>
+              <Button
+                className="h-10 px-6 bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+                disabled={!selectedSource}
+                onClick={() => setEntryMode("source-connecting")}
+              >
+                Connect
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* ── SCREEN: source-connecting ───────────────────────────────────────── */}
+        {(entryMode === "source-connecting" || entryMode === "source-connected") && (
+          <div className="flex-1 flex items-center justify-center px-6">
+            <div className="text-center">
+              <div className="animate-spin h-8 w-8 text-primary border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-base font-semibold text-foreground mb-1">
+                Connecting to {SOURCE_CARDS.find(s => s.value === selectedSource)?.label ?? selectedSource}...
+              </p>
+              <p className="text-sm text-muted-foreground">Fetching client information. This will only take a moment.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── SCREEN: manual (form) ───────────────────────────────────────────── */}
+        {entryMode === "manual" && (
+          <div className="flex-1 overflow-auto px-6 pb-8 pt-4 space-y-4">
+
+            {/* Prefill banner */}
+            {showPrefillBanner && (
+              <div className="flex items-center gap-3 px-4 py-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-800 dark:text-green-300">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span className="flex-1">
+                  Client information imported from {SOURCE_CARDS.find(s => s.value === selectedSource)?.label ?? selectedSource}. Review the details below and make any changes before saving.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowPrefillBanner(false)}
+                  className="shrink-0 hover:opacity-70 transition-opacity"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+
+            {/* ── Section 1: Entity Foundation ──────────────────────────────── */}
+            <SectionCard
+              icon={Building2}
+              title="Entity Foundation"
+              subtitle="Start with the legal identity — this drives which other fields appear"
+            >
+              <div className="space-y-4 max-w-[50%]">
+                <InlineField label="Country">
+                  <Select value={country} onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {subTypeCfg.options.map(o => (
-                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                      ))}
+                      <SelectItem value="ca">🇨🇦 Canada</SelectItem>
+                      <SelectItem value="us">🇺🇸 United States</SelectItem>
                     </SelectContent>
                   </Select>
                 </InlineField>
-              )}
-              {entityType && (
-                <>
+                <InlineField label="Client ID" hint="Leave blank to auto-generate.">
+                  <Input placeholder="e.g., CLI-0042" />
+                </InlineField>
+                <InlineField label="Legal Entity Name" required>
+                  <Input
+                    placeholder="e.g., Acme Holdings Inc."
+                    value={legalEntityName}
+                    onChange={e => setLegalEntityName(e.target.value)}
+                  />
+                </InlineField>
+                {/* DBA toggle */}
+                <div className="flex items-start gap-4">
+                  <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">
+                    {cfg ? cfg.dbaLabel : "Operating Name / DBA"}
+                  </span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <Switch
+                        checked={showDba}
+                        onCheckedChange={v => { setShowDba(v); if (!v) { setDbaName(""); setDbaDisplay("legal-only"); } }}
+                      />
+                      {showDba
+                        ? <Input className="flex-1" value={dbaName} onChange={e => setDbaName(e.target.value)} placeholder="e.g., Acme Trading Co." />
+                        : <p className="text-xs text-muted-foreground">{cfg ? cfg.dbaHint : "The branded name used in public-facing materials, if different from the registered legal name."}</p>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <InlineField label="Group Name" hint="Use to group related clients together.">
+                  <Input placeholder="e.g., Smith Family Group" />
+                </InlineField>
+                <InlineField label="Entity Type" required>
+                  <Select
+                    value={entityType}
+                    onValueChange={v => {
+                      setEntityType(v);
+                      setShowDba(false);
+                      setDbaName("");
+                      setDbaDisplay("legal-only");
+                      setGstRegistered("");
+                      setSubCorpType("");
+                    }}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="corporation">Corporation</SelectItem>
+                      <SelectItem value="partnership">Partnership</SelectItem>
+                      <SelectItem value="sole-proprietor">Sole Proprietor</SelectItem>
+                      <SelectItem value="trust">Trust</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </InlineField>
+                {subTypeCfg && (
+                  <InlineField label={subTypeCfg.label} required hint={subTypeCfg.hint}>
+                    <Select value={subCorpType} onValueChange={setSubCorpType}>
+                      <SelectTrigger><SelectValue placeholder={`Select ${subTypeCfg.label.toLowerCase()}`} /></SelectTrigger>
+                      <SelectContent>
+                        {subTypeCfg.options.map(o => (
+                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </InlineField>
+                )}
+                {entityType && (
                   <InlineField label="Engagement Partner" required>
                     <Select>
                       <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
@@ -743,170 +938,145 @@ export default function AddNewClientV2() {
                       </SelectContent>
                     </Select>
                   </InlineField>
-                  <InlineField
-                    label="Source Connection"
-                    hint="Connect to your client's accounting software for data import. This is a one-time setup — you can change it later in Client Settings."
-                  >
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {SOURCE_CONNECTIONS.map(s => (
-                        <button
-                          key={s.value}
-                          type="button"
-                          onClick={() => setSourceConnection(sourceConnection === s.value ? "" : s.value)}
-                          className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
-                            sourceConnection === s.value
-                              ? "bg-primary/10 border-primary text-primary"
-                              : "bg-card border-border text-foreground hover:bg-muted"
-                          }`}
-                        >
-                          {s.label}
-                        </button>
-                      ))}
-                      {!sourceConnection && (
-                        <span className="text-xs text-muted-foreground ml-1 cursor-default">
-                          Skip for now
-                        </span>
-                      )}
-                    </div>
+                )}
+                {showDba && dbaName && (
+                  <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
+                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="legal-only">Legal name only</SelectItem>
+                        <SelectItem value="dba-only">DBA only</SelectItem>
+                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </InlineField>
-                </>
-              )}
-              {showDba && dbaName && (
-                <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
-                  <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="legal-only">Legal name only</SelectItem>
-                      <SelectItem value="dba-only">DBA only</SelectItem>
-                      <SelectItem value="both">Both — legal name and DBA</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </InlineField>
-              )}
-            </div>
-          </SectionCard>
-
-          {/* Placeholder shown before entity type is selected */}
-          {!showSections && (
-            <div className="flex items-center justify-center py-10">
-              <div className="text-center">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
-                  <Building2 className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <p className="text-sm font-medium text-foreground mb-1">Select an entity type above to continue</p>
-                <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                  The form adapts to show only the fields relevant to the selected entity and country.
-                </p>
+                )}
               </div>
-            </div>
-          )}
+            </SectionCard>
 
-          {/* Sections 2 & 3 appear after entity type is selected */}
-          {showSections && (
-            <div className="space-y-4">
-
-              {/* ── Section 2: Primary Contact & Business Address ─────────────── */}
-              <SectionCard
-                icon={User}
-                title="Primary Contact & Business Address"
-                subtitle="The person responsible for this client relationship"
-              >
-                <div className="space-y-4 max-w-[50%]">
-                  <InlineField label="First Name" required>
-                    <Input placeholder="First Name" />
-                  </InlineField>
-                  <InlineField label="Last Name" required>
-                    <Input placeholder="Last Name" />
-                  </InlineField>
-                  <InlineField label="Email">
-                    <Input type="email" placeholder="contact@company.com" />
-                  </InlineField>
-                  <InlineField label="Business Phone">
-                    <PhoneInput />
-                  </InlineField>
-                  <InlineField label="Cell Phone">
-                    <PhoneInput />
-                  </InlineField>
-                  <InlineField label="Website">
-                    <Input type="url" placeholder="https://example.com" />
-                  </InlineField>
-                  <InlineField label="Address Line 1">
-                    <Input placeholder="Address Line 1" />
-                  </InlineField>
-                  <InlineField label="Address Line 2">
-                    <Input placeholder="Address Line 2" />
-                  </InlineField>
-                  <InlineField label="City">
-                    <Input placeholder="City" />
-                  </InlineField>
-                  <InlineField label={taxCfg.regionLabel}>
-                    <Select>
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>
-                        {regions.map(r => (
-                          <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </InlineField>
-                  <InlineField label={taxCfg.postalLabel}>
-                    <Input placeholder={taxCfg.postalPlaceholder} />
-                  </InlineField>
+            {/* Placeholder shown before entity type is selected */}
+            {!showSections && (
+              <div className="flex items-center justify-center py-10">
+                <div className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
+                    <Building2 className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium text-foreground mb-1">Select an entity type above to continue</p>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                    The form adapts to show only the fields relevant to the selected entity and country.
+                  </p>
                 </div>
-              </SectionCard>
+              </div>
+            )}
 
-              {/* ── Section 3: Business & Tax Details ────────────────────────── */}
-              <SectionCard
-                icon={FileText}
-                title="Business & Tax Details"
-                subtitle={`Fiscal dates, registration numbers, and tax identifiers for ${country === "ca" ? "Canada" : "United States"}`}
-              >
-                <div className="space-y-4 max-w-[50%]">
-                  <InlineField
-                    label="Fiscal Year-End (Month/Day)"
-                    hint="Not mandatory — can be set at the engagement level."
-                  >
-                    <MonthDayPicker value={fiscalYearEnd} onChange={setFiscalYearEnd} />
-                  </InlineField>
-                  {cfg?.hasIncorporation && (
-                    <InlineField label={incLabel[entityType] ?? "Date of Incorporation"} required>
-                      <Input type="date" className="w-44" />
-                    </InlineField>
-                  )}
-                  <InlineField label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
-                    <Input placeholder={taxCfg.businessNumberPlaceholder} />
-                  </InlineField>
-                  {cfg?.hasCorporateTax && (
-                    <InlineField label={taxCfg.corporateTaxLabel}>
-                      <Input placeholder={taxCfg.corporateTaxPlaceholder} />
-                    </InlineField>
-                  )}
-                  {cfg?.hasPayroll && (
-                    <InlineField label={taxCfg.payrollLabel}>
-                      <Input placeholder={taxCfg.payrollPlaceholder} />
-                    </InlineField>
-                  )}
-                  <InlineField label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
-                    <Select value={gstRegistered} onValueChange={setGstRegistered}>
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </InlineField>
-                  {gstRegistered === "yes" && (
-                    <InlineField label={taxCfg.salesTaxNumberLabel}>
-                      <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
-                    </InlineField>
-                  )}
-                </div>
-              </SectionCard>
+            {/* Sections 2 & 3 appear after entity type is selected */}
+            {showSections && (
+              <div className="space-y-4">
 
-            </div>
-          )}
+                {/* ── Section 2: Primary Contact & Business Address ──────────── */}
+                <SectionCard
+                  icon={User}
+                  title="Primary Contact & Business Address"
+                  subtitle="The person responsible for this client relationship"
+                >
+                  <div className="space-y-4 max-w-[50%]">
+                    <InlineField label="First Name" required>
+                      <Input placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Last Name" required>
+                      <Input placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Email">
+                      <Input type="email" placeholder="contact@company.com" value={email} onChange={e => setEmail(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Business Phone">
+                      <Input placeholder="(555) 000-0000" value={businessPhone} onChange={e => setBusinessPhone(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Cell Phone">
+                      <PhoneInput />
+                    </InlineField>
+                    <InlineField label="Website">
+                      <Input type="url" placeholder="https://example.com" value={website} onChange={e => setWebsite(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Address Line 1">
+                      <Input placeholder="Address Line 1" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Address Line 2">
+                      <Input placeholder="Address Line 2" />
+                    </InlineField>
+                    <InlineField label="City">
+                      <Input placeholder="City" value={city} onChange={e => setCity(e.target.value)} />
+                    </InlineField>
+                    <InlineField label={taxCfg.regionLabel}>
+                      <Select value={province} onValueChange={setProvince}>
+                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          {regions.map(r => (
+                            <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </InlineField>
+                    <InlineField label={taxCfg.postalLabel}>
+                      <Input placeholder={taxCfg.postalPlaceholder} value={postalCode} onChange={e => setPostalCode(e.target.value)} />
+                    </InlineField>
+                  </div>
+                </SectionCard>
 
-        </div>
+                {/* ── Section 3: Business & Tax Details ─────────────────────── */}
+                <SectionCard
+                  icon={FileText}
+                  title="Business & Tax Details"
+                  subtitle={`Fiscal dates, registration numbers, and tax identifiers for ${country === "ca" ? "Canada" : "United States"}`}
+                >
+                  <div className="space-y-4 max-w-[50%]">
+                    <InlineField
+                      label="Fiscal Year-End (Month/Day)"
+                      hint="Not mandatory — can be set at the engagement level."
+                    >
+                      <MonthDayPicker value={fiscalYearEnd} onChange={setFiscalYearEnd} />
+                    </InlineField>
+                    {cfg?.hasIncorporation && (
+                      <InlineField label={incLabel[entityType] ?? "Date of Incorporation"} required>
+                        <Input type="date" className="w-44" />
+                      </InlineField>
+                    )}
+                    <InlineField label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
+                      <Input placeholder={taxCfg.businessNumberPlaceholder} value={businessNumber} onChange={e => setBusinessNumber(e.target.value)} />
+                    </InlineField>
+                    {cfg?.hasCorporateTax && (
+                      <InlineField label={taxCfg.corporateTaxLabel}>
+                        <Input placeholder={taxCfg.corporateTaxPlaceholder} />
+                      </InlineField>
+                    )}
+                    {cfg?.hasPayroll && (
+                      <InlineField label={taxCfg.payrollLabel}>
+                        <Input placeholder={taxCfg.payrollPlaceholder} />
+                      </InlineField>
+                    )}
+                    <InlineField label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
+                      <Select value={gstRegistered} onValueChange={setGstRegistered}>
+                        <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">Yes</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </InlineField>
+                    {gstRegistered === "yes" && (
+                      <InlineField label={taxCfg.salesTaxNumberLabel}>
+                        <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
+                      </InlineField>
+                    )}
+                  </div>
+                </SectionCard>
+
+              </div>
+            )}
+
+          </div>
+        )}
+
       </div>
     </Layout>
   );
