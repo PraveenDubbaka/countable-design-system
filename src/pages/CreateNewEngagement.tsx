@@ -512,31 +512,18 @@ export default function CreateNewEngagement() {
               </InlineRow>
 
               {clientName && clientInfo && (
-                <div className="mt-4 pt-4 border-t border-border/40">
-                  <div className="grid grid-cols-7 gap-4">
-                    {[
-                      { label: "Entity legal name", value: clientInfo.entityLegalName },
-                      { label: "Entity type", value: clientInfo.entityType },
-                      { label: "Contact person", value: clientInfo.contactPerson },
-                      { label: "Engagement partner", value: clientInfo.engagementPartner, isLink: true },
-                      { label: "Integrations", value: clientInfo.integrations },
-                      { label: "Business phone", value: clientInfo.businessPhone },
-                      { label: "Cell phone", value: clientInfo.cellPhone },
-                    ].map((col) => (
-                      <div key={col.label} className="flex flex-col gap-1">
-                        <span className="text-xs font-semibold text-primary">{col.label}</span>
-                        {Array.isArray(col.value) ? (
-                          <div className="flex items-center gap-1.5">
-                            {col.value.includes("quickbooks") && <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />}
-                          </div>
-                        ) : (col as { isLink?: boolean }).isLink ? (
-                          <span className="text-sm text-link font-medium cursor-pointer hover:underline">{col.value as string}</span>
-                        ) : (
-                          <span className="text-sm text-foreground">{col.value as string}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                <div className="mt-1 pt-1 border-t border-border/40">
+                  <InlineRow label="Entity legal name"><span className="text-sm text-foreground">{clientInfo.entityLegalName}</span></InlineRow>
+                  <InlineRow label="Entity type"><span className="text-sm text-foreground">{clientInfo.entityType}</span></InlineRow>
+                  <InlineRow label="Contact person"><span className="text-sm text-foreground">{clientInfo.contactPerson}</span></InlineRow>
+                  <InlineRow label="Engagement partner"><span className="text-sm text-link font-medium cursor-pointer hover:underline">{clientInfo.engagementPartner}</span></InlineRow>
+                  <InlineRow label="Integrations">
+                    <div className="flex items-center gap-1.5">
+                      {clientInfo.integrations.includes("quickbooks") && <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />}
+                    </div>
+                  </InlineRow>
+                  <InlineRow label="Business phone"><span className="text-sm text-foreground">{clientInfo.businessPhone}</span></InlineRow>
+                  <InlineRow label="Cell phone"><span className="text-sm text-foreground">{clientInfo.cellPhone}</span></InlineRow>
                 </div>
               )}
             </SectionCard>
