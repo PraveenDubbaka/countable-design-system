@@ -289,22 +289,38 @@ const TeamMemberEditRow = ({
   );
 };
 
+// MM/DD/YYYY ↔ YYYY-MM-DD for native date inputs
+function toInputDate(mmddyyyy: string): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3 || !p[2]) return "";
+  return `${p[2]}-${p[0].padStart(2, "0")}-${p[1].padStart(2, "0")}`;
+}
+function fromInputDate(yyyymmdd: string): string {
+  const p = yyyymmdd.split("-");
+  if (p.length !== 3) return yyyymmdd;
+  return `${p[1]}/${p[2]}/${p[0]}`;
+}
+
 const LabeledInput = ({
-  label, value, onChange, required = false, icon,
+  label, value, onChange, required = false, type = "text",
 }: {
-  label: string; value: string; onChange: (v: string) => void; required?: boolean; icon?: React.ReactNode;
-}) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-xs font-medium text-foreground">
-      {label}{required && <span className="text-destructive ml-0.5">*</span>}
-    </label>
-    <div className="relative">
-      <input type="text" value={value} onChange={e => onChange(e.target.value)}
-        className={ic + (icon ? " pr-10" : "")} />
-      {icon && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</div>}
+  label: string; value: string; onChange: (v: string) => void; required?: boolean; type?: string;
+}) => {
+  const isDate = type === "date";
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs font-medium text-foreground">
+        {label}{required && <span className="text-destructive ml-0.5">*</span>}
+      </label>
+      <input
+        type={type}
+        value={isDate ? toInputDate(value) : value}
+        onChange={e => onChange(isDate ? fromInputDate(e.target.value) : e.target.value)}
+        className={ic}
+      />
     </div>
-  </div>
-);
+  );
+};
 
 export default function CreateNewEngagement() {
   const navigate = useNavigate();
@@ -669,10 +685,10 @@ export default function CreateNewEngagement() {
                   </span>
                   <div className="flex gap-3 flex-1 min-w-0">
                     <div className="flex-1 min-w-0 max-w-44">
-                      <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required icon={<Calendar className="h-4 w-4" />} />
+                      <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required type="date" />
                     </div>
                     <div className="flex-1 min-w-0 max-w-44">
-                      <LabeledInput label="End Date" value={currentYearEnd} onChange={handleCurrentYearEndChange} required icon={<Calendar className="h-4 w-4" />} />
+                      <LabeledInput label="End Date" value={currentYearEnd} onChange={handleCurrentYearEndChange} required type="date" />
                     </div>
                   </div>
                 </div>
@@ -683,16 +699,12 @@ export default function CreateNewEngagement() {
                   <div className="flex-1 min-w-0">
                     <div className="flex gap-3">
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} icon={<Calendar className="h-4 w-4" />} />
+                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} type="date" />
                       </div>
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} icon={<Calendar className="h-4 w-4" />} />
+                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} type="date" />
                       </div>
                     </div>
-                    <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
-                      <Checkbox checked={priorYear1NoData} onCheckedChange={v => setPriorYear1NoData(!!v)} />
-                      <span className="text-xs text-muted-foreground">No Data</span>
-                    </label>
                   </div>
                 </div>
 
@@ -702,16 +714,12 @@ export default function CreateNewEngagement() {
                   <div className="flex-1 min-w-0">
                     <div className="flex gap-3">
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} icon={<Calendar className="h-4 w-4" />} />
+                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} type="date" />
                       </div>
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} icon={<Calendar className="h-4 w-4" />} />
+                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} type="date" />
                       </div>
                     </div>
-                    <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
-                      <Checkbox checked={priorYear2NoData} onCheckedChange={v => setPriorYear2NoData(!!v)} />
-                      <span className="text-xs text-muted-foreground">No Data</span>
-                    </label>
                   </div>
                 </div>
               </SectionCard>
