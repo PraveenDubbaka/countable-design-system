@@ -493,20 +493,20 @@ export default function CreateNewEngagement() {
 
             {/* SECTION 1: CLIENT INFORMATION — always visible */}
             <SectionCard icon={<User className="h-5 w-5" />} title="Client Information">
-              <InlineRow label="Client Name" required>
-                <Select value={clientName} onValueChange={setClientName}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select client" /></SelectTrigger>
-                  <SelectContent>
-                    {clientOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </InlineRow>
-
               <InlineRow label="Engagement Type" required>
                 <Select value={engagementType} onValueChange={handleEngagementTypeChange}>
                   <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select engagement type" /></SelectTrigger>
                   <SelectContent>
                     {ENGAGEMENT_TYPES.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </InlineRow>
+
+              <InlineRow label="Client Name" required>
+                <Select value={clientName} onValueChange={setClientName}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select client" /></SelectTrigger>
+                  <SelectContent>
+                    {clientOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </InlineRow>
@@ -544,9 +544,6 @@ export default function CreateNewEngagement() {
                       <ExternalLink className="h-4 w-4 text-muted-foreground" />
                     </button>
                   </div>
-                </InlineRow>
-                <InlineRow label="Engagement Type" required>
-                  <input type="text" value={engagementType} readOnly className={ic + " cursor-default bg-muted/40 text-muted-foreground"} />
                 </InlineRow>
                 <InlineRow label="Budget ($)" required>
                   <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
