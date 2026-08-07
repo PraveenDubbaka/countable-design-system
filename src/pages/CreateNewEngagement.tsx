@@ -103,6 +103,14 @@ function shiftYear(mmddyyyy: string, delta: number): string {
   return `${p[0]}/${p[1]}/${String(parseInt(p[2]) + delta)}`;
 }
 
+function addDays(mmddyyyy: string, days: number): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3) return mmddyyyy;
+  const d = new Date(parseInt(p[2]), parseInt(p[0]) - 1, parseInt(p[1]));
+  d.setDate(d.getDate() + days);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
 function deriveEngagementId(type: string, client: string, yearEnd: string): string {
   const typePrefix = type.match(/\(([^)]+)\)/)?.[1] ?? type.substring(0, 3).toUpperCase();
   const abbrev = client.split(/\s+/)
@@ -404,32 +412,39 @@ export default function CreateNewEngagement() {
 
   const isFullYear = periodType === "Full Year";
 
+  const applyFullYear = (cyStart: string, cyEnd: string) => {
+    setPriorYear1Start(shiftYear(cyStart, -1));
+    setPriorYear1End(shiftYear(cyEnd, -1));
+    setPriorYear2Start(shiftYear(cyStart, -2));
+    setPriorYear2End(shiftYear(cyEnd, -2));
+  };
+
   const handleCurrentYearStartChange = (val: string) => {
     setCurrentYearStart(val);
     if (isFullYear) {
-      setPriorYear1Start(shiftYear(val, -1));
-      setPriorYear2Start(shiftYear(val, -2));
+      // Auto-derive end = start + 1 year - 1 day
+      const autoEnd = addDays(shiftYear(val, 1), -1);
+      setCurrentYearEnd(autoEnd);
+      if (engagementType && clientName) setEngagementId(deriveEngagementId(engagementType, clientName, autoEnd));
+      applyFullYear(val, autoEnd);
     }
   };
 
   const handleCurrentYearEndChange = (val: string) => {
     setCurrentYearEnd(val);
-    if (engagementType && clientName) {
-      setEngagementId(deriveEngagementId(engagementType, clientName, val));
-    }
+    if (engagementType && clientName) setEngagementId(deriveEngagementId(engagementType, clientName, val));
     if (isFullYear) {
-      setPriorYear1End(shiftYear(val, -1));
-      setPriorYear2End(shiftYear(val, -2));
+      // Auto-derive start = end - 1 year + 1 day
+      const autoStart = addDays(shiftYear(val, -1), 1);
+      setCurrentYearStart(autoStart);
+      applyFullYear(autoStart, val);
     }
   };
 
   const handlePeriodTypeChange = (val: string) => {
     setPeriodType(val);
     if (val === "Full Year") {
-      setPriorYear1Start(shiftYear(currentYearStart, -1));
-      setPriorYear1End(shiftYear(currentYearEnd, -1));
-      setPriorYear2Start(shiftYear(currentYearStart, -2));
-      setPriorYear2End(shiftYear(currentYearEnd, -2));
+      applyFullYear(currentYearStart, currentYearEnd);
     }
   };
 
