@@ -476,7 +476,7 @@ export default function CreateNewEngagement() {
   };
 
   return (
-    <Layout title="Create Engagement">
+    <Layout title="Create Engagement" hideSidebar>
       <div className="flex-1 overflow-y-auto bg-background">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-6">
