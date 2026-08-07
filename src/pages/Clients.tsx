@@ -275,6 +275,13 @@ export default function Clients() {
  className="pl-9 w-44 h-9 text-sm"
  />
  </div>
+ <Button
+   variant="outline"
+   className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
+   onClick={() => navigate("/clients/add-new")}
+ >
+   Add New Client
+ </Button>
  <Popover>
  <PopoverTrigger asChild>
  <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">

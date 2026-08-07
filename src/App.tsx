@@ -12,6 +12,7 @@ import Engagements from "./pages/Engagements";
 import EngagementDetail from "./pages/EngagementDetail";
 import CreateEngagement from "./pages/CreateEngagement";
 import CreateNewEngagement from "./pages/CreateNewEngagement";
+import AddNewClientV2 from "./pages/AddNewClientV2";
 import Clients from "./pages/Clients";
 import AddNewClient from "./pages/AddNewClient";
 import ClientDetail from "./pages/ClientDetail";
@@ -41,6 +42,7 @@ const App = () => (
  <Route path="/" element={<Navigate to="/dashboard" replace />} />
  <Route path="/dashboard" element={<Dashboard />} />
  <Route path="/clients" element={<Clients />} />
+ <Route path="/clients/add-new" element={<AddNewClientV2 />} />
  <Route path="/clients/new" element={<AddNewClient />} />
  <Route path="/clients/:clientId" element={<ClientDetail />} />
  <Route path="/teams" element={<Teams />} />
