@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText, ChevronLeft, CalendarDays } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StyledCard } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 
 // Shared primitives mirrored from AddNewClient.tsx — keep in sync
@@ -490,6 +491,109 @@ const SOURCE_CONNECTIONS: Array<{ value: string; label: string }> = [
   { value: "sage", label: "Sage" },
 ];
 
+// ── Month/Day picker ─────────────────────────────────────────────────────────
+
+const MONTHS_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_DAYS  = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+const MonthDayPicker = ({
+  value,
+  onChange,
+  placeholder = "e.g., Dec 31",
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<"month" | "day">("month");
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o) setStep("month");
+  };
+
+  const handleMonthClick = (m: number) => {
+    setSelectedMonth(m);
+    setStep("day");
+  };
+
+  const handleDayClick = (d: number) => {
+    if (selectedMonth === null) return;
+    onChange(`${MONTHS_ABBR[selectedMonth]} ${d}`);
+    setOpen(false);
+    setStep("month");
+  };
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={`input-double-border flex items-center gap-2 h-9 px-3 w-full rounded-[10px] border text-sm text-left transition-all duration-200 bg-white dark:bg-card border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] ${value ? "text-foreground" : "text-muted-foreground/70"}`}
+        >
+          <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
+          <span>{value || placeholder}</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-56 p-3" align="start">
+        {step === "month" ? (
+          <>
+            <p className="text-xs font-medium text-muted-foreground mb-2 text-center">Select Month</p>
+            <div className="grid grid-cols-3 gap-1">
+              {MONTHS_ABBR.map((m, i) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => handleMonthClick(i)}
+                  className={`py-1.5 text-sm rounded-md transition-colors font-medium text-center ${
+                    selectedMonth === i
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted text-foreground"
+                  }`}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-1 mb-2">
+              <button
+                type="button"
+                onClick={() => setStep("month")}
+                className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+              <p className="text-xs font-medium flex-1 text-center">
+                {selectedMonth !== null ? MONTHS_ABBR[selectedMonth] : ""} — Select Day
+              </p>
+            </div>
+            <div className="grid grid-cols-7 gap-0.5">
+              {Array.from(
+                { length: selectedMonth !== null ? MONTH_DAYS[selectedMonth] : 31 },
+                (_, i) => i + 1
+              ).map(d => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => handleDayClick(d)}
+                  className="h-7 w-7 text-xs rounded-md transition-colors hover:bg-primary hover:text-primary-foreground text-foreground font-medium text-center"
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function AddNewClientV2() {
@@ -502,6 +606,7 @@ export default function AddNewClientV2() {
   const [dbaDisplay, setDbaDisplay] = useState<string>("legal-only");
   const [gstRegistered, setGstRegistered] = useState<string>("");
   const [sourceConnection, setSourceConnection] = useState<string>("");
+  const [fiscalYearEnd, setFiscalYearEnd] = useState<string>("");
 
   const subTypeCfg = entityType ? (SUB_TYPE_CONFIG[`${country}-${entityType}`] ?? null) : null;
   const cfg = entityType ? ENTITY_CONFIG[entityType] : null;
@@ -759,9 +864,9 @@ export default function AddNewClientV2() {
                 <div className="space-y-4 max-w-[50%]">
                   <InlineField
                     label="Fiscal Year-End (Month/Day)"
-                    hint="Enter as month and day only (e.g., Dec 31). Not mandatory — can be set at the engagement level."
+                    hint="Not mandatory — can be set at the engagement level."
                   >
-                    <Input placeholder="e.g., Dec 31" />
+                    <MonthDayPicker value={fiscalYearEnd} onChange={setFiscalYearEnd} />
                   </InlineField>
                   {cfg?.hasIncorporation && (
                     <InlineField label={incLabel[entityType] ?? "Date of Incorporation"} required>
