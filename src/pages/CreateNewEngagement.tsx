@@ -97,6 +97,12 @@ function engagementIdDatePart(yearEnd: string): string {
   return `${MONTHS_SHORT[m]}${d}${y}`;
 }
 
+function shiftYear(mmddyyyy: string, delta: number): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3) return mmddyyyy;
+  return `${p[0]}/${p[1]}/${String(parseInt(p[2]) + delta)}`;
+}
+
 function deriveEngagementId(type: string, client: string, yearEnd: string): string {
   const typePrefix = type.match(/\(([^)]+)\)/)?.[1] ?? type.substring(0, 3).toUpperCase();
   const abbrev = client.split(/\s+/)
@@ -302,9 +308,9 @@ function fromInputDate(yyyymmdd: string): string {
 }
 
 const LabeledInput = ({
-  label, value, onChange, required = false, type = "text",
+  label, value, onChange, required = false, type = "text", disabled = false,
 }: {
-  label: string; value: string; onChange: (v: string) => void; required?: boolean; type?: string;
+  label: string; value: string; onChange: (v: string) => void; required?: boolean; type?: string; disabled?: boolean;
 }) => {
   const isDate = type === "date";
   return (
@@ -316,7 +322,8 @@ const LabeledInput = ({
         type={type}
         value={isDate ? toInputDate(value) : value}
         onChange={e => onChange(isDate ? fromInputDate(e.target.value) : e.target.value)}
-        className={ic}
+        disabled={disabled}
+        className={ic + (disabled ? " opacity-50 cursor-not-allowed bg-muted/40" : "")}
       />
     </div>
   );
@@ -395,10 +402,34 @@ export default function CreateNewEngagement() {
     }
   };
 
+  const isFullYear = periodType === "Full Year";
+
+  const handleCurrentYearStartChange = (val: string) => {
+    setCurrentYearStart(val);
+    if (isFullYear) {
+      setPriorYear1Start(shiftYear(val, -1));
+      setPriorYear2Start(shiftYear(val, -2));
+    }
+  };
+
   const handleCurrentYearEndChange = (val: string) => {
     setCurrentYearEnd(val);
     if (engagementType && clientName) {
       setEngagementId(deriveEngagementId(engagementType, clientName, val));
+    }
+    if (isFullYear) {
+      setPriorYear1End(shiftYear(val, -1));
+      setPriorYear2End(shiftYear(val, -2));
+    }
+  };
+
+  const handlePeriodTypeChange = (val: string) => {
+    setPeriodType(val);
+    if (val === "Full Year") {
+      setPriorYear1Start(shiftYear(currentYearStart, -1));
+      setPriorYear1End(shiftYear(currentYearEnd, -1));
+      setPriorYear2Start(shiftYear(currentYearStart, -2));
+      setPriorYear2End(shiftYear(currentYearEnd, -2));
     }
   };
 
@@ -669,7 +700,7 @@ export default function CreateNewEngagement() {
                     Period Type<span className="text-destructive ml-0.5">*</span>
                   </span>
                   <div className="flex-1 min-w-0 max-w-sm">
-                    <Select value={periodType} onValueChange={setPeriodType}>
+                    <Select value={periodType} onValueChange={handlePeriodTypeChange}>
                       <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
                       <SelectContent>
                         {periodTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
@@ -685,7 +716,7 @@ export default function CreateNewEngagement() {
                   </span>
                   <div className="flex gap-3 flex-1 min-w-0">
                     <div className="flex-1 min-w-0 max-w-44">
-                      <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required type="date" />
+                      <LabeledInput label="Start Date" value={currentYearStart} onChange={handleCurrentYearStartChange} required type="date" />
                     </div>
                     <div className="flex-1 min-w-0 max-w-44">
                       <LabeledInput label="End Date" value={currentYearEnd} onChange={handleCurrentYearEndChange} required type="date" />
@@ -699,10 +730,10 @@ export default function CreateNewEngagement() {
                   <div className="flex-1 min-w-0">
                     <div className="flex gap-3">
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} type="date" />
+                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} type="date" disabled={isFullYear} />
                       </div>
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} type="date" />
+                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} type="date" disabled={isFullYear} />
                       </div>
                     </div>
                   </div>
@@ -714,10 +745,10 @@ export default function CreateNewEngagement() {
                   <div className="flex-1 min-w-0">
                     <div className="flex gap-3">
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} type="date" />
+                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} type="date" disabled={isFullYear} />
                       </div>
                       <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} type="date" />
+                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} type="date" disabled={isFullYear} />
                       </div>
                     </div>
                   </div>
