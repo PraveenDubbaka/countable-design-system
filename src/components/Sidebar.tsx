@@ -1875,7 +1875,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </div>
 
  {/* Engagement Sections panel - portalled below the global header */}
- {portalTarget && location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && createPortal(<>
+ {portalTarget && location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create" && location.pathname !== "/engagements/create-new" && createPortal(<>
  <div 
  ref={panelRef}
  style={{ width: isTemplatesPanelCollapsed ? 0 : (signoffsMode ? Math.max(panelWidth, 440) : panelWidth) }}
