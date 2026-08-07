@@ -380,7 +380,7 @@ export default function CreateNewEngagement() {
     : [{ value: "Full year", label: "Full year" }];
 
   // Section 2 gate
-  const showDetails = clientName.trim() !== "" && engagementType !== "";
+  const showDetails = clientName.trim() !== "";
 
   // Section 5 gate
   const engagementDetailsValid =
@@ -493,15 +493,6 @@ export default function CreateNewEngagement() {
 
             {/* SECTION 1: CLIENT INFORMATION — always visible */}
             <SectionCard icon={<User className="h-5 w-5" />} title="Client Information">
-              <InlineRow label="Engagement Type" required>
-                <Select value={engagementType} onValueChange={handleEngagementTypeChange}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select engagement type" /></SelectTrigger>
-                  <SelectContent>
-                    {ENGAGEMENT_TYPES.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </InlineRow>
-
               <InlineRow label="Client Name" required>
                 <Select value={clientName} onValueChange={setClientName}>
                   <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select client" /></SelectTrigger>
@@ -528,9 +519,17 @@ export default function CreateNewEngagement() {
               )}
             </SectionCard>
 
-            {/* SECTION 2: ENGAGEMENT DETAILS — gated on client + type */}
+            {/* SECTION 2: ENGAGEMENT DETAILS — gated on client */}
             {showDetails && (
               <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
+                <InlineRow label="Engagement Type" required>
+                  <Select value={engagementType} onValueChange={handleEngagementTypeChange}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select engagement type" /></SelectTrigger>
+                    <SelectContent>
+                      {ENGAGEMENT_TYPES.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </InlineRow>
                 <InlineRow label="Engagement ID" required>
                   <div className="relative">
                     <input type="text" value={engagementId} onChange={e => setEngagementId(e.target.value)} className={ic + " pr-10"} />
