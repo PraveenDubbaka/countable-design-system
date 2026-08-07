@@ -84,6 +84,29 @@ const MOCK_TEAM_MEMBERS = [
   { name: "Jane DEF", email: "John_DEF@email.com", title: "Associate", hourlyRate: "25.00" },
 ];
 
+const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const STOP_WORDS = new Set(["LLC","INC","INC.","LTD","LTD.","CO","CO.","CORP","CORP."]);
+
+function engagementIdDatePart(yearEnd: string): string {
+  const parts = yearEnd.split("/");
+  if (parts.length !== 3) return yearEnd.replace(/\//g, "");
+  const m = parseInt(parts[0]) - 1;
+  const d = parseInt(parts[1]);
+  const y = parts[2];
+  if (m < 0 || m > 11 || isNaN(d)) return yearEnd.replace(/\//g, "");
+  return `${MONTHS_SHORT[m]}${d}${y}`;
+}
+
+function deriveEngagementId(type: string, client: string, yearEnd: string): string {
+  const typePrefix = type.match(/\(([^)]+)\)/)?.[1] ?? type.substring(0, 3).toUpperCase();
+  const abbrev = client.split(/\s+/)
+    .filter(w => !STOP_WORDS.has(w.toUpperCase()))
+    .map(w => w[0]?.toUpperCase() ?? "")
+    .join("")
+    .substring(0, 4);
+  return `${typePrefix}-${abbrev}-${engagementIdDatePart(yearEnd)}`;
+}
+
 function formatYearEnd(dateStr: string): string {
   const parts = dateStr.split("/");
   if (parts.length !== 3) return dateStr;
@@ -339,21 +362,27 @@ export default function CreateNewEngagement() {
 
   const handleEngagementTypeChange = (newType: string) => {
     setEngagementType(newType);
+    setEngagementId(deriveEngagementId(newType, clientName, currentYearEnd));
     const audit = newType === "Audit (AUD)";
     if (audit) {
-      setEngagementId("AUD-HFL-Mar312024");
       setEngagementTemplate("CAS Audit");
       setTemplateId("");
       setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
       setPeriodType("Full Year");
       setAdditionalDisclosures("Full financial statements");
     } else {
-      setEngagementId("REV-DEF-Nov302023");
       setEngagementTemplate("Review Section 2400");
       setTemplateId("");
       setAccountingStandards("Section 2400 Review standards");
       setPeriodType("Full year");
       setAdditionalDisclosures("Statement of cash flows");
+    }
+  };
+
+  const handleCurrentYearEndChange = (val: string) => {
+    setCurrentYearEnd(val);
+    if (engagementType && clientName) {
+      setEngagementId(deriveEngagementId(engagementType, clientName, val));
     }
   };
 
@@ -643,7 +672,7 @@ export default function CreateNewEngagement() {
                       <LabeledInput label="Start Date" value={currentYearStart} onChange={setCurrentYearStart} required icon={<Calendar className="h-4 w-4" />} />
                     </div>
                     <div className="flex-1 min-w-0 max-w-44">
-                      <LabeledInput label="End Date" value={currentYearEnd} onChange={setCurrentYearEnd} required icon={<Calendar className="h-4 w-4" />} />
+                      <LabeledInput label="End Date" value={currentYearEnd} onChange={handleCurrentYearEndChange} required icon={<Calendar className="h-4 w-4" />} />
                     </div>
                   </div>
                 </div>
