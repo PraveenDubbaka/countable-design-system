@@ -530,46 +530,50 @@ export default function CreateNewEngagement() {
                     </SelectContent>
                   </Select>
                 </InlineRow>
-                <InlineRow label="Engagement ID" required>
-                  <div className="relative">
-                    <input type="text" value={engagementId} onChange={e => setEngagementId(e.target.value)} className={ic + " pr-10"} />
-                    <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  </div>
-                </InlineRow>
-                <InlineRow label="Template" required>
-                  <div className="relative">
-                    <input type="text" value={engagementTemplate} onChange={e => setEngagementTemplate(e.target.value)} className={ic + " pr-10"} />
-                    <button type="button" onClick={() => setShowTemplatePicker(true)} className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded hover:text-primary">
-                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </div>
-                </InlineRow>
-                <InlineRow label="Budget ($)" required>
-                  <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
-                </InlineRow>
-                <InlineRow label="Accounting Framework" required>
-                  <Select value={accountingStandards} onValueChange={setAccountingStandards}>
-                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
-                    <SelectContent>
-                      {accountingStandardsOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </InlineRow>
-                {!isAudit && (
-                  <InlineRow label="Additional Disclosures" required>
-                    <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
-                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
-                      <SelectContent>
-                        {disclosureOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </InlineRow>
+                {engagementType !== "" && (
+                  <>
+                    <InlineRow label="Engagement ID" required>
+                      <div className="relative">
+                        <input type="text" value={engagementId} onChange={e => setEngagementId(e.target.value)} className={ic + " pr-10"} />
+                        <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </InlineRow>
+                    <InlineRow label="Template" required>
+                      <div className="relative">
+                        <input type="text" value={engagementTemplate} onChange={e => setEngagementTemplate(e.target.value)} className={ic + " pr-10"} />
+                        <button type="button" onClick={() => setShowTemplatePicker(true)} className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded hover:text-primary">
+                          <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </div>
+                    </InlineRow>
+                    <InlineRow label="Budget ($)" required>
+                      <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
+                    </InlineRow>
+                    <InlineRow label="Accounting Framework" required>
+                      <Select value={accountingStandards} onValueChange={setAccountingStandards}>
+                        <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                        <SelectContent>
+                          {accountingStandardsOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </InlineRow>
+                    {!isAudit && (
+                      <InlineRow label="Additional Disclosures" required>
+                        <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
+                          <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                          <SelectContent>
+                            {disclosureOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </InlineRow>
+                    )}
+                  </>
                 )}
               </SectionCard>
             )}
 
-            {/* SECTION 3: AUDIT CONFIGURATION — gated on isAudit + showDetails */}
-            {isAudit && showDetails && (
+            {/* SECTION 3: AUDIT CONFIGURATION — gated on isAudit + showDetails + type selected */}
+            {isAudit && showDetails && engagementType !== "" && (
               <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                 <div className="px-5 py-4 border-b border-border bg-muted/30">
                   <div className="flex items-center gap-2">
@@ -612,8 +616,8 @@ export default function CreateNewEngagement() {
               </div>
             )}
 
-            {/* SECTION 4: ENGAGEMENT PERIOD — gated on showDetails */}
-            {showDetails && (
+            {/* SECTION 4: ENGAGEMENT PERIOD — gated on showDetails + type selected */}
+            {showDetails && engagementType !== "" && (
               <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
                 <div className="flex items-center gap-4 py-2.5">
                   <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap">
