@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Engagements from "./pages/Engagements";
 import EngagementDetail from "./pages/EngagementDetail";
 import CreateEngagement from "./pages/CreateEngagement";
+import CreateNewEngagement from "./pages/CreateNewEngagement";
 import Clients from "./pages/Clients";
 import AddNewClient from "./pages/AddNewClient";
 import ClientDetail from "./pages/ClientDetail";
@@ -46,7 +47,8 @@ const App = () => (
  <Route path="/engagements" element={<Engagements />} />
  <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
  <Route path="/engagements/:engagementId/checklist/:checklistKey" element={<EngagementDetail />} />
- <Route path="/engagements/create" element={<CreateEngagement />} />
+ <Route path="/engagements/create-new" element={<CreateNewEngagement />} />
+         <Route path="/engagements/create" element={<CreateEngagement />} />
  <Route path="/engagements/:engagementId/trial-balance" element={<TrialBalance />} />
  <Route path="/engagements/:engagementId/workbook" element={<Workbook />} />
  <Route path="/engagements/:engagementId/procedure/:procedureId" element={<ProcedureDetail />} />
