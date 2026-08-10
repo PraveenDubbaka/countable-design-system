@@ -432,41 +432,52 @@ export function Audit520Worksheet() {
  const storageKey = `audit-520-data-${engagementId ?? "default"}`;
 
  const [data, setData] = useState<Data520>(() => {
- const saved = readJsonFromLocalStorage<Data520 | null>(storageKey, null);
- const toRefDocs = (v: unknown): RefDoc[] => {
- if (Array.isArray(v)) return v as RefDoc[];
- if (typeof v === "string" && v) return [{ name: v }];
- return [];
- };
- const base: Data520 = saved
- ? {
-...buildDefault(),
-...saved,
- partARows: saved.partARows.map(r => ({
-...r,
- wpRefSource: toRefDocs(r.wpRefSource),
- wpRef: toRefDocs(r.wpRef),
- })),
- partBRows: saved.partBRows.map(r => ({
- procedures: [] as string[],
- balanceValue: "",
-...r,
- wpRefSource: toRefDocs(r.wpRefSource),
- })),
- }
- : buildDefault();
- const auto = buildAutoFillRows(engagementId ?? "default");
- const merged = mergeAutoFill(base, auto);
- return {...base,...merged } as Data520;
+  const raw = readJsonFromLocalStorage<Data520 | null>(storageKey, null);
+
+  // Discard stale saved data that pre-dates the Form 508 library update
+  const STALE_MARKERS = [
+   "Inventory value could be overstated",
+   "cut-off of charter agreements",
+   "cut-off of vessel charter",
+   "incorrect cut-off",
+   "obsolescence provision",
+  ];
+  const isStale = raw?.partBRows?.some(r =>
+   STALE_MARKERS.some(marker => r.rmmIdentified?.includes(marker))
+  );
+  if (isStale) {
+   localStorage.removeItem(storageKey);
+  }
+
+  const saved = isStale ? null : raw;
+
+  const toRefDocs = (v: unknown): RefDoc[] => {
+   if (Array.isArray(v)) return v as RefDoc[];
+   if (typeof v === "string" && v) return [{ name: v }];
+   return [];
+  };
+  const base: Data520 = saved
+   ? {
+    ...buildDefault(),
+    ...saved,
+    partARows: saved.partARows.map(r => ({
+     ...r,
+     wpRefSource: toRefDocs(r.wpRefSource),
+     wpRef: toRefDocs(r.wpRef),
+    })),
+    partBRows: saved.partBRows.map(r => ({
+     procedures: [] as string[],
+     balanceValue: "",
+     ...r,
+     wpRefSource: toRefDocs(r.wpRefSource),
+    })),
+   }
+   : buildDefault();
+  const auto = buildAutoFillRows(engagementId ?? "default");
+  const merged = mergeAutoFill(base, auto);
+  return {...base, ...merged } as Data520;
  });
 
- useEffect(() => {
-  const key = `audit-520-data-AUD-NPM-Dec312025`;
-  const saved = readJsonFromLocalStorage<Data520 | null>(key, null);
-  if (saved?.partBRows?.some(r => r.rmmIdentified?.includes("Inventory value could be overstated") || r.rmmIdentified?.includes("cut-off of charter agreements"))) {
-   localStorage.removeItem(key);
-  }
- }, []);
 
  const firstRender = useRef(true);
  useEffect(() => {
