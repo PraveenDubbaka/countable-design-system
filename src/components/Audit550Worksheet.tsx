@@ -200,46 +200,221 @@ function emptyRisk(): RiskBlock {
 function buildDefault(): Data550 {
  return {
   categories: CATEGORY_DEFS.map(c => {
+
+   // ── Journal Entries ────────────────────────────────────────────────
    if (c.key === "journalEntries") return {
     ...c,
     risks: [{
      id: uid(),
-     description: "Risk of material misstatement in journal entries — management override and unauthorized entries could be posted to the general ledger without detection or timely review.",
-     controls: [{
-      ...emptyControl(),
-      id: uid(),
-      description: "Period-end journal entries are categorized by type (standard, recurring and non-routine) and reviewed for completeness and inclusion in the correct accounting period.",
-      assertions: ["C","AV","E"] as Assertion[],
-      controlType: "Authorization / Approval",
-      automated: "Manual" as AutoManual,
-      prevDet: "Preventive" as PrevDet,
-     }, {
-      ...emptyControl(),
-      id: uid(),
-      description: "All journal entries require supporting documentation. Any non-routine entries require documented approval prior to being posted.",
-      assertions: ["C","AV","E"] as Assertion[],
-      controlType: "Authorization / Approval",
-      automated: "Manual" as AutoManual,
-      prevDet: "Preventive" as PrevDet,
-     }],
+     description: "Risk of material misstatement in journal entries — management override and unauthorized entries could be posted to the general ledger without detection or timely review. First-year audit; no prior CAS baseline established.",
+     controls: [
+      {
+       ...emptyControl(), id: uid(),
+       description: "Period-end journal entries are categorized by type (standard, recurring, and non-routine) and reviewed for completeness and inclusion in the correct accounting period.",
+       assertions: ["C","AV","E"] as Assertion[],
+       controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+       prevDet: "Preventive" as PrevDet, inherentRisk: "H" as IR,
+      },
+      {
+       ...emptyControl(), id: uid(),
+       description: "All journal entries require supporting documentation. Any non-routine entries require documented approval prior to being posted in QuickBooks Online.",
+       assertions: ["C","AV","E"] as Assertion[],
+       controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+       prevDet: "Preventive" as PrevDet, inherentRisk: "H" as IR,
+      },
+      {
+       ...emptyControl(), id: uid(),
+       description: "Accounting software (QuickBooks Online) does not allow unbalanced or duplicate journal entries; system generates an error before posting.",
+       assertions: ["AV"] as Assertion[],
+       controlType: "Automated application control", automated: "Automated" as AutoManual,
+       prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+      },
+     ],
     }],
    };
+
+   // ── Significant Risks ──────────────────────────────────────────────
    if (c.key === "significantRisks") return {
     ...c,
-    risks: [{
-     id: uid(),
-     description: "Complex operating structure and related-party transactions — risk that transactions with related parties are not recorded on arm's length terms or are not fully disclosed.",
-     controls: [{
-      ...emptyControl(),
+    risks: [
+     {
       id: uid(),
-      description: "Significant transactions with related parties require documented approval by the board or those charged with governance prior to execution.",
-      assertions: ["C","AV","E"] as Assertion[],
-      controlType: "Authorization / Approval",
-      automated: "Manual" as AutoManual,
-      prevDet: "Preventive" as PrevDet,
-     }],
-    }],
+      description: "Complex operating structure and related-party transactions — rent payments to Northline Holdings Inc. (common directorship) may not be recorded on arm's length terms or fully disclosed. Assessed as significant risk in Form 520.",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "Significant transactions with related parties (including Northline Holdings Inc.) require documented approval by the board or those charged with governance prior to execution.",
+        assertions: ["C","AV","E"] as Assertion[],
+        controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "H" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Management maintains and annually updates a listing of all related parties; the listing is reviewed by the board and compared to prior year.",
+        assertions: ["C"] as Assertion[],
+        controlType: "Review of performance", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "H" as IR,
+       },
+      ],
+     },
+     {
+      id: uid(),
+      description: "Financial reporting process — period-end close deficiencies. First-year audit with no established close timetable documented under CAS. Risk of unrecorded accrued liabilities ($620K) and deferred revenue ($284K) cut-off errors.",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "Accrual calculations and provisions (including income taxes — $249K) are reviewed by someone other than the preparer for accuracy and lack of bias.",
+        assertions: ["C","AV","E"] as Assertion[],
+        controlType: "Review of performance", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "H" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Procedures exist to ensure period-end revenue ($18.4M service revenue) and deferred revenue ($284K) are recorded in the correct accounting period (cut-off).",
+        assertions: ["C","AV"] as Assertion[],
+        controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "H" as IR,
+       },
+      ],
+     },
+    ],
    };
+
+   // ── Operating Effectiveness ────────────────────────────────────────
+   if (c.key === "operatingEffectiveness") return {
+    ...c,
+    risks: [
+     {
+      id: uid(),
+      description: "Revenue, receivables, and receipts — service revenue of $18.4M and AR of $2.1M. Risk of fictitious revenue, incorrect cut-off, and uncollectible balances not adequately provisioned (allowance $42K on $2.1M AR).",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "A standard price list is used for service invoice preparation. Exceptions require documentation and approval.",
+        assertions: ["C","AV","E"] as Assertion[],
+        controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "The sales journal and sub-ledger are reconciled to the general ledger (account 4000 — Service Revenue) on a monthly basis.",
+        assertions: ["AV"] as Assertion[],
+        controlType: "Reconciliation", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "A reconciliation of aged receivables ($2.1M) to control accounts is prepared monthly and management approval documented.",
+        assertions: ["AV","E"] as Assertion[],
+        controlType: "Reconciliation", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Regular (at least monthly) comparison of budgeted revenue to actual revenue ($18.4M) and timely investigation of variances by management.",
+        assertions: ["C","AV","E"] as Assertion[],
+        controlType: "Review of performance", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+      ],
+     },
+     {
+      id: uid(),
+      description: "Salaries and payroll — salaries and benefits of $2.16M (62 employees across Mississauga and Barrie). Risk of unauthorized pay rate changes, ghost employees, and inaccurate deductions.",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "Any change in employment status or rate of pay for any of the 62 employees must first be approved and documented in writing by management.",
+        assertions: ["AV","E"] as Assertion[],
+        controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Procedures exist to ensure terminated employees are immediately removed from payroll.",
+        assertions: ["AV","E"] as Assertion[],
+        controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "The payroll register is reconciled to the general ledger (account 6100 — Salaries & Benefits) each pay period.",
+        assertions: ["AV"] as Assertion[],
+        controlType: "Reconciliation", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+      ],
+     },
+    ],
+   };
+
+   // ── Other Controls ─────────────────────────────────────────────────
+   if (c.key === "other") return {
+    ...c,
+    risks: [
+     {
+      id: uid(),
+      description: "Cash and bank — cash & bank balance of $1.24M processed across Mississauga and Barrie locations. Risk of misappropriation and undetected errors in cash handling.",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "A bank reconciliation is prepared monthly (with statements from bank) and management approval documented for each bank account.",
+        assertions: ["C","AV"] as Assertion[],
+        controlType: "Reconciliation", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Access to blank cheques and online banking credentials is restricted to authorized personnel only.",
+        assertions: ["E"] as Assertion[],
+        controlType: "Physical / logical access", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+       },
+      ],
+     },
+     {
+      id: uid(),
+      description: "Purchases, payables, and payments — accounts payable of $1.4M and accrued liabilities of $620K. Risk of unrecorded liabilities and unauthorized payments.",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "An aged accounts payable listing ($1.4M) is reconciled to the general ledger each month and exceptions investigated by management.",
+        assertions: ["C","AV","E"] as Assertion[],
+        controlType: "Reconciliation", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Authorized personnel examine supporting documentation and approve payments up to their individual spending limit. Payments over the limit require additional approval of senior management.",
+        assertions: ["AV","E"] as Assertion[],
+        controlType: "Authorization / Approval", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+       },
+      ],
+     },
+     {
+      id: uid(),
+      description: "Property, plant and equipment — net PPE of $4.82M ($6.42M cost less $1.6M accumulated depreciation) plus ROU assets of $2.8M. Risk of improper capitalization and inadequate depreciation.",
+      controls: [
+       {
+        ...emptyControl(), id: uid(),
+        description: "The accounting policy for when goods should be capitalized versus expensed is documented and clearly understood by accounting personnel.",
+        assertions: ["AV"] as Assertion[],
+        controlType: "Review of performance", automated: "Manual" as AutoManual,
+        prevDet: "Preventive" as PrevDet, inherentRisk: "M" as IR,
+       },
+       {
+        ...emptyControl(), id: uid(),
+        description: "Management periodically reviews the application of the accounting policy on capitalization and depreciation rates for PPE and ROU assets.",
+        assertions: ["AV"] as Assertion[],
+        controlType: "Review of performance", automated: "Manual" as AutoManual,
+        prevDet: "Detective" as PrevDet, inherentRisk: "M" as IR,
+       },
+      ],
+     },
+    ],
+   };
+
    return { ...c, risks: [emptyRisk()] };
   }),
   overallConclusion: "",
@@ -260,8 +435,15 @@ export function Audit550Worksheet() {
  const isFirstRender = useRef(true);
 
  const [data, setData] = useState<Data550>(() => {
- const saved = readJsonFromLocalStorage<Data550 | null>(storageKey, null);
- if (!saved) return buildDefault();
+  const raw = readJsonFromLocalStorage<Data550 | null>(storageKey, null);
+  // Discard stale saved data that pre-dates the seeded category controls
+  const isStale = raw?.categories?.some(cat =>
+   (cat.key === "operatingEffectiveness" || cat.key === "other") &&
+   cat.risks?.every(r => !r.description)
+  );
+  if (isStale) localStorage.removeItem(storageKey);
+  const saved = isStale ? null : raw;
+  if (!saved) return buildDefault();
  const def = buildDefault();
  // Reconcile categories by key so we always show the four required buckets
  const categories = def.categories.map(d => {
