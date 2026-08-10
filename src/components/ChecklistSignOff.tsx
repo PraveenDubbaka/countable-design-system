@@ -28,6 +28,7 @@ type SignEntry = {
  signedBy: string;
  initials: string;
  signedAt: string;
+ signedTitle?: string;
 };
 
 type ExtraRow = {
@@ -36,6 +37,7 @@ type ExtraRow = {
  signedBy?: string;
  initials?: string;
  signedAt?: string;
+ signedTitle?: string;
 };
 
 type SignOffData = {
@@ -177,6 +179,17 @@ export function ChecklistSignOff({
  return result;
  }, [ctx.team]);
 
+ const assignedTitle = useMemo<Record<RoleId, string>>(() => {
+ const result = {} as Record<RoleId, string>;
+ for (const role of ROLES) {
+ const match = ctx.team?.find(m =>
+ role.teamRoles.some(tr => m.role.toLowerCase().includes(tr.toLowerCase()))
+ );
+ result[role.id] = match?.role ?? "";
+ }
+ return result;
+ }, [ctx.team]);
+
  function commitTitle() {
  const html = editorRef.current?.innerHTML ?? '';
  const t = html.trim() || DEFAULT_TITLE;
@@ -216,6 +229,7 @@ export function ChecklistSignOff({
  signedBy: name,
  initials: getInitials(name),
  signedAt: new Date().toISOString(),
+ signedTitle: assignedTitle[roleId] || undefined,
  };
  setData(d => ({
 ...d,
@@ -238,11 +252,12 @@ export function ChecklistSignOff({
  function signExtraRow(rowId: string, roleId: RoleId) {
  const name = assigned[roleId];
  if (!name || name === "—") return;
+ const title = assignedTitle[roleId] || undefined;
  setData(d => ({
 ...d,
  extraRows: d.extraRows.map(r =>
  r.id === rowId
- ? {...r, signedBy: name, initials: getInitials(name), signedAt: new Date().toISOString() }
+ ? {...r, signedBy: name, initials: getInitials(name), signedAt: new Date().toISOString(), signedTitle: title }
  : r
  ),
  }));
@@ -321,6 +336,7 @@ export function ChecklistSignOff({
  const entry = data.entries.find(e => e.roleId === role.id);
  const isSigned = !!entry;
  const displayName = isSigned ? entry.signedBy : assigned[role.id];
+ const displayTitle = isSigned ? (entry.signedTitle ?? assignedTitle[role.id]) : assignedTitle[role.id];
  const hasAssignee = displayName && displayName !== "—";
  const initials = hasAssignee ? getInitials(displayName) : "?";
  const avatarColorClass = hasAssignee
@@ -363,6 +379,9 @@ export function ChecklistSignOff({
  <p className="text-sm font-medium text-foreground truncate">
  {hasAssignee ? displayName : "Unassigned"}
  </p>
+ {displayTitle && (
+ <p className="text-xs text-muted-foreground">{displayTitle}</p>
+ )}
  {isSigned && (
  <p className="text-xs text-muted-foreground">{formatDate(entry.signedAt)}</p>
  )}
@@ -395,6 +414,7 @@ export function ChecklistSignOff({
  const role = ROLES.find(r => r.id === row.roleId)!;
  const isSigned = !!row.signedAt;
  const displayName = isSigned ? (row.signedBy ?? "") : assigned[row.roleId];
+ const displayTitle = isSigned ? (row.signedTitle ?? assignedTitle[row.roleId]) : assignedTitle[row.roleId];
  const hasAssignee = displayName && displayName !== "—";
  const initials = hasAssignee ? getInitials(displayName) : "?";
  const avatarColorClass = hasAssignee
@@ -432,6 +452,9 @@ export function ChecklistSignOff({
  <p className="text-sm font-medium text-foreground truncate">
  {hasAssignee ? displayName : "Unassigned"}
  </p>
+ {displayTitle && (
+ <p className="text-xs text-muted-foreground">{displayTitle}</p>
+ )}
  {isSigned && row.signedAt && (
  <p className="text-xs text-muted-foreground">{formatDate(row.signedAt)}</p>
  )}
