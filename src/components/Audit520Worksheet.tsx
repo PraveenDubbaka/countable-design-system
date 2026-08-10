@@ -463,7 +463,7 @@ export function Audit520Worksheet() {
  useEffect(() => {
   const key = `audit-520-data-AUD-NPM-Dec312025`;
   const saved = readJsonFromLocalStorage<Data520 | null>(key, null);
-  if (saved?.partBRows?.some(r => r.rmmIdentified?.includes("Inventory value could be overstated"))) {
+  if (saved?.partBRows?.some(r => r.rmmIdentified?.includes("Inventory value could be overstated") || r.rmmIdentified?.includes("cut-off of charter agreements"))) {
    localStorage.removeItem(key);
   }
  }, []);
@@ -593,16 +593,16 @@ export function Audit520Worksheet() {
                   if (b0) {
                     setData(d => ({...d, partBRows: d.partBRows.map(r => r.id !== b0 ? r : {
                       ...r,
-                      rmmIdentified: "Inventory value could be overstated due to inadequate obsolescence provision",
-                      scotabd: "Inventories",
-                      assertions: ["AV"],
-                      irFactors: "Inventory provision for obsolescence is subject to moderate estimate uncertainty and complexity. Management judgment is required in assessing slow-moving and obsolete stock. No automated controls over provision calculation.",
-                      fraudRisk: "N" as YN,
+                      rmmIdentified: "Management override of controls — journal entries and accounting estimates",
+                      scotabd: "Disclosures",
+                      assertions: ["C", "AV", "E"],
+                      irFactors: "No procedures or timetable for period-end close; no cut-off requirements; period-end reconciliations not performed; no supervision or review of work performed. Management is in a unique position to override controls that otherwise appear to be operating effectively.",
+                      fraudRisk: "Y" as YN,
                       irLikelihood: "M" as HML,
-                      irMagnitude: "M" as HML,
-                      inherentRisk: "M" as HML,
-                      significantRisk: "N" as YN,
-                      substantiveSufficient: "Y" as YN,
+                      irMagnitude: "H" as HML,
+                      inherentRisk: "H" as HML,
+                      significantRisk: "Y" as YN,
+                      substantiveSufficient: "N" as YN,
                     })}));
                     markLukaFilled(b0);
                   }
@@ -613,16 +613,16 @@ export function Audit520Worksheet() {
                   if (b1) {
                     setData(d => ({...d, partBRows: d.partBRows.map(r => r.id !== b1 ? r : {
                       ...r,
-                      rmmIdentified: "Revenue recognition may be misstated due to incorrect cut-off of charter agreements at year-end",
-                      scotabd: "Revenue",
+                      rmmIdentified: "Related-party transactions — incomplete or not disclosed on arm's length terms",
+                      scotabd: "Related-party transactions",
                       assertions: ["C", "AV"],
-                      irFactors: "Charter revenue is recognised over the contract period; cut-off risk exists at year-end for contracts spanning the period boundary. Low complexity but requires consistent application of revenue recognition policy.",
-                      fraudRisk: "N" as YN,
+                      irFactors: "Overly complex organizational structure; significant related-party transactions; contractual arrangements without apparent business purpose; non-arm's-length pricing. Management controls related-party information and is in a position to conceal or omit disclosures.",
+                      fraudRisk: "Y" as YN,
                       irLikelihood: "M" as HML,
-                      irMagnitude: "M" as HML,
-                      inherentRisk: "M" as HML,
-                      significantRisk: "N" as YN,
-                      substantiveSufficient: "Y" as YN,
+                      irMagnitude: "H" as HML,
+                      inherentRisk: "H" as HML,
+                      significantRisk: "Y" as YN,
+                      substantiveSufficient: "N" as YN,
                     })}));
                     markLukaFilled(b1);
                   }
@@ -633,16 +633,16 @@ export function Audit520Worksheet() {
                   if (b2) {
                     setData(d => ({...d, partBRows: d.partBRows.map(r => r.id !== b2 ? r : {
                       ...r,
-                      rmmIdentified: "Related-party transactions may be incomplete or not disclosed on arm's length terms",
-                      scotabd: "Related-party transactions",
-                      assertions: ["C", "AV"],
-                      irFactors: "Owner-managed entity — risk of undisclosed related-party transactions or non-arm's-length pricing. Moderate subjectivity in management's determination of market rates.",
+                      rmmIdentified: "Misappropriation of assets — cash and inventory theft risk",
+                      scotabd: "Cash and cash equivalents",
+                      assertions: ["E", "AV"],
+                      irFactors: "Large amounts of cash on hand or processed regularly; inventory with high value or high demand; poor physical safeguards; lack of procedures to screen job applicants for positions with access to susceptible assets; financial stress of personnel.",
                       fraudRisk: "Y" as YN,
-                      irLikelihood: "M" as HML,
-                      irMagnitude: "H" as HML,
-                      inherentRisk: "H" as HML,
-                      significantRisk: "Y" as YN,
-                      substantiveSufficient: "N" as YN,
+                      irLikelihood: "L" as HML,
+                      irMagnitude: "M" as HML,
+                      inherentRisk: "M" as HML,
+                      significantRisk: "N" as YN,
+                      substantiveSufficient: "Y" as YN,
                     })}));
                     markLukaFilled(b2);
                   }
