@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info, Plus, Trash2 } from "lucide-react";
+import { Info, Plus, Trash2, BookOpen, X } from "lucide-react";
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { WorksheetSignOff, ConcludedRow } from "@/components/WorksheetSignOff";
@@ -88,6 +88,77 @@ const CONTROL_TYPES = [
 
 const FREQUENCIES = ["Per transaction", "Daily", "Weekly", "Monthly", "Quarterly", "Annually", "Ad hoc"];
 
+interface ControlLibraryEntry {
+  id: string;
+  cycle: "revenues" | "purchases" | "payroll" | "financial-reporting";
+  cycleLabel: string;
+  description: string;
+  assertions: Assertion[];
+  controlType: string;
+  automated: AutoManual;
+  prevDet: PrevDet;
+  component: string;
+}
+
+const CONTROL_LIBRARY: ControlLibraryEntry[] = [
+  // ── Revenues, receivables, receipts ─────────────────────────────────────
+  { id: "rev-1",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Sales employees are competent for their assigned tasks, adequately trained and supervised.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Preventive", component: "CE" },
+  { id: "rev-2",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Shipping and billing functions are segregated from cash receipts.", assertions: ["E"], controlType: "Segregation of duties", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "rev-3",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "A valid sales order must exist before a shipment is made or processed.", assertions: ["AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "rev-4",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "A standard price list is used for invoice preparation. Exceptions require documentation and approval.", assertions: ["C","AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "rev-5",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "The sales journal and sub-ledger are reconciled to the general ledger.", assertions: ["AV"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "rev-6",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Procedures exist to ensure revenue is recorded in the appropriate accounting period (cut-off).", assertions: ["AV"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "rev-7",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Controls exist to prevent unauthorized changes to standard price lists and customer master files.", assertions: ["AV","E"], controlType: "Physical / logical access", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "rev-8",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Credit approval is independent of the sales and accounts receivable function.", assertions: ["AV","E"], controlType: "Segregation of duties", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "rev-9",  cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Shipping and sales order numbers are matched to invoices.", assertions: ["C","AV","E"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "rev-10", cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Monthly statements are issued to customers.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "rev-11", cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "A bank reconciliation is prepared monthly (with statements from bank) and management approval documented.", assertions: ["C","AV"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "rev-12", cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "A reconciliation of aged receivables to control accounts is prepared monthly and management approval documented.", assertions: ["AV","E"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "rev-13", cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Revenue recognition policies are clearly communicated to accounting and operations personnel.", assertions: ["C","AV","E"], controlType: "IT-dependent manual", automated: "IT-dependent manual", prevDet: "Preventive", component: "IS" },
+  { id: "rev-14", cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Regular (at least monthly) comparison of budgeted sales to actual sales and timely investigation of variances by management.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "MO" },
+  { id: "rev-15", cycle: "revenues", cycleLabel: "Revenues, receivables & receipts", description: "Management reviews the aged accounts receivable reports and takes action on overdue accounts.", assertions: ["AV"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "MO" },
+  // ── Purchases, payables, payments ────────────────────────────────────────
+  { id: "ap-1",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Personnel responsible for the purchasing, receiving, and payables functions are competent, adequately trained and supervised.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Preventive", component: "CE" },
+  { id: "ap-2",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Documented controls exist over who can issue purchase requisitions and orders and to what dollar limit.", assertions: ["AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "ap-3",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Personnel receiving goods do not perform any accounting functions.", assertions: ["E"], controlType: "Segregation of duties", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "ap-4",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Receiving slips are matched to invoices and purchase orders.", assertions: ["AV"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "ap-5",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "System will not allow payment for goods or services without information being recorded on receipt of goods and authorization for payment.", assertions: ["AV","E"], controlType: "Automated application control", automated: "Automated", prevDet: "Preventive", component: "CA" },
+  { id: "ap-6",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "System has checks to prevent duplicate payments on same order.", assertions: ["AV"], controlType: "Automated application control", automated: "Automated", prevDet: "Preventive", component: "CA" },
+  { id: "ap-7",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Authorized personnel examine supporting documentation and approve payments up to their individual spending limit.", assertions: ["AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "ap-8",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "A bank reconciliation is prepared monthly and reviewed by management.", assertions: ["AV"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "ap-9",  cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Suppliers' statements are reconciled to accounts payable monthly and reviewed by management.", assertions: ["C","AV","E"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "ap-10", cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Procedures exist to ensure payments are recorded in the correct period.", assertions: ["C","AV"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "ap-11", cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Management reviews and approves period-end accruals.", assertions: ["C","AV"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "ap-12", cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "An aged accounts payable listing is reconciled to general ledger each month and exceptions investigated by management.", assertions: ["C","AV","E"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "ap-13", cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Access to purchasing, receiving, accounts payable, and inventory records is restricted to authorized personnel.", assertions: ["AV","E"], controlType: "Physical / logical access", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "ap-14", cycle: "purchases", cycleLabel: "Purchases, payables & payments", description: "Management regularly compares actual purchases to budgeted purchases and investigates and documents variances.", assertions: ["C","AV"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "MO" },
+  // ── Payroll ──────────────────────────────────────────────────────────────
+  { id: "pay-1",  cycle: "payroll", cycleLabel: "Payroll", description: "Payroll staff are competent for their assigned tasks, adequately trained and supervised.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Preventive", component: "CE" },
+  { id: "pay-2",  cycle: "payroll", cycleLabel: "Payroll", description: "Persons preparing payroll are independent of other payroll functions, such as hiring or firing of staff, timekeeping, and cheque distribution.", assertions: ["E"], controlType: "Segregation of duties", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "pay-3",  cycle: "payroll", cycleLabel: "Payroll", description: "Approval in writing is required to add new employees to payroll.", assertions: ["E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "pay-4",  cycle: "payroll", cycleLabel: "Payroll", description: "Any change in employment status or rate of pay must first be approved and documented.", assertions: ["AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "pay-5",  cycle: "payroll", cycleLabel: "Payroll", description: "Time cards and totals of hours worked are approved before being processed for payment.", assertions: ["AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "pay-6",  cycle: "payroll", cycleLabel: "Payroll", description: "Procedures exist to ensure terminated employees are immediately removed from payroll.", assertions: ["AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "pay-7",  cycle: "payroll", cycleLabel: "Payroll", description: "The payroll register is reconciled to the general ledger.", assertions: ["AV"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "pay-8",  cycle: "payroll", cycleLabel: "Payroll", description: "Payroll taxes are paid on a timely basis and payroll tax returns are filed when due.", assertions: ["C","AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "pay-9",  cycle: "payroll", cycleLabel: "Payroll", description: "There is restricted access to personnel records, payroll records, and blank payroll cheques.", assertions: ["E"], controlType: "Physical / logical access", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "pay-10", cycle: "payroll", cycleLabel: "Payroll", description: "Costs by department or division are compared to budget and variances are investigated.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "MO" },
+  { id: "pay-11", cycle: "payroll", cycleLabel: "Payroll", description: "System generates exception reports where payroll deductions seem to be below normal levels for position and status.", assertions: ["AV","E"], controlType: "IT-dependent manual", automated: "IT-dependent manual", prevDet: "Detective", component: "IS" },
+  // ── Financial reporting ──────────────────────────────────────────────────
+  { id: "fr-1",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Personnel responsible for financial statement preparation are competent, adequately trained and supervised.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Preventive", component: "CE" },
+  { id: "fr-2",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Period-end journal entries are categorized by type (standard, recurring and non-routine) and reviewed for completeness and inclusion in the correct accounting period.", assertions: ["C","AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-3",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "All journal entries require supporting documentation. Any non-routine entries require documented approval prior to being posted.", assertions: ["C","AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Preventive", component: "CA" },
+  { id: "fr-4",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "The mapping of trial balance accounts to financial statement groupings is automatic or documented and checked periodically by management.", assertions: ["AV"], controlType: "Reconciliation", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-5",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Accrual calculations and provisions (including income taxes) are reviewed by someone other than the preparer for accuracy and lack of bias.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-6",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Financial models used in preparing fair value assessments and estimates are tested and reviewed by management.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-7",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Those with oversight responsibilities regularly review financial statements and approve the selection of accounting policies used.", assertions: ["C","AV","E"], controlType: "Authorization / Approval", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-8",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Financial statements are reviewed for accuracy, classification, consistency of accounting policy application, cross-referencing and completeness by someone other than the preparer.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-9",  cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "An up-to-date financial statement disclosure checklist is used for determining the completeness of disclosures.", assertions: ["C","AV"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-10", cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Senior management and the audit committee review the financial statements prior to release.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "CA" },
+  { id: "fr-11", cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Regular (at least monthly) comparison of period-end results with budgeted and prior period results, with investigation of variances by management.", assertions: ["C","AV","E"], controlType: "Review of performance", automated: "Manual", prevDet: "Detective", component: "MO" },
+  { id: "fr-12", cycle: "financial-reporting", cycleLabel: "Financial reporting", description: "Accounting software used contains application controls that prevent or detect an error from occurring.", assertions: ["C","AV","E"], controlType: "Automated application control", automated: "Automated", prevDet: "Preventive", component: "CA" },
+];
+
 const CATEGORY_DEFS: { key: CategoryKey; title: string; hint: string }[] = [
  {
  key: "journalEntries",
@@ -128,11 +199,54 @@ function emptyRisk(): RiskBlock {
 }
 function buildDefault(): Data550 {
  return {
- categories: CATEGORY_DEFS.map(c => ({...c, risks: [emptyRisk()] })),
- overallConclusion: "",
- overallRationale: "",
- notes: "",
- concluded: false, concludedOn: "",
+  categories: CATEGORY_DEFS.map(c => {
+   if (c.key === "journalEntries") return {
+    ...c,
+    risks: [{
+     id: uid(),
+     description: "Risk of material misstatement in journal entries — management override and unauthorized entries could be posted to the general ledger without detection or timely review.",
+     controls: [{
+      ...emptyControl(),
+      id: uid(),
+      description: "Period-end journal entries are categorized by type (standard, recurring and non-routine) and reviewed for completeness and inclusion in the correct accounting period.",
+      assertions: ["C","AV","E"] as Assertion[],
+      controlType: "Authorization / Approval",
+      automated: "Manual" as AutoManual,
+      prevDet: "Preventive" as PrevDet,
+     }, {
+      ...emptyControl(),
+      id: uid(),
+      description: "All journal entries require supporting documentation. Any non-routine entries require documented approval prior to being posted.",
+      assertions: ["C","AV","E"] as Assertion[],
+      controlType: "Authorization / Approval",
+      automated: "Manual" as AutoManual,
+      prevDet: "Preventive" as PrevDet,
+     }],
+    }],
+   };
+   if (c.key === "significantRisks") return {
+    ...c,
+    risks: [{
+     id: uid(),
+     description: "Complex operating structure and related-party transactions — risk that transactions with related parties are not recorded on arm's length terms or are not fully disclosed.",
+     controls: [{
+      ...emptyControl(),
+      id: uid(),
+      description: "Significant transactions with related parties require documented approval by the board or those charged with governance prior to execution.",
+      assertions: ["C","AV","E"] as Assertion[],
+      controlType: "Authorization / Approval",
+      automated: "Manual" as AutoManual,
+      prevDet: "Preventive" as PrevDet,
+     }],
+    }],
+   };
+   return { ...c, risks: [emptyRisk()] };
+  }),
+  overallConclusion: "",
+  overallRationale: "",
+  notes: "",
+  concluded: false,
+  concludedOn: "",
  };
 }
 
@@ -168,6 +282,33 @@ export function Audit550Worksheet() {
  const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
  const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
  const firstFillRef = useRef<HTMLElement>(null);
+
+ const [pickerFor, setPickerFor] = useState<{ catKey: CategoryKey; riskId: string } | null>(null);
+ const [pickerCycle, setPickerCycle] = useState<string>("revenues");
+
+ function loadFromLibrary(entry: ControlLibraryEntry, catKey: CategoryKey, riskId: string) {
+  addControl(catKey, riskId);
+  setData(d => ({
+   ...d,
+   categories: d.categories.map(cat => cat.key !== catKey ? cat : {
+    ...cat,
+    risks: cat.risks.map(r => r.id !== riskId ? r : {
+     ...r,
+     controls: r.controls.map((ct, idx) =>
+      idx !== r.controls.length - 1 ? ct : {
+       ...ct,
+       description: entry.description,
+       assertions: entry.assertions,
+       controlType: entry.controlType,
+       automated: entry.automated,
+       prevDet: entry.prevDet,
+      }
+     ),
+    }),
+   }),
+  }));
+  setPickerFor(null);
+ }
 
  function markLukaFilled(id: string) {
   setLukaFilledFields(prev => new Set(prev).add(id));
@@ -536,12 +677,48 @@ export function Audit550Worksheet() {
  </div>
 
  {!locked && (
- <div>
- <Button size="sm" variant="secondary" className="h-7 text-xs gap-1"
- onClick={() => addControl(cat.key, risk.id)}>
- <Plus className="h-3.5 w-3.5" /> Add control
- </Button>
- </div>
+  <div className="flex items-start gap-2 flex-wrap">
+   <Button size="sm" variant="secondary" className="h-7 text-xs gap-1"
+    onClick={() => addControl(cat.key, risk.id)}>
+    <Plus className="h-3.5 w-3.5" /> Add control
+   </Button>
+   <Button size="sm" variant="secondary" className="h-7 text-xs gap-1"
+    onClick={() => setPickerFor({ catKey: cat.key, riskId: risk.id })}>
+    <BookOpen className="h-3.5 w-3.5" /> From library
+   </Button>
+   {pickerFor?.catKey === cat.key && pickerFor?.riskId === risk.id && (
+    <div className="w-full mt-1 border border-border rounded-md bg-card shadow-md overflow-hidden">
+     <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/40">
+      <span className="text-xs font-semibold text-foreground">Control library — Form 582</span>
+      <button onClick={() => setPickerFor(null)} className="text-muted-foreground hover:text-foreground">
+       <X className="h-3.5 w-3.5" />
+      </button>
+     </div>
+     <div className="flex gap-1 px-3 pt-2 pb-1 flex-wrap">
+      {(["revenues","purchases","payroll","financial-reporting"] as const).map(cycle => (
+       <button key={cycle} onClick={() => setPickerCycle(cycle)}
+        className={`px-2.5 py-1 rounded text-[11px] font-medium border transition-colors ${
+         pickerCycle === cycle
+          ? "bg-primary text-primary-foreground border-primary"
+          : "bg-background text-muted-foreground border-input hover:bg-muted"
+        }`}>
+        {CONTROL_LIBRARY.find(e => e.cycle === cycle)?.cycleLabel ?? cycle}
+       </button>
+      ))}
+     </div>
+     <div className="max-h-52 overflow-y-auto divide-y divide-border">
+      {CONTROL_LIBRARY.filter(e => e.cycle === pickerCycle).map(entry => (
+       <button key={entry.id}
+        onClick={() => loadFromLibrary(entry, cat.key, risk.id)}
+        className="w-full text-left px-3 py-2 hover:bg-muted transition-colors flex items-start gap-2">
+        <span className="text-[10px] font-mono text-muted-foreground mt-0.5 shrink-0 w-16">{entry.component} · {entry.assertions.join(",")}</span>
+        <span className="text-xs text-foreground leading-snug">{entry.description}</span>
+       </button>
+      ))}
+     </div>
+    </div>
+   )}
+  </div>
  )}
  </div>
  );
