@@ -98,173 +98,191 @@ interface RiskLibraryEntry {
 
 const RISK_LIBRARY: RiskLibraryEntry[] = [
  {
- id: "mgmt-override",
- name: "Management override of controls",
- scotabd: "Revenue",
- assertions: ["C", "AV", "E"],
- irFactors: "Presumed fraud risk. Management is in a unique position to perpetuate fraud by overriding controls that otherwise appear to be operating effectively.",
- procedures: [
- "Test appropriateness of journal entries recorded in the general ledger, focusing on unusual, complex, or after-close entries.",
- "Review accounting estimates for management bias; evaluate whether the cumulative effect of estimates indicates a bias toward the desired outcome.",
- "Evaluate the business rationale for significant transactions outside the normal course of business.",
- "Test completeness of the journal entry population obtained from management.",
- ],
+  id: "governance",
+  name: "Governance — weaknesses in board and oversight",
+  scotabd: "Disclosures",
+  assertions: ["C", "AV", "E"],
+  irFactors: "No emphasis on integrity and ethical values; directors lack financial expertise or independence; no audit committee; no strategic plan or budget; inadequate review of major decisions; board dominated by a single person; high turnover in board, management, or accounting personnel; no process for staff to report suspected improprieties.",
+  procedures: [
+   "Inquire of management and TCWG regarding the entity's governance structure and oversight processes.",
+   "Review board minutes for evidence of active engagement with financial reporting and internal control matters.",
+   "Assess whether an audit committee exists and has members with appropriate financial expertise.",
+   "Evaluate whether a code of conduct or equivalent process has been established and communicated.",
+   "Document the entity's process for reporting suspected improprieties and assess its adequacy.",
+   "Consider the overall tone at the top and its impact on the control environment.",
+  ],
  },
  {
- id: "rev-cutoff",
- name: "Revenue recognition — incorrect cut-off at period-end",
- scotabd: "Revenue",
- assertions: ["C", "AV"],
- irFactors: "Revenue may be recognized in the wrong period due to timing differences at year-end. Risk is heightened for term contracts spanning the reporting date.",
- procedures: [
- "Obtain listing of revenue transactions recorded in the final 10 business days of the period and first 10 business days after period-end.",
- "Trace a sample to underlying contracts, invoices, and delivery/service completion evidence to verify the period of recognition.",
- "Reconcile revenue per the general ledger to the revenue listing and investigate significant variances.",
- "Test a sample of credit notes issued after period-end to identify reversals of improperly recognized revenue.",
- "Review manual and unusual journal entries posted to revenue accounts near year-end.",
- ],
+  id: "mgmt-attitudes",
+  name: "Management attitudes — inadequate supervision and high risk tolerance",
+  scotabd: "Disclosures",
+  assertions: ["C", "AV", "E"],
+  irFactors: "Significant internal control deficiencies ignored or uncorrected; inadequate supervision of financial staff; ineffective or improperly qualified accounting or IT staff; history of accepting high risks; failure to monitor significant controls; high turnover of management personnel; lack of mandatory vacations for personnel in key control functions.",
+  procedures: [
+   "Inquire of management regarding their approach to risk identification and response.",
+   "Assess whether management information reports are timely and relevant for monitoring business activity.",
+   "Evaluate whether procedures exist to prevent unauthorized access to assets, documents, and records.",
+   "Review whether a disaster recovery plan exists to protect accounting records.",
+   "Assess the adequacy of management's process for monitoring compliance with internal control policies.",
+  ],
  },
  {
- id: "rev-existence",
- name: "Revenue — fictitious or unsupported transactions",
- scotabd: "Revenue",
- assertions: ["E", "AV"],
- irFactors: "Risk of fictitious revenue recording, particularly for transactions with related parties, unusual customers, or performance-based arrangements.",
- procedures: [
- "Select a sample of revenue transactions and trace to executed contracts, invoices, and evidence of goods/services delivered.",
- "Confirm significant revenue transactions directly with customers.",
- "Perform analytical procedures comparing revenue by product/service line and period; investigate significant variances.",
- "Review material contracts for side agreements, return clauses, or contingencies that would preclude recognition.",
- ],
+  id: "complex-structure",
+  name: "Complex operating structure and unusual transactions",
+  scotabd: "Related-party transactions",
+  assertions: ["C", "AV", "E"],
+  irFactors: "Overly complex organizational structure with no apparent reason; significant revenue not in ordinary course of business; contractual arrangements without apparent business purpose; unusual transactions at or near period end; significant cash transactions; aggressive timing of revenue recognition; significant related-party transactions; highly complex transactions toward period end.",
+  procedures: [
+   "Obtain an understanding of the entity's organizational structure and the business rationale for its complexity.",
+   "Identify significant transactions outside the normal course of business and assess their business purpose.",
+   "Review board minutes and shareholder agreements for related-party transactions and significant decisions.",
+   "Test a sample of unusual or significant period-end transactions for proper authorization, recording, and disclosure.",
+   "Assess whether management has policies to review and approve significant and complex transactions before they occur.",
+   "Verify that significant journal entries are supported and explanations are provided.",
+  ],
  },
  {
- id: "inv-overstatement",
- name: "Inventory — overstatement due to inadequate obsolescence provision",
- scotabd: "Inventories",
- assertions: ["AV", "E"],
- irFactors: "Inventory valuation requires management judgment in assessing slow-moving and obsolete stock. Provision calculations may not be systematically supported.",
- procedures: [
- "Attend the physical inventory count; observe procedures, perform test counts, and trace results to the final inventory listing.",
- "Test the mathematical accuracy of the inventory listing and agree the total to the general ledger.",
- "Test inventory unit costs by reference to recent supplier invoices and compare to standard costs.",
- "Obtain management's obsolescence provision schedule and test assumptions (aging thresholds, turnover rates).",
- "Identify slow-moving or zero-movement items and assess adequacy of the provision.",
- "Compare net realizable value to cost for a sample of inventory items.",
- ],
+  id: "regulatory",
+  name: "Regulatory environment — non-compliance and legal exposure",
+  scotabd: "Disclosures",
+  assertions: ["C", "AV", "E"],
+  irFactors: "Legislation or regulations with significant negative impact not adequately addressed; entity prone to lawsuits or controversies; history of regulatory violations; disregard for regulatory authorities; lack of documentation of actual or pending regulatory events; overly optimistic assessments of investigations and regulatory reviews.",
+  procedures: [
+   "Inquire of management regarding applicable laws, regulations, and the entity's compliance processes.",
+   "Review correspondence with regulatory authorities and legal counsel for indications of non-compliance.",
+   "Assess whether all relevant legislation with financial impact has been identified and policies established for compliance.",
+   "Evaluate whether a risk management process exists with action steps to minimize regulatory exposures.",
+   "Consider whether the board or senior management has set clear direction regarding compliance requirements.",
+  ],
  },
  {
- id: "ar-collectibility",
- name: "Accounts receivable — collectibility (allowance for doubtful accounts)",
- scotabd: "Accounts receivable",
- assertions: ["AV"],
- irFactors: "Allowance for doubtful accounts requires estimation; management may be incentivized to understate the allowance to improve reported results.",
- procedures: [
- "Obtain the aged accounts receivable listing and agree the total to the general ledger.",
- "Review subsequent cash receipts to assess collectibility of amounts outstanding at period-end.",
- "Circularize (confirm) a sample of significant and/or unusual receivable balances.",
- "Evaluate the reasonableness of the allowance by comparing historical write-offs to prior provisions.",
- "Identify and investigate long-outstanding balances and assess the adequacy of provisions.",
- ],
+  id: "accounting-policies",
+  name: "Accounting policies — aggressive or manipulative choices",
+  scotabd: "Revenue",
+  assertions: ["C", "AV", "E"],
+  irFactors: "Proposed changes in accounting principles not addressed; frequent changes in accounting policies; policies chosen to manipulate earnings; use of aggressive accounting practices to maintain stock price or earnings trends; accounting changes that ensure lucrative bonus plans are paid; overly optimistic or pessimistic estimates.",
+  procedures: [
+   "Inquire of management regarding any changes in accounting policies during the period and the rationale.",
+   "Assess whether an independent audit committee has addressed the impact of all accounting changes.",
+   "Review significant accounting estimates for evidence of management bias toward a desired outcome.",
+   "Evaluate the appropriateness of revenue recognition policies and their consistent application.",
+   "Consider whether controls exist over the selection and application of accounting principles.",
+  ],
  },
  {
- id: "ppe-valuation",
- name: "Property, plant and equipment — overstatement or impairment",
- scotabd: "Property, plant and equipment",
- assertions: ["AV", "E"],
- irFactors: "PPE balances may be overstated through improper capitalization of repairs/maintenance or inadequate impairment assessment.",
- procedures: [
- "Agree the PPE continuity schedule to prior period and trace additions, disposals, and ending balances to the general ledger.",
- "Test a sample of current-period additions to supporting documentation and verify proper capitalization criteria are met.",
- "Test a sample of repairs and maintenance expense items to confirm they are not capital in nature.",
- "Review disposals for completeness; trace proceeds and removal of net book value.",
- "Assess depreciation rates and methods for reasonableness; recalculate depreciation for a sample of assets.",
- "Evaluate whether indicators of impairment exist and review management's impairment assessment.",
- ],
+  id: "industry-conditions",
+  name: "Deteriorating industry conditions — competitive pressure and declining demand",
+  scotabd: "Revenue",
+  assertions: ["C", "AV", "E"],
+  irFactors: "High degree of competition or market saturation; declining profit margins; declining industry with increasing business failures; significant declines in customer demand; high vulnerability to rapidly changing technology; intense or new competition; aggressive earnings forecasts committed to third parties; excessive interest in maintaining stock price or earnings trend.",
+  procedures: [
+   "Perform analytical procedures comparing revenue and gross profit to prior periods and budget; investigate significant variances.",
+   "Inquire of management regarding the entity's competitive position and industry outlook.",
+   "Assess whether management has analyzed business risks and taken appropriate action.",
+   "Evaluate whether management monitors compliance with internal control policies and investigates variances on a timely basis.",
+  ],
  },
  {
- id: "ap-completeness",
- name: "Accounts payable — understatement (unrecorded liabilities)",
- scotabd: "Accounts payable",
- assertions: ["C"],
- irFactors: "Management may have an incentive to understate liabilities. Cut-off errors may result in payables being recorded in the subsequent period.",
- procedures: [
- "Perform a search for unrecorded liabilities: review subsequent disbursements and invoices received after period-end for goods received before year-end.",
- "Circularize (confirm) significant vendor balances.",
- "Reconcile supplier statements to the accounts payable listing for significant vendors.",
- "Test cut-off by reviewing purchases recorded in the final days of the period and first days of the subsequent period.",
- ],
+  id: "financial-deterioration",
+  name: "Deteriorating financial conditions — going concern and covenant risk",
+  scotabd: "Long-term debt",
+  assertions: ["C", "AV"],
+  irFactors: "Marginal ability to meet debt repayment requirements; threat of bankruptcy, foreclosure, or hostile takeover; pressures to obtain new capital; negative cash flows; contingent liabilities; high vulnerability to changes in interest rates; unusually high dependence on debt; management has personally guaranteed significant debts; aggressive sales or profitability incentive programs.",
+  procedures: [
+   "Obtain management's going concern assessment and review assumptions and period covered.",
+   "Review cash flow forecasts for reasonableness; compare projected cash flows to historical results.",
+   "Confirm outstanding loan facilities; review maturity dates, renewal terms, and covenant compliance.",
+   "Identify any covenant breaches and assess whether waivers have been obtained.",
+   "Assess whether meaningful plans exist to address debt repayment and financing requirements.",
+   "Review post-period events for evidence that alleviates or exacerbates going concern indicators.",
+  ],
  },
  {
- id: "related-party",
- name: "Related-party transactions — incomplete or non-arm's-length",
- scotabd: "Related-party transactions",
- assertions: ["C", "AV"],
- irFactors: "In owner-managed entities, undisclosed related-party transactions and non-arm's-length pricing are a significant risk. Management controls related-party information.",
- procedures: [
- "Obtain and review the entity's listing of identified related parties; compare to prior year and assess completeness.",
- "Inquire of management and those charged with governance regarding related-party transactions during the period.",
- "Review board minutes, shareholder agreements, and contracts for references to related parties.",
- "Identify significant transactions outside the normal course of business and assess whether they involve related parties.",
- "Test a sample of identified related-party transactions for authorization, proper recording, and adequate disclosure.",
- ],
+  id: "rapid-growth",
+  name: "Rapid business growth — control environment lag",
+  scotabd: "Revenue",
+  assertions: ["C", "AV", "E"],
+  irFactors: "Directors or management poorly skilled or inexperienced to deal with growth; inability to attract competent personnel; control systems unable to adapt quickly enough to changing circumstances; inadequate cash availability; growth not profitable; little attention paid by board to financial reporting and internal control; lucrative bonus or stock option plans based on performance.",
+  procedures: [
+   "Assess whether the entity's control systems have kept pace with the growth in operations.",
+   "Inquire of management regarding the adequacy of staffing and competencies in key areas.",
+   "Evaluate whether mechanisms exist to identify and react to events affecting achievement of objectives.",
+   "Review whether management provides accounting and key personnel with sufficient resources and training.",
+   "Assess whether entity goals are supported by strategic plans and monitored against actual results.",
+  ],
  },
  {
- id: "acctg-estimates",
- name: "Accounting estimates — management bias",
- scotabd: "Other current assets",
- assertions: ["AV"],
- irFactors: "Accounting estimates require management judgment and may be subject to intentional or unintentional bias. Complexity and subjectivity increase susceptibility.",
- procedures: [
- "Obtain management's listing of significant accounting estimates and assess whether all material estimates are identified.",
- "For each significant estimate, evaluate the appropriateness of the valuation method and the reasonableness of key assumptions.",
- "Develop an independent expectation (or range) for significant estimates and compare to management's estimates.",
- "Test the underlying data used in the estimation process for accuracy, completeness, and relevance.",
- "Review prior-period estimates for indications of management bias by comparing estimates to actual outcomes.",
- ],
+  id: "major-changes",
+  name: "Major changes in business activities — acquisitions, restructuring, new operations",
+  scotabd: "Disclosures",
+  assertions: ["C", "AV", "E"],
+  irFactors: "Major acquisitions, divestitures, or reorganizations; going public or new sources of financing; new product launch or production facility; start of operations in foreign jurisdictions; change of control; significant new contracts; material transactions or adjustments near period end; lack of documentation of major transactions; significant transactions with related parties.",
+  procedures: [
+   "Obtain an understanding of significant changes in the entity's business activities during the period.",
+   "Review board minutes, agreements, and contracts related to major transactions or structural changes.",
+   "Assess whether the board or its committees are competent to review the implications of major new initiatives.",
+   "Test a sample of transactions arising from major changes for proper authorization, recording, and disclosure.",
+   "Evaluate whether management has clear objectives that are actively communicated and monitored.",
+  ],
  },
  {
- id: "going-concern",
- name: "Going concern — material uncertainty in continuity",
- scotabd: "Long-term debt",
- assertions: ["AV"],
- irFactors: "Events or conditions may indicate material uncertainty about the entity's ability to continue as a going concern.",
- procedures: [
- "Obtain management's going concern assessment and review the assumptions and period covered.",
- "Review cash flow forecasts for reasonableness; compare projected cash flows to historical results.",
- "Review compliance with debt covenants and identify any breaches or waiver requirements.",
- "Confirm outstanding loan facilities and review maturity dates and renewal terms.",
- "Review post-period events for evidence that either alleviates or exacerbates going concern indicators.",
- ],
+  id: "acctg-estimates",
+  name: "Accounting estimates and judgments — management bias",
+  scotabd: "Other current assets",
+  assertions: ["AV"],
+  irFactors: "Issues regarding realization of assets, contingent liabilities, or unusual uncertainties; allowance for bad debts; obsolete inventory provisions; cost allocations to inventory; impairment of long-lived assets; history of significant audit adjustments; judgment required in timing of revenue recognition; stock option or performance plans tied to income; desire to minimize tax liabilities.",
+  procedures: [
+   "Obtain management's listing of significant accounting estimates and assess whether all material estimates are identified.",
+   "For each significant estimate, evaluate the appropriateness of the valuation method and reasonableness of key assumptions.",
+   "Develop an independent expectation or range for significant estimates and compare to management's estimates.",
+   "Test the underlying data used in the estimation process for accuracy, completeness, and relevance.",
+   "Review prior-period estimates for indications of management bias by comparing estimates to actual outcomes.",
+  ],
  },
  {
- id: "ltd-completeness",
- name: "Long-term debt — completeness and proper disclosure",
- scotabd: "Long-term debt",
- assertions: ["C", "AV"],
- irFactors: "Debt arrangements may not be fully disclosed, covenants may not be properly reflected, or debt may be improperly classified between current and long-term.",
- procedures: [
- "Obtain a continuity schedule of long-term debt and agree opening balances to prior period working papers.",
- "Confirm outstanding debt balances, terms, interest rates, and covenants directly with lenders.",
- "Review loan agreements for restrictive covenants and confirm compliance at period-end.",
- "Recalculate interest expense for a sample of debt instruments and agree to general ledger.",
- "Assess appropriateness of current vs. non-current classification based on maturity dates and covenant compliance.",
- ],
+  id: "financial-reporting-process",
+  name: "Financial reporting process — period-end close deficiencies",
+  scotabd: "Disclosures",
+  assertions: ["C", "AV", "E"],
+  irFactors: "No procedures or timetable for period-end close; persons assigned responsibility not trained; roles not clearly defined; no cut-off requirements for inventory, purchases, and sales; period-end reconciliations not performed; no control over use of spreadsheets; no standardization of software used; no supervision or review of work performed; poor intra-organizational communication.",
+  procedures: [
+   "Inquire of management regarding period-end close procedures, timetable, and assigned responsibilities.",
+   "Assess whether period-end reporting instructions address all steps involved and key dates.",
+   "Evaluate whether accountability for each step in the financial reporting process is clearly defined and communicated.",
+   "Review the entity's policy on use of spreadsheets and test the integrity of key calculations.",
+   "Assess whether reconciliations of key accounts are performed at period end and reviewed.",
+  ],
  },
  {
- id: "equity-completeness",
- name: "Equity — completeness and proper authorization",
- scotabd: "Equity",
- assertions: ["C", "AV"],
- irFactors: "Share capital transactions may not be properly authorized or recorded; retained earnings rollforward may contain errors.",
- procedures: [
- "Obtain the equity continuity schedule and agree opening balances to prior period audited financial statements.",
- "Review articles of incorporation and minute book for authorized share capital and any changes during the period.",
- "Verify share issuances or repurchases to supporting documentation and confirm proper board authorization.",
- "Agree dividends declared to board approval and trace payment to bank statements.",
- "Recalculate retained earnings rollforward (opening + net income ± OCI − dividends).",
- ],
+  id: "auditor-mgmt-relations",
+  name: "Auditor and management relations — restrictions and evasiveness",
+  scotabd: "Disclosures",
+  assertions: ["C", "AV", "E"],
+  irFactors: "History of changing auditors, lawyers, or key advisors; frequent disputes on accounting or reporting matters; unreasonable demands or constraints in performing the audit; restrictions limiting auditor access to people or information; history of receiving incomplete or misleading information; consistent choice of aggressive accounting policies; domineering management behaviour.",
+  procedures: [
+   "Assess whether management's responses to audit inquiries are complete, timely, and consistent.",
+   "Document any restrictions placed on the audit and evaluate the implications for the audit strategy.",
+   "Consider whether an independent audit committee effectively addresses management-auditor friction.",
+   "Evaluate whether information provided by management is consistent with information obtained from other sources.",
+  ],
+ },
+ {
+  id: "misappropriation",
+  name: "Misappropriation of assets — theft and fraud risk",
+  scotabd: "Cash and cash equivalents",
+  assertions: ["E", "AV"],
+  irFactors: "Large amounts of cash on hand or processed regularly; inventory with high value or high demand; easily convertible assets; history of asset theft; poor physical safeguards over cash, investments, inventory, or fixed assets; high number of insurance claims; lack of procedures to screen job applicants for positions with access to susceptible assets; collusion with suppliers and customers; financial stress of personnel.",
+  procedures: [
+   "Assess the adequacy of physical safeguards over cash, investments, inventory, and other susceptible assets.",
+   "Review reconciliations of amounts recorded in the accounting system to physical assets.",
+   "Evaluate whether controls exist to address asset security and the risk of theft or misappropriation.",
+   "Assess whether mandatory vacations are required for accounting personnel performing key control functions.",
+   "Inquire of management regarding any known or suspected instances of asset theft or misappropriation.",
+   "Perform surprise cash counts or inventory observations where the risk of misappropriation is elevated.",
+  ],
  },
 ];
+
 
 const formatRefList = (refs: RefDoc[]) => refs.map(r => r.name).join(", ") || "—";
 
@@ -281,18 +299,19 @@ function bestLibraryMatch(scotabd: string, rmmText?: string): RiskLibraryEntry |
   // 2. RMM text keyword fallback
   if (rmmText) {
     const r = rmmText.toLowerCase();
-    if (r.includes("inventory") || r.includes("obsolesc")) return RISK_LIBRARY.find(e => e.id === "inv-overstatement") ?? null;
-    if (r.includes("revenue") && (r.includes("cut-off") || r.includes("cutoff") || r.includes("recognition"))) return RISK_LIBRARY.find(e => e.id === "rev-cutoff") ?? null;
-    if (r.includes("revenue")) return RISK_LIBRARY.find(e => e.id === "rev-existence") ?? null;
-    if (r.includes("related-party") || r.includes("related party")) return RISK_LIBRARY.find(e => e.id === "related-party") ?? null;
-    if (r.includes("accounting estimate") || r.includes("estimates")) return RISK_LIBRARY.find(e => e.id === "acctg-estimates") ?? null;
-    if (r.includes("going concern")) return RISK_LIBRARY.find(e => e.id === "going-concern") ?? null;
-    if (r.includes("long-term debt") || r.includes("long term debt")) return RISK_LIBRARY.find(e => e.id === "ltd-completeness") ?? null;
-    if (r.includes("payable") || r.includes("unrecorded liabilit")) return RISK_LIBRARY.find(e => e.id === "ap-completeness") ?? null;
-    if (r.includes("receivable") || r.includes("collectib")) return RISK_LIBRARY.find(e => e.id === "ar-collectibility") ?? null;
-    if (r.includes("property") || r.includes("plant") || r.includes("equipment")) return RISK_LIBRARY.find(e => e.id === "ppe-valuation") ?? null;
-    if (r.includes("management override") || r.includes("journal entr")) return RISK_LIBRARY.find(e => e.id === "mgmt-override") ?? null;
-    if (r.includes("equity") || r.includes("share capital")) return RISK_LIBRARY.find(e => e.id === "equity-completeness") ?? null;
+    if (r.includes("misappropriat") || r.includes("theft") || r.includes("cash on hand")) return RISK_LIBRARY.find(e => e.id === "misappropriation") ?? null;
+    if (r.includes("going concern") || r.includes("debt covenant") || r.includes("negative cash flow")) return RISK_LIBRARY.find(e => e.id === "financial-deterioration") ?? null;
+    if (r.includes("related-party") || r.includes("related party") || r.includes("unusual transaction")) return RISK_LIBRARY.find(e => e.id === "complex-structure") ?? null;
+    if (r.includes("accounting estimate") || r.includes("estimates") || r.includes("impairment")) return RISK_LIBRARY.find(e => e.id === "acctg-estimates") ?? null;
+    if (r.includes("management override") || r.includes("journal entr") || r.includes("period-end") || r.includes("close")) return RISK_LIBRARY.find(e => e.id === "financial-reporting-process") ?? null;
+    if (r.includes("governance") || r.includes("board") || r.includes("audit committee")) return RISK_LIBRARY.find(e => e.id === "governance") ?? null;
+    if (r.includes("regulatory") || r.includes("compliance") || r.includes("regulation")) return RISK_LIBRARY.find(e => e.id === "regulatory") ?? null;
+    if (r.includes("growth") || r.includes("rapid") || r.includes("expansion")) return RISK_LIBRARY.find(e => e.id === "rapid-growth") ?? null;
+    if (r.includes("acquisition") || r.includes("restructur") || r.includes("reorganiz") || r.includes("major change")) return RISK_LIBRARY.find(e => e.id === "major-changes") ?? null;
+    if (r.includes("industry") || r.includes("competition") || r.includes("market saturation")) return RISK_LIBRARY.find(e => e.id === "industry-conditions") ?? null;
+    if (r.includes("aggressive") || r.includes("accounting polic") || r.includes("earnings manipulation")) return RISK_LIBRARY.find(e => e.id === "accounting-policies") ?? null;
+    if (r.includes("auditor") || r.includes("restriction") || r.includes("misleading information")) return RISK_LIBRARY.find(e => e.id === "auditor-mgmt-relations") ?? null;
+    if (r.includes("revenue")) return RISK_LIBRARY.find(e => e.id === "industry-conditions") ?? null;
   }
   return null;
 }
