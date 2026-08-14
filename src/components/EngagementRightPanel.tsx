@@ -460,7 +460,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
      </div>
      <div className="flex items-start gap-1">
       <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
+      <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
      </div>
      <p className="text-[12px] text-muted-foreground">{req.notes}</p>
      <div className="flex items-center gap-2">
@@ -498,7 +498,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     </div>
     <div className="flex items-start gap-1">
      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-     <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
+     <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
     </div>
     <p className="text-[12px] text-muted-foreground">{req.notes}</p>
     <div className="flex items-center gap-2">
@@ -533,7 +533,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     </div>
     <div className="flex items-start gap-1">
      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-     <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
+     <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
     </div>
     <p className="text-[12px] text-muted-foreground">{req.notes}</p>
     <div className="flex items-center gap-2">
