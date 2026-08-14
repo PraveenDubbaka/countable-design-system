@@ -36,6 +36,7 @@ interface MockRequest {
  id: string;
  reqNum: string;
  folder: string;
+ section: string;
  docName: string;
  dueDate: string;
  notes: string;
@@ -48,21 +49,21 @@ interface MockRequest {
 }
 
 const MOCK_REQUESTS: MockRequest[] = [
- { id: '1', reqNum: 'REQ-10', folder: 'Client Onboarding', docName: 'Engagement Letter — Signed', dueDate: 'Aug 16, 2026', notes: 'Please return countersigned engagement letter', date: 'Aug 14, 2026 09:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
- { id: '2', reqNum: 'REQ-9', folder: 'Client Onboarding', docName: 'Incorporation Documents', dueDate: 'Aug 18, 2026', notes: 'Certificate of incorporation and constating documents', date: 'Aug 14, 2026 09:20 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 1, status: 'pending' },
- { id: '3', reqNum: 'REQ-8', folder: 'Planning', docName: 'Prior Year Financial Statements', dueDate: 'Aug 15, 2026', notes: 'FY2024 comparative financials for opening balances', date: 'Aug 14, 2026 09:45 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 1, comments: 0, status: 'available' },
- { id: '4', reqNum: 'REQ-7', folder: 'Planning', docName: 'Board Minutes — 2025', dueDate: 'Aug 20, 2026', notes: 'Minutes from all board and shareholder meetings in 2025', date: 'Aug 14, 2026 10:00 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'pending' },
- { id: '5', reqNum: 'REQ-6', folder: 'Risk Assessment', docName: 'Related Party Listing', dueDate: 'Aug 22, 2026', notes: 'Identify all related parties and outstanding balances', date: 'Aug 14, 2026 10:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 2, status: 'pending' },
- { id: '6', reqNum: 'REQ-5', folder: 'Procedures', docName: 'Bank Statements — Q4 2025', dueDate: 'Aug 25, 2026', notes: 'All bank account statements for Oct–Dec 2025', date: 'Aug 14, 2026 11:00 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
- { id: '7', reqNum: 'REQ-4', folder: 'Procedures', docName: 'Accounts Receivable Subledger', dueDate: 'Aug 25, 2026', notes: 'Year-end AR aging schedule as at Dec 31, 2025', date: 'Aug 14, 2026 11:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
- { id: '8', reqNum: 'REQ-3', folder: 'Procedures', docName: 'Fixed Asset Continuity Schedule', dueDate: 'Aug 28, 2026', notes: 'PPE and ROU asset roll-forward with depreciation detail', date: 'Aug 14, 2026 11:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
- { id: '9', reqNum: 'REQ-2', folder: 'Financial Statements', docName: 'Draft Financial Statements', dueDate: 'Sep 1, 2026', notes: 'Management-prepared ASPE financial statements for review', date: 'Aug 14, 2026 01:39 PM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 1, status: 'batch' },
- { id: '10', reqNum: 'REQ-1', folder: 'Completion & Signoffs', docName: 'Management Representation Letter', dueDate: 'Sep 10, 2026', notes: 'To be signed by CEO and CFO per CAS 580 requirements', date: 'Aug 14, 2026 01:42 PM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'batch' },
+ { id: '1', reqNum: 'REQ-10', folder: 'Client Onboarding', section: 'AL1.1 Engagement Letter', docName: 'Engagement Letter — Signed', dueDate: 'Aug 16, 2026', notes: 'Please return countersigned engagement letter', date: 'Aug 14, 2026 09:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
+ { id: '2', reqNum: 'REQ-9', folder: 'Client Onboarding', section: '410 New/Existing Engagement — Acceptance/Continuance', docName: 'Incorporation Documents', dueDate: 'Aug 18, 2026', notes: 'Certificate of incorporation and constating documents', date: 'Aug 14, 2026 09:20 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 1, status: 'pending' },
+ { id: '3', reqNum: 'REQ-8', folder: 'Planning', section: '501-A Preliminary Analytical', docName: 'Prior Year Financial Statements', dueDate: 'Aug 15, 2026', notes: 'FY2024 comparative financials for opening balances', date: 'Aug 14, 2026 09:45 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 1, comments: 0, status: 'available' },
+ { id: '4', reqNum: 'REQ-7', folder: 'Planning', section: '507 Governance Minutes', docName: 'Board Minutes — 2025', dueDate: 'Aug 20, 2026', notes: 'Minutes from all board and shareholder meetings in 2025', date: 'Aug 14, 2026 10:00 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'pending' },
+ { id: '5', reqNum: 'REQ-6', folder: 'Risk Assessment', section: '515 Related Parties', docName: 'Related Party Listing', dueDate: 'Aug 22, 2026', notes: 'Identify all related parties and outstanding balances', date: 'Aug 14, 2026 10:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 2, status: 'pending' },
+ { id: '6', reqNum: 'REQ-5', folder: 'Procedures', section: 'A Cash and Cash Equivalents', docName: 'Bank Statements — Q4 2025', dueDate: 'Aug 25, 2026', notes: 'All bank account statements for Oct–Dec 2025', date: 'Aug 14, 2026 11:00 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '7', reqNum: 'REQ-4', folder: 'Procedures', section: 'B Accounts Receivable', docName: 'Accounts Receivable Subledger', dueDate: 'Aug 25, 2026', notes: 'Year-end AR aging schedule as at Dec 31, 2025', date: 'Aug 14, 2026 11:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
+ { id: '8', reqNum: 'REQ-3', folder: 'Procedures', section: 'H Property, Plant and Equipment', docName: 'Fixed Asset Continuity Schedule', dueDate: 'Aug 28, 2026', notes: 'PPE and ROU asset roll-forward with depreciation detail', date: 'Aug 14, 2026 11:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '9', reqNum: 'REQ-2', folder: 'Financial Statements', section: 'FS Financial Statements', docName: 'Draft Financial Statements', dueDate: 'Sep 1, 2026', notes: 'Management-prepared ASPE financial statements for review', date: 'Aug 14, 2026 01:39 PM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 1, status: 'batch' },
+ { id: '10', reqNum: 'REQ-1', folder: 'Completion & Signoffs', section: 'MR Management Representation Letter', docName: 'Management Representation Letter', dueDate: 'Sep 10, 2026', notes: 'To be signed by CEO and CFO per CAS 580 requirements', date: 'Aug 14, 2026 01:42 PM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'batch' },
 ];
 
-const MOCK_BY_FOLDER: [string, MockRequest[]][] = (() => {
+const MOCK_BY_SECTION: [string, MockRequest[]][] = (() => {
  const g: Record<string, MockRequest[]> = {};
- for (const r of MOCK_REQUESTS) { g[r.folder] = g[r.folder] ?? []; g[r.folder].push(r); }
+ for (const r of MOCK_REQUESTS) { g[r.section] = g[r.section] ?? []; g[r.section].push(r); }
  return Object.entries(g);
 })();
 
@@ -429,15 +430,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     <span>Sort By</span><Filter className="h-3 w-3 ml-0.5" />
    </button>
   </div>
-  {MOCK_BY_FOLDER.map(([folder, reqs]) => {
-   const isCollapsed = collapsedFolders.has(folder);
+  {MOCK_BY_SECTION.map(([section, reqs]) => {
+   const isCollapsed = collapsedFolders.has(section);
    return (
-   <div key={folder} className="space-y-2">
-    <button type="button" onClick={() => toggleFolder(folder)} className="w-full flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+   <div key={section} className="space-y-2">
+    <button type="button" onClick={() => toggleFolder(section)} className="w-full flex items-center gap-1.5 hover:opacity-80 transition-opacity">
      {isCollapsed
       ? <FolderPlusIcon className="h-3.5 w-3.5 text-primary shrink-0" />
       : <FolderMinusIcon className="h-3.5 w-3.5 text-primary shrink-0" />}
-     <span className="text-[11px] font-medium text-foreground truncate flex-1 text-left">{folder}</span>
+     <div className="flex-1 min-w-0 text-left">
+      <span className="text-[11px] font-medium text-foreground block truncate">{section}</span>
+      <span className="text-[10px] text-muted-foreground">{reqs[0].folder}</span>
+     </div>
      <span className="text-[10px] text-muted-foreground bg-muted rounded-full px-1.5 py-0.5">({reqs.length})</span>
     </button>
     {!isCollapsed && reqs.map(req => (
