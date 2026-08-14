@@ -283,6 +283,23 @@ function DocRequestForm({ context, onBack }: { context: DocRequestContext; onBac
  );
 }
 
+function Highlight({ text, query }: { text: string; query: string }) {
+ if (!query.trim()) return <>{text}</>;
+ const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+ const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+ return (
+  <>
+   {parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+     <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 rounded-sm px-0.5 not-italic">{part}</mark>
+    ) : (
+     <span key={i}>{part}</span>
+    )
+   )}
+  </>
+ );
+}
+
 export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  const [isExpanded, setIsExpanded] = useState(false);
  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
@@ -484,21 +501,21 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
      {isCollapsed
       ? <FolderPlusIcon className="h-3.5 w-3.5 text-primary shrink-0" />
       : <FolderMinusIcon className="h-3.5 w-3.5 text-primary shrink-0" />}
-   <span className="text-[13px] font-medium text-foreground truncate flex-1 text-left">{section}</span>
+   <span className="text-[13px] font-medium text-foreground truncate flex-1 text-left"><Highlight text={section} query={searchQuery} /></span>
      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-secondary text-secondary-foreground border border-secondary-foreground/10">{reqs.length}</span>
     </button>
     {!isCollapsed && reqs.map(req => (
     <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
      <div className="flex items-center gap-1.5">
-      <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
+      <span className="text-[13px] font-medium text-muted-foreground"><Highlight text={req.reqNum} query={searchQuery} /></span>
       <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
       <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
      </div>
      <div className="flex items-start gap-1">
-      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate"><Highlight text={req.docName} query={searchQuery} /></span>
       <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
      </div>
-     <p className="text-[12px] text-muted-foreground">{req.notes}</p>
+     <p className="text-[12px] text-muted-foreground"><Highlight text={req.notes} query={searchQuery} /></p>
      <div className="flex items-center gap-2">
       <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
       <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
@@ -530,15 +547,15 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   return <div className="space-y-2">{avail.map(req => (
    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
     <div className="flex items-center gap-1.5">
-     <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
+     <span className="text-[13px] font-medium text-muted-foreground"><Highlight text={req.reqNum} query={searchQuery} /></span>
      <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
-     <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+     <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate"><Highlight text={req.docName} query={searchQuery} /></span>
      <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
     </div>
-    <p className="text-[12px] text-muted-foreground">{req.notes}</p>
+    <p className="text-[12px] text-muted-foreground"><Highlight text={req.notes} query={searchQuery} /></p>
     <div className="flex items-center gap-2">
      <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
      <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
@@ -566,15 +583,15 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   return <div className="space-y-2">{batch.map(req => (
    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
     <div className="flex items-center gap-1.5">
-     <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
+     <span className="text-[13px] font-medium text-muted-foreground"><Highlight text={req.reqNum} query={searchQuery} /></span>
      <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
-     <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+     <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate"><Highlight text={req.docName} query={searchQuery} /></span>
      <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
     </div>
-    <p className="text-[12px] text-muted-foreground">{req.notes}</p>
+    <p className="text-[12px] text-muted-foreground"><Highlight text={req.notes} query={searchQuery} /></p>
     <div className="flex items-center gap-2">
      <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
      <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
