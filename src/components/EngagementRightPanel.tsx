@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers, Pencil, Trash2, Paperclip, Filter } from 'lucide-react';
+import { FolderPlusIcon, FolderMinusIcon } from '@/components/icons/FolderIcons';
 import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -273,6 +274,8 @@ function DocRequestForm({ context, onBack }: { context: DocRequestContext; onBac
 
 export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  const [isExpanded, setIsExpanded] = useState(false);
+ const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
+ const toggleFolder = (f: string) => setCollapsedFolders(prev => { const n = new Set(prev); n.has(f) ? n.delete(f) : n.add(f); return n; });
  const [activeItem, setActiveItem] = useState('folders');
  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
  const [mode, setMode] = useState<PanelMode>('folders');
@@ -426,14 +429,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     <span>Sort By</span><Filter className="h-3 w-3 ml-0.5" />
    </button>
   </div>
-  {MOCK_BY_FOLDER.map(([folder, reqs]) => (
+  {MOCK_BY_FOLDER.map(([folder, reqs]) => {
+   const isCollapsed = collapsedFolders.has(folder);
+   return (
    <div key={folder} className="space-y-2">
-    <div className="flex items-center gap-1.5">
-     <FolderOpen className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-     <span className="text-[11px] font-medium text-foreground truncate flex-1">{folder}</span>
+    <button type="button" onClick={() => toggleFolder(folder)} className="w-full flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+     {isCollapsed
+      ? <FolderPlusIcon className="h-3.5 w-3.5 text-primary shrink-0" />
+      : <FolderMinusIcon className="h-3.5 w-3.5 text-primary shrink-0" />}
+     <span className="text-[11px] font-medium text-foreground truncate flex-1 text-left">{folder}</span>
      <span className="text-[10px] text-muted-foreground bg-muted rounded-full px-1.5 py-0.5">({reqs.length})</span>
-    </div>
-    {reqs.map(req => (
+    </button>
+    {!isCollapsed && reqs.map(req => (
     <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
      <div className="flex items-center gap-1.5">
       <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
@@ -456,7 +463,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     </div>
     ))}
    </div>
-  ))}
+   );
+  })}
  </div>
  </TabsContent>
  <TabsContent value="available" className="mt-4">
