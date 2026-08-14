@@ -306,6 +306,8 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  const toggleFolder = (f: string) => setCollapsedFolders(prev => { const n = new Set(prev); n.has(f) ? n.delete(f) : n.add(f); return n; });
  const [showSearch, setShowSearch] = useState(false);
  const [searchQuery, setSearchQuery] = useState('');
+ const [selectedFolder, setSelectedFolder] = useState('all-folders');
+ const [selectedSection, setSelectedSection] = useState('');
  const [activeItem, setActiveItem] = useState('folders');
  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
  const [mode, setMode] = useState<PanelMode>('folders');
@@ -419,39 +421,74 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  <div className="flex-1 overflow-y-auto p-4 space-y-3">
  <div className="space-y-1.5">
  <label className="text-xs font-medium text-foreground">
- Choose Engagement Folder <span className="text-destructive">*</span>
+  Choose Engagement Folder <span className="text-destructive">*</span>
  </label>
- <Select defaultValue="all-folders">
- <SelectTrigger className="h-9 text-sm w-full">
- <SelectValue placeholder="Select folder" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="all-folders">Show All Folders</SelectItem>
- <SelectItem value="client-onboarding">Client Onboarding</SelectItem>
- <SelectItem value="planning">Planning</SelectItem>
- <SelectItem value="risk-assessment">Risk Assessment</SelectItem>
- <SelectItem value="procedures">Procedures</SelectItem>
- <SelectItem value="financials">Financial Statements</SelectItem>
- <SelectItem value="completion">Completion &amp; Signoffs</SelectItem>
- </SelectContent>
+ <Select value={selectedFolder} onValueChange={v => { setSelectedFolder(v); setSelectedSection(''); }}>
+  <SelectTrigger className="h-9 text-sm w-full">
+   <SelectValue placeholder="Select folder" />
+  </SelectTrigger>
+  <SelectContent>
+   <SelectItem value="all-folders">Show All Folders</SelectItem>
+   <SelectItem value="client-onboarding">CO — Client Onboarding</SelectItem>
+   <SelectItem value="planning">PL — Planning</SelectItem>
+   <SelectItem value="risk-assessment">RA — Risk Assessment</SelectItem>
+   <SelectItem value="response">RP — Response to Assessed Risks</SelectItem>
+   <SelectItem value="documents">DO — Documents</SelectItem>
+   <SelectItem value="trial-balance">TB — Trial Balance &amp; Adjusting Entries</SelectItem>
+   <SelectItem value="procedures">PR — Procedures</SelectItem>
+   <SelectItem value="financials">FS — Financial Statements</SelectItem>
+   <SelectItem value="completion">SO — Completion &amp; Signoffs</SelectItem>
+  </SelectContent>
  </Select>
  </div>
 
- <div className="space-y-1.5">
- <label className="text-xs font-medium text-foreground">
- Choose Engagement Section <span className="text-destructive">*</span>
- </label>
- <Select defaultValue="new-section">
- <SelectTrigger className="h-9 text-sm w-full">
- <SelectValue placeholder="Select section" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="new-section">NewSectionCOM3012251...</SelectItem>
- <SelectItem value="quality">Quality Management</SelectItem>
- <SelectItem value="financial">Financial Information</SelectItem>
- </SelectContent>
- </Select>
- </div>
+ {selectedFolder !== 'all-folders' && (() => {
+ const FOLDER_SECTIONS: Record<string, { value: string; label: string }[]> = {
+  'client-onboarding': [
+  { value: 'al1-engagement-letter', label: 'AL1.1 Engagement Letter' },
+  { value: '410-acceptance', label: '410 New/Existing Engagement — Acceptance/Continuance' },
+  ],
+  'planning': [
+  { value: '501a-preliminary', label: '501-A Preliminary Analytical' },
+  ],
+  'risk-assessment': [
+  { value: '507-governance', label: '507 Governance Minutes' },
+  { value: '515-related-parties', label: '515 Related Parties' },
+  ],
+  'response': [],
+  'documents': [],
+  'trial-balance': [],
+  'procedures': [
+  { value: 'a-cash', label: 'A Cash and Cash Equivalents' },
+  { value: 'b-ar', label: 'B Accounts Receivable' },
+  { value: 'h-ppe', label: 'H Property, Plant and Equipment' },
+  ],
+  'financials': [
+  { value: 'fs-financial', label: 'FS Financial Statements' },
+  ],
+  'completion': [
+  { value: 'mr-management', label: 'MR Management Representation Letter' },
+  ],
+ };
+ const sections = FOLDER_SECTIONS[selectedFolder] ?? [];
+ return (
+  <div className="space-y-1.5">
+  <label className="text-xs font-medium text-foreground">
+   Choose Engagement Section <span className="text-destructive">*</span>
+  </label>
+  <Select value={selectedSection} onValueChange={setSelectedSection} disabled={sections.length === 0}>
+   <SelectTrigger className="h-9 text-sm w-full">
+   <SelectValue placeholder={sections.length === 0 ? 'No sections available' : 'Select section'} />
+   </SelectTrigger>
+   <SelectContent>
+   {sections.map(s => (
+    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+   ))}
+   </SelectContent>
+  </Select>
+  </div>
+ );
+ })()}
 
  <Button
  className="w-full justify-center gap-2 h-10 text-xs font-medium bg-[#1C63A6] hover:bg-[#1a5a9e] text-white border-0"
