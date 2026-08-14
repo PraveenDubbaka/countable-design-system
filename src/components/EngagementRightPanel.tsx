@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, Clock, MessageSquare, FolderOpen, Search, Plus, CalendarClock, ArrowLeft, Upload, X, Layers, Pencil, Trash2, Paperclip, Filter } from 'lucide-react';
 import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,40 @@ const menuItems = [
 const ENGAGEMENT_FOLDERS = ['Client Onboarding', 'Planning', 'Risk Assessment', 'Procedures', 'Financial Statements', 'Completion & Signoffs'];
 const DOC_TYPES = ['General', 'Urgent', 'Internal', 'External'];
 const PRIORITIES = ['High', 'Medium', 'Low'];
+
+interface MockRequest {
+ id: string;
+ reqNum: string;
+ folder: string;
+ docName: string;
+ dueDate: string;
+ notes: string;
+ date: string;
+ initials: string;
+ avatarColor: string;
+ attachments: number;
+ comments: number;
+ status: 'pending' | 'available' | 'batch';
+}
+
+const MOCK_REQUESTS: MockRequest[] = [
+ { id: '1', reqNum: 'REQ-10', folder: 'Client Onboarding', docName: 'Engagement Letter — Signed', dueDate: 'Aug 16, 2026', notes: 'Please return countersigned engagement letter', date: 'Aug 14, 2026 09:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
+ { id: '2', reqNum: 'REQ-9', folder: 'Client Onboarding', docName: 'Incorporation Documents', dueDate: 'Aug 18, 2026', notes: 'Certificate of incorporation and constating documents', date: 'Aug 14, 2026 09:20 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 1, status: 'pending' },
+ { id: '3', reqNum: 'REQ-8', folder: 'Planning', docName: 'Prior Year Financial Statements', dueDate: 'Aug 15, 2026', notes: 'FY2024 comparative financials for opening balances', date: 'Aug 14, 2026 09:45 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 1, comments: 0, status: 'available' },
+ { id: '4', reqNum: 'REQ-7', folder: 'Planning', docName: 'Board Minutes — 2025', dueDate: 'Aug 20, 2026', notes: 'Minutes from all board and shareholder meetings in 2025', date: 'Aug 14, 2026 10:00 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'pending' },
+ { id: '5', reqNum: 'REQ-6', folder: 'Risk Assessment', docName: 'Related Party Listing', dueDate: 'Aug 22, 2026', notes: 'Identify all related parties and outstanding balances', date: 'Aug 14, 2026 10:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 2, status: 'pending' },
+ { id: '6', reqNum: 'REQ-5', folder: 'Procedures', docName: 'Bank Statements — Q4 2025', dueDate: 'Aug 25, 2026', notes: 'All bank account statements for Oct–Dec 2025', date: 'Aug 14, 2026 11:00 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '7', reqNum: 'REQ-4', folder: 'Procedures', docName: 'Accounts Receivable Subledger', dueDate: 'Aug 25, 2026', notes: 'Year-end AR aging schedule as at Dec 31, 2025', date: 'Aug 14, 2026 11:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
+ { id: '8', reqNum: 'REQ-3', folder: 'Procedures', docName: 'Fixed Asset Continuity Schedule', dueDate: 'Aug 28, 2026', notes: 'PPE and ROU asset roll-forward with depreciation detail', date: 'Aug 14, 2026 11:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '9', reqNum: 'REQ-2', folder: 'Financial Statements', docName: 'Draft Financial Statements', dueDate: 'Sep 1, 2026', notes: 'Management-prepared ASPE financial statements for review', date: 'Aug 14, 2026 01:39 PM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 1, status: 'batch' },
+ { id: '10', reqNum: 'REQ-1', folder: 'Completion & Signoffs', docName: 'Management Representation Letter', dueDate: 'Sep 10, 2026', notes: 'To be signed by CEO and CFO per CAS 580 requirements', date: 'Aug 14, 2026 01:42 PM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'batch' },
+];
+
+const MOCK_BY_FOLDER: [string, MockRequest[]][] = (() => {
+ const g: Record<string, MockRequest[]> = {};
+ for (const r of MOCK_REQUESTS) { g[r.folder] = g[r.folder] ?? []; g[r.folder].push(r); }
+ return Object.entries(g);
+})();
 
 function DocRequestForm({ context, onBack }: { context: DocRequestContext; onBack: () => void }) {
  const [folder, setFolder] = useState(context.folder || '');
@@ -331,14 +365,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  <label className="text-xs font-medium text-foreground">
  Choose Engagement Folder <span className="text-destructive">*</span>
  </label>
- <Select defaultValue="client-onboarding">
+ <Select defaultValue="all-folders">
  <SelectTrigger className="h-9 text-sm w-full">
  <SelectValue placeholder="Select folder" />
  </SelectTrigger>
  <SelectContent>
+ <SelectItem value="all-folders">Show All Folders</SelectItem>
  <SelectItem value="client-onboarding">Client Onboarding</SelectItem>
- <SelectItem value="documents">Documents</SelectItem>
- <SelectItem value="financials">Financials</SelectItem>
+ <SelectItem value="planning">Planning</SelectItem>
+ <SelectItem value="risk-assessment">Risk Assessment</SelectItem>
+ <SelectItem value="procedures">Procedures</SelectItem>
+ <SelectItem value="financials">Financial Statements</SelectItem>
+ <SelectItem value="completion">Completion &amp; Signoffs</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -382,28 +420,114 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  </TooltipProvider>
  </TabsList>
  <TabsContent value="all" className="mt-4">
- <div className="flex flex-col items-center justify-center py-8 text-center">
- <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-4">
- <FolderOpen className="h-8 w-8 text-primary/40" />
- </div>
- <p className="text-sm text-muted-foreground">There are no requests to show up</p>
+ <div className="space-y-3">
+  <div className="flex items-center justify-end">
+   <button type="button" className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+    <span>Sort By</span><Filter className="h-3 w-3 ml-0.5" />
+   </button>
+  </div>
+  {MOCK_BY_FOLDER.map(([folder, reqs]) => (
+   <div key={folder} className="space-y-2">
+    <div className="flex items-center gap-1.5">
+     <FolderOpen className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+     <span className="text-[11px] font-medium text-foreground truncate flex-1">{folder}</span>
+     <span className="text-[10px] text-muted-foreground bg-muted rounded-full px-1.5 py-0.5">({reqs.length})</span>
+    </div>
+    {reqs.map(req => (
+    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
+     <div className="flex items-center gap-1.5">
+      <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
+      <span className="text-[10px] text-muted-foreground flex-1">{req.date}</span>
+      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+     </div>
+     <div className="flex items-start gap-1">
+      <span className="text-[11px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+      <span className="text-[9px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+     </div>
+     <p className="text-[10px] text-muted-foreground">{req.notes}</p>
+     <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
+      <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
+      <div className="ml-auto flex items-center gap-1">
+       <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Pencil className="h-3 w-3 text-muted-foreground" /></button>
+       <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Trash2 className="h-3 w-3 text-destructive/70" /></button>
+      </div>
+     </div>
+    </div>
+    ))}
+   </div>
+  ))}
  </div>
  </TabsContent>
  <TabsContent value="available" className="mt-4">
- <div className="flex flex-col items-center justify-center py-8 text-center">
- <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-4">
- <FolderOpen className="h-8 w-8 text-primary/40" />
- </div>
- <p className="text-sm text-muted-foreground">No available requests</p>
- </div>
+ {(() => {
+  const avail = MOCK_REQUESTS.filter(r => r.status === 'available');
+  if (!avail.length) return (
+   <div className="flex flex-col items-center justify-center py-8 text-center">
+    <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-4">
+     <FolderOpen className="h-8 w-8 text-primary/40" />
+    </div>
+    <p className="text-sm text-muted-foreground">No available requests</p>
+   </div>
+  );
+  return <div className="space-y-2">{avail.map(req => (
+   <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
+    <div className="flex items-center gap-1.5">
+     <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
+     <span className="text-[10px] text-muted-foreground flex-1">{req.date}</span>
+     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+    </div>
+    <div className="flex items-start gap-1">
+     <span className="text-[11px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+     <span className="text-[9px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+    </div>
+    <p className="text-[10px] text-muted-foreground">{req.notes}</p>
+    <div className="flex items-center gap-2">
+     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
+     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
+     <div className="ml-auto flex items-center gap-1">
+      <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Pencil className="h-3 w-3 text-muted-foreground" /></button>
+      <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Trash2 className="h-3 w-3 text-destructive/70" /></button>
+     </div>
+    </div>
+   </div>
+  ))}</div>;
+ })()}
  </TabsContent>
  <TabsContent value="backlog" className="mt-4">
- <div className="flex flex-col items-center justify-center py-8 text-center">
- <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-4">
- <FolderOpen className="h-8 w-8 text-primary/40" />
- </div>
- <p className="text-sm text-muted-foreground">No backlog items</p>
- </div>
+ {(() => {
+  const batch = MOCK_REQUESTS.filter(r => r.status === 'batch');
+  if (!batch.length) return (
+   <div className="flex flex-col items-center justify-center py-8 text-center">
+    <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-4">
+     <FolderOpen className="h-8 w-8 text-primary/40" />
+    </div>
+    <p className="text-sm text-muted-foreground">No batch requests</p>
+   </div>
+  );
+  return <div className="space-y-2">{batch.map(req => (
+   <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
+    <div className="flex items-center gap-1.5">
+     <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
+     <span className="text-[10px] text-muted-foreground flex-1">{req.date}</span>
+     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+    </div>
+    <div className="flex items-start gap-1">
+     <span className="text-[11px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+     <span className="text-[9px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+    </div>
+    <p className="text-[10px] text-muted-foreground">{req.notes}</p>
+    <div className="flex items-center gap-2">
+     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
+     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
+     <div className="ml-auto flex items-center gap-1">
+      <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Pencil className="h-3 w-3 text-muted-foreground" /></button>
+      <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Trash2 className="h-3 w-3 text-destructive/70" /></button>
+     </div>
+    </div>
+   </div>
+  ))}</div>;
+ })()}
  </TabsContent>
  </Tabs>
  </div>
