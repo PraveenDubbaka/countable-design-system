@@ -438,17 +438,14 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
      {isCollapsed
       ? <FolderPlusIcon className="h-3.5 w-3.5 text-primary shrink-0" />
       : <FolderMinusIcon className="h-3.5 w-3.5 text-primary shrink-0" />}
-     <div className="flex-1 min-w-0 text-left">
-      <span className="text-[11px] font-medium text-foreground block truncate">{section}</span>
-      <span className="text-[10px] text-muted-foreground">{reqs[0].folder}</span>
-     </div>
-     <span className="text-[10px] text-muted-foreground bg-muted rounded-full px-1.5 py-0.5">({reqs.length})</span>
+   <span className="text-[13px] font-medium text-foreground truncate flex-1 text-left">{section}</span>
+     <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-muted text-muted-foreground border border-border">{reqs.length}</span>
     </button>
     {!isCollapsed && reqs.map(req => (
     <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
      <div className="flex items-center gap-1.5">
       <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
-      <span className="text-[10px] text-muted-foreground flex-1">{req.date}</span>
+      <span className="text-[10px] text-muted-foreground flex-1 text-right">{req.date}</span>
       <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
      </div>
      <div className="flex items-start gap-1">
@@ -486,7 +483,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
     <div className="flex items-center gap-1.5">
      <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
-     <span className="text-[10px] text-muted-foreground flex-1">{req.date}</span>
+     <span className="text-[10px] text-muted-foreground flex-1 text-right">{req.date}</span>
      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
@@ -521,7 +518,7 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
     <div className="flex items-center gap-1.5">
      <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
-     <span className="text-[10px] text-muted-foreground flex-1">{req.date}</span>
+     <span className="text-[10px] text-muted-foreground flex-1 text-right">{req.date}</span>
      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
