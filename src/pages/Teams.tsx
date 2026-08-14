@@ -43,9 +43,45 @@ const StatusBadge = ({ status }: { status: string }) => {
  return <Badge variant={getVariant()}>{status}</Badge>;
 };
 
+function Highlight({ text, query }: { text: string; query: string }) {
+ if (!query.trim()) return <>{text}</>;
+ const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+ const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+ return (
+  <>
+   {parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+     <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 rounded-sm px-0.5 not-italic">{part}</mark>
+    ) : (
+     <span key={i}>{part}</span>
+    )
+   )}
+  </>
+ );
+}
+
 export default function Teams() {
  const [searchQuery, setSearchQuery] = useState("");
  const [activeTab, setActiveTab] = useState("all-teams");
+
+ const q = searchQuery.toLowerCase();
+ const filteredMembers = teamMembers.filter(m => {
+  const tabMatch =
+   activeTab === 'all-teams' ||
+   (activeTab === 'partner' && m.category === 'Partner') ||
+   (activeTab === 'staff' && m.category === 'Staff') ||
+   (activeTab === 'cms' && m.category.startsWith('CMS'));
+  if (!tabMatch) return false;
+  if (!q) return true;
+  return (
+   m.name.toLowerCase().includes(q) ||
+   m.title.toLowerCase().includes(q) ||
+   m.email.toLowerCase().includes(q) ||
+   m.category.toLowerCase().includes(q) ||
+   m.status.toLowerCase().includes(q)
+  );
+ });
+
 
  const tabs = [
  { id: "all-teams", label: "All Teams" },
@@ -166,7 +202,12 @@ export default function Teams() {
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
- {teamMembers.map((member, idx) => (
+ {filteredMembers.length === 0 && searchQuery.trim() ? (
+          <tr><td colSpan={15} className="px-6 py-12 text-center">
+           <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
+           <p className="text-xs text-muted-foreground mt-1">Try a different name, email, or category</p>
+          </td></tr>
+         ) : filteredMembers.map((member, idx) => (
  <tr
  key={idx}
  className="hover:bg-muted/50 transition-colors group max-h-[50px]"
@@ -176,8 +217,8 @@ export default function Teams() {
  <Checkbox />
  </td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.id}</td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.name}</td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.title}</td>
+ <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={member.name} query={searchQuery} /></td>
+ <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={member.title} query={searchQuery} /></td>
  <td className="px-6 py-2 whitespace-nowrap">
  <StatusBadge status={member.status} />
  </td>
@@ -186,7 +227,7 @@ export default function Teams() {
  {member.email}
  </a>
  </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.category}</td>
+ <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={member.category} query={searchQuery} /></td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.clients}</td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.businessPhone}</td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{member.cellPhone}</td>
