@@ -5,6 +5,7 @@ import { FolderPlusIcon, FolderMinusIcon } from '@/components/icons/FolderIcons'
 import { MultipleRequestModal } from './MultipleRequestModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ExpandableSearch } from '@/components/ui/expandable-search';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -287,7 +288,6 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  const [isExpanded, setIsExpanded] = useState(false);
  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
  const toggleFolder = (f: string) => setCollapsedFolders(prev => { const n = new Set(prev); n.has(f) ? n.delete(f) : n.add(f); return n; });
- const [showSearch, setShowSearch] = useState(false);
  const [searchQuery, setSearchQuery] = useState('');
  const [activeItem, setActiveItem] = useState('folders');
  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
@@ -367,30 +367,15 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
  {/* Header */}
  <div className="flex items-center gap-2 px-4 py-3">
  <h3 className="font-semibold text-sm text-foreground flex-1">Engagement Folders</h3>
- <Button variant="ghost" size="icon" className={`h-7 w-7 shrink-0 ${showSearch ? 'bg-accent' : ''}`} onClick={() => { setShowSearch(p => !p); setSearchQuery(''); }}>
- <Search className="h-3.5 w-3.5 text-muted-foreground" />
- </Button>
+ <ExpandableSearch
+ value={searchQuery}
+ onChange={setSearchQuery}
+ placeholder="Search requests..."
+ />
  <Button variant="outline" size="icon" className="h-7 w-7 shrink-0 border-border">
  <Plus className="h-3.5 w-3.5 text-foreground" />
  </Button>
  </div>
- {showSearch && (
-  <div className="px-4 pb-2 relative">
-   <Search className="absolute left-7 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-   <Input
-    autoFocus
-    value={searchQuery}
-    onChange={e => setSearchQuery(e.target.value)}
-    placeholder="Search requests..."
-    className="pl-9 h-9 text-sm"
-   />
-   {searchQuery && (
-    <button type="button" onClick={() => setSearchQuery('')} className="absolute right-7 top-1/2 -translate-y-1/2 p-0.5 hover:bg-muted rounded transition-colors">
-     <X className="h-3.5 w-3.5 text-muted-foreground" />
-    </button>
-   )}
-  </div>
- )}
 
  {/* Content */}
  <div className="flex-1 overflow-y-auto p-4 space-y-3">
