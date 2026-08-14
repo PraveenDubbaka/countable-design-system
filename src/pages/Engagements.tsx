@@ -165,7 +165,8 @@ export default function Engagements() {
 
  return (
  <Layout title="Engagements">
- <div className="flex-1 p-6 overflow-hidden flex flex-col bg-background">
+ <div className="flex h-full overflow-hidden bg-background">
+  <div className="flex-1 p-6 overflow-hidden flex flex-col min-w-0">
  <div className="flex flex-col flex-1 gap-6 min-h-0">
  {/* Stats Cards */}
  <div className="flex items-center gap-3 flex-shrink-0">
@@ -467,6 +468,8 @@ export default function Engagements() {
  </div>
  </DialogContent>
  </Dialog>
+  </div>
+ </div>
  </Layout>
  );
 }
