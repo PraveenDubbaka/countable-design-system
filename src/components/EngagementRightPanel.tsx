@@ -49,16 +49,26 @@ interface MockRequest {
 }
 
 const MOCK_REQUESTS: MockRequest[] = [
- { id: '1', reqNum: 'REQ-10', folder: 'Client Onboarding', section: 'AL1.1 Engagement Letter', docName: 'Engagement Letter — Signed', dueDate: 'Aug 16, 2026', notes: 'Please return countersigned engagement letter', date: 'Aug 14, 2026 09:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
- { id: '2', reqNum: 'REQ-9', folder: 'Client Onboarding', section: '410 New/Existing Engagement — Acceptance/Continuance', docName: 'Incorporation Documents', dueDate: 'Aug 18, 2026', notes: 'Certificate of incorporation and constating documents', date: 'Aug 14, 2026 09:20 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 1, status: 'pending' },
- { id: '3', reqNum: 'REQ-8', folder: 'Planning', section: '501-A Preliminary Analytical', docName: 'Prior Year Financial Statements', dueDate: 'Aug 15, 2026', notes: 'FY2024 comparative financials for opening balances', date: 'Aug 14, 2026 09:45 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 1, comments: 0, status: 'available' },
- { id: '4', reqNum: 'REQ-7', folder: 'Planning', section: '507 Governance Minutes', docName: 'Board Minutes — 2025', dueDate: 'Aug 20, 2026', notes: 'Minutes from all board and shareholder meetings in 2025', date: 'Aug 14, 2026 10:00 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'pending' },
- { id: '5', reqNum: 'REQ-6', folder: 'Risk Assessment', section: '515 Related Parties', docName: 'Related Party Listing', dueDate: 'Aug 22, 2026', notes: 'Identify all related parties and outstanding balances', date: 'Aug 14, 2026 10:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 2, status: 'pending' },
- { id: '6', reqNum: 'REQ-5', folder: 'Procedures', section: 'A Cash and Cash Equivalents', docName: 'Bank Statements — Q4 2025', dueDate: 'Aug 25, 2026', notes: 'All bank account statements for Oct–Dec 2025', date: 'Aug 14, 2026 11:00 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
- { id: '7', reqNum: 'REQ-4', folder: 'Procedures', section: 'B Accounts Receivable', docName: 'Accounts Receivable Subledger', dueDate: 'Aug 25, 2026', notes: 'Year-end AR aging schedule as at Dec 31, 2025', date: 'Aug 14, 2026 11:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
- { id: '8', reqNum: 'REQ-3', folder: 'Procedures', section: 'H Property, Plant and Equipment', docName: 'Fixed Asset Continuity Schedule', dueDate: 'Aug 28, 2026', notes: 'PPE and ROU asset roll-forward with depreciation detail', date: 'Aug 14, 2026 11:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
- { id: '9', reqNum: 'REQ-2', folder: 'Financial Statements', section: 'FS Financial Statements', docName: 'Draft Financial Statements', dueDate: 'Sep 1, 2026', notes: 'Management-prepared ASPE financial statements for review', date: 'Aug 14, 2026 01:39 PM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 1, status: 'batch' },
- { id: '10', reqNum: 'REQ-1', folder: 'Completion & Signoffs', section: 'MR Management Representation Letter', docName: 'Management Representation Letter', dueDate: 'Sep 10, 2026', notes: 'To be signed by CEO and CFO per CAS 580 requirements', date: 'Aug 14, 2026 01:42 PM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'batch' },
+ { id: '1',  reqNum: 'REQ-20', folder: 'Client Onboarding',      section: 'AL1.1 Engagement Letter',                              docName: 'Engagement Letter — Signed',                  dueDate: 'Aug 16, 2026', notes: 'Please return countersigned engagement letter',                              date: 'Aug 14, 2026 09:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
+ { id: '2',  reqNum: 'REQ-19', folder: 'Client Onboarding',      section: 'AL1.1 Engagement Letter',                              docName: 'Director Authorization — Signed',              dueDate: 'Aug 18, 2026', notes: 'Signed authorization from director to proceed with engagement',              date: 'Aug 14, 2026 09:18 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '3',  reqNum: 'REQ-18', folder: 'Client Onboarding',      section: '410 New/Existing Engagement — Acceptance/Continuance', docName: 'Incorporation Documents',                      dueDate: 'Aug 18, 2026', notes: 'Certificate of incorporation and constating documents',                    date: 'Aug 14, 2026 09:20 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 1, status: 'pending' },
+ { id: '4',  reqNum: 'REQ-17', folder: 'Client Onboarding',      section: '410 New/Existing Engagement — Acceptance/Continuance', docName: 'AML / KYC Questionnaire',                     dueDate: 'Aug 20, 2026', notes: 'Anti-money laundering and know-your-client completed questionnaire',       date: 'Aug 14, 2026 09:22 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '5',  reqNum: 'REQ-16', folder: 'Planning',               section: '501-A Preliminary Analytical',                         docName: 'Prior Year Financial Statements',              dueDate: 'Aug 15, 2026', notes: 'FY2024 comparative financials for opening balances',                       date: 'Aug 14, 2026 09:45 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 1, comments: 0, status: 'available' },
+ { id: '6',  reqNum: 'REQ-15', folder: 'Planning',               section: '501-A Preliminary Analytical',                         docName: 'Trial Balance — Unadjusted (FY2025)',          dueDate: 'Aug 17, 2026', notes: 'Unadjusted trial balance as at December 31, 2025',                       date: 'Aug 14, 2026 09:50 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 1, status: 'pending' },
+ { id: '7',  reqNum: 'REQ-14', folder: 'Planning',               section: '507 Governance Minutes',                               docName: 'Board Minutes — 2025',                        dueDate: 'Aug 20, 2026', notes: 'Minutes from all board and shareholder meetings in 2025',                 date: 'Aug 14, 2026 10:00 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'pending' },
+ { id: '8',  reqNum: 'REQ-13', folder: 'Planning',               section: '507 Governance Minutes',                               docName: 'Shareholder Resolutions — 2025',               dueDate: 'Aug 22, 2026', notes: 'Shareholder meeting resolutions and special resolutions passed in 2025',   date: 'Aug 14, 2026 10:05 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '9',  reqNum: 'REQ-12', folder: 'Risk Assessment',        section: '515 Related Parties',                                  docName: 'Related Party Listing',                       dueDate: 'Aug 22, 2026', notes: 'Identify all related parties and outstanding balances',                   date: 'Aug 14, 2026 10:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 2, status: 'pending' },
+ { id: '10', reqNum: 'REQ-11', folder: 'Risk Assessment',        section: '515 Related Parties',                                  docName: 'Intercompany Balances Schedule',               dueDate: 'Aug 24, 2026', notes: 'Schedule of intercompany receivables and payables with elimination entries', date: 'Aug 14, 2026 10:35 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '11', reqNum: 'REQ-10', folder: 'Procedures',             section: 'A Cash and Cash Equivalents',                          docName: 'Bank Statements — Q4 2025',                   dueDate: 'Aug 25, 2026', notes: 'All bank account statements for Oct–Dec 2025',                          date: 'Aug 14, 2026 11:00 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '12', reqNum: 'REQ-9',  folder: 'Procedures',             section: 'A Cash and Cash Equivalents',                          docName: 'Bank Reconciliation — Dec 31, 2025',           dueDate: 'Aug 27, 2026', notes: 'Year-end bank reconciliation for all bank accounts',                      date: 'Aug 14, 2026 11:05 AM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'pending' },
+ { id: '13', reqNum: 'REQ-8',  folder: 'Procedures',             section: 'B Accounts Receivable',                                docName: 'Accounts Receivable Subledger',                dueDate: 'Aug 25, 2026', notes: 'Year-end AR aging schedule as at Dec 31, 2025',                           date: 'Aug 14, 2026 11:15 AM', initials: 'JP', avatarColor: '#E97316', attachments: 1, comments: 0, status: 'available' },
+ { id: '14', reqNum: 'REQ-7',  folder: 'Procedures',             section: 'B Accounts Receivable',                                docName: 'Customer Confirmations — Top 10 Accounts',    dueDate: 'Aug 29, 2026', notes: 'Positive confirmation letters sent to top 10 customers by balance',       date: 'Aug 14, 2026 11:20 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 1, status: 'pending' },
+ { id: '15', reqNum: 'REQ-6',  folder: 'Procedures',             section: 'H Property, Plant and Equipment',                      docName: 'Fixed Asset Continuity Schedule',              dueDate: 'Aug 28, 2026', notes: 'PPE and ROU asset roll-forward with depreciation detail',                date: 'Aug 14, 2026 11:30 AM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '16', reqNum: 'REQ-5',  folder: 'Procedures',             section: 'H Property, Plant and Equipment',                      docName: 'Capital Expenditure Approvals (>$10K)',        dueDate: 'Aug 30, 2026', notes: 'Board-approved capex requests and invoices for additions in 2025',       date: 'Aug 14, 2026 11:35 AM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 0, status: 'pending' },
+ { id: '17', reqNum: 'REQ-4',  folder: 'Financial Statements',   section: 'FS Financial Statements',                              docName: 'Draft Financial Statements',                  dueDate: 'Sep 1, 2026',  notes: 'Management-prepared ASPE financial statements for review',               date: 'Aug 14, 2026 01:39 PM', initials: 'TB', avatarColor: '#8B5CF6', attachments: 0, comments: 1, status: 'batch' },
+ { id: '18', reqNum: 'REQ-3',  folder: 'Financial Statements',   section: 'FS Financial Statements',                              docName: 'Management Discussion & Analysis',             dueDate: 'Sep 3, 2026',  notes: "MD&A narrative to accompany the year-end financial statements",            date: 'Aug 14, 2026 01:42 PM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'batch' },
+ { id: '19', reqNum: 'REQ-2',  folder: 'Completion & Signoffs',  section: 'MR Management Representation Letter',                  docName: 'Management Representation Letter',             dueDate: 'Sep 10, 2026', notes: 'To be signed by CEO and CFO per CAS 580 requirements',                   date: 'Aug 14, 2026 01:45 PM', initials: 'JP', avatarColor: '#E97316', attachments: 0, comments: 0, status: 'batch' },
+ { id: '20', reqNum: 'REQ-1',  folder: 'Completion & Signoffs',  section: 'MR Management Representation Letter',                  docName: 'Officer Certificate — CFO',                   dueDate: 'Sep 10, 2026', notes: 'CFO certification confirming accuracy of financial information provided',  date: 'Aug 14, 2026 01:47 PM', initials: 'AN', avatarColor: '#3B82F6', attachments: 0, comments: 0, status: 'pending' },
 ];
 
 const MOCK_BY_SECTION: [string, MockRequest[]][] = (() => {
@@ -439,23 +449,23 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
       ? <FolderPlusIcon className="h-3.5 w-3.5 text-primary shrink-0" />
       : <FolderMinusIcon className="h-3.5 w-3.5 text-primary shrink-0" />}
    <span className="text-[13px] font-medium text-foreground truncate flex-1 text-left">{section}</span>
-     <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-muted text-muted-foreground border border-border">{reqs.length}</span>
+     <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap bg-secondary text-secondary-foreground border border-secondary-foreground/10">{reqs.length}</span>
     </button>
     {!isCollapsed && reqs.map(req => (
     <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
      <div className="flex items-center gap-1.5">
-      <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
-      <span className="text-[10px] text-muted-foreground flex-1 text-right">{req.date}</span>
-      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+      <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
+      <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
+      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
      </div>
      <div className="flex items-start gap-1">
-      <span className="text-[11px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-      <span className="text-[9px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+      <span className="text-[11px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
      </div>
-     <p className="text-[10px] text-muted-foreground">{req.notes}</p>
+     <p className="text-[12px] text-muted-foreground">{req.notes}</p>
      <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
-      <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
+      <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
+      <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
       <div className="ml-auto flex items-center gap-1">
        <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Pencil className="h-3 w-3 text-muted-foreground" /></button>
        <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Trash2 className="h-3 w-3 text-destructive/70" /></button>
@@ -482,18 +492,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   return <div className="space-y-2">{avail.map(req => (
    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
     <div className="flex items-center gap-1.5">
-     <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
-     <span className="text-[10px] text-muted-foreground flex-1 text-right">{req.date}</span>
-     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+     <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
+     <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
+     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
-     <span className="text-[11px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-     <span className="text-[9px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+     <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+     <span className="text-[11px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
     </div>
-    <p className="text-[10px] text-muted-foreground">{req.notes}</p>
+    <p className="text-[12px] text-muted-foreground">{req.notes}</p>
     <div className="flex items-center gap-2">
-     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
-     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
+     <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
+     <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
      <div className="ml-auto flex items-center gap-1">
       <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Pencil className="h-3 w-3 text-muted-foreground" /></button>
       <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Trash2 className="h-3 w-3 text-destructive/70" /></button>
@@ -517,18 +527,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   return <div className="space-y-2">{batch.map(req => (
    <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
     <div className="flex items-center gap-1.5">
-     <span className="text-[11px] font-medium text-muted-foreground">{req.reqNum}</span>
-     <span className="text-[10px] text-muted-foreground flex-1 text-right">{req.date}</span>
-     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+     <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
+     <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
+     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
-     <span className="text-[11px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-     <span className="text-[9px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+     <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
+     <span className="text-[11px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
     </div>
-    <p className="text-[10px] text-muted-foreground">{req.notes}</p>
+    <p className="text-[12px] text-muted-foreground">{req.notes}</p>
     <div className="flex items-center gap-2">
-     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
-     <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
+     <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><Paperclip className="h-3 w-3" /><span>{req.attachments}</span></div>
+     <div className="flex items-center gap-1 text-[12px] text-muted-foreground"><MessageSquare className="h-3 w-3" /><span>{req.comments}</span></div>
      <div className="ml-auto flex items-center gap-1">
       <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Pencil className="h-3 w-3 text-muted-foreground" /></button>
       <button type="button" className="p-0.5 hover:bg-muted rounded transition-colors"><Trash2 className="h-3 w-3 text-destructive/70" /></button>
