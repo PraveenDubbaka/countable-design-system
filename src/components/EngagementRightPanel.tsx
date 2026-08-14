@@ -429,15 +429,15 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
   </SelectTrigger>
   <SelectContent>
    <SelectItem value="all-folders">Show All Folders</SelectItem>
-   <SelectItem value="client-onboarding">CO — Client Onboarding</SelectItem>
-   <SelectItem value="planning">PL — Planning</SelectItem>
-   <SelectItem value="risk-assessment">RA — Risk Assessment</SelectItem>
-   <SelectItem value="response">RP — Response to Assessed Risks</SelectItem>
-   <SelectItem value="documents">DO — Documents</SelectItem>
-   <SelectItem value="trial-balance">TB — Trial Balance &amp; Adjusting Entries</SelectItem>
-   <SelectItem value="procedures">PR — Procedures</SelectItem>
-   <SelectItem value="financials">FS — Financial Statements</SelectItem>
-   <SelectItem value="completion">SO — Completion &amp; Signoffs</SelectItem>
+   <SelectItem value="client-onboarding">Client Onboarding</SelectItem>
+   <SelectItem value="planning">Planning</SelectItem>
+   <SelectItem value="risk-assessment">Risk Assessment</SelectItem>
+   <SelectItem value="response">Response to Assessed Risks</SelectItem>
+   <SelectItem value="documents">Documents</SelectItem>
+   <SelectItem value="trial-balance">Trial Balance &amp; Adjusting Entries</SelectItem>
+   <SelectItem value="procedures">Procedures</SelectItem>
+   <SelectItem value="financials">Financial Statements</SelectItem>
+   <SelectItem value="completion">Completion &amp; Signoffs</SelectItem>
   </SelectContent>
  </Select>
  </div>
