@@ -449,18 +449,18 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
       ? <FolderPlusIcon className="h-3.5 w-3.5 text-primary shrink-0" />
       : <FolderMinusIcon className="h-3.5 w-3.5 text-primary shrink-0" />}
    <span className="text-[13px] font-medium text-foreground truncate flex-1 text-left">{section}</span>
-     <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap bg-secondary text-secondary-foreground border border-secondary-foreground/10">{reqs.length}</span>
+     <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-secondary text-secondary-foreground border border-secondary-foreground/10">{reqs.length}</span>
     </button>
     {!isCollapsed && reqs.map(req => (
     <div key={req.id} className="rounded-lg border border-border bg-card p-2.5 space-y-1.5">
      <div className="flex items-center gap-1.5">
       <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
       <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
-      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+      <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
      </div>
      <div className="flex items-start gap-1">
       <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-      <span className="text-[11px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
      </div>
      <p className="text-[12px] text-muted-foreground">{req.notes}</p>
      <div className="flex items-center gap-2">
@@ -494,11 +494,11 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     <div className="flex items-center gap-1.5">
      <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
      <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
-     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-     <span className="text-[11px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+     <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
     </div>
     <p className="text-[12px] text-muted-foreground">{req.notes}</p>
     <div className="flex items-center gap-2">
@@ -529,11 +529,11 @@ export function EngagementRightPanel({ className }: EngagementRightPanelProps) {
     <div className="flex items-center gap-1.5">
      <span className="text-[13px] font-medium text-muted-foreground">{req.reqNum}</span>
      <span className="text-[12px] text-muted-foreground flex-1 text-right">{req.date}</span>
-     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
+     <div className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ backgroundColor: req.avatarColor }}>{req.initials}</div>
     </div>
     <div className="flex items-start gap-1">
      <span className="text-[13px] font-semibold text-foreground flex-1 min-w-0 truncate">{req.docName}</span>
-     <span className="text-[11px] font-medium text-orange-600 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded px-1.5 py-0.5 shrink-0 whitespace-nowrap">Due by {req.dueDate}</span>
+     <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all duration-200 ease-emphasized bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800/50 shrink-0">Due by {req.dueDate}</span>
     </div>
     <p className="text-[12px] text-muted-foreground">{req.notes}</p>
     <div className="flex items-center gap-2">
