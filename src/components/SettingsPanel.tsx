@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2 } from "lucide-react";
+import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2, Search, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -147,7 +147,7 @@ export function SettingsPanel({ open, onOpenChange, firmNav }: SettingsPanelProp
 
  <div className="flex-1 overflow-auto p-6">
  {activeSection === "my-account" && <MyAccountContent defaultTab={firmNav?.tab} openAddOffice={firmNav?.addOffice} />}
- {activeSection === "letterhead" && <PlaceholderContent title="Letterhead & Signature" />}
+ {activeSection === "letterhead" && <LetterheadContent />}
  {activeSection === "luka" && <LukaContent />}
  {activeSection === "notifications" && <NotificationsContent />}
  {activeSection === "user-access" && <UserAccessContent />}
@@ -1167,6 +1167,330 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
    <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white" onClick={handleSaveChanges}>
     Save Changes
    </Button>
+  </div>
+ );
+}
+
+// ── Letterhead & Signature ────────────────────────────────────────────────────
+
+interface LetterheadItem {
+ id: string;
+ name: string;
+ isDefault: boolean;
+ alignment: "left" | "center" | "right";
+ stretchToFit: boolean;
+}
+
+interface SignatureItem {
+ id: string;
+ name: string;
+ isDefault: boolean;
+}
+
+interface FirmLetterheadData {
+ headers: LetterheadItem[];
+ footers: LetterheadItem[];
+ signatures: SignatureItem[];
+}
+
+function defaultLetterheadData(firmName: string): FirmLetterheadData {
+ const short = firmName.split(" ")[0];
+ return {
+  headers: [
+   { id: "h1", name: "Header", isDefault: true, alignment: "left", stretchToFit: false },
+  ],
+  footers: [
+   { id: "f1", name: "Footer", isDefault: true, alignment: "center", stretchToFit: false },
+  ],
+  signatures: [
+   { id: "s1", name: "Signature 144", isDefault: true },
+   { id: "s2", name: "Signature 145", isDefault: false },
+   { id: "s3", name: "Signature 146", isDefault: false },
+   { id: "s4", name: "Signature 147", isDefault: false },
+   { id: "s5", name: "Signature", isDefault: false },
+   { id: "s6", name: `${short} Sign`, isDefault: false },
+  ],
+ };
+}
+
+function readLetterheadData(firmId: string, firmName: string): FirmLetterheadData {
+ try { const s = localStorage.getItem(`letterhead-${firmId}`); return s ? JSON.parse(s) : defaultLetterheadData(firmName); } catch { return defaultLetterheadData(firmName); }
+}
+
+function writeLetterheadData(firmId: string, data: FirmLetterheadData) {
+ localStorage.setItem(`letterhead-${firmId}`, JSON.stringify(data));
+}
+
+function HeaderPreview() {
+ return (
+  <div className="w-full h-20 rounded-md overflow-hidden flex items-center bg-[#0f3d7a]">
+   <div className="flex-1 px-4">
+    <p className="text-white font-semibold text-sm">A Smarter Year-End Experience</p>
+    <p className="text-blue-200 text-xs mt-0.5">Seamless year-end workflows powered by Countable</p>
+   </div>
+   <div className="w-16 h-full bg-[#1C63A6] flex items-center justify-center flex-shrink-0">
+    <span className="text-white text-[10px] font-bold tracking-wide">LOGO</span>
+   </div>
+  </div>
+ );
+}
+
+function FooterPreview() {
+ return (
+  <div className="w-full h-16 rounded-md overflow-hidden border-t-2 border-[#1C63A6] bg-gray-50 flex flex-col justify-center px-4">
+   <p className="text-gray-500 text-[10px]">Confidential | 123 Main St, Toronto ON M5V 3C6 | +1 (416) 555-0100</p>
+   <p className="text-gray-400 text-[9px] mt-0.5">Page 1 of 1</p>
+  </div>
+ );
+}
+
+const SIG_STYLES = [
+ { color: "#1a1a4e", size: "1.7rem", skew: "-4deg" },
+ { color: "#1a3a6e", size: "1.5rem", skew: "-2deg" },
+ { color: "#0f2a5a", size: "1.6rem", skew: "-5deg" },
+ { color: "#2c3e7d", size: "1.4rem", skew: "-3deg" },
+ { color: "#1a2e6e", size: "1.55rem", skew: "-4deg" },
+ { color: "#2a1a5e", size: "1.45rem", skew: "-6deg" },
+];
+
+function SignaturePreview({ name, index }: { name: string; index: number }) {
+ const s = SIG_STYLES[index % SIG_STYLES.length];
+ const display = name.toLowerCase().startsWith("signature") ? "signature" : name;
+ return (
+  <div className="w-full h-14 bg-white rounded border border-border flex items-center justify-center px-3 overflow-hidden">
+   <span
+    style={{
+     fontFamily: "Georgia, 'Times New Roman', serif",
+     fontSize: s.size,
+     fontStyle: "italic",
+     color: s.color,
+     display: "inline-block",
+     transform: `skewX(${s.skew})`,
+     letterSpacing: "-0.03em",
+    }}
+   >
+    {display}
+   </span>
+  </div>
+ );
+}
+
+type LhTab = "header" | "footer" | "signature";
+
+function LetterheadContent() {
+ const [firms, setFirms] = useState<FirmProfile[]>(readFirmProfiles);
+ const [activeFirmId, setActiveFirmId] = useState<string>(readActiveFirmId);
+ const [tab, setTab] = useState<LhTab>("header");
+ const [search, setSearch] = useState("");
+
+ const activeFirm = firms.find(f => f.id === activeFirmId) ?? firms[0];
+
+ const [data, setData] = useState<FirmLetterheadData>(() =>
+  readLetterheadData(activeFirm.id, activeFirm.name)
+ );
+
+ useEffect(() => {
+  const firm = firms.find(f => f.id === activeFirmId) ?? firms[0];
+  setData(readLetterheadData(firm.id, firm.name));
+  setSearch("");
+ }, [activeFirmId]);
+
+ useEffect(() => {
+  const handler = () => {
+   try {
+    const s = localStorage.getItem("firmProfiles");
+    if (s) setFirms(JSON.parse(s));
+    const id = localStorage.getItem("activeFirmId");
+    if (id) setActiveFirmId(id);
+   } catch {}
+  };
+  window.addEventListener("firm-profiles-updated", handler);
+  return () => window.removeEventListener("firm-profiles-updated", handler);
+ }, []);
+
+ function save(next: FirmLetterheadData) {
+  setData(next);
+  writeLetterheadData(activeFirm.id, next);
+ }
+
+ const addItem = () => {
+  if (tab === "header") {
+   save({ ...data, headers: [...data.headers, { id: `h${Date.now()}`, name: "New Header", isDefault: false, alignment: "left", stretchToFit: false }] });
+  } else if (tab === "footer") {
+   save({ ...data, footers: [...data.footers, { id: `f${Date.now()}`, name: "New Footer", isDefault: false, alignment: "left", stretchToFit: false }] });
+  } else {
+   save({ ...data, signatures: [...data.signatures, { id: `s${Date.now()}`, name: "New Signature", isDefault: false }] });
+  }
+ };
+
+ const filteredHeaders = data.headers.filter(h => h.name.toLowerCase().includes(search.toLowerCase()));
+ const filteredFooters = data.footers.filter(f => f.name.toLowerCase().includes(search.toLowerCase()));
+ const filteredSigs    = data.signatures.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
+
+ const labelCap = tab.charAt(0).toUpperCase() + tab.slice(1);
+
+ return (
+  <div className="-m-6 flex flex-col h-full">
+   {/* Firm switcher */}
+   <div className="border-b border-border px-6 py-3 bg-muted/30 flex items-center gap-2 flex-wrap">
+    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mr-1">Firm:</span>
+    {firms.map(firm => (
+     <button
+      key={firm.id}
+      onClick={() => setActiveFirmId(firm.id)}
+      className={cn(
+       "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors border",
+       activeFirmId === firm.id
+        ? "bg-primary text-white border-primary"
+        : "bg-background text-foreground border-border hover:border-primary/40 hover:bg-primary/5"
+      )}
+     >
+      <span className={cn("w-4 h-4 rounded-sm flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0", firm.color)}>
+       {firm.initials[0]}
+      </span>
+      {firm.name}
+     </button>
+    ))}
+   </div>
+
+   {/* Tab + actions */}
+   <div className="px-6 pt-4 pb-3 flex items-center justify-between gap-3 flex-wrap">
+    <div className="flex gap-0.5 bg-muted/50 rounded-lg p-1">
+     {(["header", "footer", "signature"] as const).map(t => (
+      <button
+       key={t}
+       onClick={() => { setTab(t); setSearch(""); }}
+       className={cn(
+        "px-4 py-1.5 rounded-md text-sm font-medium transition-colors capitalize",
+        tab === t ? "bg-primary text-white shadow-sm" : "text-muted-foreground hover:text-foreground"
+       )}
+      >
+       {t.charAt(0).toUpperCase() + t.slice(1)}
+      </button>
+     ))}
+    </div>
+    <div className="flex items-center gap-2">
+     <div className="relative">
+      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+      <Input
+       placeholder="Search"
+       value={search}
+       onChange={e => setSearch(e.target.value)}
+       className="pl-8 h-8 w-40 text-sm"
+      />
+     </div>
+     <Button
+      size="sm"
+      className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white gap-1.5"
+      onClick={addItem}
+     >
+      <Plus className="h-3.5 w-3.5" />
+      Add {labelCap}
+     </Button>
+    </div>
+   </div>
+
+   {/* Content */}
+   <div className="flex-1 overflow-auto px-6 pb-6">
+    {(tab === "header" || tab === "footer") && (() => {
+     const items = tab === "header" ? filteredHeaders : filteredFooters;
+     const setDefault = (id: string) => tab === "header"
+      ? save({ ...data, headers: data.headers.map(h => ({ ...h, isDefault: h.id === id })) })
+      : save({ ...data, footers: data.footers.map(f => ({ ...f, isDefault: f.id === id })) });
+     const deleteItem = (id: string) => tab === "header"
+      ? save({ ...data, headers: data.headers.filter(h => h.id !== id) })
+      : save({ ...data, footers: data.footers.filter(f => f.id !== id) });
+     const setAlign = (id: string, a: "left"|"center"|"right") => tab === "header"
+      ? save({ ...data, headers: data.headers.map(h => h.id === id ? { ...h, alignment: a } : h) })
+      : save({ ...data, footers: data.footers.map(f => f.id === id ? { ...f, alignment: a } : f) });
+     const setStretch = (id: string, v: boolean) => tab === "header"
+      ? save({ ...data, headers: data.headers.map(h => h.id === id ? { ...h, stretchToFit: v } : h) })
+      : save({ ...data, footers: data.footers.map(f => f.id === id ? { ...f, stretchToFit: v } : f) });
+     return (
+      <div className="space-y-4">
+       {items.length === 0 && (
+        <div className="flex items-center justify-center h-40 text-muted-foreground text-sm border border-dashed rounded-xl">
+         No {tab}s yet — click "+ Add {labelCap}" to upload one.
+        </div>
+       )}
+       {items.map(item => (
+        <div key={item.id} className="border border-border rounded-xl p-4 space-y-3">
+         <div className="flex items-center justify-between">
+          <span className="text-sm font-semibold">{item.name}</span>
+          <div className="flex items-center gap-2">
+           <span className="text-sm text-muted-foreground">Set as Default</span>
+           <Switch checked={item.isDefault} onCheckedChange={() => setDefault(item.id)} />
+          </div>
+         </div>
+         {tab === "header" ? <HeaderPreview /> : <FooterPreview />}
+         <div className="flex items-center justify-between">
+          <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer select-none">
+           <input type="checkbox" checked={item.stretchToFit} onChange={e => setStretch(item.id, e.target.checked)} className="rounded" />
+           Stretch to Fit
+          </label>
+          <div className="flex items-center gap-0.5">
+           {(["left","center","right"] as const).map(a => (
+            <button
+             key={a}
+             onClick={() => setAlign(item.id, a)}
+             title={`Align ${a}`}
+             className={cn(
+              "w-7 h-7 rounded flex items-center justify-center transition-colors",
+              item.alignment === a ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+             )}
+            >
+             {a === "left" && <AlignLeft className="h-4 w-4" />}
+             {a === "center" && <AlignCenter className="h-4 w-4" />}
+             {a === "right" && <AlignRight className="h-4 w-4" />}
+            </button>
+           ))}
+           <button
+            onClick={() => deleteItem(item.id)}
+            className="w-7 h-7 ml-1 rounded flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors"
+            title="Delete"
+           >
+            <Trash2 className="h-4 w-4" />
+           </button>
+          </div>
+         </div>
+        </div>
+       ))}
+      </div>
+     );
+    })()}
+
+    {tab === "signature" && (
+     <div className="grid grid-cols-2 gap-4">
+      {filteredSigs.length === 0 && (
+       <div className="col-span-2 flex items-center justify-center h-40 text-muted-foreground text-sm border border-dashed rounded-xl">
+        No signatures yet — click "+ Add Signature" to create one.
+       </div>
+      )}
+      {filteredSigs.map((sig, i) => (
+       <div key={sig.id} className="border border-border rounded-xl p-4 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+         <span className="text-sm font-semibold truncate">{sig.name}</span>
+         <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="text-xs text-muted-foreground">Set as Default</span>
+          <Switch
+           checked={sig.isDefault}
+           onCheckedChange={() => save({ ...data, signatures: data.signatures.map(s => ({ ...s, isDefault: s.id === sig.id })) })}
+          />
+          <button
+           onClick={() => save({ ...data, signatures: data.signatures.filter(s => s.id !== sig.id) })}
+           className="w-6 h-6 ml-0.5 rounded flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors"
+           title="Delete"
+          >
+           <Trash2 className="h-3.5 w-3.5" />
+          </button>
+         </div>
+        </div>
+        <SignaturePreview name={sig.name} index={i} />
+       </div>
+      ))}
+     </div>
+    )}
+   </div>
   </div>
  );
 }
