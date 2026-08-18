@@ -25,6 +25,10 @@ const CLIENT_DATA: Record<string, {
   integrations: string[];
   businessPhone: string;
   cellPhone: string;
+  industryType: string;
+  clientCountry: string;
+  hasQuebecPersonalInfo: boolean;
+  isUsTaxpayer: boolean;
 }> = {
   "Harbor Freight Logistics LLC": {
     entityLegalName: "Harbor Freight Logistics LLC",
@@ -34,6 +38,10 @@ const CLIENT_DATA: Record<string, {
     integrations: ["quickbooks"],
     businessPhone: "+1 (604) 555-0192",
     cellPhone: "-",
+    industryType: "Transportation & Logistics",
+    clientCountry: "ca",
+    hasQuebecPersonalInfo: false,
+    isUsTaxpayer: false,
   },
   "Shipping Line Inc.": {
     entityLegalName: "Shipping Line Inc.",
@@ -43,6 +51,10 @@ const CLIENT_DATA: Record<string, {
     integrations: ["quickbooks"],
     businessPhone: "+1 (604) 555-0134",
     cellPhone: "+1 (778) 555-0221",
+    industryType: "Transportation & Logistics",
+    clientCountry: "ca",
+    hasQuebecPersonalInfo: false,
+    isUsTaxpayer: false,
   },
   "John Doe Inc.": {
     entityLegalName: "John Doe Inc.",
@@ -52,6 +64,10 @@ const CLIENT_DATA: Record<string, {
     integrations: ["quickbooks"],
     businessPhone: "-",
     cellPhone: "-",
+    industryType: "Professional Services",
+    clientCountry: "us",
+    hasQuebecPersonalInfo: false,
+    isUsTaxpayer: true,
   },
 };
 
@@ -361,6 +377,7 @@ export default function CreateNewEngagement() {
   const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstTimeAdoption, setFirstTimeAdoption] = useState(false);
+  const [sevenSixteenConsented, setSevenSixteenConsented] = useState<boolean>(false);
 
   // Section 4: Engagement Period
   const [periodType, setPeriodType] = useState("Full Year");
@@ -448,18 +465,20 @@ export default function CreateNewEngagement() {
     }
   };
 
-  const accountingStandardsOptions = isAudit
-    ? ACCOUNTING_FRAMEWORKS.map(fw => ({ value: fw, label: fw }))
-    : [
-      { value: "Section 2400 Review standards", label: "Section 2400 Review standards" },
-      { value: "CSRE 2400 — Review of Historical Financial Statements", label: "CSRE 2400 — Review of Historical Financial Statements" },
-      { value: "ASPE", label: "ASPE" },
-      { value: "IFRS", label: "IFRS" },
-      { value: "ASNPO — Accounting Standards for Not-for-Profit Organizations", label: "ASNPO — Accounting Standards for Not-for-Profit Organizations" },
-      { value: "PSAB — Public Sector Accounting Standards", label: "PSAB — Public Sector Accounting Standards" },
-      { value: "Pension Plans Accounting Standards", label: "Pension Plans Accounting Standards" },
-      { value: "CSRS 4200 — Compilation Engagements", label: "CSRS 4200 — Compilation Engagements" },
+  const accountingStandardsOptions = (() => {
+    const frameworks = isAudit ? ACCOUNTING_FRAMEWORKS : [
+      "ASPE — Canadian Accounting Standards for Private Enterprises",
+      "IFRS — International Financial Reporting Standards",
+      "US GAAP — Generally Accepted Accounting Principles (United States)",
+      "Tax Basis", "Cash Basis", "Modified Cash Basis",
     ];
+    if (clientInfo?.clientCountry === "us") {
+      const usFirst = frameworks.filter(fw => fw.includes("US GAAP") || fw.includes("PCAOB"));
+      const rest = frameworks.filter(fw => !fw.includes("US GAAP") && !fw.includes("PCAOB"));
+      return [...usFirst, ...rest].map(fw => ({ value: fw, label: fw }));
+    }
+    return frameworks.map(fw => ({ value: fw, label: fw }));
+  })();
 
   const disclosureOptions = [
     { value: "Statement of cash flows", label: "Statement of cash flows" },
@@ -597,6 +616,8 @@ export default function CreateNewEngagement() {
                 <div className="mt-1 pt-1 border-t border-border/40">
                   <InlineRow label="Entity legal name"><span className="text-sm text-foreground">{clientInfo.entityLegalName}</span></InlineRow>
                   <InlineRow label="Entity type"><span className="text-sm text-foreground">{clientInfo.entityType}</span></InlineRow>
+                  <InlineRow label="Client country"><span className="text-sm text-foreground">{clientInfo.clientCountry === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"}</span></InlineRow>
+                  <InlineRow label="Industry"><span className="text-sm text-foreground">{clientInfo.industryType}</span></InlineRow>
                   <InlineRow label="Contact person"><span className="text-sm text-foreground">{clientInfo.contactPerson}</span></InlineRow>
                   <InlineRow label="Engagement partner"><span className="text-sm text-link font-medium cursor-pointer hover:underline">{clientInfo.engagementPartner}</span></InlineRow>
                   <InlineRow label="Integrations">
@@ -606,6 +627,16 @@ export default function CreateNewEngagement() {
                   </InlineRow>
                   <InlineRow label="Business phone"><span className="text-sm text-foreground">{clientInfo.businessPhone}</span></InlineRow>
                   <InlineRow label="Cell phone"><span className="text-sm text-foreground">{clientInfo.cellPhone}</span></InlineRow>
+                  <InlineRow label="Quebec personal info">
+                    <span className={`text-sm font-medium ${clientInfo.hasQuebecPersonalInfo ? "text-amber-600" : "text-muted-foreground"}`}>
+                      {clientInfo.hasQuebecPersonalInfo ? "Yes" : "No"}
+                    </span>
+                  </InlineRow>
+                  <InlineRow label="US taxpayer">
+                    <span className={`text-sm font-medium ${clientInfo.isUsTaxpayer ? "text-amber-600" : "text-muted-foreground"}`}>
+                      {clientInfo.isUsTaxpayer ? "Yes" : "No"}
+                    </span>
+                  </InlineRow>
                 </div>
               )}
             </SectionCard>
@@ -698,6 +729,53 @@ export default function CreateNewEngagement() {
                         </div>
                       )}
                     </div>
+                    {(clientInfo?.isUsTaxpayer || clientInfo?.hasQuebecPersonalInfo) && (
+                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Compliance Requirements</p>
+                        {clientInfo?.isUsTaxpayer && (
+                          <div className={`rounded-md border p-3 space-y-2 ${sevenSixteenConsented ? "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/30" : "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/30"}`}>
+                            <div className="flex items-start gap-2">
+                              <span className={`text-xs mt-0.5 ${sevenSixteenConsented ? "text-green-500" : "text-amber-500"}`}>
+                                {sevenSixteenConsented ? "✓" : "⚠"}
+                              </span>
+                              <div className="flex-1">
+                                <p className={`text-xs font-medium ${sevenSixteenConsented ? "text-green-700 dark:text-green-400" : "text-amber-700 dark:text-amber-400"}`}>
+                                  IRC §7216 Consent Required
+                                </p>
+                                <p className={`text-xs mt-0.5 ${sevenSixteenConsented ? "text-green-600 dark:text-green-500" : "text-amber-600 dark:text-amber-500"}`}>
+                                  This client is a US taxpayer. The firm must obtain IRC §7216 consent before disclosing tax return information to any third party, including this platform. Confirm the consent form has been issued and signed before proceeding.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 pt-1">
+                              <input
+                                type="checkbox"
+                                id="seven-sixteen-consent"
+                                checked={sevenSixteenConsented}
+                                onChange={e => setSevenSixteenConsented(e.target.checked)}
+                                className="accent-primary"
+                              />
+                              <label htmlFor="seven-sixteen-consent" className="text-xs text-foreground cursor-pointer">
+                                I confirm the §7216 consent form has been issued to and signed by this client
+                              </label>
+                            </div>
+                          </div>
+                        )}
+                        {clientInfo?.hasQuebecPersonalInfo && (
+                          <div className="rounded-md border bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/30 p-3 space-y-1 mt-2">
+                            <div className="flex items-start gap-2">
+                              <span className="text-blue-500 text-xs mt-0.5">ℹ</span>
+                              <div>
+                                <p className="text-xs font-medium text-blue-700 dark:text-blue-400">Quebec Law 25 — Transfer Impact Assessment</p>
+                                <p className="text-xs mt-0.5 text-blue-600 dark:text-blue-500">
+                                  This client involves personal information of Quebec residents. The firm is required to complete a Privacy Impact Assessment (PIA) and Transfer Impact Assessment (TIA) before transferring this data outside Quebec. A TIA template will be available in the engagement documents section.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="px-5 py-8 text-center">
