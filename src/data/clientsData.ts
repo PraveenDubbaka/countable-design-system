@@ -24,6 +24,10 @@ export interface Client {
  businessPhone: string | null;
  cellPhone: string | null;
  engagements: ClientEngagement[];
+ clientCountry: "ca" | "us";
+ industryType?: string;
+ hasQuebecPersonalInfo?: boolean;
+ isUsTaxpayer?: boolean;
 }
 
 export const clientsData: Client[] = [
@@ -43,6 +47,8 @@ export const clientsData: Client[] = [
  assignedTeam: 'Audit Team',
  businessPhone: '905-555-0142',
  cellPhone: null,
+ clientCountry: 'ca',
+ industryType: 'Manufacturing',
  engagements: [
    {
      id: 'AUD-NPM-Dec312025',
@@ -70,6 +76,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: null,
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-CRT-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
  { id: 'AUD-CRT-Dec312023', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 10, 2024 11:00 AM' },
@@ -93,6 +100,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: null,
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-CSV-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Dec 20, 2024 02:00 PM' },
  { id: 'COM-CSV-Dec312023', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2023', status: 'Archived', dateCreated: 'Jan 05, 2024 09:45 AM' },
@@ -114,6 +122,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(416) 555-0134',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-S41-Mar312025', type: 'Audit (AUD)', periodEnd: 'Mar 31, 2025', status: 'In Progress', dateCreated: 'Apr 10, 2025 10:00 AM' },
  { id: 'AUD-S41-Mar312024', type: 'Audit (AUD)', periodEnd: 'Mar 31, 2024', status: 'Completed', dateCreated: 'Apr 08, 2024 09:30 AM' },
@@ -137,6 +146,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: null,
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-XV-Jun302025', type: 'Compilation (COM)', periodEnd: 'Jun 30, 2025', status: 'In Progress', dateCreated: 'Jul 15, 2025 03:00 PM' },
  { id: 'COM-XV-Jun302024', type: 'Compilation (COM)', periodEnd: 'Jun 30, 2024', status: 'In Progress', hasRF: true, dateCreated: 'Jul 12, 2024 02:30 PM' },
@@ -163,6 +173,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(604) 555-0198',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-FST-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 20, 2025 08:00 AM' },
  { id: 'AUD-FST-Dec312023', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 18, 2024 09:00 AM' },
@@ -185,6 +196,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: null,
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-CON-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 21, 2026 09:00 AM' },
  ],
@@ -205,6 +217,7 @@ export const clientsData: Client[] = [
  assignedTeam: 'Norbert',
  businessPhone: null,
  cellPhone: '(123) 456-7876',
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-UAT-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Dec 15, 2024 01:00 PM' },
  { id: 'COM-UAT-Dec312023', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2023', status: 'Archived', dateCreated: 'Dec 10, 2023 10:00 AM' },
@@ -226,6 +239,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: null,
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-GIG-Apr302026', type: 'Compilation (COM)', periodEnd: 'Apr 30, 2026', status: 'In Progress', dateCreated: 'Jun 28, 2026 02:10 AM' },
  { id: 'COM-GIG-Feb282026', type: 'Compilation (COM)', periodEnd: 'Feb 28, 2026', status: 'In Progress', dateCreated: 'Jun 12, 2026 07:18 PM' },
@@ -251,6 +265,7 @@ export const clientsData: Client[] = [
  assignedTeam: 'Lisa T.',
  businessPhone: '(905) 555-0172',
  cellPhone: '(905) 555-0173',
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-AYP-Dec312025', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2025', status: 'In Progress', dateCreated: 'Feb 01, 2026 10:00 AM' },
  { id: 'AUD-AYP-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'Completed', dateCreated: 'Jan 28, 2025 09:00 AM' },
@@ -273,6 +288,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(647) 555-0229',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-MON-Sep302025', type: 'Compilation (COM)', periodEnd: 'Sep 30, 2025', status: 'In Progress', dateCreated: 'Oct 15, 2025 11:00 AM' },
  { id: 'COM-MON-Sep302024', type: 'Compilation (COM)', periodEnd: 'Sep 30, 2024', status: 'In Progress', hasRF: true, dateCreated: 'Oct 12, 2024 10:00 AM' },
@@ -295,6 +311,7 @@ export const clientsData: Client[] = [
  assignedTeam: 'Audit Team A',
  businessPhone: '(416) 555-0101',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-SL-Mar312024', type: 'Audit (AUD)', periodEnd: 'Mar 31, 2024', status: 'In Progress', dateCreated: 'Jan 21, 2026 10:00 AM' },
  { id: 'COM-CON-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 21, 2026 09:00 AM' },
@@ -317,6 +334,8 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(310) 555-0188',
  cellPhone: null,
+ clientCountry: 'us',
+ isUsTaxpayer: true,
  engagements: [
  { id: 'AUD-US-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 20, 2025 08:00 AM' },
  { id: 'AUD-HF-Dec312023', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 15, 2024 09:00 AM' },
@@ -338,6 +357,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: null,
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-QB-Dec312025', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2025', status: 'In Progress', hasRF: true, dateCreated: 'Jan 16, 2026 01:15 PM' },
  { id: 'COM-QB-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 13, 2026 01:36 AM' },
@@ -360,6 +380,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(250) 555-0144',
  cellPhone: '(250) 555-0145',
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-TOF-Mar312025', type: 'Compilation (COM)', periodEnd: 'Mar 31, 2025', status: 'In Progress', dateCreated: 'Apr 20, 2025 09:00 AM' },
  { id: 'COM-TOF-Mar312024', type: 'Compilation (COM)', periodEnd: 'Mar 31, 2024', status: 'Archived', dateCreated: 'Apr 18, 2024 10:00 AM' },
@@ -381,6 +402,7 @@ export const clientsData: Client[] = [
  assignedTeam: 'Lisa T.',
  businessPhone: '(514) 555-0217',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-RIV-Jun302025', type: 'Audit (AUD)', periodEnd: 'Jun 30, 2025', status: 'In Progress', dateCreated: 'Jul 10, 2025 11:00 AM' },
  { id: 'AUD-RIV-Jun302024', type: 'Audit (AUD)', periodEnd: 'Jun 30, 2024', status: 'Completed', dateCreated: 'Jul 08, 2024 10:00 AM' },
@@ -403,6 +425,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(778) 555-0263',
  cellPhone: '(778) 555-0264',
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-PIN-Dec312025', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2025', status: 'New', dateCreated: 'Jan 05, 2026 08:00 AM' },
  { id: 'AUD-PIN-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 03, 2025 09:00 AM' },
@@ -424,6 +447,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(613) 555-0309',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-NVP-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Feb 14, 2025 02:00 PM' },
  ],
@@ -444,6 +468,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(780) 555-0341',
  cellPhone: '(780) 555-0342',
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-BOR-Jun302025', type: 'Compilation (COM)', periodEnd: 'Jun 30, 2025', status: 'In Progress', dateCreated: 'Jul 20, 2025 10:30 AM' },
  { id: 'COM-BOR-Jun302024', type: 'Compilation (COM)', periodEnd: 'Jun 30, 2024', status: 'Completed', dateCreated: 'Jul 18, 2024 09:30 AM' },
@@ -465,6 +490,7 @@ export const clientsData: Client[] = [
  assignedTeam: 'Audit Team A',
  businessPhone: '(604) 555-0412',
  cellPhone: null,
+ clientCountry: 'ca',
  engagements: [
  { id: 'AUD-EVG-Mar312026', type: 'Audit (AUD)', periodEnd: 'Mar 31, 2026', status: 'New', dateCreated: 'Apr 02, 2026 08:00 AM' },
  { id: 'AUD-EVG-Mar312025', type: 'Audit (AUD)', periodEnd: 'Mar 31, 2025', status: 'Completed', dateCreated: 'Apr 01, 2025 09:00 AM' },
@@ -487,6 +513,7 @@ export const clientsData: Client[] = [
  assignedTeam: null,
  businessPhone: '(519) 555-0488',
  cellPhone: '(519) 555-0489',
+ clientCountry: 'ca',
  engagements: [
  { id: 'COM-MHF-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 10, 2025 08:00 AM' },
  ],
