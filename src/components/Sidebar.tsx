@@ -3530,15 +3530,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
       variant="destructive"
       className="flex-1"
       onClick={() => {
-       const remaining = myEngagementTemplates.filter(t => !engMySelectedIds.has(t.id));
+       setEngMyDeleteConfirmOpen(false);
+       const toDelete = new Set(engMySelectedIds);
+       const count = toDelete.size;
+       const remaining = myEngagementTemplates.filter(t => !toDelete.has(t.id));
        writeJsonToLocalStorage("myEngagementTemplates", remaining);
        setMyEngagementTemplates(remaining);
-       if (searchParams.get("myTemplate") && engMySelectedIds.has(searchParams.get("myTemplate")!)) {
+       setEngMySelectedIds(new Set());
+       if (searchParams.get("myTemplate") && toDelete.has(searchParams.get("myTemplate")!)) {
         setSearchParams({}, { replace: true });
        }
-       toast.success(`${engMySelectedIds.size} template${engMySelectedIds.size > 1 ? "s" : ""} deleted`);
-       setEngMySelectedIds(new Set());
-       setEngMyDeleteConfirmOpen(false);
+       toast.success(`${count} template${count > 1 ? "s" : ""} deleted`);
       }}
      >Delete</Button>
     </div>
