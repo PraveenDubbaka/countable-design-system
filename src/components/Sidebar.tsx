@@ -32,6 +32,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { LukaIcon } from "@/components/LukaIcon";
@@ -1713,6 +1714,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   city: "",
  });
 
+ const [firmPopoverOpen, setFirmPopoverOpen] = useState(false);
+ const firmCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+ const openFirmPopover = () => { if (firmCloseTimer.current) clearTimeout(firmCloseTimer.current); setFirmPopoverOpen(true); };
+ const scheduleFirmClose = () => { firmCloseTimer.current = setTimeout(() => setFirmPopoverOpen(false), 180); };
+
  // Sync with SettingsPanel when firm data changes there
  useEffect(() => {
   const handler = () => {
@@ -2020,77 +2026,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  )}
  </div>
 
- {/* Firm Switcher */}
- {isNavExpanded ? (
-  <div className="px-2 pb-2">
-   <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-     <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-white/10 transition-colors group text-left">
-      <div className={cn("w-7 h-7 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", activeFirm.color)}>
-       {activeFirm.initials}
-      </div>
-      <div className="flex-1 min-w-0">
-       <p className="text-white text-[12px] font-semibold truncate leading-tight">{activeFirm.name}</p>
-       <p className="text-white/50 text-[10px] truncate leading-tight">
-        {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.city}
-       </p>
-      </div>
-      <ChevronDown className="h-3.5 w-3.5 text-white/40 group-hover:text-white/70 flex-shrink-0" />
-     </button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="start" className="w-64 p-2" sideOffset={4}>
-     <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-2 pb-2">Switch Office</p>
-     {firmProfiles.map(firm => (
-      <DropdownMenuItem
-       key={firm.id}
-       onClick={() => { setActiveFirmId(firm.id); localStorage.setItem("activeFirmId", firm.id); window.dispatchEvent(new CustomEvent("firm-profiles-updated")); }}
-       className={cn(
-        "flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer",
-        activeFirmId === firm.id && "bg-primary/10"
-       )}
-      >
-       <div className={cn("w-8 h-8 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
-        {firm.initials}
-       </div>
-       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">{firm.name}</p>
-        <p className="text-xs text-muted-foreground truncate">
-         {firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}
-        </p>
-       </div>
-       {activeFirmId === firm.id && (
-        <svg className="h-4 w-4 text-primary flex-shrink-0" viewBox="0 0 16 16" fill="none">
-         <path d="M3 8l3.5 3.5L13 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-       )}
-      </DropdownMenuItem>
-     ))}
-     <DropdownMenuSeparator />
-     <DropdownMenuItem
-      className="flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer text-primary"
-      onClick={() => {
-       setNewFirmStep(1);
-       setNewFirmData({ name: "", region: "ca", city: "" });
-       setRegisterFirmOpen(true);
-      }}
-     >
-      <Plus className="h-4 w-4" />
-      <span className="text-sm font-medium">Register new office</span>
-     </DropdownMenuItem>
-    </DropdownMenuContent>
-   </DropdownMenu>
-  </div>
- ) : (
-  <div className="flex justify-center pb-2">
-   <div
-    className={cn("w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity", activeFirm.color)}
-    title={activeFirm.name}
-   >
-    {activeFirm.initials}
-   </div>
-  </div>
- )}
-
  {/* Nav items */}
  {navItems.map((item, index) => {
  const isTemplatesItem = item.label === "Templates";
@@ -2126,7 +2061,72 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {!isNavExpanded && <TooltipContent side="right">Support</TooltipContent>}
  </Tooltip>
 
-
+ {/* Firm badge — icon-only, always at bottom */}
+ <div className={cn("pb-3 pt-1", isNavExpanded ? "px-2" : "flex justify-center")}>
+  <Popover open={firmPopoverOpen} onOpenChange={setFirmPopoverOpen}>
+   <PopoverTrigger asChild>
+    <button
+     onMouseEnter={openFirmPopover}
+     onMouseLeave={scheduleFirmClose}
+     onClick={() => setFirmPopoverOpen(v => !v)}
+     className={cn(
+      "w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/30",
+      activeFirm.color
+     )}
+     title={activeFirm.name}
+    >
+     {activeFirm.initials}
+    </button>
+   </PopoverTrigger>
+   <PopoverContent
+    side="right"
+    align="end"
+    sideOffset={8}
+    className="w-64 p-2"
+    onMouseEnter={openFirmPopover}
+    onMouseLeave={scheduleFirmClose}
+   >
+    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-2 pb-2">Switch Office</p>
+    {firmProfiles.map(firm => (
+     <button
+      key={firm.id}
+      onClick={() => {
+       setActiveFirmId(firm.id);
+       localStorage.setItem("activeFirmId", firm.id);
+       window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+       setFirmPopoverOpen(false);
+      }}
+      className={cn(
+       "w-full flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors text-left",
+       activeFirmId === firm.id && "bg-primary/10"
+      )}
+     >
+      <div className={cn("w-8 h-8 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
+       {firm.initials}
+      </div>
+      <div className="flex-1 min-w-0">
+       <p className="text-sm font-medium text-foreground truncate">{firm.name}</p>
+       <p className="text-xs text-muted-foreground truncate">
+        {firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}
+       </p>
+      </div>
+      {activeFirmId === firm.id && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
+     </button>
+    ))}
+    <div className="border-t border-border my-1" />
+    <button
+     className="w-full flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors text-primary text-left"
+     onClick={() => {
+      setFirmPopoverOpen(false);
+      window.dispatchEvent(new CustomEvent("open-settings-firm-info", { detail: { showAddOffice: true } }));
+     }}
+    >
+     <Plus className="h-4 w-4" />
+     <span className="text-sm font-medium">Add Office</span>
+    </button>
+   </PopoverContent>
+  </Popover>
+ </div>
 
  </div>
 

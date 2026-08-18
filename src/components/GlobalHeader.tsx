@@ -25,6 +25,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  const { isDarkMode, toggleTheme } = useThemeContext();
  const [askLukaQuery, setAskLukaQuery] = useState("");
  const [settingsOpen, setSettingsOpen] = useState(false);
+ const [settingsFirmNav, setSettingsFirmNav] = useState<{ tab: string; addOffice: boolean } | null>(null);
  const [askLukaOpen, setAskLukaOpen] = useState(() => getLukaOpen());
  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
  const [notifSearch, setNotifSearch] = useState("");
@@ -58,6 +59,16 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
 
  useEffect(() => subscribeEnabled(setTtEnabled), []);
  useEffect(() => subscribeEngagements(setTtEngagements), []);
+
+ useEffect(() => {
+  const handler = (e: Event) => {
+   const detail = (e as CustomEvent).detail ?? {};
+   setSettingsFirmNav({ tab: "firm-info", addOffice: !!detail.showAddOffice });
+   setSettingsOpen(true);
+  };
+  window.addEventListener("open-settings-firm-info", handler);
+  return () => window.removeEventListener("open-settings-firm-info", handler);
+ }, []);
 
  const fmtTrackerTime = (s: number) => {
  const h = Math.floor(s / 3600).toString().padStart(2, '0');
@@ -471,7 +482,11 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  </header>
 
  {/* Settings Panel */}
- <SettingsPanel open={settingsOpen} onOpenChange={setSettingsOpen} />
+ <SettingsPanel
+  open={settingsOpen}
+  onOpenChange={(o) => { setSettingsOpen(o); if (!o) setSettingsFirmNav(null); }}
+  firmNav={settingsFirmNav}
+ />
 
  {/* Ask Luka Overlay */}
  <AskLukaOverlay open={askLukaOpen} onOpenChange={(o) => { setAskLukaOpen(o); setLukaOpen(o); }} />
