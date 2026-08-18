@@ -3336,7 +3336,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
     <Input
      placeholder="Search"
-     className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")}
+     className={cn("pl-8 h-9 text-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40 border-0" : "")}
      value={engMySearchQuery}
      onChange={e => setEngMySearchQuery(e.target.value)}
     />
