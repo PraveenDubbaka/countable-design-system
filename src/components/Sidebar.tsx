@@ -28,6 +28,7 @@ import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, F
 import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
@@ -3896,20 +3897,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      <X className={cn("h-4 w-4", hasDarkSecondary ? "text-white/60" : "text-muted-foreground")} />
     </button>
    </div>
-   <div className={cn("flex gap-1 px-3 py-2 flex-shrink-0 border-b", hasDarkSecondary ? "border-white/10" : "border-border")}>
-    {(["CA", "US"] as const).map(c => (
-     <button
-      key={c}
-      onClick={() => { setEngPickerCountry(c); setEngTemplateExpandedFolders(new Set()); setSelectedEngTemplates(new Set()); }}
-      className={cn("flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors",
-       engPickerCountry === c
-        ? (hasDarkSecondary ? "bg-white/20 text-white" : "bg-primary text-primary-foreground")
-        : (hasDarkSecondary ? "text-white/50 hover:bg-white/10" : "text-muted-foreground hover:bg-muted")
-      )}
-     >
-      {c === "CA" ? "🇨🇦 Canada" : "🇺🇸 United States"}
-     </button>
-    ))}
+   <div className={cn("px-3 py-2 flex-shrink-0 border-b", hasDarkSecondary ? "border-white/10" : "border-border")}>
+    <Select
+     value={engPickerCountry}
+     onValueChange={(v) => { setEngPickerCountry(v as "CA" | "US"); setEngTemplateExpandedFolders(new Set()); setSelectedEngTemplates(new Set()); }}
+    >
+     <SelectTrigger className={cn("h-8 text-xs font-medium w-full", hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "")}>
+      <SelectValue />
+     </SelectTrigger>
+     <SelectContent>
+      <SelectItem value="CA">🇨🇦 Canada</SelectItem>
+      <SelectItem value="US">🇺🇸 United States</SelectItem>
+     </SelectContent>
+    </Select>
    </div>
    <div className="p-3 flex gap-2 flex-shrink-0">
     <div className="relative flex-1">
