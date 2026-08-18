@@ -49,17 +49,6 @@ interface BulkAddToMyTemplatesDialogProps {
  getTemplateViewData?: (templateId: string) => TemplateView | null;
 }
 
-const initialFolders: Template[] = [
- { id: "1", name: "Before Release V22Comp", type: "folder", children: [] },
- { id: "2", name: "Before Release V22 Revi...", type: "folder", children: [] },
- { id: "3", name: "Carissa_13208", type: "folder", children: [] },
- { id: "4", name: "carisa 37.3", type: "folder", children: [] },
- { id: "5", name: "Compilation Checklists", type: "folder", children: [] },
- { id: "6", name: "release 38 before", type: "folder", children: [] },
- { id: "7", name: "Review Checklists", type: "folder", children: [] },
- { id: "8", name: "Tax Release", type: "folder", children: [] },
-];
-
 export function BulkAddToMyTemplatesDialog({
  open,
  onOpenChange,
@@ -69,9 +58,9 @@ export function BulkAddToMyTemplatesDialog({
  variant = "checklist",
  getTemplateViewData,
 }: BulkAddToMyTemplatesDialogProps) {
- const [folderOption, setFolderOption] = useState<'existing' | 'new'>('existing');
+ const [folderOption, setFolderOption] = useState<'existing' | 'new'>('new');
  const [selectedFolder, setSelectedFolder] = useState<string>('');
- const [folders, setFolders] = useState<Template[]>(initialFolders);
+ const [folders, setFolders] = useState<Template[]>([]);
  const [newFolderName, setNewFolderName] = useState('');
 
  // Get checklist counts per folder
@@ -84,14 +73,35 @@ export function BulkAddToMyTemplatesDialog({
  return counts;
  }, [folders, open]);
 
- // Reset state when dialog opens
+ // Load real folders from localStorage when dialog opens
  useEffect(() => {
  if (open) {
- setFolderOption('existing');
- setSelectedFolder('');
- setNewFolderName('');
+  const realFolders: Template[] = [];
+  if (variant === "engagement") {
+   const stored = readJsonFromLocalStorage<MyEngagementTemplate[]>('myEngagementTemplates', []);
+   const seen = new Set<string>();
+   for (const t of stored) {
+    if (!seen.has(t.folderId)) {
+     seen.add(t.folderId);
+     realFolders.push({ id: t.folderId, name: t.folderName, type: 'folder', children: [] });
+    }
+   }
+  } else {
+   const stored = readJsonFromLocalStorage<SavedChecklist[]>('savedChecklists', []);
+   const seen = new Set<string>();
+   for (const c of stored) {
+    if (c.folderId && !seen.has(c.folderId)) {
+     seen.add(c.folderId);
+     realFolders.push({ id: c.folderId, name: (c as any).folderName || c.folderId, type: 'folder', children: [] });
+    }
+   }
+  }
+  setFolders(realFolders);
+  setFolderOption(realFolders.length > 0 ? 'existing' : 'new');
+  setSelectedFolder('');
+  setNewFolderName('');
  }
- }, [open]);
+ }, [open, variant]);
 
  const handleSave = () => {
  let targetFolder: Template | undefined;
@@ -227,10 +237,12 @@ export function BulkAddToMyTemplatesDialog({
  onValueChange={(val) => setFolderOption(val as 'existing' | 'new')}
  className="space-y-2"
  >
+ {folders.length > 0 && (
  <div className="flex items-center space-x-2">
  <RadioGroupItem value="existing" id="existing" />
  <Label htmlFor="existing" className="cursor-pointer">Existing folder</Label>
  </div>
+ )}
  <div className="flex items-center space-x-2">
  <RadioGroupItem value="new" id="new" />
  <Label htmlFor="new" className="cursor-pointer">Create new folder</Label>
