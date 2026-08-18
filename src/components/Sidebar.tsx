@@ -716,7 +716,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Multi-select state for Engagement Templates tree
  const [selectedEngTemplates, setSelectedEngTemplates] = useState<Set<string>>(new Set());
  const [engBulkAddDialogOpen, setEngBulkAddDialogOpen] = useState(false);
- const [engActiveTab, setEngActiveTab] = useState<"my" | "global">("global");
+ const [engActiveTab, setEngActiveTab] = useState<"my" | "global">("my");
+ const [engPickerOpen, setEngPickerOpen] = useState(false);
  const [myEngagementTemplates, setMyEngagementTemplates] = useState<import("@/lib/engagementTemplatesData").MyEngagementTemplate[]>(() =>
  readJsonFromLocalStorage("myEngagementTemplates", [])
  );
@@ -3313,87 +3314,28 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {/* Engagement Templates tree view */}
  {selectedDropdown === "engagements" ? (
  <>
- <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
- borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+ <div className={cn("flex items-center justify-between px-3 py-2 flex-shrink-0", isTemplatesPanelCollapsed ? "hidden" : "")} style={{
+  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
  }}>
- <button onClick={() => setEngActiveTab("my")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${engActiveTab === "my" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- My Templates
- </button>
- <button onClick={() => setEngActiveTab("global")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${engActiveTab === "global" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- Global Templates
- </button>
+  <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>My Templates</span>
+  <Tooltip>
+   <TooltipTrigger asChild>
+    <button
+     className={cn("h-7 w-7 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
+     onClick={() => { setEngPickerOpen(true); setSelectedEngTemplates(new Set()); setEngTemplateSearchQuery(""); }}
+    >
+     <Plus className={cn("h-4 w-4", hasDarkSecondary ? "text-white" : "text-primary")} />
+    </button>
+   </TooltipTrigger>
+   <TooltipContent>Add from Global Templates</TooltipContent>
+  </Tooltip>
  </div>
 
- {engActiveTab === "global" ? (
- <>
- <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- <div className="flex gap-2">
- <div className="relative flex-1">
- <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
- <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={engTemplateSearchQuery} onChange={e => setEngTemplateSearchQuery(e.target.value)} />
- </div>
- <Tooltip>
- <TooltipTrigger asChild>
- <button
- className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-colors flex-shrink-0", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
- onClick={handleEngExpandCollapseAll}
- >
- {allEngExpanded ? (
- <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
- <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
- </svg>
- ) : (
- <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
- <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
- </svg>
- )}
- </button>
- </TooltipTrigger>
- <TooltipContent>{allEngExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
- </Tooltip>
- <Tooltip>
- <TooltipTrigger asChild>
- <Button
- size="icon"
- className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0"
- disabled={selectedEngTemplates.size === 0}
- onClick={() => setEngBulkAddDialogOpen(true)}
- >
- <Files className="h-4 w-4 text-primary-foreground" />
- </Button>
- </TooltipTrigger>
- <TooltipContent>
- {selectedEngTemplates.size > 0
- ? `Add ${selectedEngTemplates.size} selected to My Templates`
- : "Select templates to add"}
- </TooltipContent>
- </Tooltip>
- </div>
- </div>
- <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {(() => {
- const etq = engTemplateSearchQuery.trim().toLowerCase();
- const engTreeHasMatch = !etq || templateTree.some(function check(it): boolean {
- return it.label.toLowerCase().includes(etq) || (it.children?.some(check) ?? false);
- });
- if (!engTreeHasMatch) return (
- <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
- <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
- <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{engTemplateSearchQuery}&rdquo;</p>
- <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
- </div>
- );
- return templateTree.map((item) => renderEngTemplateTreeNode(item, 0));
- })()}
- </div>
- </>
- ) : (
- /* My Templates tab for engagements */
  <div className={`flex-1 overflow-y-auto p-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
  {myEngagementTemplates.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
  <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No templates yet</p>
- <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
+ <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Click &ldquo;+&rdquo; to add from Global Templates</p>
  </div>
  ) : (() => {
  // Group by folder
@@ -3441,7 +3383,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  ));
  })()}
  </div>
- )}
  </>
  ) : selectedDropdown === "checklists" ? (
  <>
@@ -3865,6 +3806,76 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </DialogContent>
  </Dialog>
 
+ {/* Engagement Templates Global Picker Panel */}
+ {engPickerOpen && (
+  <div className={cn("fixed inset-y-0 right-0 z-50 w-80 flex flex-col shadow-2xl border-l", hasDarkSecondary ? "bg-[#1a2235] border-white/10" : "bg-background border-border")}>
+   <div className={cn("flex items-center justify-between px-4 py-3 flex-shrink-0 border-b", hasDarkSecondary ? "border-white/10" : "border-border")}>
+    <div>
+     <h3 className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Global Templates</h3>
+     <p className={cn("text-xs mt-0.5", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>Select templates to add to My Templates</p>
+    </div>
+    <button
+     className={cn("h-7 w-7 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "hover:bg-white/10" : "hover:bg-muted")}
+     onClick={() => { setEngPickerOpen(false); setSelectedEngTemplates(new Set()); setEngTemplateSearchQuery(""); }}
+    >
+     <X className={cn("h-4 w-4", hasDarkSecondary ? "text-white/60" : "text-muted-foreground")} />
+    </button>
+   </div>
+   <div className="p-3 flex gap-2 flex-shrink-0">
+    <div className="relative flex-1">
+     <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+     <Input placeholder="Search templates" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={engTemplateSearchQuery} onChange={e => setEngTemplateSearchQuery(e.target.value)} />
+    </div>
+    <Tooltip>
+     <TooltipTrigger asChild>
+      <button
+       className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-colors flex-shrink-0", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
+       onClick={handleEngExpandCollapseAll}
+      >
+       {allEngExpanded ? (
+        <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+       ) : (
+        <svg width="15" height="15" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+       )}
+      </button>
+     </TooltipTrigger>
+     <TooltipContent>{allEngExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+    </Tooltip>
+   </div>
+   <div className="flex-1 overflow-y-auto p-2 pt-0">
+    {(() => {
+     const etq = engTemplateSearchQuery.trim().toLowerCase();
+     const engTreeHasMatch = !etq || templateTree.some(function check(it): boolean {
+      return it.label.toLowerCase().includes(etq) || (it.children?.some(check) ?? false);
+     });
+     if (!engTreeHasMatch) return (
+      <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+       <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
+       <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{engTemplateSearchQuery}&rdquo;</p>
+       <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+      </div>
+     );
+     return templateTree.map((item) => renderEngTemplateTreeNode(item, 0));
+    })()}
+   </div>
+   <div className={cn("p-3 flex-shrink-0 border-t", hasDarkSecondary ? "border-white/10" : "border-border")}>
+    <Button
+     className="w-full h-9 bg-[#1C63A6] hover:bg-[#1a5a9e]"
+     disabled={selectedEngTemplates.size === 0}
+     onClick={() => { setEngPickerOpen(false); setEngBulkAddDialogOpen(true); }}
+    >
+     <Files className="h-4 w-4 mr-2" />
+     {selectedEngTemplates.size > 0
+      ? `Add ${selectedEngTemplates.size} Template${selectedEngTemplates.size !== 1 ? "s" : ""}`
+      : "Select templates above"}
+    </Button>
+   </div>
+  </div>
+ )}
  {/* Bulk Add to My Templates Dialog */}
  <BulkAddToMyTemplatesDialog
  open={bulkAddDialogOpen}
