@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2 } from "lucide-react";
 import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -11,6 +11,61 @@ import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
+
+// ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
+
+interface FirmProfile {
+ id: string;
+ name: string;
+ region: "ca" | "us";
+ city: string;
+ initials: string;
+ color: string;
+}
+
+interface FirmDetails {
+ firmName: string;
+ displayAs: string;
+ address: string;
+ country: string;
+ province: string;
+ city: string;
+ postalCode: string;
+ pegPact: string;
+ invoiceNo: string;
+ expiryDate: string;
+}
+
+const DEFAULT_FIRMS: FirmProfile[] = [
+ { id: "firm-ca-1", name: "Maple Grove Accounting PC", region: "ca", city: "Toronto, ON", initials: "MG", color: "bg-red-600" },
+ { id: "firm-us-1", name: "Ascend LLP", region: "us", city: "New York, NY", initials: "AS", color: "bg-blue-600" },
+];
+
+const CA_PROVINCES = ["Alberta","British Columbia","Manitoba","New Brunswick","Newfoundland and Labrador","Northwest Territories","Nova Scotia","Nunavut","Ontario","Prince Edward Island","Quebec","Saskatchewan","Yukon"];
+const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
+
+function readFirmProfiles(): FirmProfile[] {
+ try { const s = localStorage.getItem("firmProfiles"); return s ? JSON.parse(s) : DEFAULT_FIRMS; } catch { return DEFAULT_FIRMS; }
+}
+function writeFirmProfiles(profiles: FirmProfile[]) {
+ localStorage.setItem("firmProfiles", JSON.stringify(profiles));
+ window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+}
+function readActiveFirmId(): string {
+ return localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+}
+function writeActiveFirmId(id: string) {
+ localStorage.setItem("activeFirmId", id);
+ window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+}
+function readFirmDetails(firmId: string): FirmDetails {
+ const empty: FirmDetails = { firmName: "", displayAs: "", address: "", country: "Canada", province: "Ontario", city: "", postalCode: "", pegPact: "Yes", invoiceNo: "", expiryDate: "" };
+ try { const s = localStorage.getItem(`firmDetails-${firmId}`); return s ? JSON.parse(s) : empty; } catch { return empty; }
+}
+function writeFirmDetails(firmId: string, details: FirmDetails) {
+ localStorage.setItem(`firmDetails-${firmId}`, JSON.stringify(details));
+}
+
 interface SettingsPanelProps {
  open: boolean;
  onOpenChange: (open: boolean) => void;
@@ -421,7 +476,7 @@ function MyAccountContent() {
  </TabsContent>
 
  <TabsContent value="firm-info" className="mt-6">
- <PlaceholderContent title="Firm Information" />
+ <FirmInfoContent />
  </TabsContent>
 
  <TabsContent value="timezone" className="mt-6">
@@ -813,6 +868,298 @@ function UserAccessContent() {
      </tbody>
     </table>
    </div>
+  </div>
+ );
+}
+
+function FirmInfoContent() {
+ const [firms, setFirms] = useState<FirmProfile[]>(readFirmProfiles);
+ const [activeFirmId, setActiveFirmId] = useState<string>(readActiveFirmId);
+ const activeFirm = firms.find(f => f.id === activeFirmId) ?? firms[0];
+
+ const defaultDetails = (firm: FirmProfile): FirmDetails => ({
+  firmName: firm.name,
+  displayAs: firm.name,
+  address: "",
+  country: firm.region === "us" ? "United States" : "Canada",
+  province: firm.region === "us" ? "New York" : "Ontario",
+  city: firm.city.split(",")[0].trim(),
+  postalCode: "",
+  pegPact: "Yes",
+  invoiceNo: "",
+  expiryDate: "",
+ });
+
+ const [formData, setFormData] = useState<FirmDetails>(() => {
+  const stored = readFirmDetails(readActiveFirmId());
+  const firm = readFirmProfiles().find(f => f.id === readActiveFirmId());
+  return stored.firmName ? stored : (firm ? defaultDetails(firm) : stored);
+ });
+
+ const [showAddOffice, setShowAddOffice] = useState(false);
+ const [newOffice, setNewOffice] = useState({ name: "", region: "ca" as "ca" | "us", city: "" });
+
+ useEffect(() => {
+  const stored = readFirmDetails(activeFirmId);
+  const firm = firms.find(f => f.id === activeFirmId);
+  setFormData(stored.firmName ? stored : (firm ? defaultDetails(firm) : stored));
+ }, [activeFirmId]);
+
+ useEffect(() => {
+  const handler = () => {
+   setFirms(readFirmProfiles());
+   setActiveFirmId(readActiveFirmId());
+  };
+  window.addEventListener("firm-profiles-updated", handler);
+  return () => window.removeEventListener("firm-profiles-updated", handler);
+ }, []);
+
+ const handleSwitchFirm = (firmId: string) => {
+  writeActiveFirmId(firmId);
+  setActiveFirmId(firmId);
+ };
+
+ const handleDeleteFirm = (firmId: string) => {
+  if (firms.length <= 1) return;
+  const updated = firms.filter(f => f.id !== firmId);
+  writeFirmProfiles(updated);
+  setFirms(updated);
+  if (activeFirmId === firmId) {
+   writeActiveFirmId(updated[0].id);
+   setActiveFirmId(updated[0].id);
+  }
+ };
+
+ const handleAddOffice = () => {
+  if (!newOffice.name.trim() || !newOffice.city.trim()) return;
+  const initials = newOffice.name.trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+  const newFirm: FirmProfile = {
+   id: `firm-${newOffice.region}-${Date.now()}`,
+   name: newOffice.name.trim(),
+   region: newOffice.region,
+   city: newOffice.city.trim(),
+   initials,
+   color: newOffice.region === "ca" ? "bg-red-600" : "bg-blue-600",
+  };
+  const updated = [...firms, newFirm];
+  writeFirmProfiles(updated);
+  setFirms(updated);
+  setNewOffice({ name: "", region: "ca", city: "" });
+  setShowAddOffice(false);
+  toast.success(`${newFirm.name} registered successfully`);
+ };
+
+ const handleSaveChanges = () => {
+  writeFirmDetails(activeFirmId, formData);
+  const cityProv = formData.city
+   ? `${formData.city}${formData.province ? ", " + formData.province.slice(0, 2).toUpperCase() : ""}`
+   : activeFirm?.city ?? "";
+  const updated = firms.map(f =>
+   f.id === activeFirmId
+    ? {
+       ...f,
+       name: formData.firmName || f.name,
+       city: cityProv,
+       initials: (formData.firmName || f.name).split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2),
+      }
+    : f
+  );
+  writeFirmProfiles(updated);
+  setFirms(updated);
+  toast.success("Firm information saved");
+ };
+
+ const isCA = formData.country === "Canada";
+
+ const selectClass = "w-full h-9 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring";
+
+ return (
+  <div className="space-y-8">
+   {/* My Offices */}
+   <div className="space-y-3">
+    <div className="flex items-center justify-between">
+     <div className="flex items-center gap-2">
+      <Building2 className="h-4 w-4 text-primary" />
+      <h3 className="text-sm font-semibold text-primary">My Offices</h3>
+     </div>
+     <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" onClick={() => setShowAddOffice(v => !v)}>
+      <Plus className="h-3.5 w-3.5" /> Add Office
+     </Button>
+    </div>
+
+    <div className="grid gap-2">
+     {firms.map(firm => (
+      <div
+       key={firm.id}
+       onClick={() => handleSwitchFirm(firm.id)}
+       className={cn(
+        "flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer",
+        activeFirmId === firm.id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50"
+       )}
+      >
+       <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
+        {firm.initials}
+       </div>
+       <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium truncate">{firm.name}</p>
+        <p className="text-xs text-muted-foreground">{firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}</p>
+       </div>
+       {activeFirmId === firm.id && (
+        <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20 flex-shrink-0">Active</span>
+       )}
+       {firms.length > 1 && (
+        <button
+         className="ml-1 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+         onClick={e => { e.stopPropagation(); handleDeleteFirm(firm.id); }}
+        >
+         <Trash2 className="h-3.5 w-3.5" />
+        </button>
+       )}
+      </div>
+     ))}
+    </div>
+
+    {showAddOffice && (
+     <div className="border border-dashed border-border rounded-xl p-4 space-y-3">
+      <p className="text-sm font-semibold">Register New Office</p>
+      <div className="space-y-1.5">
+       <Label className="text-xs">Office / Firm Name</Label>
+       <Input value={newOffice.name} onChange={e => setNewOffice(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Ascend LLP — Toronto Office" />
+      </div>
+      <div className="space-y-1.5">
+       <Label className="text-xs">Region</Label>
+       <div className="flex gap-2">
+        {(["ca", "us"] as const).map(r => (
+         <button
+          key={r}
+          onClick={() => setNewOffice(p => ({ ...p, region: r }))}
+          className={cn(
+           "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+           newOffice.region === r ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted/50"
+          )}
+         >
+          {r === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"}
+         </button>
+        ))}
+       </div>
+      </div>
+      <div className="space-y-1.5">
+       <Label className="text-xs">City</Label>
+       <Input value={newOffice.city} onChange={e => setNewOffice(p => ({ ...p, city: e.target.value }))} placeholder="e.g. Toronto, ON" />
+      </div>
+      <div className="flex gap-2 pt-1">
+       <Button size="sm" variant="outline" onClick={() => setShowAddOffice(false)}>Cancel</Button>
+       <Button
+        size="sm"
+        className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+        disabled={!newOffice.name.trim() || !newOffice.city.trim()}
+        onClick={handleAddOffice}
+       >
+        Register Office
+       </Button>
+      </div>
+     </div>
+    )}
+   </div>
+
+   <div className="border-t border-border" />
+
+   {/* Firm Logo */}
+   <div className="space-y-3">
+    <h3 className="text-sm font-semibold text-primary">Firm Logo</h3>
+    <div className="flex items-center gap-4">
+     <div className="w-20 h-20 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/20">
+      <svg className="w-8 h-8 text-muted-foreground/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+     </div>
+     <Button variant="outline" size="sm" className="gap-2">
+      <Upload className="h-4 w-4" /> Upload Logo
+     </Button>
+    </div>
+   </div>
+
+   {/* Firm Information */}
+   <div className="space-y-4">
+    <h3 className="text-sm font-semibold text-primary">
+     Firm Information{activeFirm && <span className="ml-2 text-xs font-normal text-muted-foreground">— {activeFirm.name}</span>}
+    </h3>
+
+    <div className="grid gap-4">
+     <div className="space-y-1.5">
+      <Label>Firm Name <span className="text-destructive">*</span></Label>
+      <Input value={formData.firmName} onChange={e => setFormData(p => ({ ...p, firmName: e.target.value }))} />
+     </div>
+
+     <div className="space-y-1.5">
+      <Label>Display as</Label>
+      <Input value={formData.displayAs} onChange={e => setFormData(p => ({ ...p, displayAs: e.target.value }))} />
+     </div>
+
+     <div className="space-y-1.5">
+      <Label>Address <span className="text-destructive">*</span></Label>
+      <Input value={formData.address} onChange={e => setFormData(p => ({ ...p, address: e.target.value }))} />
+     </div>
+
+     <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-1.5">
+       <Label>Country <span className="text-destructive">*</span></Label>
+       <select
+        value={formData.country}
+        onChange={e => setFormData(p => ({ ...p, country: e.target.value, province: e.target.value === "Canada" ? "Ontario" : "New York" }))}
+        className={selectClass}
+       >
+        <option>Canada</option>
+        <option>United States</option>
+       </select>
+      </div>
+      <div className="space-y-1.5">
+       <Label>{isCA ? "Province" : "State"} <span className="text-destructive">*</span></Label>
+       <select
+        value={formData.province}
+        onChange={e => setFormData(p => ({ ...p, province: e.target.value }))}
+        className={selectClass}
+       >
+        {(isCA ? CA_PROVINCES : US_STATES).map(p => <option key={p}>{p}</option>)}
+       </select>
+      </div>
+     </div>
+
+     <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-1.5">
+       <Label>City <span className="text-destructive">*</span></Label>
+       <Input value={formData.city} onChange={e => setFormData(p => ({ ...p, city: e.target.value }))} />
+      </div>
+      <div className="space-y-1.5">
+       <Label>{isCA ? "Postal Code" : "ZIP Code"} <span className="text-destructive">*</span></Label>
+       <Input value={formData.postalCode} onChange={e => setFormData(p => ({ ...p, postalCode: e.target.value }))} placeholder={isCA ? "M5V 3R7" : "10001"} />
+      </div>
+     </div>
+
+     <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-1.5">
+       <Label>PEG/PACT Subscriber <span className="text-destructive">*</span></Label>
+       <select value={formData.pegPact} onChange={e => setFormData(p => ({ ...p, pegPact: e.target.value }))} className={selectClass}>
+        <option>Yes</option>
+        <option>No</option>
+       </select>
+      </div>
+      <div className="space-y-1.5">
+       <Label>PEG/PACT Invoice No. <span className="text-destructive">*</span></Label>
+       <Input value={formData.invoiceNo} onChange={e => setFormData(p => ({ ...p, invoiceNo: e.target.value }))} />
+      </div>
+     </div>
+
+     <div className="space-y-1.5">
+      <Label>Expiry Date (MM/DD/YYYY) <span className="text-destructive">*</span></Label>
+      <Input type="date" value={formData.expiryDate} onChange={e => setFormData(p => ({ ...p, expiryDate: e.target.value }))} />
+     </div>
+    </div>
+   </div>
+
+   <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white" onClick={handleSaveChanges}>
+    Save Changes
+   </Button>
   </div>
  );
 }
