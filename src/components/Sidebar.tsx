@@ -3330,7 +3330,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  }}>
   <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
  </div>
- <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+ <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
   <div className="flex gap-2">
    <div className="relative flex-1">
     <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
