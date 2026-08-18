@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { cn } from "@/lib/utils";
 
 function Highlight({ text, query }: { text: string; query: string }) {
  if (!query.trim()) return <>{text}</>;
@@ -18,7 +19,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2 } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -47,12 +48,15 @@ const partners = [
 
 const acceptedCount = clientsData.filter(c => c.status === 'Accepted').length;
 const pendingCount = clientsData.filter(c => c.status === 'Invite Now' || c.status === 'Pending').length;
+const caCount = clientsData.filter(c => c.clientCountry === 'ca').length;
+const usCount = clientsData.filter(c => c.clientCountry === 'us').length;
 
 // Sample stats data
 const stats = [
  { label: "Active Clients", value: String(acceptedCount) },
  { label: "Pending Clients", value: String(pendingCount) },
  { label: "Total Clients", value: String(clientsData.length) },
+ { label: "Canada / US", value: `${caCount} / ${usCount}` },
 ];
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -112,12 +116,15 @@ export default function Clients() {
  const [activeTab, setActiveTab] = useState("my-clients");
  const [selectedClient, setSelectedClient] = useState<string | null>(null);
  const [clientList, setClientList] = useState(clientsData);
+ const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
 
- const filteredClients = clientList.filter(c =>
- c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
- c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
- c.email.toLowerCase().includes(searchQuery.toLowerCase())
- );
+ const filteredClients = clientList
+  .filter(c => countryFilter === "all" || c.clientCountry === countryFilter)
+  .filter(c =>
+   c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+   c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+   c.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
  const handleCreateEngagement = (clientId: string, e: React.MouseEvent) => {
  e.stopPropagation();
@@ -158,6 +165,7 @@ export default function Clients() {
  { color: 'text-primary', bg: 'bg-primary/10', icon: UserCheck, animation: '' },
  { color: 'text-primary', bg: 'bg-primary/10', icon: Clock, animation: '' },
  { color: 'text-primary', bg: 'bg-primary/10', icon: UsersRound, animation: '' },
+ { color: 'text-primary', bg: 'bg-primary/10', icon: Globe2, animation: '' },
  ];
  const { color, bg, icon: Icon, animation } = config[index];
  return (
@@ -266,6 +274,26 @@ export default function Clients() {
  icon={<Download className="h-4 w-4" />}
  label="Export"
  />
+ <div className="flex items-center rounded-lg border border-border overflow-hidden h-9">
+  {([
+   { value: "all", label: "All" },
+   { value: "ca", label: "🇨🇦 Canada" },
+   { value: "us", label: "🇺🇸 United States" },
+  ] as const).map(opt => (
+   <button
+    key={opt.value}
+    onClick={() => setCountryFilter(opt.value)}
+    className={cn(
+     "px-3 h-full text-xs font-medium transition-colors border-r border-border last:border-r-0",
+     countryFilter === opt.value
+      ? "bg-primary/10 text-primary"
+      : "text-muted-foreground hover:bg-muted/50"
+    )}
+   >
+    {opt.label}
+   </button>
+  ))}
+ </div>
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
  <Input
@@ -319,6 +347,7 @@ export default function Clients() {
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client ID</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Name</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Type</th>
+ <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Country</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Integrations</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Contact Name</th>
@@ -334,7 +363,7 @@ export default function Clients() {
  <tbody className="divide-y divide-border">
  {filteredClients.length === 0 && searchQuery.trim() && (
  <tr>
- <td colSpan={14} className="px-6 py-16 text-center">
+ <td colSpan={15} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
  <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
  <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
@@ -364,6 +393,16 @@ export default function Clients() {
  </Link>
  </td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
+ <td className="px-4 py-2 text-sm whitespace-nowrap">
+  <span className={cn(
+   "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+   client.clientCountry === "us"
+    ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
+    : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
+  )}>
+   {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+  </span>
+ </td>
  <td className="px-6 py-2 whitespace-nowrap">
  <StatusBadge status={client.status} />
  </td>
