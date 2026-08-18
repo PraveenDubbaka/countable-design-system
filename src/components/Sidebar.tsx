@@ -326,9 +326,22 @@ const engPickerTreeCA: TreeItem[] = [
 ];
 
 const engPickerTreeUS: TreeItem[] = [
+ { id: "compilation-us", label: "Compilation", type: "folder", children: [
+  { id: "comp-us-ssars21", label: "SSARS 21 — Compilation of Financial Statements", type: "file", suggested: true },
+  { id: "comp-us-arc80", label: "AR-C 80 Compilation Engagement", type: "file" },
+ ]},
+ { id: "review-us", label: "Review", type: "folder", children: [
+  { id: "rev-us-ssars21", label: "SSARS 21 — Review of Financial Statements", type: "file", suggested: true },
+  { id: "rev-us-arc90", label: "AR-C 90 Review Engagement", type: "file" },
+ ]},
  { id: "audit-us-root", label: "Audit", type: "folder", children: [
   { id: "audit6100", label: "GAAS / US GAAP — Private (6100)", type: "file", suggested: true },
   { id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" },
+ ]},
+ { id: "tax-us", label: "Tax", type: "folder", children: [
+  { id: "tax-us-1120", label: "Form 1120 (C-Corporations)", type: "file", suggested: true },
+  { id: "tax-us-1120s", label: "Form 1120-S (S-Corporations)", type: "file" },
+  { id: "tax-us-1065", label: "Form 1065 (Partnerships)", type: "file" },
  ]},
 ];
 
