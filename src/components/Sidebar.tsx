@@ -3521,7 +3521,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     <div className="space-y-1.5">
      <DialogTitle className="text-lg font-bold">Delete engagement template(s)</DialogTitle>
      <DialogDescription className="text-sm text-muted-foreground">
-      You are trying to delete engagement template(s) under My Templates. Are you sure you want to continue?
+      You are trying to delete engagement template(s) under Templates. Are you sure you want to continue?
      </DialogDescription>
     </div>
     <div className="flex gap-3 w-full pt-1">
