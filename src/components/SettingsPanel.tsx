@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 // ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
@@ -1332,25 +1333,33 @@ function LetterheadContent() {
  return (
   <div className="-m-6 flex flex-col h-full">
    {/* Firm switcher */}
-   <div className="border-b border-border px-6 py-3 bg-muted/30 flex items-center gap-2 flex-wrap">
-    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mr-1">Firm:</span>
-    {firms.map(firm => (
-     <button
-      key={firm.id}
-      onClick={() => setActiveFirmId(firm.id)}
-      className={cn(
-       "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors border",
-       activeFirmId === firm.id
-        ? "bg-primary text-white border-primary"
-        : "bg-background text-foreground border-border hover:border-primary/40 hover:bg-primary/5"
-      )}
-     >
-      <span className={cn("w-4 h-4 rounded-sm flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0", firm.color)}>
-       {firm.initials[0]}
-      </span>
-      {firm.name}
-     </button>
-    ))}
+   <div className="border-b border-border px-6 py-3 bg-muted/30 flex items-center gap-2">
+    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex-shrink-0">Firm:</span>
+    <Select value={activeFirmId} onValueChange={setActiveFirmId}>
+     <SelectTrigger className="h-8 w-64 text-sm gap-2">
+      <SelectValue>
+       <div className="flex items-center gap-2">
+        <span className={cn("w-5 h-5 rounded-sm flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0", activeFirm.color)}>
+         {activeFirm.initials}
+        </span>
+        <span className="truncate">{activeFirm.name}</span>
+       </div>
+      </SelectValue>
+     </SelectTrigger>
+     <SelectContent>
+      {firms.map(firm => (
+       <SelectItem key={firm.id} value={firm.id}>
+        <div className="flex items-center gap-2">
+         <span className={cn("w-5 h-5 rounded-sm flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0", firm.color)}>
+          {firm.initials}
+         </span>
+         <span>{firm.name}</span>
+         <span className="text-xs text-muted-foreground">{firm.region === "ca" ? "🇨🇦" : "🇺🇸"} {firm.city}</span>
+        </div>
+       </SelectItem>
+      ))}
+     </SelectContent>
+    </Select>
    </div>
 
    {/* Tab + actions */}
