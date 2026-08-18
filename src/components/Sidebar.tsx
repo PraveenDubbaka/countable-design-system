@@ -762,6 +762,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  );
  const [engMyFolderExpanded, setEngMyFolderExpanded] = useState<Set<string>>(new Set());
  const [engMySearchQuery, setEngMySearchQuery] = useState("");
+ const [engMyDeleteMode, setEngMyDeleteMode] = useState(false);
+ const [engMySelectedIds, setEngMySelectedIds] = useState<Set<string>>(new Set());
 
  const handleEngTemplateCheckbox = (id: string, checked: boolean) => {
  setSelectedEngTemplates(prev => {
@@ -3375,34 +3377,68 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      onChange={e => setEngMySearchQuery(e.target.value)}
     />
    </div>
-   <Tooltip>
-    <TooltipTrigger asChild>
-     <button
-      className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
-      onClick={handleEngMyExpandCollapseAll}
-     >
-      {allEngMyExpanded ? (
-       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-       </svg>
-      ) : (
-       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
-       </svg>
-      )}
-     </button>
-    </TooltipTrigger>
-    <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
-   </Tooltip>
+   {engMyDeleteMode ? (
+    <button
+     className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
+     onClick={() => { setEngMyDeleteMode(false); setEngMySelectedIds(new Set()); }}
+    >
+     <X className="h-4 w-4" style={{ color: hasDarkSecondary ? "white" : "#074075" }} />
+    </button>
+   ) : (
+    <Tooltip>
+     <TooltipTrigger asChild>
+      <button
+       className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
+       onClick={handleEngMyExpandCollapseAll}
+      >
+       {allEngMyExpanded ? (
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+       ) : (
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+       )}
+      </button>
+     </TooltipTrigger>
+     <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+    </Tooltip>
+   )}
+   {!engMyDeleteMode && (
+    <Button
+     size="icon"
+     className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
+     onClick={() => { setEngPickerOpen(true); setSelectedEngTemplates(new Set()); setEngTemplateSearchQuery(""); }}
+    >
+     <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+    </Button>
+   )}
    <Button
     size="icon"
-    className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
-    onClick={() => { setEngPickerOpen(true); setSelectedEngTemplates(new Set()); setEngTemplateSearchQuery(""); }}
+    variant="secondary"
+    className={cn("h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive", engMyDeleteMode && engMySelectedIds.size > 0 && "bg-destructive/10 border-destructive/30")}
+    disabled={engMyDeleteMode && engMySelectedIds.size === 0}
+    onClick={() => {
+     if (!engMyDeleteMode) {
+      setEngMyDeleteMode(true);
+      setEngMySelectedIds(new Set());
+     } else if (engMySelectedIds.size > 0) {
+      const remaining = myEngagementTemplates.filter(t => !engMySelectedIds.has(t.id));
+      writeJsonToLocalStorage("myEngagementTemplates", remaining);
+      setMyEngagementTemplates(remaining);
+      if (searchParams.get("myTemplate") && engMySelectedIds.has(searchParams.get("myTemplate")!)) {
+       setSearchParams({}, { replace: true });
+      }
+      toast.success(`${engMySelectedIds.size} template${engMySelectedIds.size > 1 ? "s" : ""} deleted`);
+      setEngMyDeleteMode(false);
+      setEngMySelectedIds(new Set());
+     }
+    }}
    >
-    <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
-   </Button>
-   <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive">
-    <Trash2 className="h-4 w-4" />
+    {engMyDeleteMode && engMySelectedIds.size > 0
+     ? <span className="text-xs font-bold leading-none">{engMySelectedIds.size}</span>
+     : <Trash2 className="h-4 w-4" />}
    </Button>
   </div>
  </div>
@@ -3427,43 +3463,85 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  if (!folders[t.folderId]) folders[t.folderId] = { id: t.folderId, name: t.folderName, templates: [] };
  folders[t.folderId].templates.push(t);
  });
- return Object.values(folders).map(folder => (
+ return Object.values(folders).map(folder => {
+ const allFolderSelected = folder.templates.every(t => engMySelectedIds.has(t.id));
+ const someFolderSelected = !allFolderSelected && folder.templates.some(t => engMySelectedIds.has(t.id));
+ return (
  <div key={folder.id}>
  <div
  className={cn("flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none", hasDarkSecondary ? "text-white" : "text-foreground")}
- onClick={() => setEngMyFolderExpanded(prev => {
- const next = new Set(prev);
- next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
- return next;
- })}
+ onClick={() => {
+  if (engMyDeleteMode) {
+   setEngMySelectedIds(prev => {
+    const next = new Set(prev);
+    if (allFolderSelected) { folder.templates.forEach(t => next.delete(t.id)); }
+    else { folder.templates.forEach(t => next.add(t.id)); }
+    return next;
+   });
+  } else {
+   setEngMyFolderExpanded(prev => {
+    const next = new Set(prev);
+    next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
+    return next;
+   });
+  }
+ }}
  >
- {engMyFolderExpanded.has(folder.id)
- ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
- : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />}
+ {engMyDeleteMode ? (
+  <div className={cn("h-4 w-4 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors",
+   allFolderSelected ? "bg-primary border-primary" : someFolderSelected ? "border-primary bg-primary/20" : (hasDarkSecondary ? "border-white/40" : "border-border")
+  )}>
+   {(allFolderSelected || someFolderSelected) && <Check className="h-2.5 w-2.5 text-white" />}
+  </div>
+ ) : (
+  engMyFolderExpanded.has(folder.id)
+   ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+   : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
+ )}
  <span className="truncate flex-1">{folder.name}</span>
  <span className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>{folder.templates.length}</span>
  </div>
- {engMyFolderExpanded.has(folder.id) && folder.templates.map(t => {
- const isActive = searchParams.get("myTemplate") === t.id;
+ {(engMyDeleteMode || engMyFolderExpanded.has(folder.id)) && folder.templates.map(t => {
+ const isActive = !engMyDeleteMode && searchParams.get("myTemplate") === t.id;
+ const isSelected = engMySelectedIds.has(t.id);
  return (
  <div
  key={t.id}
  className={cn(
  "flex items-center gap-2 py-1.5 pl-7 pr-2 rounded-md cursor-pointer text-sm ml-1 font-medium select-none",
- isActive ? "bg-primary/10 text-primary" : (hasDarkSecondary ? "text-white/80 hover:bg-white/10" : "text-foreground hover:bg-muted/50")
+ engMyDeleteMode
+  ? (isSelected ? (hasDarkSecondary ? "bg-white/15 text-white" : "bg-primary/10 text-primary") : (hasDarkSecondary ? "text-white/80 hover:bg-white/10" : "text-foreground hover:bg-muted/50"))
+  : (isActive ? "bg-primary/10 text-primary" : (hasDarkSecondary ? "text-white/80 hover:bg-white/10" : "text-foreground hover:bg-muted/50"))
  )}
  onClick={() => {
- navigate("/engagement-templates");
- setSearchParams({ myTemplate: t.id });
+ if (engMyDeleteMode) {
+  setEngMySelectedIds(prev => {
+   const next = new Set(prev);
+   next.has(t.id) ? next.delete(t.id) : next.add(t.id);
+   return next;
+  });
+ } else {
+  navigate("/engagement-templates");
+  setSearchParams({ myTemplate: t.id });
+ }
  }}
  >
- <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+ {engMyDeleteMode ? (
+  <div className={cn("h-4 w-4 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors",
+   isSelected ? "bg-primary border-primary" : (hasDarkSecondary ? "border-white/40" : "border-border")
+  )}>
+   {isSelected && <Check className="h-2.5 w-2.5 text-white" />}
+  </div>
+ ) : (
+  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+ )}
  <span className="truncate flex-1">{t.name}</span>
  </div>
  );
  })}
  </div>
- ));
+ );
+ });
  })()}
  </div>
  </>
