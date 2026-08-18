@@ -534,6 +534,21 @@ const SUB_TYPE_CONFIG: Record<string, SubTypeConfig> = {
  },
 };
 
+const INDUSTRY_TYPES = [
+ "Construction & Real Estate",
+ "Financial Services",
+ "Healthcare & Life Sciences",
+ "Hospitality & Tourism",
+ "Manufacturing",
+ "Mining & Resources",
+ "Not-for-Profit",
+ "Oil & Gas",
+ "Professional Services",
+ "Retail & Consumer",
+ "Technology",
+ "Transportation & Logistics",
+];
+
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function AddNewClient() {
@@ -545,6 +560,9 @@ export default function AddNewClient() {
  const [dbaName, setDbaName] = useState<string>("");
  const [dbaDisplay, setDbaDisplay] = useState<string>("legal-only");
  const [gstRegistered, setGstRegistered] = useState<string>("");
+ const [industryType, setIndustryType] = useState<string>("");
+ const [hasQuebecPersonalInfo, setHasQuebecPersonalInfo] = useState<boolean>(false);
+ const [isUsTaxpayer, setIsUsTaxpayer] = useState<boolean>(false);
 
  const subTypeCfg = SUB_TYPE_CONFIG[`${country}-${entityType}`] ?? null;
 
@@ -592,7 +610,7 @@ export default function AddNewClient() {
  <SectionCard icon={Building2} title="Entity Foundation" subtitle="Start with the legal identity — this drives which other fields appear">
  {/* Core identity */}
  <div className="space-y-4 max-w-[50%]">
- <InlineField label="Country" hint="Determines applicable tax identifiers and field labels.">
+ <InlineField label="Client Country" hint="The country where this client's operations are primarily based. Determines applicable tax identifiers, field labels, and compliance obligations on engagements.">
  <Select value={country} onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}>
  <SelectTrigger><SelectValue /></SelectTrigger>
  <SelectContent>
@@ -647,6 +665,18 @@ export default function AddNewClient() {
  </SelectContent>
  </Select>
  </InlineField>
+ )}
+ {cfg && (
+  <InlineField label="Industry Type" hint="Used to filter engagements by sector and seed industry-specific risks in the risk register.">
+   <Select value={industryType} onValueChange={setIndustryType}>
+    <SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger>
+    <SelectContent>
+     {INDUSTRY_TYPES.map(i => (
+      <SelectItem key={i} value={i}>{i}</SelectItem>
+     ))}
+    </SelectContent>
+   </Select>
+  </InlineField>
  )}
  {/* Engagement Partner — after Entity Type */}
  {cfg && (
@@ -825,6 +855,47 @@ export default function AddNewClient() {
  <Input placeholder={taxCfg.salesTaxNumberPlaceholder} />
  </InlineField>
  )}
+ </div>
+ {/* ── Compliance flags ──────────────────────────────── */}
+ <div className="mt-5 pt-5 border-t border-border space-y-4">
+  <div className="flex items-start gap-4">
+   <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-0.5 leading-snug">
+    Quebec Personal Info
+   </span>
+   <div className="flex-1">
+    <div className="flex items-center gap-3">
+     <Switch
+      checked={hasQuebecPersonalInfo}
+      onCheckedChange={setHasQuebecPersonalInfo}
+     />
+     <span className="text-sm text-foreground">
+      {hasQuebecPersonalInfo ? "Yes" : "No"}
+     </span>
+    </div>
+    <p className="text-xs text-muted-foreground mt-1">
+     Enable if this client involves personal information of Quebec residents. Triggers Law 25 Transfer Impact Assessment obligations for the firm.
+    </p>
+   </div>
+  </div>
+  <div className="flex items-start gap-4">
+   <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-0.5 leading-snug">
+    US Taxpayer
+   </span>
+   <div className="flex-1">
+    <div className="flex items-center gap-3">
+     <Switch
+      checked={isUsTaxpayer}
+      onCheckedChange={setIsUsTaxpayer}
+     />
+     <span className="text-sm text-foreground">
+      {isUsTaxpayer ? "Yes" : "No"}
+     </span>
+    </div>
+    <p className="text-xs text-muted-foreground mt-1">
+     Enable if this client is a US taxpayer. Triggers IRC §7216 consent requirements on any engagement created for this client.
+    </p>
+   </div>
+  </div>
  </div>
  </div>
 
