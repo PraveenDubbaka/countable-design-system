@@ -19,7 +19,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2 } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, SlidersHorizontal, Check } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -46,12 +46,13 @@ const partners = [
  { id: "jd-1", name: "Joey doem", email: "joey.team@yopmail.com", role: "", color: "bg-teal-500" },
 ];
 
+const allIndustries = Array.from(new Set(clientsData.map(c => c.industryType).filter(Boolean))).sort() as string[];
+
 const acceptedCount = clientsData.filter(c => c.status === 'Accepted').length;
 const pendingCount = clientsData.filter(c => c.status === 'Invite Now' || c.status === 'Pending').length;
 const caCount = clientsData.filter(c => c.clientCountry === 'ca').length;
 const usCount = clientsData.filter(c => c.clientCountry === 'us').length;
 
-// Sample stats data
 const stats = [
  { label: "Active Clients", value: String(acceptedCount) },
  { label: "Pending Clients", value: String(pendingCount) },
@@ -70,25 +71,14 @@ const StatusBadge = ({ status }: { status: string }) => {
  return "secondary" as const;
  }
  };
-
- return (
- <Badge variant={getStatusVariant()}>
- {status}
- </Badge>
- );
+ return <Badge variant={getStatusVariant()}>{status}</Badge>;
 };
 
 const IntegrationCell = ({ type }: { type: string }) => {
  if (type === "connect") {
- return (
- <Button variant="outline" size="sm" className="h-7 text-xs font-medium">
- Connect
- </Button>
- );
+ return <Button variant="outline" size="sm" className="h-7 text-xs font-medium">Connect</Button>;
  }
- 
  const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 bg-card dark:bg-[hsl(var(--m3-inverse-surface))] border border-border rounded-sm";
- 
  if (type === "xero") {
  return (
  <div className={`${badgeClasses} gap-1`}>
@@ -97,17 +87,35 @@ const IntegrationCell = ({ type }: { type: string }) => {
  </div>
  );
  }
- 
  if (type === "quickbooks") {
- return (
- <div className={badgeClasses}>
- <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-4" />
- </div>
- );
+ return <div className={badgeClasses}><img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-4" /></div>;
  }
- 
  return null;
 };
+
+function ColFilterHeader({ label, active, children }: { label: string; active: boolean; children: React.ReactNode }) {
+ return (
+ <div className="flex items-center gap-1.5">
+  <span>{label}</span>
+  <Popover>
+   <PopoverTrigger asChild>
+    <button
+     onClick={e => e.stopPropagation()}
+     className={cn(
+      "p-0.5 rounded transition-colors",
+      active ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-black/10"
+     )}
+    >
+     <SlidersHorizontal className="h-3 w-3" />
+    </button>
+   </PopoverTrigger>
+   <PopoverContent className="p-1 bg-card min-w-max" align="start" side="bottom">
+    {children}
+   </PopoverContent>
+  </Popover>
+ </div>
+ );
+}
 
 export default function Clients() {
  const navigate = useNavigate();
@@ -117,9 +125,11 @@ export default function Clients() {
  const [selectedClient, setSelectedClient] = useState<string | null>(null);
  const [clientList, setClientList] = useState(clientsData);
  const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
+ const [industryFilter, setIndustryFilter] = useState<string>("all");
 
  const filteredClients = clientList
   .filter(c => countryFilter === "all" || c.clientCountry === countryFilter)
+  .filter(c => industryFilter === "all" || c.industryType === industryFilter)
   .filter(c =>
    c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
    c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -151,6 +161,20 @@ export default function Clients() {
  ];
 
  const selectedClientData = clientsData.find(c => c.id === selectedClient);
+
+ const filterOption = (value: string, label: string, current: string, onClick: () => void) => (
+ <button
+  key={value}
+  onClick={onClick}
+  className={cn(
+   "w-full text-left px-2.5 py-1.5 text-xs rounded flex items-center gap-2 transition-colors whitespace-nowrap",
+   current === value ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted text-foreground"
+  )}
+ >
+  {current === value ? <Check className="h-3 w-3 flex-shrink-0" /> : <span className="h-3 w-3 flex-shrink-0" />}
+  {label}
+ </button>
+ );
 
  return (
  <Layout title="Clients">
@@ -207,29 +231,16 @@ export default function Clients() {
 
  {/* Actions and Add Client Button */}
  <div className="flex items-center gap-2">
- <ExpandableIconButton
- variant="secondary"
- icon={<RefreshCw className="h-4 w-4" />}
- label="Refresh"
- />
+ <ExpandableIconButton variant="secondary" icon={<RefreshCw className="h-4 w-4" />} label="Refresh" />
  <Popover>
  <PopoverTrigger asChild>
- <ExpandableIconButton
- variant="secondary"
- icon={<UserPlus className="h-4 w-4" />}
- label="Assign Partner"
- />
+ <ExpandableIconButton variant="secondary" icon={<UserPlus className="h-4 w-4" />} label="Assign Partner" />
  </PopoverTrigger>
  <PopoverContent className="w-72 p-0 bg-card" align="start">
  <div className="p-3 border-b border-border">
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
- <Input
- placeholder="Search"
- value={partnerSearch}
- onChange={(e) => setPartnerSearch(e.target.value)}
- className="pl-9 h-9 text-sm"
- />
+ <Input placeholder="Search" value={partnerSearch} onChange={(e) => setPartnerSearch(e.target.value)} className="pl-9 h-9 text-sm" />
  </div>
  </div>
  <div className="p-2 border-b border-border">
@@ -240,16 +251,8 @@ export default function Clients() {
  </div>
  <ScrollArea className="h-72">
  <div className="p-2">
- {partners
-.filter(partner => 
- partner.name.toLowerCase().includes(partnerSearch.toLowerCase()) ||
- partner.email.toLowerCase().includes(partnerSearch.toLowerCase())
- )
-.map((partner) => (
- <button
- key={partner.id}
- className="flex items-start gap-3 w-full px-2 py-2.5 text-left hover:bg-primary hover:text-primary-foreground rounded transition-colors group"
- >
+ {partners.filter(p => p.name.toLowerCase().includes(partnerSearch.toLowerCase()) || p.email.toLowerCase().includes(partnerSearch.toLowerCase())).map((partner) => (
+ <button key={partner.id} className="flex items-start gap-3 w-full px-2 py-2.5 text-left hover:bg-primary hover:text-primary-foreground rounded transition-colors group">
  <div className={`h-8 w-8 rounded-full ${partner.color} flex items-center justify-center text-white text-xs font-medium flex-shrink-0`}>
  {partner.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
  </div>
@@ -264,72 +267,24 @@ export default function Clients() {
  </ScrollArea>
  </PopoverContent>
  </Popover>
- <ExpandableIconButton
- variant="secondary"
- icon={<Mail className="h-4 w-4" />}
- label="Invite All"
- />
- <ExpandableIconButton
- variant="secondary"
- icon={<Download className="h-4 w-4" />}
- label="Export"
- />
- <div className="flex items-center rounded-lg border border-border overflow-hidden h-9">
-  {([
-   { value: "all", label: "All" },
-   { value: "ca", label: "🇨🇦 Canada" },
-   { value: "us", label: "🇺🇸 United States" },
-  ] as const).map(opt => (
-   <button
-    key={opt.value}
-    onClick={() => setCountryFilter(opt.value)}
-    className={cn(
-     "px-3 h-full text-xs font-medium transition-colors border-r border-border last:border-r-0",
-     countryFilter === opt.value
-      ? "bg-primary/10 text-primary"
-      : "text-muted-foreground hover:bg-muted/50"
-    )}
-   >
-    {opt.label}
-   </button>
-  ))}
- </div>
+ <ExpandableIconButton variant="secondary" icon={<Mail className="h-4 w-4" />} label="Invite All" />
+ <ExpandableIconButton variant="secondary" icon={<Download className="h-4 w-4" />} label="Export" />
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
- <Input
- placeholder="Search"
- value={searchQuery}
- onChange={(e) => setSearchQuery(e.target.value)}
- className="pl-9 w-44 h-9 text-sm"
- />
+ <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 w-44 h-9 text-sm" />
  </div>
- <Button
-   variant="outline"
-   className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
-   onClick={() => navigate("/clients/add-new")}
- >
-   Add New Client
+ <Button variant="outline" className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted" onClick={() => navigate("/clients/add-new")}>
+ Add New Client
  </Button>
  <Popover>
  <PopoverTrigger asChild>
  <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
- Add Client
- <ChevronDown className="h-4 w-4 ml-1.5" />
+ Add Client <ChevronDown className="h-4 w-4 ml-1.5" />
  </Button>
  </PopoverTrigger>
  <PopoverContent className="w-56 p-1 bg-card" align="end">
- <button
- onClick={() => navigate("/clients/new")}
- className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors"
- >
- Add New Client
- </button>
- <button
- onClick={() => toast.info("Upload Existing Client")}
- className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors"
- >
- Upload Existing Client
- </button>
+ <button onClick={() => navigate("/clients/new")} className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors">Add New Client</button>
+ <button onClick={() => toast.info("Upload Existing Client")} className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors">Upload Existing Client</button>
  </PopoverContent>
  </Popover>
  </div>
@@ -347,7 +302,19 @@ export default function Clients() {
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client ID</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Name</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Type</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Country</th>
+ <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
+  <ColFilterHeader label="Country" active={countryFilter !== "all"}>
+   {filterOption("all", "All", countryFilter, () => setCountryFilter("all"))}
+   {filterOption("ca", "🇨🇦 Canada", countryFilter, () => setCountryFilter("ca"))}
+   {filterOption("us", "🇺🇸 United States", countryFilter, () => setCountryFilter("us"))}
+  </ColFilterHeader>
+ </th>
+ <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
+  <ColFilterHeader label="Industry" active={industryFilter !== "all"}>
+   {filterOption("all", "All Industries", industryFilter, () => setIndustryFilter("all"))}
+   {allIndustries.map(ind => filterOption(ind, ind, industryFilter, () => setIndustryFilter(ind)))}
+  </ColFilterHeader>
+ </th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Integrations</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Contact Name</th>
@@ -361,21 +328,19 @@ export default function Clients() {
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
- {filteredClients.length === 0 && searchQuery.trim() && (
+ {filteredClients.length === 0 && (
  <tr>
- <td colSpan={15} className="px-6 py-16 text-center">
+ <td colSpan={16} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
- <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
- <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
+ <p className="text-sm font-medium text-foreground">No clients match the current filters</p>
+ <p className="text-xs text-muted-foreground mt-1">Try adjusting your search or filter criteria</p>
  </td>
  </tr>
  )}
  {filteredClients.map((client) => (
- <tr 
- key={client.id} 
- className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${
- selectedClient === client.id ? 'bg-primary/5' : ''
- }`}
+ <tr
+ key={client.id}
+ className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${selectedClient === client.id ? 'bg-primary/5' : ''}`}
  style={{ maxHeight: '50px' }}
  onClick={() => setSelectedClient(client.id)}
  >
@@ -384,31 +349,24 @@ export default function Clients() {
  </td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={client.id} query={searchQuery} /></td>
  <td className="px-6 py-2 whitespace-nowrap">
- <Link
- to={`/clients/${client.id}`}
- className="text-sm text-link font-medium hover:underline"
- onClick={e => e.stopPropagation()}
- >
+ <Link to={`/clients/${client.id}`} className="text-sm text-link font-medium hover:underline" onClick={e => e.stopPropagation()}>
  <Highlight text={client.entityName} query={searchQuery} />
  </Link>
  </td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
  <td className="px-4 py-2 text-sm whitespace-nowrap">
-  <span className={cn(
-   "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
-   client.clientCountry === "us"
-    ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
-    : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
-  )}>
-   {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
-  </span>
+ <span className={cn(
+  "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+  client.clientCountry === "us"
+   ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
+   : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
+ )}>
+  {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+ </span>
  </td>
- <td className="px-6 py-2 whitespace-nowrap">
- <StatusBadge status={client.status} />
- </td>
- <td className="px-6 py-2 whitespace-nowrap">
- <IntegrationCell type={client.integration} />
- </td>
+ <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.industryType || '—'}</td>
+ <td className="px-6 py-2 whitespace-nowrap"><StatusBadge status={client.status} /></td>
+ <td className="px-6 py-2 whitespace-nowrap"><IntegrationCell type={client.integration} /></td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
  <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap"><Highlight text={client.email} query={searchQuery} /></td>
  <td className="px-6 py-2 whitespace-nowrap">
@@ -434,25 +392,13 @@ export default function Clients() {
  <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements.length}</td>
  <td className="px-6 py-2 whitespace-nowrap">
  <div className="flex items-center gap-2">
- <button
- className="p-1.5 hover:bg-muted rounded-lg transition-colors"
- title="Create Engagement"
- onClick={(e) => handleCreateEngagement(client.id, e)}
- >
+ <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement" onClick={(e) => handleCreateEngagement(client.id, e)}>
  <ClipboardPlus className="h-4 w-4 text-link" />
  </button>
- <button
- className="p-1.5 hover:bg-muted rounded-lg transition-colors"
- title="Edit Client"
- onClick={(e) => handleEditClient(client.id, e)}
- >
+ <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client" onClick={(e) => handleEditClient(client.id, e)}>
  <Pencil className="h-4 w-4 text-link" />
  </button>
- <button
- className="p-1.5 hover:bg-muted rounded-lg transition-colors"
- title="Delete Client"
- onClick={(e) => handleDeleteClient(client.id, e)}
- >
+ <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client" onClick={(e) => handleDeleteClient(client.id, e)}>
  <Trash2 className="h-4 w-4 text-destructive" />
  </button>
  </div>
@@ -466,11 +412,8 @@ export default function Clients() {
  </div>
  </div>
 
- {/* Right Panel - Fixed height, doesn't scroll with content */}
- <ClientRightPanel 
- className="flex-shrink-0 h-full" 
- clientName={selectedClientData?.entityName || 'Select a client'}
- />
+ {/* Right Panel */}
+ <ClientRightPanel className="flex-shrink-0 h-full" clientName={selectedClientData?.entityName || 'Select a client'} />
  </div>
  </Layout>
  );
