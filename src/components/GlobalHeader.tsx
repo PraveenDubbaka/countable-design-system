@@ -443,7 +443,13 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  <UserCircle className="h-5 w-5 text-muted-foreground" />
  <span>My Account</span>
  </DropdownMenuItem>
- <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+ <DropdownMenuItem
+ className="gap-3 py-3 cursor-pointer"
+ onClick={() => {
+  setSettingsFirmNav({ tab: "firm-info", addOffice: false });
+  setSettingsOpen(true);
+ }}
+ >
  <Building2 className="h-5 w-5 text-muted-foreground" />
  <span>Firm Profile</span>
  </DropdownMenuItem>
