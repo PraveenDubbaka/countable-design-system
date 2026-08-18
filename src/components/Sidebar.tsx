@@ -64,6 +64,35 @@ import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { FinancialStatementsPanelContent } from "@/components/FinancialStatementsPanelContent";
 import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
+
+interface FirmProfile {
+ id: string;
+ name: string;
+ region: "ca" | "us";
+ city: string;
+ initials: string;
+ color: string;
+}
+
+const DEFAULT_FIRMS: FirmProfile[] = [
+ {
+  id: "firm-ca-1",
+  name: "Maple Grove Accounting PC",
+  region: "ca",
+  city: "Toronto, ON",
+  initials: "MG",
+  color: "bg-red-600",
+ },
+ {
+  id: "firm-us-1",
+  name: "Ascend LLP",
+  region: "us",
+  city: "New York, NY",
+  initials: "AS",
+  color: "bg-blue-600",
+ },
+];
+
 function SidebarHighlight({ text, query }: { text: string; query: string }) {
  if (!query.trim()) return <>{text}</>;
  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1669,6 +1698,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [addNoteName, setAddNoteName] = useState('');
  const [hiddenChildren, setHiddenChildren] = useState<Record<string, string[]>>({});
 
+ // Firm switcher state
+ const [firmProfiles, setFirmProfiles] = useState<FirmProfile[]>(DEFAULT_FIRMS);
+ const [activeFirmId, setActiveFirmId] = useState<string>("firm-ca-1");
+ const activeFirm = firmProfiles.find(f => f.id === activeFirmId) ?? firmProfiles[0];
+
+ const [registerFirmOpen, setRegisterFirmOpen] = useState(false);
+ const [newFirmStep, setNewFirmStep] = useState<1 | 2 | 3>(1);
+ const [newFirmData, setNewFirmData] = useState({
+  name: "",
+  region: "ca" as "ca" | "us",
+  city: "",
+ });
+
  // Persist expanded sections across route changes
  useEffect(() => {
  try {
@@ -1961,6 +2003,77 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </div>
  )}
  </div>
+
+ {/* Firm Switcher */}
+ {isNavExpanded ? (
+  <div className="px-2 pb-2">
+   <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+     <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-white/10 transition-colors group text-left">
+      <div className={cn("w-7 h-7 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", activeFirm.color)}>
+       {activeFirm.initials}
+      </div>
+      <div className="flex-1 min-w-0">
+       <p className="text-white text-[12px] font-semibold truncate leading-tight">{activeFirm.name}</p>
+       <p className="text-white/50 text-[10px] truncate leading-tight">
+        {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.city}
+       </p>
+      </div>
+      <ChevronDown className="h-3.5 w-3.5 text-white/40 group-hover:text-white/70 flex-shrink-0" />
+     </button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="start" className="w-64 p-2" sideOffset={4}>
+     <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-2 pb-2">Switch Office</p>
+     {firmProfiles.map(firm => (
+      <DropdownMenuItem
+       key={firm.id}
+       onClick={() => setActiveFirmId(firm.id)}
+       className={cn(
+        "flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer",
+        activeFirmId === firm.id && "bg-primary/10"
+       )}
+      >
+       <div className={cn("w-8 h-8 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
+        {firm.initials}
+       </div>
+       <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-foreground truncate">{firm.name}</p>
+        <p className="text-xs text-muted-foreground truncate">
+         {firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}
+        </p>
+       </div>
+       {activeFirmId === firm.id && (
+        <svg className="h-4 w-4 text-primary flex-shrink-0" viewBox="0 0 16 16" fill="none">
+         <path d="M3 8l3.5 3.5L13 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+       )}
+      </DropdownMenuItem>
+     ))}
+     <DropdownMenuSeparator />
+     <DropdownMenuItem
+      className="flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer text-primary"
+      onClick={() => {
+       setNewFirmStep(1);
+       setNewFirmData({ name: "", region: "ca", city: "" });
+       setRegisterFirmOpen(true);
+      }}
+     >
+      <Plus className="h-4 w-4" />
+      <span className="text-sm font-medium">Register new office</span>
+     </DropdownMenuItem>
+    </DropdownMenuContent>
+   </DropdownMenu>
+  </div>
+ ) : (
+  <div className="flex justify-center pb-2">
+   <div
+    className={cn("w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity", activeFirm.color)}
+    title={activeFirm.name}
+   >
+    {activeFirm.initials}
+   </div>
+  </div>
+ )}
 
  {/* Nav items */}
  {navItems.map((item, index) => {
@@ -4372,6 +4485,159 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  <Button size="sm" disabled={pendingDocFiles.length === 0} onClick={handleAddDocs}>Add</Button>
  </DialogFooter>
  </DialogContent>
+ </Dialog>
+
+ {/* Register New Office Dialog */}
+ <Dialog open={registerFirmOpen} onOpenChange={setRegisterFirmOpen}>
+  <DialogContent className="max-w-md">
+   <DialogHeader>
+    <DialogTitle>
+     {newFirmStep === 1 && "Register a New Office"}
+     {newFirmStep === 2 && "Office Already Registered"}
+     {newFirmStep === 3 && "Office Registered"}
+    </DialogTitle>
+    <DialogDescription>
+     {newFirmStep === 1 && "Each office is a separate firm entity in its own region. Data stays strictly within that region."}
+     {newFirmStep === 2 && "A firm with a similar name exists in another region."}
+     {newFirmStep === 3 && "You can now switch to this office using the firm switcher in the sidebar."}
+    </DialogDescription>
+   </DialogHeader>
+
+   {newFirmStep === 1 && (
+    <div className="space-y-4 py-1">
+     <div className="space-y-1.5">
+      <label className="text-sm font-medium text-foreground">Firm / Office Name</label>
+      <Input
+       value={newFirmData.name}
+       onChange={e => setNewFirmData(prev => ({ ...prev, name: e.target.value }))}
+       placeholder="e.g. Ascend LLP — Toronto Office"
+      />
+     </div>
+     <div className="space-y-1.5">
+      <label className="text-sm font-medium text-foreground">Region</label>
+      <div className="flex gap-2">
+       {(["ca", "us"] as const).map(r => (
+        <button
+         key={r}
+         onClick={() => setNewFirmData(prev => ({ ...prev, region: r }))}
+         className={cn(
+          "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+          newFirmData.region === r
+           ? "border-primary bg-primary/10 text-primary"
+           : "border-border text-muted-foreground hover:bg-muted/50"
+         )}
+        >
+         {r === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"}
+        </button>
+       ))}
+      </div>
+     </div>
+     <div className="space-y-1.5">
+      <label className="text-sm font-medium text-foreground">City</label>
+      <Input
+       value={newFirmData.city}
+       onChange={e => setNewFirmData(prev => ({ ...prev, city: e.target.value }))}
+       placeholder="e.g. Toronto, ON"
+      />
+     </div>
+     <div className="rounded-md border border-border bg-muted/30 p-3">
+      <p className="text-xs text-muted-foreground">
+       Each office is registered as a separate entity. A user with access to multiple offices can switch between them using the firm switcher. Data never crosses regions.
+      </p>
+     </div>
+    </div>
+   )}
+
+   {newFirmStep === 2 && (
+    <div className="space-y-3 py-1">
+     <div className="rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800/30 p-4 space-y-2">
+      <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">⚠ Similar Firm Found in Another Region</p>
+      <p className="text-sm text-amber-600 dark:text-amber-500">
+       It looks like <span className="font-semibold">{newFirmData.name}</span> may already be registered in another region. You can still register a separate office for {newFirmData.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"}. Each office will have its own data cell — nothing is shared across regions.
+      </p>
+     </div>
+    </div>
+   )}
+
+   {newFirmStep === 3 && (
+    <div className="space-y-3 py-1">
+     <div className="rounded-lg border border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800/30 p-4 space-y-2">
+      <p className="text-sm font-semibold text-green-700 dark:text-green-400">✓ Office Registered Successfully</p>
+      <p className="text-sm text-green-600 dark:text-green-500">
+       <span className="font-semibold">{newFirmData.name}</span> has been registered as a {newFirmData.region === "ca" ? "🇨🇦 Canadian" : "🇺🇸 US"} office. Switch to it anytime from the firm switcher at the top of the sidebar.
+      </p>
+     </div>
+    </div>
+   )}
+
+   <DialogFooter>
+    {newFirmStep === 1 && (
+     <>
+      <Button variant="outline" onClick={() => setRegisterFirmOpen(false)}>Cancel</Button>
+      <Button
+       disabled={!newFirmData.name.trim() || !newFirmData.city.trim()}
+       className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+       onClick={() => {
+        const nameKey = newFirmData.name.trim().split(" ")[0].toLowerCase();
+        const existsInOtherRegion = firmProfiles.some(
+         f => f.name.toLowerCase().startsWith(nameKey) && f.region !== newFirmData.region
+        );
+        if (existsInOtherRegion) {
+         setNewFirmStep(2);
+        } else {
+         const initials = newFirmData.name.trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+         const newFirm: FirmProfile = {
+          id: `firm-${newFirmData.region}-${Date.now()}`,
+          name: newFirmData.name.trim(),
+          region: newFirmData.region,
+          city: newFirmData.city.trim(),
+          initials,
+          color: newFirmData.region === "ca" ? "bg-red-600" : "bg-blue-600",
+         };
+         setFirmProfiles(prev => [...prev, newFirm]);
+         setActiveFirmId(newFirm.id);
+         setNewFirmStep(3);
+        }
+       }}
+      >
+       Continue
+      </Button>
+     </>
+    )}
+    {newFirmStep === 2 && (
+     <>
+      <Button variant="outline" onClick={() => setNewFirmStep(1)}>Back</Button>
+      <Button
+       className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+       onClick={() => {
+        const initials = newFirmData.name.trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        const newFirm: FirmProfile = {
+         id: `firm-${newFirmData.region}-${Date.now()}`,
+         name: newFirmData.name.trim(),
+         region: newFirmData.region,
+         city: newFirmData.city.trim(),
+         initials,
+         color: newFirmData.region === "ca" ? "bg-red-600" : "bg-blue-600",
+        };
+        setFirmProfiles(prev => [...prev, newFirm]);
+        setActiveFirmId(newFirm.id);
+        setNewFirmStep(3);
+       }}
+      >
+       Register as Separate Office
+      </Button>
+     </>
+    )}
+    {newFirmStep === 3 && (
+     <Button
+      className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+      onClick={() => setRegisterFirmOpen(false)}
+     >
+      Done
+     </Button>
+    )}
+   </DialogFooter>
+  </DialogContent>
  </Dialog>
  </div>;
 }
