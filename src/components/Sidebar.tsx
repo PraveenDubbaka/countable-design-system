@@ -3330,7 +3330,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  }}>
   <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
  </div>
- <div className={`p-3 pt-2 pb-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+ <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
   <div className="flex gap-2">
    <div className="relative flex-1">
     <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
@@ -3344,13 +3344,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    <Tooltip>
     <TooltipTrigger asChild>
      <button
-      className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-colors flex-shrink-0", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
+      className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}
       onClick={handleEngMyExpandCollapseAll}
      >
       {allEngMyExpanded ? (
-       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cn("h-4 w-4", hasDarkSecondary ? "text-white" : "text-primary")}><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
       ) : (
-       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cn("h-4 w-4", hasDarkSecondary ? "text-white" : "text-primary")}><path d="m7 20 5-5 5 5"/><path d="m7 4 5 5 5-5"/></svg>
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
       )}
      </button>
     </TooltipTrigger>
@@ -3358,12 +3362,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    </Tooltip>
    <Button
     size="icon"
-    className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0"
+    className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
     onClick={() => { setEngPickerOpen(true); setSelectedEngTemplates(new Set()); setEngTemplateSearchQuery(""); }}
    >
-    <Plus className="h-4 w-4 text-primary-foreground" />
+    <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
    </Button>
-   <Button size="icon" variant="secondary" className="h-8 w-8 text-destructive hover:text-destructive focus-visible:text-destructive flex-shrink-0">
+   <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive">
     <Trash2 className="h-4 w-4" />
    </Button>
   </div>
