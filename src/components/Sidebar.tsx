@@ -764,6 +764,85 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [engMySearchQuery, setEngMySearchQuery] = useState("");
  const [engMySelectedIds, setEngMySelectedIds] = useState<Set<string>>(new Set());
  const [engMyDeleteConfirmOpen, setEngMyDeleteConfirmOpen] = useState(false);
+ // Context menu state
+ type EngMyFolder = { id: string; name: string; templates: import("@/lib/engagementTemplatesData").MyEngagementTemplate[] };
+ const [engMyCtxFolder, setEngMyCtxFolder] = useState<EngMyFolder | null>(null);
+ const [engMyCtxTemplate, setEngMyCtxTemplate] = useState<import("@/lib/engagementTemplatesData").MyEngagementTemplate | null>(null);
+ const [engMyFolderRenameOpen, setEngMyFolderRenameOpen] = useState(false);
+ const [engMyFolderDeleteOpen, setEngMyFolderDeleteOpen] = useState(false);
+ const [engMyFolderRenameValue, setEngMyFolderRenameValue] = useState("");
+ const [engMyTemplateRenameOpen, setEngMyTemplateRenameOpen] = useState(false);
+ const [engMyTemplateRenameValue, setEngMyTemplateRenameValue] = useState("");
+ const [engMyTemplateSingleDeleteOpen, setEngMyTemplateSingleDeleteOpen] = useState(false);
+ const [engMyTemplateMoveOpen, setEngMyTemplateMoveOpen] = useState(false);
+ const [engMyTemplateMoveTargetId, setEngMyTemplateMoveTargetId] = useState("");
+ const [engMyDefaultId, setEngMyDefaultId] = useState<string | null>(() => {
+  try { return localStorage.getItem("defaultEngagementTemplateId"); } catch { return null; }
+ });
+
+ // Engagement My Templates – context menu handlers
+ const engMyUpdateStorage = (updated: import("@/lib/engagementTemplatesData").MyEngagementTemplate[]) => {
+  writeJsonToLocalStorage("myEngagementTemplates", updated);
+  setMyEngagementTemplates(updated);
+ };
+ const handleEngMyFolderRenameConfirm = () => {
+  if (!engMyCtxFolder || !engMyFolderRenameValue.trim()) return;
+  const updated = myEngagementTemplates.map(t =>
+   t.folderId === engMyCtxFolder.id ? { ...t, folderName: engMyFolderRenameValue.trim() } : t
+  );
+  engMyUpdateStorage(updated);
+  setEngMyFolderRenameOpen(false);
+ };
+ const handleEngMyFolderDelete = () => {
+  if (!engMyCtxFolder) return;
+  const remaining = myEngagementTemplates.filter(t => t.folderId !== engMyCtxFolder.id);
+  engMyUpdateStorage(remaining);
+  if (engMyCtxFolder.templates.some(t => t.id === searchParams.get("myTemplate"))) {
+   setSearchParams({}, { replace: true });
+  }
+  setEngMyFolderDeleteOpen(false);
+  toast.success(`Folder "${engMyCtxFolder.name}" and its templates deleted`);
+ };
+ const handleEngMyTemplateRenameConfirm = () => {
+  if (!engMyCtxTemplate || !engMyTemplateRenameValue.trim()) return;
+  const updated = myEngagementTemplates.map(t =>
+   t.id === engMyCtxTemplate.id ? { ...t, name: engMyTemplateRenameValue.trim() } : t
+  );
+  engMyUpdateStorage(updated);
+  setEngMyTemplateRenameOpen(false);
+ };
+ const handleEngMyTemplateDuplicate = (t: import("@/lib/engagementTemplatesData").MyEngagementTemplate) => {
+  const copy = { ...t, id: `my-eng-${Date.now()}`, name: `${t.name} (Copy)`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  engMyUpdateStorage([...myEngagementTemplates, copy]);
+  toast.success("Template duplicated");
+ };
+ const handleEngMyTemplateSingleDelete = () => {
+  if (!engMyCtxTemplate) return;
+  const remaining = myEngagementTemplates.filter(t => t.id !== engMyCtxTemplate.id);
+  engMyUpdateStorage(remaining);
+  if (searchParams.get("myTemplate") === engMyCtxTemplate.id) setSearchParams({}, { replace: true });
+  setEngMyTemplateSingleDeleteOpen(false);
+  toast.success("Template deleted");
+ };
+ const handleEngMyTemplateMoveConfirm = () => {
+  if (!engMyCtxTemplate || !engMyTemplateMoveTargetId) return;
+  const targetFolder = Object.values(
+   myEngagementTemplates.reduce((acc, t) => { acc[t.folderId] = { id: t.folderId, name: t.folderName }; return acc; }, {} as Record<string, {id: string; name: string}>)
+  ).find(f => f.id === engMyTemplateMoveTargetId);
+  if (!targetFolder) return;
+  const updated = myEngagementTemplates.map(t =>
+   t.id === engMyCtxTemplate.id ? { ...t, folderId: targetFolder.id, folderName: targetFolder.name } : t
+  );
+  engMyUpdateStorage(updated);
+  setEngMyTemplateMoveOpen(false);
+  toast.success("Template moved");
+ };
+ const handleEngMySetDefault = (id: string) => {
+  const next = engMyDefaultId === id ? null : id;
+  setEngMyDefaultId(next);
+  if (next) localStorage.setItem("defaultEngagementTemplateId", next);
+  else localStorage.removeItem("defaultEngagementTemplateId");
+ };
 
  const handleEngTemplateCheckbox = (id: string, checked: boolean) => {
  setSelectedEngTemplates(prev => {
@@ -3440,8 +3519,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const someFolderSelected = !allFolderSelected && folder.templates.some(t => engMySelectedIds.has(t.id));
  return (
  <div key={folder.id}>
+ {/* Folder row */}
  <div
- className={cn("flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none", hasDarkSecondary ? "text-white" : "text-foreground")}
+ className={cn("group flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none", hasDarkSecondary ? "text-white" : "text-foreground")}
  onClick={() => setEngMyFolderExpanded(prev => {
   const next = new Set(prev);
   next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
@@ -3468,16 +3548,35 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
   : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />}
  <span className="truncate flex-1">{folder.name}</span>
- <span className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>{folder.templates.length}</span>
+ <span className={cn("text-xs group-hover:hidden", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>{folder.templates.length}</span>
+ <DropdownMenu>
+  <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+   <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
+    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+   </button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end" className="w-44">
+   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setEngMyCtxFolder(folder); setEngMyFolderRenameValue(folder.name); setEngMyFolderRenameOpen(true); }}>
+    <Pencil className="h-4 w-4 text-primary" /> Rename
+   </DropdownMenuItem>
+   <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={e => { e.stopPropagation(); setEngMyCtxFolder(folder); setEngMyFolderDeleteOpen(true); }}>
+    <Trash2 className="h-4 w-4" /> Delete
+   </DropdownMenuItem>
+  </DropdownMenuContent>
+ </DropdownMenu>
  </div>
  {engMyFolderExpanded.has(folder.id) && folder.templates.map(t => {
  const isActive = searchParams.get("myTemplate") === t.id;
  const isSelected = engMySelectedIds.has(t.id);
+ const isDefault = engMyDefaultId === t.id;
+ const otherFolders = Object.values(
+  myEngagementTemplates.reduce((acc, x) => { acc[x.folderId] = { id: x.folderId, name: x.folderName }; return acc; }, {} as Record<string, {id: string; name: string}>)
+ ).filter(f => f.id !== folder.id);
  return (
  <div
  key={t.id}
  className={cn(
- "flex items-center gap-2 py-1.5 pl-6 pr-2 rounded-md cursor-pointer text-sm ml-1 font-medium select-none",
+ "group flex items-center gap-2 py-1.5 pl-6 pr-2 rounded-md cursor-pointer text-sm ml-1 font-medium select-none",
  isActive ? "bg-primary/10 text-primary" : (hasDarkSecondary ? "text-white/80 hover:bg-white/10" : "text-foreground hover:bg-muted/50")
  )}
  onClick={() => {
@@ -3501,7 +3600,34 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   {isSelected && <Check className="h-2.5 w-2.5 text-white" />}
  </div>
  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
- <span className="truncate flex-1">{t.name}</span>
+ <span className="truncate flex-1">{t.name}{isDefault && <span className="ml-1 text-[10px] text-primary font-normal">(Default)</span>}</span>
+ <DropdownMenu>
+  <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+   <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
+    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+   </button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end" className="w-48">
+   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); handleEngMySetDefault(t.id); }}>
+    <ArrowUpDown className="h-4 w-4 text-primary" /> {isDefault ? "Remove Default" : "Set as Default"}
+   </DropdownMenuItem>
+   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); handleEngMyTemplateDuplicate(t); }}>
+    <Copy className="h-4 w-4 text-primary" /> Duplicate
+   </DropdownMenuItem>
+   <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={e => { e.stopPropagation(); setEngMyCtxTemplate(t); setEngMyTemplateSingleDeleteOpen(true); }}>
+    <Trash2 className="h-4 w-4" /> Delete
+   </DropdownMenuItem>
+   <DropdownMenuSeparator />
+   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setEngMyCtxTemplate(t); setEngMyTemplateRenameValue(t.name); setEngMyTemplateRenameOpen(true); }}>
+    <Pencil className="h-4 w-4 text-primary" /> Rename
+   </DropdownMenuItem>
+   {otherFolders.length > 0 && (
+    <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setEngMyCtxTemplate(t); setEngMyTemplateMoveTargetId(""); setEngMyTemplateMoveOpen(true); }}>
+     <Move className="h-4 w-4 text-primary" /> Move
+    </DropdownMenuItem>
+   )}
+  </DropdownMenuContent>
+ </DropdownMenu>
  </div>
  );
  })}
@@ -3547,6 +3673,121 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    </div>
   </DialogContent>
  </Dialog>
+
+ {/* Folder rename dialog */}
+ <Dialog open={engMyFolderRenameOpen} onOpenChange={setEngMyFolderRenameOpen}>
+  <DialogContent className="sm:max-w-sm">
+   <DialogHeader>
+    <DialogTitle>Rename folder</DialogTitle>
+    <DialogDescription>Enter a new name for "{engMyCtxFolder?.name}"</DialogDescription>
+   </DialogHeader>
+   <div className="py-2">
+    <Input
+     value={engMyFolderRenameValue}
+     onChange={e => setEngMyFolderRenameValue(e.target.value)}
+     onKeyDown={e => { if (e.key === "Enter") handleEngMyFolderRenameConfirm(); }}
+     autoFocus
+    />
+   </div>
+   <DialogFooter>
+    <Button variant="outline" onClick={() => setEngMyFolderRenameOpen(false)}>Cancel</Button>
+    <Button onClick={handleEngMyFolderRenameConfirm} disabled={!engMyFolderRenameValue.trim()}>Rename</Button>
+   </DialogFooter>
+  </DialogContent>
+ </Dialog>
+
+ {/* Folder delete confirm dialog */}
+ <Dialog open={engMyFolderDeleteOpen} onOpenChange={setEngMyFolderDeleteOpen}>
+  <DialogContent className="sm:max-w-sm text-center">
+   <div className="flex flex-col items-center gap-4 pt-2">
+    <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+     <Trash2 className="h-6 w-6 text-destructive" />
+    </div>
+    <div className="space-y-1.5">
+     <DialogTitle className="text-lg font-bold">Delete folder</DialogTitle>
+     <DialogDescription className="text-sm text-muted-foreground">
+      Delete "{engMyCtxFolder?.name}" and all {engMyCtxFolder?.templates.length ?? 0} template(s) inside? This cannot be undone.
+     </DialogDescription>
+    </div>
+    <div className="flex gap-3 w-full pt-1">
+     <Button variant="outline" className="flex-1" onClick={() => setEngMyFolderDeleteOpen(false)}>Cancel</Button>
+     <Button variant="destructive" className="flex-1" onClick={handleEngMyFolderDelete}>Delete</Button>
+    </div>
+   </div>
+  </DialogContent>
+ </Dialog>
+
+ {/* Template rename dialog */}
+ <Dialog open={engMyTemplateRenameOpen} onOpenChange={setEngMyTemplateRenameOpen}>
+  <DialogContent className="sm:max-w-sm">
+   <DialogHeader>
+    <DialogTitle>Rename template</DialogTitle>
+    <DialogDescription>Enter a new name for "{engMyCtxTemplate?.name}"</DialogDescription>
+   </DialogHeader>
+   <div className="py-2">
+    <Input
+     value={engMyTemplateRenameValue}
+     onChange={e => setEngMyTemplateRenameValue(e.target.value)}
+     onKeyDown={e => { if (e.key === "Enter") handleEngMyTemplateRenameConfirm(); }}
+     autoFocus
+    />
+   </div>
+   <DialogFooter>
+    <Button variant="outline" onClick={() => setEngMyTemplateRenameOpen(false)}>Cancel</Button>
+    <Button onClick={handleEngMyTemplateRenameConfirm} disabled={!engMyTemplateRenameValue.trim()}>Rename</Button>
+   </DialogFooter>
+  </DialogContent>
+ </Dialog>
+
+ {/* Template single delete confirm dialog */}
+ <Dialog open={engMyTemplateSingleDeleteOpen} onOpenChange={setEngMyTemplateSingleDeleteOpen}>
+  <DialogContent className="sm:max-w-sm text-center">
+   <div className="flex flex-col items-center gap-4 pt-2">
+    <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+     <Trash2 className="h-6 w-6 text-destructive" />
+    </div>
+    <div className="space-y-1.5">
+     <DialogTitle className="text-lg font-bold">Delete template</DialogTitle>
+     <DialogDescription className="text-sm text-muted-foreground">
+      Delete "{engMyCtxTemplate?.name}"? This cannot be undone.
+     </DialogDescription>
+    </div>
+    <div className="flex gap-3 w-full pt-1">
+     <Button variant="outline" className="flex-1" onClick={() => setEngMyTemplateSingleDeleteOpen(false)}>Cancel</Button>
+     <Button variant="destructive" className="flex-1" onClick={handleEngMyTemplateSingleDelete}>Delete</Button>
+    </div>
+   </div>
+  </DialogContent>
+ </Dialog>
+
+ {/* Template move dialog */}
+ <Dialog open={engMyTemplateMoveOpen} onOpenChange={setEngMyTemplateMoveOpen}>
+  <DialogContent className="sm:max-w-sm">
+   <DialogHeader>
+    <DialogTitle>Move template</DialogTitle>
+    <DialogDescription>Choose a folder to move "{engMyCtxTemplate?.name}" to</DialogDescription>
+   </DialogHeader>
+   <div className="py-2">
+    <Select value={engMyTemplateMoveTargetId} onValueChange={setEngMyTemplateMoveTargetId}>
+     <SelectTrigger className="w-full">
+      <SelectValue placeholder="Select folder" />
+     </SelectTrigger>
+     <SelectContent>
+      {Object.values(
+       myEngagementTemplates.reduce((acc, x) => { acc[x.folderId] = { id: x.folderId, name: x.folderName }; return acc; }, {} as Record<string, {id: string; name: string}>)
+      ).filter(f => f.id !== engMyCtxTemplate?.folderId).map(f => (
+       <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+      ))}
+     </SelectContent>
+    </Select>
+   </div>
+   <DialogFooter>
+    <Button variant="outline" onClick={() => setEngMyTemplateMoveOpen(false)}>Cancel</Button>
+    <Button onClick={handleEngMyTemplateMoveConfirm} disabled={!engMyTemplateMoveTargetId}>Move</Button>
+   </DialogFooter>
+  </DialogContent>
+ </Dialog>
+
  </>
  ) : selectedDropdown === "checklists" ? (
  <>
