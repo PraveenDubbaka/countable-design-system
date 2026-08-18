@@ -307,6 +307,30 @@ export const initialGlobalTemplates: GlobalTemplate[] = [
  }
 ];
 
+// Country-specific engagement template trees for the picker panel
+const engPickerTreeCA: TreeItem[] = [
+ { id: "compilation", label: "Compilation", type: "folder", children: [
+  { id: "comp4200", label: "Compilation CSRS 4200", type: "file", suggested: true },
+ ]},
+ { id: "review", label: "Review", type: "folder", children: [
+  { id: "rev2400", label: "Review Section 2400", type: "file", suggested: true },
+ ]},
+ { id: "audit", label: "Audit", type: "folder", children: [
+  { id: "audit5100", label: "CAS / ASPE — Private (5100)", type: "file", suggested: true },
+  { id: "audit5101", label: "CAS / NFP — ASNPO (5101)", type: "file" },
+ ]},
+ { id: "tax", label: "Tax", type: "folder", children: [
+  { id: "tax-t2", label: "T2 (Corporations)", type: "file" },
+ ]},
+];
+
+const engPickerTreeUS: TreeItem[] = [
+ { id: "audit-us-root", label: "Audit", type: "folder", children: [
+  { id: "audit6100", label: "GAAS / US GAAP — Private (6100)", type: "file", suggested: true },
+  { id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" },
+ ]},
+];
+
 // Global Worksheets data structure — shown when "Worksheets" is selected in the dropdown
 export const initialGlobalWorksheets: GlobalTemplate[] = [
  {
@@ -718,6 +742,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [engBulkAddDialogOpen, setEngBulkAddDialogOpen] = useState(false);
  const [engActiveTab, setEngActiveTab] = useState<"my" | "global">("my");
  const [engPickerOpen, setEngPickerOpen] = useState(false);
+ const [engPickerCountry, setEngPickerCountry] = useState<"CA" | "US">("CA");
  const [myEngagementTemplates, setMyEngagementTemplates] = useState<import("@/lib/engagementTemplatesData").MyEngagementTemplate[]>(() =>
  readJsonFromLocalStorage("myEngagementTemplates", [])
  );
@@ -770,7 +795,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [engTemplateSelectedId]);
 
- const allEngFolderIds = getAllEngFolderIds(templateTree);
+ const activeEngPickerTree = engPickerCountry === "CA" ? engPickerTreeCA : engPickerTreeUS;
+ const allEngFolderIds = getAllEngFolderIds(activeEngPickerTree);
  const allEngExpanded = allEngFolderIds.every(id => engTemplateExpandedFolders.has(id));
 
  const handleEngExpandCollapseAll = () => {
@@ -3870,6 +3896,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      <X className={cn("h-4 w-4", hasDarkSecondary ? "text-white/60" : "text-muted-foreground")} />
     </button>
    </div>
+   <div className={cn("flex gap-1 px-3 py-2 flex-shrink-0 border-b", hasDarkSecondary ? "border-white/10" : "border-border")}>
+    {(["CA", "US"] as const).map(c => (
+     <button
+      key={c}
+      onClick={() => { setEngPickerCountry(c); setEngTemplateExpandedFolders(new Set()); setSelectedEngTemplates(new Set()); }}
+      className={cn("flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors",
+       engPickerCountry === c
+        ? (hasDarkSecondary ? "bg-white/20 text-white" : "bg-primary text-primary-foreground")
+        : (hasDarkSecondary ? "text-white/50 hover:bg-white/10" : "text-muted-foreground hover:bg-muted")
+      )}
+     >
+      {c === "CA" ? "🇨🇦 Canada" : "🇺🇸 United States"}
+     </button>
+    ))}
+   </div>
    <div className="p-3 flex gap-2 flex-shrink-0">
     <div className="relative flex-1">
      <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
@@ -3898,7 +3939,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    <div className="flex-1 overflow-y-auto p-2 pt-0">
     {(() => {
      const etq = engTemplateSearchQuery.trim().toLowerCase();
-     const engTreeHasMatch = !etq || templateTree.some(function check(it): boolean {
+     const engTreeHasMatch = !etq || activeEngPickerTree.some(function check(it): boolean {
       return it.label.toLowerCase().includes(etq) || (it.children?.some(check) ?? false);
      });
      if (!engTreeHasMatch) return (
@@ -3908,7 +3949,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
        <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
       </div>
      );
-     return templateTree.map((item) => renderEngTemplateTreeNode(item, 0));
+     return activeEngPickerTree.map((item) => renderEngTemplateTreeNode(item, 0));
     })()}
    </div>
    <div className={cn("p-3 flex-shrink-0 border-t", hasDarkSecondary ? "border-white/10" : "border-border")}>
