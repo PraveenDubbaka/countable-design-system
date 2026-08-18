@@ -19,7 +19,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, SlidersHorizontal, Check } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -106,7 +106,7 @@ function ColFilterHeader({ label, active, children }: { label: string; active: b
       active ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-black/10"
      )}
     >
-     <SlidersHorizontal className="h-3 w-3" />
+     <ListFilter className="h-3.5 w-3.5" />
     </button>
    </PopoverTrigger>
    <PopoverContent className="p-1 bg-card min-w-max" align="start" side="bottom">
