@@ -729,7 +729,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [engTemplateExpandedFolders, setEngTemplateExpandedFolders] = useState<Set<string>>(
  () => new Set(["compilation", "review", "audit"])
  );
- const engTemplateSelectedId = searchParams.get("template") || "comp4200";
+ const engTemplateSelectedId = searchParams.get("template") || null;
  const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
  const [engSidebarSearchQuery, setEngSidebarSearchQuery] = useState("");
 
@@ -1073,17 +1073,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  localStorage.setItem("selectedDropdown", itemId);
  setSelectedDropdown(itemId);
  if (itemId === "engagements") {
- // Navigate to engagement templates and auto-select the first template
- // (comp4200) so the content area immediately shows something useful.
- const firstTemplate = "comp4200";
  if (location.pathname !== "/engagement-templates") {
- navigate(`/engagement-templates?template=${firstTemplate}`);
+ navigate("/engagement-templates");
  } else {
- // Already on the page — just update the search param to select first item.
- setSearchParams({ template: firstTemplate }, { replace: true });
+ setSearchParams({}, { replace: true });
  }
- // Expand the compilation folder so the selected item is visible in the tree.
- setEngTemplateExpandedFolders(prev => new Set([...prev, "compilation"]));
  } else if (itemId === "checklists") {
  navigate("/create", { state: { contentType: "checklists" } });
  } else {
