@@ -1571,9 +1571,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [addNoteName, setAddNoteName] = useState('');
  const [hiddenChildren, setHiddenChildren] = useState<Record<string, string[]>>({});
 
- // Firm switcher state
- const [firmProfiles, setFirmProfiles] = useState<FirmProfile[]>(DEFAULT_FIRMS);
- const [activeFirmId, setActiveFirmId] = useState<string>("firm-ca-1");
+ // Firm switcher state — persisted to localStorage to stay in sync with Settings > Firm Info
+ const [firmProfiles, setFirmProfiles] = useState<FirmProfile[]>(() => {
+  try { const s = localStorage.getItem("firmProfiles"); return s ? JSON.parse(s) : DEFAULT_FIRMS; } catch { return DEFAULT_FIRMS; }
+ });
+ const [activeFirmId, setActiveFirmId] = useState<string>(() => localStorage.getItem("activeFirmId") ?? "firm-ca-1");
  const activeFirm = firmProfiles.find(f => f.id === activeFirmId) ?? firmProfiles[0];
 
  const [registerFirmOpen, setRegisterFirmOpen] = useState(false);
@@ -1583,6 +1585,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   region: "ca" as "ca" | "us",
   city: "",
  });
+
+ // Sync with SettingsPanel when firm data changes there
+ useEffect(() => {
+  const handler = () => {
+   try {
+    const s = localStorage.getItem("firmProfiles");
+    if (s) setFirmProfiles(JSON.parse(s));
+    const id = localStorage.getItem("activeFirmId");
+    if (id) setActiveFirmId(id);
+   } catch {}
+  };
+  window.addEventListener("firm-profiles-updated", handler);
+  return () => window.removeEventListener("firm-profiles-updated", handler);
+ }, []);
 
  // Persist expanded sections across route changes
  useEffect(() => {
@@ -1900,7 +1916,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      {firmProfiles.map(firm => (
       <DropdownMenuItem
        key={firm.id}
-       onClick={() => setActiveFirmId(firm.id)}
+       onClick={() => { setActiveFirmId(firm.id); localStorage.setItem("activeFirmId", firm.id); window.dispatchEvent(new CustomEvent("firm-profiles-updated")); }}
        className={cn(
         "flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer",
         activeFirmId === firm.id && "bg-primary/10"
@@ -4164,7 +4180,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           initials,
           color: newFirmData.region === "ca" ? "bg-red-600" : "bg-blue-600",
          };
-         setFirmProfiles(prev => [...prev, newFirm]);
+         const updated1 = [...firmProfiles, newFirm];
+         setFirmProfiles(updated1);
+         localStorage.setItem("firmProfiles", JSON.stringify(updated1));
+         localStorage.setItem("activeFirmId", newFirm.id);
+         window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
          setActiveFirmId(newFirm.id);
          setNewFirmStep(3);
         }
@@ -4189,7 +4209,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
          initials,
          color: newFirmData.region === "ca" ? "bg-red-600" : "bg-blue-600",
         };
-        setFirmProfiles(prev => [...prev, newFirm]);
+        const updated2 = [...firmProfiles, newFirm];
+        setFirmProfiles(updated2);
+        localStorage.setItem("firmProfiles", JSON.stringify(updated2));
+        localStorage.setItem("activeFirmId", newFirm.id);
+        window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
         setActiveFirmId(newFirm.id);
         setNewFirmStep(3);
        }}
