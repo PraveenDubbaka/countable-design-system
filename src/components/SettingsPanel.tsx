@@ -69,6 +69,7 @@ function writeFirmDetails(firmId: string, details: FirmDetails) {
 interface SettingsPanelProps {
  open: boolean;
  onOpenChange: (open: boolean) => void;
+ firmNav?: { tab?: string; addOffice?: boolean } | null;
 }
 
 const settingsNavItems = [
@@ -82,8 +83,12 @@ const settingsNavItems = [
  { id: "time-tracking", label: "Time Tracking", icon: Clock },
 ];
 
-export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
+export function SettingsPanel({ open, onOpenChange, firmNav }: SettingsPanelProps) {
  const [activeSection, setActiveSection] = useState("my-account");
+
+ useEffect(() => {
+  if (open && firmNav?.tab) setActiveSection("my-account");
+ }, [open, firmNav]);
 
  return (
  <Sheet open={open} onOpenChange={onOpenChange}>
@@ -141,7 +146,7 @@ export function SettingsPanel({ open, onOpenChange }: SettingsPanelProps) {
  </div>
 
  <div className="flex-1 overflow-auto p-6">
- {activeSection === "my-account" && <MyAccountContent />}
+ {activeSection === "my-account" && <MyAccountContent defaultTab={firmNav?.tab} openAddOffice={firmNav?.addOffice} />}
  {activeSection === "letterhead" && <PlaceholderContent title="Letterhead & Signature" />}
  {activeSection === "luka" && <LukaContent />}
  {activeSection === "notifications" && <NotificationsContent />}
@@ -393,10 +398,12 @@ function LukaContent() {
  );
 }
 
-function MyAccountContent() {
+function MyAccountContent({ defaultTab, openAddOffice }: { defaultTab?: string; openAddOffice?: boolean }) {
+ const [tab, setTab] = useState(defaultTab ?? "profile");
+ useEffect(() => { if (defaultTab) setTab(defaultTab); }, [defaultTab]);
  return (
  <div className="space-y-6">
- <Tabs defaultValue="profile" className="w-full">
+ <Tabs value={tab} onValueChange={setTab} className="w-full">
  <TabsList>
  <TabsTrigger value="profile">Profile</TabsTrigger>
  <TabsTrigger value="firm-info">Firm Info</TabsTrigger>
@@ -476,7 +483,7 @@ function MyAccountContent() {
  </TabsContent>
 
  <TabsContent value="firm-info" className="mt-6">
- <FirmInfoContent />
+ <FirmInfoContent initialShowAddOffice={openAddOffice} />
  </TabsContent>
 
  <TabsContent value="timezone" className="mt-6">
@@ -872,7 +879,7 @@ function UserAccessContent() {
  );
 }
 
-function FirmInfoContent() {
+function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: boolean }) {
  const [firms, setFirms] = useState<FirmProfile[]>(readFirmProfiles);
  const [activeFirmId, setActiveFirmId] = useState<string>(readActiveFirmId);
  const activeFirm = firms.find(f => f.id === activeFirmId) ?? firms[0];
@@ -896,7 +903,7 @@ function FirmInfoContent() {
   return stored.firmName ? stored : (firm ? defaultDetails(firm) : stored);
  });
 
- const [showAddOffice, setShowAddOffice] = useState(false);
+ const [showAddOffice, setShowAddOffice] = useState(initialShowAddOffice ?? false);
  const [newOffice, setNewOffice] = useState({ name: "", region: "ca" as "ca" | "us", city: "" });
 
  useEffect(() => {
