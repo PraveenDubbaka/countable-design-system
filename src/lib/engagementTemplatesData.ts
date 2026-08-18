@@ -25,7 +25,6 @@ export interface TemplateView {
  color: "blue" | "green" | "red";
  };
  sections: TemplateSection[];
- jurisdiction?: "CA" | "US" | "global";
 }
 
 export interface TreeItem {
@@ -159,7 +158,6 @@ export const templateTree: TreeItem[] = [
 // ── Compilation Section 4200 ──
 const comp4200: TemplateView = {
  id: "comp4200",
- jurisdiction: "CA",
  title: "Compilation CSRS 4200",
  subtitle: "CSRS 4200 — Compilation Engagement",
  standardsBanner: {
@@ -227,7 +225,6 @@ const comp4200: TemplateView = {
 // ── Review 2400 ──
 const review2400: TemplateView = {
  id: "rev2400",
- jurisdiction: "CA",
  title: "Review Section 2400",
  sections: [
  {
@@ -300,7 +297,6 @@ const review2400: TemplateView = {
 // ── Audit 5100 (Canada CAS/ASPE) ──
 const audit5100: TemplateView = {
  id: "audit5100",
- jurisdiction: "CA",
  title: "Audit Section 5100",
  subtitle: "CAS — Canadian Auditing Standards · ASPE (Accounting Standards for Private Enterprises)",
  standardsBanner: {
@@ -422,7 +418,6 @@ const audit5100: TemplateView = {
 // ── Audit 5101 (Canada NFP/ASNPO) ──
 const audit5101: TemplateView = {
  id: "audit5101",
- jurisdiction: "CA",
  title: "Audit Section 5101",
  subtitle: "CAS — Canadian Auditing Standards · ASNPO (Accounting Standards for Not-for-Profit Organizations)",
  standardsBanner: {
@@ -547,7 +542,6 @@ const audit5101: TemplateView = {
 // ── Audit 6100 (US GAAS / US GAAP — Private) ──
 const audit6100: TemplateView = {
  id: "audit6100",
- jurisdiction: "US",
  title: "Audit Section 6100",
  subtitle: "United States · GAAS (AU-C Sections) · US GAAP (ASC) · Private Companies",
  standardsBanner: {
@@ -672,7 +666,6 @@ const audit6100: TemplateView = {
 // ── Audit 6200 (US PCAOB / SOX) ──
 const audit6200: TemplateView = {
  id: "audit6200",
- jurisdiction: "US",
  title: "Audit Section 6200",
  subtitle: "United States · PCAOB Auditing Standards · SOX Compliance · SEC Issuers / Public Companies",
  standardsBanner: {

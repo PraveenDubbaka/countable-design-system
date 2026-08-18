@@ -8,14 +8,12 @@ import { Layout } from "@/components/Layout";
 import {
  allTemplateViews,
  categoryConfig,
- templateViewToMyTemplate,
  type TemplateSection,
  type CategoryType,
  type MyEngagementTemplate,
  type EditableTemplateRow,
  type EditableTemplateSection,
 } from "@/lib/engagementTemplatesData";
-import TemplateSidebarMenu from "@/components/luka/templates/TemplateSidebarMenu";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { FolderSolidIcon } from "@/components/icons/FolderIcons";
@@ -606,110 +604,6 @@ function MyTemplateEditor({
  );
 }
 
-// ── Global Library Modal ──
-function GlobalLibraryModal({
- open,
- onClose,
- onAddToMyTemplates,
-}: {
- open: boolean;
- onClose: () => void;
- onAddToMyTemplates: (templateId: string) => void;
-}) {
- const [selectedId, setSelectedId] = useState("audit5100");
- const [search, setSearch] = useState("");
- const activeView = allTemplateViews[selectedId];
-
- const allTemplateIds = Object.keys(allTemplateViews);
- const filtered = search
-  ? allTemplateIds.filter(id => allTemplateViews[id].title.toLowerCase().includes(search.toLowerCase()))
-  : allTemplateIds;
-
- if (!open) return null;
-
- return (
-  <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-6">
-   <div className="bg-background rounded-xl shadow-2xl border border-border w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden">
-    {/* Modal Header */}
-    <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
-     <div>
-      <h2 className="text-lg font-bold text-foreground">Global Template Library</h2>
-      <p className="text-xs text-muted-foreground mt-0.5">Browse all available templates for Canada and the United States. Add any to your firm's templates.</p>
-     </div>
-     <button onClick={onClose} className="p-1.5 hover:bg-muted rounded-md">
-      <X className="h-5 w-5 text-muted-foreground" />
-     </button>
-    </div>
-
-    <div className="flex flex-1 overflow-hidden">
-     {/* Left: template list */}
-     <div className="w-64 border-r border-border flex flex-col flex-shrink-0">
-      <div className="p-3 border-b border-border/40">
-       <div className="relative">
-        <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-        <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search templates" className="pl-8 h-7 text-sm" />
-       </div>
-      </div>
-      <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-       {filtered.map(id => {
-        const view = allTemplateViews[id];
-        const isCA = id.startsWith("audit5") || id.startsWith("comp") || id.startsWith("rev");
-        const isUS = id.startsWith("audit6");
-        return (
-         <button
-          key={id}
-          onClick={() => setSelectedId(id)}
-          className={cn(
-           "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-           selectedId === id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
-          )}
-         >
-          <div className="flex items-center gap-2">
-           <span className="text-xs">{isCA ? "🇨🇦" : isUS ? "🇺🇸" : "🌐"}</span>
-           <span className="truncate">{view.title}</span>
-          </div>
-         </button>
-        );
-       })}
-      </div>
-     </div>
-
-     {/* Right: template preview */}
-     <div className="flex-1 flex flex-col overflow-hidden">
-      {activeView ? (
-       <>
-        {activeView.standardsBanner && <StandardsBanner banner={activeView.standardsBanner} />}
-        <div className="flex items-center justify-between px-6 py-3.5 border-b border-border flex-shrink-0">
-         <div>
-          <h3 className="text-base font-bold text-foreground">{activeView.title}</h3>
-          {activeView.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{activeView.subtitle}</p>}
-         </div>
-         <Button
-          size="sm"
-          className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white text-[13px] font-semibold gap-1.5"
-          onClick={() => { onAddToMyTemplates(selectedId); onClose(); }}
-         >
-          <Plus className="h-3.5 w-3.5" /> Add to My Templates
-         </Button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
-         {activeView.sections.map((section, i) => (
-          <SectionBlock key={i} section={section} />
-         ))}
-        </div>
-       </>
-      ) : (
-       <div className="flex items-center justify-center h-full text-muted-foreground">
-        <span className="text-sm">Select a template to preview</span>
-       </div>
-      )}
-     </div>
-    </div>
-   </div>
-  </div>
- );
-}
-
 // ── Main Page ──
 export default function EngagementTemplates() {
  const [searchParams, setSearchParams] = useSearchParams();
@@ -718,9 +612,6 @@ export default function EngagementTemplates() {
  const myTemplateId = searchParams.get("myTemplate");
 
  const activeView = allTemplateViews[selectedId];
- const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
- const [activeTab, setActiveTab] = useState<"my" | "global">("my");
- const [globalLibraryOpen, setGlobalLibraryOpen] = useState(false);
 
  // Load my template from localStorage
  const [myTemplate, setMyTemplate] = useState<MyEngagementTemplate | null>(null);
@@ -748,23 +639,8 @@ export default function EngagementTemplates() {
  return (
  <Layout title="Templates">
  <div className="flex h-full overflow-hidden bg-background">
-  {/* Left Sidebar */}
-  <TemplateSidebarMenu
-   selectedItem={myTemplateId || selectedId}
-   collapsed={sidebarCollapsed}
-   onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
-   onTabChange={(tab) => setActiveTab(tab)}
-   onSelectItem={(id) => {
-    if (activeTab === "my") {
-     setSearchParams({ myTemplate: id });
-    } else {
-     setSearchParams({ template: id });
-    }
-   }}
-  />
-
-  {/* Right Panel */}
-  <div className="flex-1 bg-background flex flex-col overflow-hidden">
+ {/* Right Panel */}
+ <div className="flex-1 bg-background flex flex-col overflow-hidden">
  {myTemplateId && myTemplate ? (
  <MyTemplateEditor
  template={myTemplate}
@@ -783,30 +659,12 @@ export default function EngagementTemplates() {
  <div>
  <h1 className="text-xl font-bold text-foreground">{activeView.title}</h1>
  </div>
- <div className="flex items-center gap-2">
-  <Button
-   size="sm"
-   variant="outline"
-   className="text-[13px] font-semibold gap-1.5"
-   onClick={() => setGlobalLibraryOpen(true)}
-  >
-   <LayoutGrid className="h-3.5 w-3.5" /> Global Library
-  </Button>
-  <Button
-   size="sm"
-   className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-primary-foreground text-[13px] font-semibold gap-1.5"
-   onClick={() => {
-    const newTemplate: MyEngagementTemplate = templateViewToMyTemplate(activeView, "my-templates", "My Templates");
-    const all = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
-    writeJsonToLocalStorage("myEngagementTemplates", [...all, newTemplate]);
-    setSearchParams({ myTemplate: newTemplate.id });
-    toast.success("Template added to My Templates");
-   }}
-  >
-   <Plus className="h-3.5 w-3.5" /> Add to My Templates
-  </Button>
+ <Button size="sm" className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-primary-foreground text-[13px] font-semibold">
+ <Plus className="h-4 w-4 mr-1" /> My Templates
+ </Button>
  </div>
- </div>
+
+
 
  {/* Sections */}
  <div className="flex-1 overflow-y-auto p-6 space-y-5">
@@ -823,19 +681,6 @@ export default function EngagementTemplates() {
  )}
  </div>
  </div>
- <GlobalLibraryModal
-  open={globalLibraryOpen}
-  onClose={() => setGlobalLibraryOpen(false)}
-  onAddToMyTemplates={(templateId) => {
-   const view = allTemplateViews[templateId];
-   if (!view) return;
-   const newTemplate = templateViewToMyTemplate(view, "my-templates", "My Templates");
-   const all = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
-   writeJsonToLocalStorage("myEngagementTemplates", [...all, newTemplate]);
-   window.dispatchEvent(new CustomEvent("engagementTemplateSaved", { detail: newTemplate }));
-   toast.success(`"${view.title}" added to My Templates`);
-  }}
- />
  </Layout>
  );
 }
