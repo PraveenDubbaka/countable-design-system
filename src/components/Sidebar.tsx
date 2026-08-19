@@ -1715,6 +1715,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  });
 
  const [firmPopoverOpen, setFirmPopoverOpen] = useState(false);
+ const [switchingFirm, setSwitchingFirm] = useState<string | null>(null);
  const firmCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const openFirmPopover = () => { if (firmCloseTimer.current) clearTimeout(firmCloseTimer.current); setFirmPopoverOpen(true); };
  const scheduleFirmClose = () => { firmCloseTimer.current = setTimeout(() => setFirmPopoverOpen(false), 180); };
@@ -2086,15 +2087,27 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     onMouseEnter={openFirmPopover}
     onMouseLeave={scheduleFirmClose}
    >
-    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-2 pb-2">Switch Office</p>
+    <div className="px-2 pb-2">
+     <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Your Offices</p>
+     {firmProfiles.length > 1 && (
+      <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+       {firmProfiles.length} offices across {[...new Set(firmProfiles.map(f => f.region))].length} region{[...new Set(firmProfiles.map(f => f.region))].length > 1 ? "s" : ""}
+      </p>
+     )}
+    </div>
     {firmProfiles.map(firm => (
      <button
       key={firm.id}
       onClick={() => {
-       setActiveFirmId(firm.id);
-       localStorage.setItem("activeFirmId", firm.id);
-       window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
-       setFirmPopoverOpen(false);
+       if (firm.id === activeFirmId) return;
+       setSwitchingFirm(firm.name);
+       setTimeout(() => {
+        setActiveFirmId(firm.id);
+        localStorage.setItem("activeFirmId", firm.id);
+        localStorage.setItem("firmProfiles", JSON.stringify(firmProfiles));
+        window.dispatchEvent(new CustomEvent("firmSwitched"));
+        setSwitchingFirm(null);
+       }, 900);
       }}
       className={cn(
        "w-full flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors text-left",
@@ -4615,6 +4628,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
          localStorage.setItem("firmProfiles", JSON.stringify(updated1));
          localStorage.setItem("activeFirmId", newFirm.id);
          window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+         window.dispatchEvent(new CustomEvent("firmSwitched"));
          setActiveFirmId(newFirm.id);
          setNewFirmStep(3);
         }
@@ -4644,6 +4658,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
         localStorage.setItem("firmProfiles", JSON.stringify(updated2));
         localStorage.setItem("activeFirmId", newFirm.id);
         window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+        window.dispatchEvent(new CustomEvent("firmSwitched"));
         setActiveFirmId(newFirm.id);
         setNewFirmStep(3);
        }}
@@ -4663,5 +4678,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    </DialogFooter>
   </DialogContent>
  </Dialog>
+ {switchingFirm && (
+  <div className="fixed inset-0 z-[200] bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+   <div className="w-10 h-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+   <p className="text-sm font-medium text-foreground">Switching to {switchingFirm}</p>
+   <p className="text-xs text-muted-foreground">Loading office context...</p>
+  </div>
+ )}
  </div>;
 }

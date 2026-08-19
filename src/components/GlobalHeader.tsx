@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Input as SearchInput } from "@/components/ui/input";
@@ -35,6 +36,14 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  const [ttOpen, setTtOpen] = useState(false);
  const [ttSelected, setTtSelected] = useState<Set<string>>(new Set());
  const [ttModalOpen, setTtModalOpen] = useState(false);
+
+ const [activeFirm, setActiveFirm] = useState<{ name: string; region: "ca" | "us"; initials: string; color: string } | null>(() => {
+  try {
+   const profiles = JSON.parse(localStorage.getItem("firmProfiles") || "[]");
+   const id = localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+   return profiles.find((f: { id: string }) => f.id === id) ?? null;
+  } catch { return null; }
+ });
  
  // Font size accessibility state
  type FontSize = 'A' | 'AA' | 'AAA';
@@ -68,6 +77,18 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
   };
   window.addEventListener("open-settings-firm-info", handler);
   return () => window.removeEventListener("open-settings-firm-info", handler);
+ }, []);
+
+ useEffect(() => {
+  const handler = () => {
+   try {
+    const profiles = JSON.parse(localStorage.getItem("firmProfiles") || "[]");
+    const id = localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+    setActiveFirm(profiles.find((f: { id: string }) => f.id === id) ?? null);
+   } catch {}
+  };
+  window.addEventListener("firmSwitched", handler);
+  return () => window.removeEventListener("firmSwitched", handler);
  }, []);
 
  const fmtTrackerTime = (s: number) => {
@@ -146,6 +167,27 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  <h1 className="text-xl font-bold text-sidebar-foreground">{title}</h1>
  )}
  {headerContent}
+ {activeFirm && (
+  <div className="flex items-center gap-1.5 ml-1">
+   <div className={cn(
+    "w-5 h-5 rounded-md flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0",
+    activeFirm.color ?? (activeFirm.region === "us" ? "bg-blue-600" : "bg-red-600")
+   )}>
+    {activeFirm.initials}
+   </div>
+   <span className="text-xs font-medium text-sidebar-foreground/70 truncate max-w-[160px]">
+    {activeFirm.name}
+   </span>
+   <span className={cn(
+    "text-[10px] font-semibold px-1.5 py-0.5 rounded-full",
+    activeFirm.region === "us"
+     ? "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400"
+     : "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400"
+   )}>
+    {activeFirm.region === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+   </span>
+  </div>
+ )}
  </div>
 
 
