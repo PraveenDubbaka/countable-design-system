@@ -2101,7 +2101,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      title={activeFirm.name}
     >
      {activeFirm.initials}
-     <span className="absolute -bottom-1.5 -right-1.5 text-[13px] leading-none pointer-events-none">
+     <span className="absolute -bottom-2 -right-2 text-[12px] leading-none pointer-events-none bg-white rounded-full ring-1 ring-white p-px">
       {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}
      </span>
     </button>
