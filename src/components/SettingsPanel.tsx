@@ -1022,9 +1022,7 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
       });
       return groups.map(group => (
        <div key={group.groupId} className="space-y-1.5">
-        {groups.length > 1 && (
-         <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground px-1">{group.groupName}</p>
-        )}
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground px-1">{group.groupName}</p>
         {group.items.map(firm => (
          <div
           key={firm.id}
