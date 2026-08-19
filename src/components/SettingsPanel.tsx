@@ -22,6 +22,9 @@ interface FirmProfile {
  city: string;
  initials: string;
  color: string;
+ firmGroupId?: string;
+ firmGroupName?: string;
+ isMainOffice?: boolean;
 }
 
 interface FirmDetails {
@@ -38,8 +41,8 @@ interface FirmDetails {
 }
 
 const DEFAULT_FIRMS: FirmProfile[] = [
- { id: "firm-ca-1", name: "Maple Grove Accounting PC", region: "ca", city: "Toronto, ON", initials: "MG", color: "bg-red-600" },
- { id: "firm-us-1", name: "Ascend LLP", region: "us", city: "New York, NY", initials: "AS", color: "bg-blue-600" },
+ { id: "firm-ca-1", name: "Maple Grove Accounting PC", region: "ca", city: "Toronto, ON", initials: "MG", color: "bg-red-600", firmGroupId: "group-maple", firmGroupName: "Maple Grove Group", isMainOffice: true },
+ { id: "firm-us-1", name: "Maple Grove Accounting PC", region: "us", city: "New York, NY", initials: "MG", color: "bg-blue-600", firmGroupId: "group-maple", firmGroupName: "Maple Grove Group", isMainOffice: false },
 ];
 
 const CA_PROVINCES = ["Alberta","British Columbia","Manitoba","New Brunswick","Newfoundland and Labrador","Northwest Territories","Nova Scotia","Nunavut","Ontario","Prince Edward Island","Quebec","Saskatchewan","Yukon"];
@@ -940,7 +943,7 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
 
  const handleAddOffice = () => {
   if (!newOffice.name.trim() || !newOffice.city.trim()) return;
-  const initials = newOffice.name.trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+  const initials = newOffice.name.trim().split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2);
   const newFirm: FirmProfile = {
    id: `firm-${newOffice.region}-${Date.now()}`,
    name: newOffice.name.trim(),
@@ -996,35 +999,58 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
     </div>
 
     <div className="grid gap-2">
-     {firms.map(firm => (
-      <div
-       key={firm.id}
-       onClick={() => handleSwitchFirm(firm.id)}
-       className={cn(
-        "flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer",
-        activeFirmId === firm.id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50"
-       )}
-      >
-       <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
-        {firm.initials}
+     {(() => {
+      const groups: { groupId: string; groupName: string; items: FirmProfile[] }[] = [];
+      const seen = new Set<string>();
+      firms.forEach(firm => {
+       const gid = firm.firmGroupId ?? firm.id;
+       const gname = firm.firmGroupName ?? firm.name;
+       if (!seen.has(gid)) { seen.add(gid); groups.push({ groupId: gid, groupName: gname, items: [] }); }
+       groups.find(g => g.groupId === gid)!.items.push(firm);
+      });
+      return groups.map(group => (
+       <div key={group.groupId} className="space-y-1.5">
+        {groups.length > 1 && (
+         <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground px-1">{group.groupName}</p>
+        )}
+        {group.items.map(firm => (
+         <div
+          key={firm.id}
+          onClick={() => handleSwitchFirm(firm.id)}
+          className={cn(
+           "flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer",
+           activeFirmId === firm.id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50"
+          )}
+         >
+          <div className={cn("relative w-9 h-9 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
+           {firm.initials}
+           <span className="absolute -bottom-1 -right-1 text-[10px] leading-none">{firm.region === "ca" ? "🇨🇦" : "🇺🇸"}</span>
+          </div>
+          <div className="flex-1 min-w-0">
+           <div className="flex items-center gap-1.5 min-w-0">
+            <p className="text-sm font-medium truncate">{firm.name}</p>
+            {firm.isMainOffice && (
+             <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-700 flex-shrink-0">Main</span>
+            )}
+           </div>
+           <p className="text-xs text-muted-foreground">{firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}</p>
+          </div>
+          {activeFirmId === firm.id && (
+           <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20 flex-shrink-0">Active</span>
+          )}
+          {firms.length > 1 && (
+           <button
+            className="ml-1 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+            onClick={e => { e.stopPropagation(); handleDeleteFirm(firm.id); }}
+           >
+            <Trash2 className="h-3.5 w-3.5" />
+           </button>
+          )}
+         </div>
+        ))}
        </div>
-       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate">{firm.name}</p>
-        <p className="text-xs text-muted-foreground">{firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}</p>
-       </div>
-       {activeFirmId === firm.id && (
-        <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20 flex-shrink-0">Active</span>
-       )}
-       {firms.length > 1 && (
-        <button
-         className="ml-1 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-         onClick={e => { e.stopPropagation(); handleDeleteFirm(firm.id); }}
-        >
-         <Trash2 className="h-3.5 w-3.5" />
-        </button>
-       )}
-      </div>
-     ))}
+      ));
+     })()}
     </div>
 
     {showAddOffice && (
@@ -1339,8 +1365,9 @@ function LetterheadContent() {
      <SelectTrigger className="h-8 w-64 text-sm gap-2">
       <SelectValue>
        <div className="flex items-center gap-2">
-        <span className={cn("w-5 h-5 rounded-sm flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0", activeFirm.color)}>
+        <span className={cn("relative w-5 h-5 rounded-sm flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0", activeFirm.color)}>
          {activeFirm.initials}
+         <span className="absolute -bottom-1 -right-1 text-[8px] leading-none">{activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}</span>
         </span>
         <span className="truncate">{activeFirm.name}</span>
        </div>
@@ -1350,11 +1377,12 @@ function LetterheadContent() {
       {firms.map(firm => (
        <SelectItem key={firm.id} value={firm.id}>
         <div className="flex items-center gap-2">
-         <span className={cn("w-5 h-5 rounded-sm flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0", firm.color)}>
+         <span className={cn("relative w-5 h-5 rounded-sm flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0", firm.color)}>
           {firm.initials}
+          <span className="absolute -bottom-1 -right-1 text-[8px] leading-none">{firm.region === "ca" ? "🇨🇦" : "🇺🇸"}</span>
          </span>
          <span>{firm.name}</span>
-         <span className="text-xs text-muted-foreground">{firm.region === "ca" ? "🇨🇦" : "🇺🇸"} {firm.city}</span>
+         <span className="text-xs text-muted-foreground">{firm.city}</span>
         </div>
        </SelectItem>
       ))}
