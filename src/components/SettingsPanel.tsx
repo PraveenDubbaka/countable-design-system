@@ -49,7 +49,19 @@ const CA_PROVINCES = ["Alberta","British Columbia","Manitoba","New Brunswick","N
 const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 
 function readFirmProfiles(): FirmProfile[] {
- try { const s = localStorage.getItem("firmProfiles"); return s ? JSON.parse(s) : DEFAULT_FIRMS; } catch { return DEFAULT_FIRMS; }
+ try {
+  const s = localStorage.getItem("firmProfiles");
+  if (s) {
+   const parsed: FirmProfile[] = JSON.parse(s);
+   const isStale = parsed.some(f => f.id === "firm-us-1" && (f.initials === "AS" || f.name === "Ascend LLP"));
+   if (isStale) {
+    localStorage.setItem("firmProfiles", JSON.stringify(DEFAULT_FIRMS));
+    return DEFAULT_FIRMS;
+   }
+   return parsed;
+  }
+  return DEFAULT_FIRMS;
+ } catch { return DEFAULT_FIRMS; }
 }
 function writeFirmProfiles(profiles: FirmProfile[]) {
  localStorage.setItem("firmProfiles", JSON.stringify(profiles));
@@ -1033,7 +1045,7 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-700 flex-shrink-0">Main</span>
             )}
            </div>
-           <p className="text-xs text-muted-foreground">{firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}</p>
+           <p className="text-xs text-muted-foreground">{firm.region === "ca" ? "Canada" : "United States"} · {firm.city}</p>
           </div>
           {activeFirmId === firm.id && (
            <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20 flex-shrink-0">Active</span>
