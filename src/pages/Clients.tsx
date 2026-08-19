@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 function Highlight({ text, query }: { text: string; query: string }) {
@@ -33,6 +33,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ScrollArea } from "@/components/ui/scroll-area";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { clientsData } from "@/data/clientsData";
+
+function getActiveFirm() {
+  try {
+    const profiles = JSON.parse(localStorage.getItem("firmProfiles") || "[]");
+    const id = localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+    return profiles.find((f: { id: string; region: string; name: string }) => f.id === id) as { id: string; region: "ca" | "us"; name: string } ?? { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
+  } catch {
+    return { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
+  }
+}
 
 // Sample partners data for the dropdown
 const partners = [
@@ -126,6 +136,15 @@ export default function Clients() {
  const [clientList, setClientList] = useState(clientsData);
  const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
  const [industryFilter, setIndustryFilter] = useState<string>("all");
+ const [activeFirm, setActiveFirm] = useState(getActiveFirm);
+ useEffect(() => {
+  const handler = () => setActiveFirm(getActiveFirm());
+  window.addEventListener("firmSwitched", handler);
+  return () => window.removeEventListener("firmSwitched", handler);
+ }, []);
+ useEffect(() => {
+  setCountryFilter(activeFirm.region);
+ }, [activeFirm.region]);
 
  const filteredClients = clientList
   .filter(c => countryFilter === "all" || c.clientCountry === countryFilter)
@@ -209,6 +228,10 @@ export default function Clients() {
  );
  })}
  </div>
+
+ <p className="text-sm text-muted-foreground">
+  {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+ </p>
 
  {/* Tabs and Actions Row */}
  <div className="flex items-center justify-between flex-shrink-0">
