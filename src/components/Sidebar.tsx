@@ -2095,12 +2095,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      onMouseLeave={scheduleFirmClose}
      onClick={() => setFirmPopoverOpen(v => !v)}
      className={cn(
-      "w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/30",
+      "relative w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/30",
       activeFirm.color
      )}
      title={activeFirm.name}
     >
      {activeFirm.initials}
+     <span className="absolute -bottom-1 -right-1 text-[8px] leading-none pointer-events-none">
+      {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}
+     </span>
     </button>
    </PopoverTrigger>
    <PopoverContent
