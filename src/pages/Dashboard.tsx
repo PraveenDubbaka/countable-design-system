@@ -13,6 +13,16 @@ import { cn } from "@/lib/utils";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import sageLogo from "@/assets/sage-logo.svg";
 
+function getActiveFirm() {
+  try {
+    const profiles = JSON.parse(localStorage.getItem("firmProfiles") || "[]");
+    const id = localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+    return profiles.find((f: { id: string; region: string; name: string }) => f.id === id) as { id: string; region: "ca" | "us"; name: string } ?? { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
+  } catch {
+    return { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
+  }
+}
+
 function Highlight({ text, query }: { text: string; query: string }) {
  if (!query.trim()) return <>{text}</>;
  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -30,23 +40,19 @@ function Highlight({ text, query }: { text: string; query: string }) {
  );
 }
 
-// Sample data for stats
-const stats = [{
- label: "Total Engagements",
- value: "1764"
-}, {
- label: "New Engagements",
- value: "482"
-}, {
- label: "In Progress",
- value: "1037"
-}, {
- label: "Completed",
- value: "168"
-}, {
- label: "Archived",
- value: "77"
-}];
+const getStatsForFirm = (region: "ca" | "us") => region === "ca" ? [
+ { label: "Total Engagements", value: "1764" },
+ { label: "New Engagements", value: "482" },
+ { label: "In Progress", value: "1037" },
+ { label: "Completed", value: "168" },
+ { label: "Archived", value: "77" },
+] : [
+ { label: "Total Engagements", value: "312" },
+ { label: "New Engagements", value: "84" },
+ { label: "In Progress", value: "198" },
+ { label: "Completed", value: "24" },
+ { label: "Archived", value: "6" },
+];
 
 // Sample engagements data
 const engagements = [{
@@ -391,6 +397,13 @@ export default function Dashboard() {
  const [searchQuery, setSearchQuery] = useState("");
  const [expandedEngagement, setExpandedEngagement] = useState<string | null>(null);
  function toggleExpand(id: string) { setExpandedEngagement(prev => prev === id ? null : id); }
+ const [activeFirm, setActiveFirm] = useState(getActiveFirm);
+ useEffect(() => {
+  const handler = () => setActiveFirm(getActiveFirm());
+  window.addEventListener("firmSwitched", handler);
+  return () => window.removeEventListener("firmSwitched", handler);
+ }, []);
+ const stats = getStatsForFirm(activeFirm.region);
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;
  try {
@@ -409,11 +422,13 @@ export default function Dashboard() {
  statusVariant: e.status === "New" ? ("secondary" as const) : ("default" as const),
  };
  });
- const filteredDashboardEngagements = dashboardEngagements.filter(e =>
- !searchQuery.trim() ||
- e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
- e.client.toLowerCase().includes(searchQuery.toLowerCase())
- );
+ const filteredDashboardEngagements = dashboardEngagements
+  .filter(e => (e.client === "Harbor Freight Logistics LLC" ? "us" : "ca") === activeFirm.region)
+  .filter(e =>
+   !searchQuery.trim() ||
+   e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+   e.client.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
  return <Layout title="Dashboard">
  <div className="flex-1 p-6 overflow-auto bg-background h-full">
@@ -456,6 +471,9 @@ export default function Dashboard() {
  <div>
  <h2 className="text-lg font-semibold text-foreground">Engagements</h2>
  <p className="text-sm text-muted-foreground mt-1">Active engagements from last 6 months</p>
+ <p className="text-sm text-muted-foreground mt-1">
+  {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+ </p>
  </div>
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />

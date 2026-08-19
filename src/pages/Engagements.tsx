@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 
 function Highlight({ text, query }: { text: string; query: string }) {
@@ -30,6 +30,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+
+function getActiveFirm() {
+  try {
+    const profiles = JSON.parse(localStorage.getItem("firmProfiles") || "[]");
+    const id = localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+    return profiles.find((f: { id: string; region: string; name: string }) => f.id === id) as { id: string; region: "ca" | "us"; name: string } ?? { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
+  } catch {
+    return { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
+  }
+}
 
 type AssigneeEntry = { initials: string; name: string; role: string; email: string; phone: string; color: string };
 const ENGAGEMENT_ASSIGNEES: Record<string, { firmTeam: AssigneeEntry[]; clientTeam: AssigneeEntry[] }> = {
@@ -124,6 +134,12 @@ export default function Engagements() {
  const [searchQuery, setSearchQuery] = useState("");
  const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
  const [expandedId, setExpandedId] = useState<string | null>(null);
+ const [activeFirm, setActiveFirm] = useState(getActiveFirm);
+ useEffect(() => {
+  const handler = () => setActiveFirm(getActiveFirm());
+  window.addEventListener("firmSwitched", handler);
+  return () => window.removeEventListener("firmSwitched", handler);
+ }, []);
 
  // Create Engagement modal
  const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -140,13 +156,15 @@ export default function Engagements() {
  };
 
  const filteredEngagements = (() => {
- const base = engagementList.filter(e =>
- e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
- e.client.toLowerCase().includes(searchQuery.toLowerCase())
- );
- const demo = base.filter(e => e.id === 'AUD-NPM-Dec312025');
- const rest = base.filter(e => e.id !== 'AUD-NPM-Dec312025');
- return [...demo, ...rest];
+  const base = engagementList
+   .filter(e => e.client?.toLowerCase().includes(searchQuery.toLowerCase()) || e.id?.toLowerCase().includes(searchQuery.toLowerCase()))
+   .filter(e => {
+    const region = e.client === "Harbor Freight Logistics LLC" ? "us" : "ca";
+    return region === activeFirm.region;
+   });
+  const demo = base.filter(e => e.id === 'AUD-NPM-Dec312025');
+  const rest = base.filter(e => e.id !== 'AUD-NPM-Dec312025');
+  return [...demo, ...rest];
  })();
 
  const handleDelete = (id: string, e: React.MouseEvent) => {
@@ -196,6 +214,10 @@ export default function Engagements() {
  );
  })}
  </div>
+
+ <p className="text-sm text-muted-foreground mt-1">
+  {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+ </p>
 
  {/* Filter, Search, Export and Create Row - Enhanced spacing */}
  <div className="flex items-center justify-between">
