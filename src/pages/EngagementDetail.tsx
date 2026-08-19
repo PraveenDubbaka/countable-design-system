@@ -254,62 +254,80 @@ const engagementsData: Record<string, {
  yearEnd: string;
  status: string;
  checklistId?: string;
+ region?: "ca" | "us";
+ jurisdiction?: string;
 }> = {
  "AUD-NPM-Dec312025": {
  id: "AUD-NPM-Dec312025",
  client: "Northline Precision Manufacturing Inc.",
  type: "Audit (AUD)",
  yearEnd: "Dec 31, 2025",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "COM-CON-Dec312024": {
  id: "COM-CON-Dec312024",
  client: "Shipping Line Inc.",
  type: "Compilation (COM)",
  yearEnd: "Dec 31, 2024",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "COM-PSP-Dec312023": {
  id: "COM-PSP-Dec312023",
  client: "Source 40",
  type: "Compilation (COM)",
  yearEnd: "Dec 31, 2023",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "COM-QB-Dec312025": {
  id: "COM-QB-Dec312025",
  client: "qb 40.1",
  type: "Compilation (COM)",
  yearEnd: "Dec 31, 2025",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "AUD-SL-Mar312024": {
  id: "AUD-SL-Mar312024",
  client: "Shipping Line Inc.",
  type: "Audit (AUD)",
  yearEnd: "Mar 31, 2024",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "REV-SL-Jun302024": {
  id: "REV-SL-Jun302024",
  client: "Shipping Line Inc.",
  type: "Review (REV)",
  yearEnd: "Jun 30, 2024",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "COM-S40-Jun302024": {
  id: "COM-S40-Jun302024",
  client: "Source 40",
  type: "Compilation (COM)",
  yearEnd: "Jun 30, 2024",
- status: "In Progress"
+ status: "In Progress",
+ region: "ca",
+ jurisdiction: "CA-ON",
  },
  "AUD-US-Dec312024": {
  id: "AUD-US-Dec312024",
  client: "Harbor Freight Logistics LLC",
  type: "Audit (GAAS/US)",
  yearEnd: "Dec 31, 2024",
- status: "In Progress"
+ status: "In Progress",
+ region: "us",
+ jurisdiction: "US-NY",
  },
 };
 
@@ -2295,6 +2313,15 @@ export default function EngagementDetail() {
  <Badge variant={status === 'Completed' || status === 'New' ? 'completed' : status === 'Not Started' ? 'notStarted' : 'inProgress'} className="ml-1 whitespace-nowrap">
  {status}
  </Badge>
+
+ {/* Jurisdiction Badge */}
+ {engagement?.jurisdiction && (
+  <div className="ml-1 inline-flex items-center gap-1 h-7 px-2 bg-muted border border-border rounded-sm">
+   <span className="text-[11px] font-semibold text-muted-foreground">
+    {engagement.region === "ca" ? "🇨🇦" : "🇺🇸"} {engagement.jurisdiction}
+   </span>
+  </div>
+ )}
 
  {/* Xero Integration Badge — shown when Xero is connected */}
  {connectedApps.has("xero") && (

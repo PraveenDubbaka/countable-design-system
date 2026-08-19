@@ -40,6 +40,14 @@ function Highlight({ text, query }: { text: string; query: string }) {
  );
 }
 
+const AGGREGATE_STATS = [
+ { label: "Total Engagements", value: "2,076" },
+ { label: "New Engagements", value: "566" },
+ { label: "In Progress", value: "1,235" },
+ { label: "Completed", value: "192" },
+ { label: "Archived", value: "83" },
+];
+
 const getStatsForFirm = (region: "ca" | "us") => region === "ca" ? [
  { label: "Total Engagements", value: "1764" },
  { label: "New Engagements", value: "482" },
@@ -398,12 +406,20 @@ export default function Dashboard() {
  const [expandedEngagement, setExpandedEngagement] = useState<string | null>(null);
  function toggleExpand(id: string) { setExpandedEngagement(prev => prev === id ? null : id); }
  const [activeFirm, setActiveFirm] = useState(getActiveFirm);
+ const [allFirmProfiles, setAllFirmProfiles] = useState<{ id: string }[]>(() => {
+  try { return JSON.parse(localStorage.getItem("firmProfiles") || "[]"); } catch { return []; }
+ });
+ const [showGroupView, setShowGroupView] = useState(false);
  useEffect(() => {
-  const handler = () => setActiveFirm(getActiveFirm());
+  const handler = () => {
+   setActiveFirm(getActiveFirm());
+   try { setAllFirmProfiles(JSON.parse(localStorage.getItem("firmProfiles") || "[]")); } catch {}
+  };
   window.addEventListener("firmSwitched", handler);
   return () => window.removeEventListener("firmSwitched", handler);
  }, []);
- const stats = getStatsForFirm(activeFirm.region);
+ const hasMultipleFirms = allFirmProfiles.length > 1;
+ const stats = showGroupView ? AGGREGATE_STATS : getStatsForFirm(activeFirm.region);
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;
  try {
@@ -436,6 +452,23 @@ export default function Dashboard() {
  <div className="flex gap-6 h-full">
  {/* Main Content */}
  <div className="flex-1 flex flex-col gap-6 min-h-0">
+ {/* All Offices / This Office pill switcher */}
+ {hasMultipleFirms && (
+  <div className="flex items-center gap-1 p-0.5 bg-muted rounded-full w-fit flex-shrink-0">
+   <button
+    onClick={() => setShowGroupView(false)}
+    className={cn("px-3 py-1 rounded-full text-xs font-medium transition-colors", !showGroupView ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground")}
+   >
+    This Office
+   </button>
+   <button
+    onClick={() => setShowGroupView(true)}
+    className={cn("px-3 py-1 rounded-full text-xs font-medium transition-colors", showGroupView ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground")}
+   >
+    All Offices
+   </button>
+  </div>
+ )}
  {/* Stats Bar - Creative compact display with micro-animated icons */}
  <div className="flex items-center gap-3 flex-shrink-0">
  {stats.map((stat, index) => {
@@ -471,9 +504,13 @@ export default function Dashboard() {
  <div>
  <h2 className="text-lg font-semibold text-foreground">Engagements</h2>
  <p className="text-sm text-muted-foreground mt-1">Active engagements from last 6 months</p>
- <p className="text-sm text-muted-foreground mt-1">
-  {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
- </p>
+ {showGroupView ? (
+  <p className="text-sm text-muted-foreground mt-1">Aggregated across all offices · Switch to an office to view client records</p>
+ ) : (
+  <p className="text-sm text-muted-foreground mt-1">
+   {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+  </p>
+ )}
  </div>
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />

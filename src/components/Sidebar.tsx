@@ -73,6 +73,9 @@ interface FirmProfile {
  city: string;
  initials: string;
  color: string;
+ firmGroupId: string;
+ firmGroupName: string;
+ isMainOffice: boolean;
 }
 
 const DEFAULT_FIRMS: FirmProfile[] = [
@@ -83,14 +86,20 @@ const DEFAULT_FIRMS: FirmProfile[] = [
   city: "Toronto, ON",
   initials: "MG",
   color: "bg-red-600",
+  firmGroupId: "group-maple",
+  firmGroupName: "Maple Grove Group",
+  isMainOffice: true,
  },
  {
   id: "firm-us-1",
-  name: "Ascend LLP",
+  name: "Maple Grove Accounting PC",
   region: "us",
   city: "New York, NY",
-  initials: "AS",
+  initials: "MG",
   color: "bg-blue-600",
+  firmGroupId: "group-maple",
+  firmGroupName: "Maple Grove Group",
+  isMainOffice: false,
  },
 ];
 
@@ -1712,10 +1721,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   name: "",
   region: "ca" as "ca" | "us",
   city: "",
+  firmGroupChoice: "existing" as "existing" | "new",
+  newGroupName: "",
+  isMainOffice: false,
  });
 
  const [firmPopoverOpen, setFirmPopoverOpen] = useState(false);
- const [switchingFirm, setSwitchingFirm] = useState<string | null>(null);
+ const [switchingFirm, setSwitchingFirm] = useState<{ name: string; region: "ca" | "us" } | null>(null);
  const firmCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  const openFirmPopover = () => { if (firmCloseTimer.current) clearTimeout(firmCloseTimer.current); setFirmPopoverOpen(true); };
  const scheduleFirmClose = () => { firmCloseTimer.current = setTimeout(() => setFirmPopoverOpen(false), 180); };
@@ -2087,45 +2099,68 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     onMouseEnter={openFirmPopover}
     onMouseLeave={scheduleFirmClose}
    >
-    <div className="px-2 pb-2">
-     <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Your Offices</p>
-     {firmProfiles.length > 1 && (
-      <p className="text-[10px] text-muted-foreground/50 mt-0.5">
-       {firmProfiles.length} offices across {[...new Set(firmProfiles.map(f => f.region))].length} region{[...new Set(firmProfiles.map(f => f.region))].length > 1 ? "s" : ""}
-      </p>
-     )}
-    </div>
-    {firmProfiles.map(firm => (
-     <button
-      key={firm.id}
-      onClick={() => {
-       if (firm.id === activeFirmId) return;
-       setSwitchingFirm(firm.name);
-       setTimeout(() => {
-        setActiveFirmId(firm.id);
-        localStorage.setItem("activeFirmId", firm.id);
-        localStorage.setItem("firmProfiles", JSON.stringify(firmProfiles));
-        window.dispatchEvent(new CustomEvent("firmSwitched"));
-        setSwitchingFirm(null);
-       }, 900);
-      }}
-      className={cn(
-       "w-full flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors text-left",
-       activeFirmId === firm.id && "bg-primary/10"
-      )}
-     >
-      <div className={cn("w-8 h-8 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
-       {firm.initials}
-      </div>
-      <div className="flex-1 min-w-0">
-       <p className="text-sm font-medium text-foreground truncate">{firm.name}</p>
-       <p className="text-xs text-muted-foreground truncate">
-        {firm.region === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"} · {firm.city}
-       </p>
-      </div>
-      {activeFirmId === firm.id && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
-     </button>
-    ))}
+    {(() => {
+     const groups = new Map<string, FirmProfile[]>();
+     firmProfiles.forEach(f => {
+      const gid = (f as any).firmGroupId ?? "default";
+      if (!groups.has(gid)) groups.set(gid, []);
+      groups.get(gid)!.push(f);
+     });
+     const groupCount = groups.size;
+     return (
+      <>
+       <div className="px-2 pb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Your Offices</p>
+        {firmProfiles.length > 1 && (
+         <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+          {groupCount} group{groupCount !== 1 ? "s" : ""} · {firmProfiles.length} offices
+         </p>
+        )}
+       </div>
+       {Array.from(groups.entries()).map(([gid, firms]) => {
+        const groupName = (firms[0] as any).firmGroupName ?? firms[0].name;
+        return (
+         <div key={gid}>
+          <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">{groupName}</p>
+          {firms.map(firm => (
+           <button
+            key={firm.id}
+            onClick={() => {
+             if (firm.id === activeFirmId) return;
+             setSwitchingFirm({ name: firm.name, region: firm.region });
+             setTimeout(() => {
+              setActiveFirmId(firm.id);
+              localStorage.setItem("activeFirmId", firm.id);
+              localStorage.setItem("firmProfiles", JSON.stringify(firmProfiles));
+              window.dispatchEvent(new CustomEvent("firmSwitched"));
+              setSwitchingFirm(null);
+             }, 900);
+            }}
+            className={cn(
+             "w-full flex items-center gap-2.5 px-2 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors text-left",
+             activeFirmId === firm.id && "bg-primary/10"
+            )}
+           >
+            <div className={cn("w-8 h-8 rounded-md flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0", firm.color)}>
+             {firm.initials}
+            </div>
+            <div className="flex-1 min-w-0">
+             <p className="text-sm font-medium text-foreground truncate">
+              {firm.region === "ca" ? "🇨🇦" : "🇺🇸"} {firm.city}
+             </p>
+            </div>
+            {(firm as any).isMainOffice && (
+             <span className="text-[10px] font-semibold px-1.5 py-px rounded-full bg-primary/10 text-primary">Main</span>
+            )}
+            {activeFirmId === firm.id && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
+           </button>
+          ))}
+         </div>
+        );
+       })}
+      </>
+     );
+    })()}
     <div className="border-t border-border my-1" />
     <button
      className="w-full flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-muted/50 transition-colors text-primary text-left"
@@ -4569,6 +4604,40 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
        placeholder="e.g. Toronto, ON"
       />
      </div>
+     <div className="space-y-1.5">
+      <label className="text-sm font-medium text-foreground">Firm Group</label>
+      <div className="flex gap-2">
+       {(["existing", "new"] as const).map(choice => (
+        <button
+         key={choice}
+         onClick={() => setNewFirmData(prev => ({ ...prev, firmGroupChoice: choice }))}
+         className={cn(
+          "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+          newFirmData.firmGroupChoice === choice
+           ? "border-primary bg-primary/10 text-primary"
+           : "border-border text-muted-foreground hover:bg-muted/50"
+         )}
+        >
+         {choice === "existing" ? "Existing Group" : "New Group"}
+        </button>
+       ))}
+      </div>
+      {newFirmData.firmGroupChoice === "new" && (
+       <Input
+        value={newFirmData.newGroupName}
+        onChange={e => setNewFirmData(prev => ({ ...prev, newGroupName: e.target.value }))}
+        placeholder="e.g. Maple Grove Group"
+       />
+      )}
+     </div>
+     <div className="flex items-center gap-2">
+      <Checkbox
+       id="isMainOffice"
+       checked={newFirmData.isMainOffice}
+       onCheckedChange={checked => setNewFirmData(prev => ({ ...prev, isMainOffice: !!checked }))}
+      />
+      <label htmlFor="isMainOffice" className="text-sm font-medium text-foreground cursor-pointer">Set as Main Office</label>
+     </div>
      <div className="rounded-md border border-border bg-muted/30 p-3">
       <p className="text-xs text-muted-foreground">
        Each office is registered as a separate entity. A user with access to multiple offices can switch between them using the firm switcher. Data never crosses regions.
@@ -4615,6 +4684,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
          setNewFirmStep(2);
         } else {
          const initials = newFirmData.name.trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+         const existingGroup = firmProfiles.find(f => (f as any).firmGroupId);
+         const groupInfo = newFirmData.firmGroupChoice === "existing" && existingGroup
+          ? { firmGroupId: (existingGroup as any).firmGroupId, firmGroupName: (existingGroup as any).firmGroupName }
+          : { firmGroupId: `group-${(newFirmData.newGroupName.trim() || newFirmData.name.trim()).toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`, firmGroupName: newFirmData.newGroupName.trim() || newFirmData.name.trim() };
          const newFirm: FirmProfile = {
           id: `firm-${newFirmData.region}-${Date.now()}`,
           name: newFirmData.name.trim(),
@@ -4622,6 +4695,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
           city: newFirmData.city.trim(),
           initials,
           color: newFirmData.region === "ca" ? "bg-red-600" : "bg-blue-600",
+          ...groupInfo,
+          isMainOffice: newFirmData.isMainOffice,
          };
          const updated1 = [...firmProfiles, newFirm];
          setFirmProfiles(updated1);
@@ -4645,6 +4720,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
        className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
        onClick={() => {
         const initials = newFirmData.name.trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        const existingGroup2 = firmProfiles.find(f => (f as any).firmGroupId);
+        const groupInfo2 = newFirmData.firmGroupChoice === "existing" && existingGroup2
+         ? { firmGroupId: (existingGroup2 as any).firmGroupId, firmGroupName: (existingGroup2 as any).firmGroupName }
+         : { firmGroupId: `group-${(newFirmData.newGroupName.trim() || newFirmData.name.trim()).toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`, firmGroupName: newFirmData.newGroupName.trim() || newFirmData.name.trim() };
         const newFirm: FirmProfile = {
          id: `firm-${newFirmData.region}-${Date.now()}`,
          name: newFirmData.name.trim(),
@@ -4652,6 +4731,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
          city: newFirmData.city.trim(),
          initials,
          color: newFirmData.region === "ca" ? "bg-red-600" : "bg-blue-600",
+         ...groupInfo2,
+         isMainOffice: newFirmData.isMainOffice,
         };
         const updated2 = [...firmProfiles, newFirm];
         setFirmProfiles(updated2);
@@ -4681,8 +4762,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {switchingFirm && (
   <div className="fixed inset-0 z-[200] bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
    <div className="w-10 h-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-   <p className="text-sm font-medium text-foreground">Switching to {switchingFirm}</p>
-   <p className="text-xs text-muted-foreground">Loading office context...</p>
+   <p className="text-sm font-medium text-foreground">
+    Switching to {switchingFirm.region === "ca" ? "🇨🇦 CA" : "🇺🇸 US"} workspace…
+   </p>
+   <p className="text-xs text-muted-foreground">{switchingFirm.name}</p>
   </div>
  )}
  </div>;
