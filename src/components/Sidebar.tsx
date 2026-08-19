@@ -1710,7 +1710,19 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Firm switcher state — persisted to localStorage to stay in sync with Settings > Firm Info
  const [firmProfiles, setFirmProfiles] = useState<FirmProfile[]>(() => {
-  try { const s = localStorage.getItem("firmProfiles"); return s ? JSON.parse(s) : DEFAULT_FIRMS; } catch { return DEFAULT_FIRMS; }
+  try {
+   const s = localStorage.getItem("firmProfiles");
+   if (s) {
+    const parsed: FirmProfile[] = JSON.parse(s);
+    const isStale = parsed.some(f => f.id === "firm-us-1" && (f.initials === "AS" || f.name === "Ascend LLP"));
+    if (isStale) {
+     localStorage.setItem("firmProfiles", JSON.stringify(DEFAULT_FIRMS));
+     return DEFAULT_FIRMS;
+    }
+    return parsed;
+   }
+   return DEFAULT_FIRMS;
+  } catch { return DEFAULT_FIRMS; }
  });
  const [activeFirmId, setActiveFirmId] = useState<string>(() => localStorage.getItem("activeFirmId") ?? "firm-ca-1");
  const activeFirm = firmProfiles.find(f => f.id === activeFirmId) ?? firmProfiles[0];
