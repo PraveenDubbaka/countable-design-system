@@ -1074,20 +1074,14 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
       </div>
       <div className="space-y-1.5">
        <Label className="text-xs">Region</Label>
-       <div className="flex gap-2">
-        {(["ca", "us"] as const).map(r => (
-         <button
-          key={r}
-          onClick={() => setNewOffice(p => ({ ...p, region: r }))}
-          className={cn(
-           "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
-           newOffice.region === r ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted/50"
-          )}
-         >
-          {r === "ca" ? "🇨🇦 Canada" : "🇺🇸 United States"}
-         </button>
-        ))}
-       </div>
+       <select
+        value={newOffice.region}
+        onChange={e => setNewOffice(p => ({ ...p, region: e.target.value as "ca" | "us" }))}
+        className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+       >
+        <option value="ca">🇨🇦 Canada</option>
+        <option value="us">🇺🇸 United States</option>
+       </select>
       </div>
       <div className="space-y-1.5">
        <Label className="text-xs">City</Label>
