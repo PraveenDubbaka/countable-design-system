@@ -4534,12 +4534,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  onOpenChange={setEngBulkAddDialogOpen}
  selectedTemplates={Array.from(selectedEngTemplates).map(id => ({
  id,
- name: allTemplateViews[id]?.title || id,
+ name: getEngPickerTemplateView(id)?.title || engPickerLabelById[id] || id,
  }))}
  onSuccess={() => setSelectedEngTemplates(new Set())}
  getChecklistData={(templateId) => getGlobalTemplateChecklist(templateId)}
  variant="engagement"
- getTemplateViewData={(templateId) => allTemplateViews[templateId] || null}
+ getTemplateViewData={(templateId) => getEngPickerTemplateView(templateId)}
  />
 
  {/* Signoffs Overlay */}
