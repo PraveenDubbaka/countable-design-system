@@ -384,6 +384,39 @@ const engPickerTreeUS: TreeItem[] = [
  ]},
 ];
 
+// Labels for every engagement picker leaf, so saved templates never show a raw slug.
+const engPickerLabelById: Record<string, string> = (() => {
+ const map: Record<string, string> = {};
+ const walk = (items: TreeItem[]) => items.forEach(i => {
+  if (i.type === "folder") walk(i.children ?? []);
+  else map[i.id] = i.label;
+ });
+ walk(engPickerTreeCA);
+ walk(engPickerTreeUS);
+ return map;
+})();
+
+// US picker entries that reuse an existing template view's content (US label kept).
+const engPickerViewFallback: Record<string, string> = {
+ "comp-us-ssars21": "comp4200",
+ "comp-us-arc80": "comp4200",
+ "rev-us-ssars21": "rev2400",
+ "rev-us-arc90": "rev2400",
+ "tax-us-1120": "tax-t2",
+ "tax-us-1120s": "tax-t2",
+ "tax-us-1065": "tax-t2",
+};
+
+function getEngPickerTemplateView(id: string) {
+ const direct = allTemplateViews[id];
+ if (direct) return direct;
+ const fallbackId = engPickerViewFallback[id];
+ const base = fallbackId ? allTemplateViews[fallbackId] : undefined;
+ if (!base) return null;
+ return { ...base, title: engPickerLabelById[id] || base.title };
+}
+
+
 // Global Worksheets data structure — shown when "Worksheets" is selected in the dropdown
 export const initialGlobalWorksheets: GlobalTemplate[] = [
  {
