@@ -254,7 +254,7 @@ const LUKA_PAP501_FILLS: Record<string, Record<string, string>> = {
  },
 };
 
-const NPM_PAP501_SEED = {
+const NPM_PAP501_SEED: Partial<PAP501Data> & { fin: Record<string, unknown> } = {
  comparePrior: 'No',
  numStreams: 1,
  streamLabels: ['Manufactured goods', 'Stream 2', 'Stream 3', 'Stream 4', 'Stream 5'],

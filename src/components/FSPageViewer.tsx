@@ -22,7 +22,7 @@ const FSPageContent = ({ pageType, isEditing, isCompilation }: FSPageViewerProps
 
  switch (pageType) {
  case 'cover':
- return <CoverPagePreview isEditMode={isEditing} templateType={templateType} />;
+ return <CoverPagePreview isEditMode={isEditing} templateType={templateType ?? undefined} />;
  case 'toc':
  return <TableOfContentsPreview />;
  case 'comp-report':

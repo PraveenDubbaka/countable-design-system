@@ -48,7 +48,7 @@ export function GcaProcPage() {
   const engagement = engagementId ? allEngagements.find(e => e.id === engagementId) ?? null : null;
   const clientName = engagement?.client || "Unknown Client";
   const displayId = engagementId || "Unknown";
-  const status = engagement?.status || "In Progress";
+  const status: string = engagement?.status || "In Progress";
   const clientEngagements = allEngagements.filter(e => e.client === clientName);
 
   const sourceIcon = useMemo(() => {

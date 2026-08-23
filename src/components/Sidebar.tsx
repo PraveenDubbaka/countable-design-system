@@ -873,7 +873,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    setSearchParams({}, { replace: true });
   }
   setEngMyFolderDeleteOpen(false);
-  toast.success(`Folder "${engMyCtxFolder.name}" and its templates deleted`);
+  toast({ title: `Folder "${engMyCtxFolder.name}" and its templates deleted` });
  };
  const handleEngMyTemplateRenameConfirm = () => {
   if (!engMyCtxTemplate || !engMyTemplateRenameValue.trim()) return;
@@ -886,7 +886,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const handleEngMyTemplateDuplicate = (t: import("@/lib/engagementTemplatesData").MyEngagementTemplate) => {
   const copy = { ...t, id: `my-eng-${Date.now()}`, name: `${t.name} (Copy)`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
   engMyUpdateStorage([...myEngagementTemplates, copy]);
-  toast.success("Template duplicated");
+  toast({ title: "Template duplicated" });
  };
  const handleEngMyTemplateSingleDelete = () => {
   if (!engMyCtxTemplate) return;
@@ -894,7 +894,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   engMyUpdateStorage(remaining);
   if (searchParams.get("myTemplate") === engMyCtxTemplate.id) setSearchParams({}, { replace: true });
   setEngMyTemplateSingleDeleteOpen(false);
-  toast.success("Template deleted");
+  toast({ title: "Template deleted" });
  };
  const handleEngMyTemplateMoveConfirm = () => {
   if (!engMyCtxTemplate || !engMyTemplateMoveTargetId) return;
@@ -907,7 +907,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
   );
   engMyUpdateStorage(updated);
   setEngMyTemplateMoveOpen(false);
-  toast.success("Template moved");
+  toast({ title: "Template moved" });
  };
  const handleEngMySetDefault = (id: string) => {
   const next = engMyDefaultId === id ? null : id;
@@ -3891,7 +3891,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
        if (searchParams.get("myTemplate") && toDelete.has(searchParams.get("myTemplate")!)) {
         setSearchParams({}, { replace: true });
        }
-       toast.success(`${count} template${count > 1 ? "s" : ""} deleted`);
+       toast({ title: `${count} template${count > 1 ? "s" : ""} deleted` });
       }}
      >Delete</Button>
     </div>
