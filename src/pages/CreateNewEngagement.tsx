@@ -466,12 +466,17 @@ export default function CreateNewEngagement() {
   };
 
   const accountingStandardsOptions = (() => {
+    const isCompilation = engagementType.includes("COM");
+    const isReview = engagementType.includes("REV");
     const frameworks = isAudit ? ACCOUNTING_FRAMEWORKS : [
-      "ASPE — Canadian Accounting Standards for Private Enterprises",
-      "IFRS — International Financial Reporting Standards",
-      "US GAAP — Generally Accepted Accounting Principles (United States)",
-      "Tax Basis", "Cash Basis", "Modified Cash Basis",
+      ...(isCompilation ? ["CSRS 4200 — Compilation Engagements"] : []),
+      ...(isReview ? ["Section 2400 Review standards", "CSRE 2400 — Review of Historical Financial Statements"] : []),
+      ...ACCOUNTING_FRAMEWORKS,
+      "ASNPO — Accounting Standards for Not-for-Profit Organizations",
+      "PSAB — Public Sector Accounting Standards",
+      "Pension Plans Accounting Standards",
     ];
+
     if (clientInfo?.clientCountry === "us") {
       const usFirst = frameworks.filter(fw => fw.includes("US GAAP") || fw.includes("PCAOB"));
       const rest = frameworks.filter(fw => !fw.includes("US GAAP") && !fw.includes("PCAOB"));
@@ -695,7 +700,7 @@ export default function CreateNewEngagement() {
             )}
 
             {/* SECTION 3: AUDIT CONFIGURATION — gated on isAudit + showDetails + type selected */}
-            {isAudit && showDetails && engagementType !== "" && (
+            {isAudit && showDetails && String(engagementType) !== "" && (
               <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                 <div className="px-5 py-4 border-b border-border bg-muted/30">
                   <div className="flex items-center gap-2">

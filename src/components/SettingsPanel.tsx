@@ -66,6 +66,7 @@ function readFirmProfiles(): FirmProfile[] {
 function writeFirmProfiles(profiles: FirmProfile[]) {
  localStorage.setItem("firmProfiles", JSON.stringify(profiles));
  window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+ window.dispatchEvent(new CustomEvent("firmSwitched"));
 }
 function readActiveFirmId(): string {
  return localStorage.getItem("activeFirmId") ?? "firm-ca-1";
@@ -73,7 +74,9 @@ function readActiveFirmId(): string {
 function writeActiveFirmId(id: string) {
  localStorage.setItem("activeFirmId", id);
  window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
+ window.dispatchEvent(new CustomEvent("firmSwitched"));
 }
+
 function readFirmDetails(firmId: string): FirmDetails {
  const empty: FirmDetails = { firmName: "", displayAs: "", address: "", country: "Canada", province: "Ontario", city: "", postalCode: "", pegPact: "Yes", invoiceNo: "", expiryDate: "" };
  try { const s = localStorage.getItem(`firmDetails-${firmId}`); return s ? JSON.parse(s) : empty; } catch { return empty; }
