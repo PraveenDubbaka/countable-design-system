@@ -49,6 +49,7 @@ export const clientsData: Client[] = [
   businessPhone: '905-555-0142',
   cellPhone: null,
   clientCountry: 'ca',
+  groupName: 'Northline Holdings',
   industryType: 'Manufacturing',
   engagements: [
    { id: 'AUD-NPM-Dec312025', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2025', status: 'In Progress', hasRF: false, dateCreated: 'Jul 27, 2026 09:00 AM' },
@@ -71,6 +72,7 @@ export const clientsData: Client[] = [
   businessPhone: null,
   cellPhone: null,
   clientCountry: 'ca',
+  groupName: 'Northline Holdings',
   industryType: 'Entertainment',
   engagements: [
    { id: 'AUD-CRT-Dec312024', type: 'Audit (AUD)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
@@ -316,6 +318,7 @@ export const clientsData: Client[] = [
   businessPhone: '(416) 555-0101',
   cellPhone: null,
   clientCountry: 'ca',
+  groupName: 'Morrison Logistics Group',
   industryType: 'Logistics',
   engagements: [
    { id: 'AUD-SL-Mar312024', type: 'Audit (AUD)', periodEnd: 'Mar 31, 2024', status: 'In Progress', dateCreated: 'Jan 21, 2026 10:00 AM' },
@@ -340,6 +343,7 @@ export const clientsData: Client[] = [
   businessPhone: '(310) 555-0188',
   cellPhone: null,
   clientCountry: 'us',
+  groupName: 'Morrison Logistics Group',
   industryType: 'Logistics',
   isUsTaxpayer: true,
   engagements: [
@@ -538,9 +542,9 @@ export const CLIENT_GROUPS_KEY = 'cds_client_groups_v1';
 export const CLIENTS_KEY = 'cds_clients_v1';
 
 export const SEED_GROUPS: string[] = [
- 'Smith Family Group',
+ 'Morrison Logistics Group',
  'Northline Holdings',
- 'Harbor Group',
+ 'Smith Family Group',
 ];
 
 export function loadClientGroups(): string[] {
