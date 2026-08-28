@@ -442,9 +442,28 @@ export default function Clients() {
      <>
        {Object.entries(grouped).map(([groupName, clients]) => (
          <React.Fragment key={groupName}>
-           <tr className="bg-muted/40">
-             <td colSpan={16} className="px-6 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-               {groupName}
+           <tr className="bg-muted/40 border-y border-border/60">
+             <td colSpan={16} className="px-6 py-2">
+               <div className="flex items-center gap-3">
+                 <span className="text-xs font-semibold text-foreground uppercase tracking-wider">{groupName}</span>
+                 <span className="text-[11px] text-muted-foreground">
+                   {clients.length} {clients.length === 1 ? 'client' : 'clients'}
+                 </span>
+                 <div className="flex items-center gap-1">
+                   {Array.from(new Set(clients.map(c => c.clientCountry))).map(country => (
+                     <span
+                       key={country}
+                       className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${
+                         country === 'us'
+                           ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40'
+                           : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40'
+                       }`}
+                     >
+                       {country === 'us' ? '🇺🇸 US' : '🇨🇦 CA'}
+                     </span>
+                   ))}
+                 </div>
+               </div>
              </td>
            </tr>
            {clients.map(renderClientRow)}

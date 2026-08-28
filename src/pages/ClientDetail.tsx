@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { clientsData } from "@/data/clientsData";
+import { loadClients } from "@/data/clientsData";
 import type { ClientEngagement } from "@/data/clientsData";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 
@@ -47,18 +47,18 @@ export default function ClientDetail() {
  const [search, setSearch] = useState('');
  const [selected, setSelected] = useState<Set<string>>(new Set());
  const [engagements, setEngagements] = useState<ClientEngagement[]>(() => {
- const c = clientsData.find(c => c.id === clientId);
+ const c = loadClients().find(c => c.id === clientId);
  return c ? c.engagements : [];
  });
 
  useEffect(() => {
- const c = clientsData.find(c => c.id === clientId);
+ const c = loadClients().find(c => c.id === clientId);
  setEngagements(c ? c.engagements : []);
  setSelected(new Set());
  setSearch('');
  }, [clientId]);
 
- const client = clientsData.find(c => c.id === clientId);
+ const client = loadClients().find(c => c.id === clientId);
 
  if (!client) {
  return (
@@ -102,6 +102,8 @@ export default function ClientDetail() {
  const infoFields = [
  { label: 'Legal Entity Name', value: client.legalEntityName },
  { label: 'Entity Type', value: client.entityType },
+ { label: 'Country', value: client.clientCountry === 'us' ? '🇺🇸 United States' : '🇨🇦 Canada' },
+ ...(client.groupName ? [{ label: 'Client Group', value: client.groupName }] : []),
  { label: 'Contact Person', value: client.contactPerson },
  { label: 'Engagement Partner', value: client.engagementPartner, isLink: true },
  { label: 'Integrations', value: null, isIntegration: true },
@@ -127,6 +129,32 @@ export default function ClientDetail() {
  <ArrowLeft className="h-4 w-4" />
  Back to Clients
  </button>
+
+ {client.groupName && (() => {
+ const siblings = loadClients().filter(
+  c => c.groupName === client.groupName && c.id !== client.id
+ );
+ if (siblings.length === 0) return null;
+ return (
+  <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border border-border rounded-lg text-sm">
+  <span className="text-muted-foreground font-medium shrink-0">Group:</span>
+  <span className="font-semibold text-foreground">{client.groupName}</span>
+  <span className="text-border mx-1">·</span>
+  <div className="flex items-center gap-2 flex-wrap">
+   {siblings.map(s => (
+   <button
+    key={s.id}
+    onClick={() => navigate(`/clients/${s.id}`)}
+    className="flex items-center gap-1 text-link hover:underline text-xs font-medium"
+   >
+    {s.clientCountry === 'us' ? '🇺🇸' : '🇨🇦'}
+    {s.entityName}
+   </button>
+   ))}
+  </div>
+  </div>
+ );
+ })()}
 
  {/* Client Information */}
  <StyledCard className="p-5">
