@@ -568,7 +568,6 @@ export default function AddNewClient() {
  const [groupName, setGroupName] = useState<string>("");
  const [clientGroups, setClientGroups] = useState<string[]>(() => loadClientGroups());
  const [newGroupInput, setNewGroupInput] = useState<string>("");
- const [showNewGroupInput, setShowNewGroupInput] = useState<boolean>(false);
 
  const subTypeCfg = SUB_TYPE_CONFIG[`${country}-${entityType}`] ?? null;
 
@@ -580,8 +579,9 @@ export default function AddNewClient() {
  const isSoleProprietor = entityType === "sole-proprietor";
 
  const handleAdd = () => {
-   if (groupName && !clientGroups.includes(groupName)) {
-     const updated = [...clientGroups, groupName];
+   const resolvedGroup = groupName === "__new__" ? newGroupInput.trim() : groupName;
+   if (resolvedGroup && !clientGroups.includes(resolvedGroup)) {
+     const updated = [...clientGroups, resolvedGroup];
      saveClientGroups(updated);
      setClientGroups(updated);
    }
@@ -604,7 +604,7 @@ export default function AddNewClient() {
      cellPhone: null,
      clientCountry: country as 'ca' | 'us',
      industryType: industryType || undefined,
-     groupName: groupName || undefined,
+     groupName: resolvedGroup || undefined,
      engagements: [],
    };
    const existing = loadClients();
@@ -676,62 +676,28 @@ export default function AddNewClient() {
  </div>
  </div>
  <InlineField label="Group Name" hint="Use to group related clients together.">
-   {showNewGroupInput ? (
-     <div className="flex gap-2">
+   <div className="flex gap-2">
+     <Select value={groupName} onValueChange={v => { setGroupName(v); if (v !== "__new__") setNewGroupInput(""); }}>
+       <SelectTrigger className={groupName === "__new__" ? "flex-none w-44" : "flex-1"}>
+         <SelectValue placeholder="Select a group (optional)" />
+       </SelectTrigger>
+       <SelectContent>
+         {clientGroups.map(g => (
+           <SelectItem key={g} value={g}>{g}</SelectItem>
+         ))}
+         <SelectItem value="__new__">New group...</SelectItem>
+       </SelectContent>
+     </Select>
+     {groupName === "__new__" && (
        <Input
-         placeholder="New group name"
+         placeholder="Group name"
          value={newGroupInput}
          onChange={e => setNewGroupInput(e.target.value)}
          className="flex-1"
+         autoFocus
        />
-       <Button
-         type="button"
-         size="sm"
-         onClick={() => {
-           const trimmed = newGroupInput.trim();
-           if (trimmed && !clientGroups.includes(trimmed)) {
-             const updated = [...clientGroups, trimmed];
-             setClientGroups(updated);
-             saveClientGroups(updated);
-           }
-           setGroupName(newGroupInput.trim() || groupName);
-           setNewGroupInput("");
-           setShowNewGroupInput(false);
-         }}
-       >
-         Add
-       </Button>
-       <Button
-         type="button"
-         size="sm"
-         variant="ghost"
-         onClick={() => { setNewGroupInput(""); setShowNewGroupInput(false); }}
-       >
-         Cancel
-       </Button>
-     </div>
-   ) : (
-     <div className="flex gap-2">
-       <Select value={groupName} onValueChange={setGroupName}>
-         <SelectTrigger className="flex-1">
-           <SelectValue placeholder="Select a group (optional)" />
-         </SelectTrigger>
-         <SelectContent>
-           {clientGroups.map(g => (
-             <SelectItem key={g} value={g}>{g}</SelectItem>
-           ))}
-         </SelectContent>
-       </Select>
-       <Button
-         type="button"
-         size="sm"
-         variant="outline"
-         onClick={() => setShowNewGroupInput(true)}
-       >
-         + New
-       </Button>
-     </div>
-   )}
+     )}
+   </div>
  </InlineField>
  <InlineField label="Entity Type" required hint="Determines which fields and tax treatments apply.">
  <Select value={entityType} onValueChange={v => { setEntityType(v); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); setGstRegistered(""); setSubCorpType(""); }}>
