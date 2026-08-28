@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
+import { loadClientGroups, saveClientGroups, loadClients, saveClients, SEED_GROUPS } from "@/data/clientsData";
 
 // Shared primitives mirrored from AddNewClient.tsx — keep in sync
 
@@ -667,6 +668,10 @@ export default function AddNewClientV2() {
   const [isUsTaxpayer, setIsUsTaxpayer] = useState<boolean>(false);
   const [fiscalYearEnd, setFiscalYearEnd] = useState<string>("");
   const [businessNumber, setBusinessNumber] = useState("");
+  const [groupName, setGroupName] = useState<string>("");
+  const [clientGroups, setClientGroups] = useState<string[]>(() => loadClientGroups());
+  const [newGroupInput, setNewGroupInput] = useState<string>("");
+  const [showNewGroupInput, setShowNewGroupInput] = useState<boolean>(false);
 
   const subTypeCfg = entityType ? (SUB_TYPE_CONFIG[`${country}-${entityType}`] ?? null) : null;
   const cfg = entityType ? ENTITY_CONFIG[entityType] : null;
@@ -713,7 +718,36 @@ export default function AddNewClientV2() {
   }, [entryMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAdd = () => {
-    toast.success("Client added");
+    if (groupName && !clientGroups.includes(groupName)) {
+      const updated = [...clientGroups, groupName];
+      saveClientGroups(updated);
+      setClientGroups(updated);
+    }
+    const newId = `CLI-${Date.now()}`;
+    const newClient = {
+      id: newId,
+      entityName: legalEntityName.split(' ').slice(0, 2).join(' '),
+      legalEntityName,
+      entityType: entityType || 'Corporation',
+      status: 'Accepted' as const,
+      integration: selectedSource ? (selectedSource as 'xero' | 'quickbooks' | 'connect') : 'none' as const,
+      contactName: `${firstName} ${lastName}`.trim(),
+      contactPerson: `${firstName} ${lastName}`.trim(),
+      engagementPartner: '',
+      email,
+      repository: 'Repository',
+      assignedPartner: '',
+      assignedTeam: null,
+      businessPhone: null,
+      cellPhone: null,
+      clientCountry: country as 'ca' | 'us',
+      industryType: industryType || undefined,
+      groupName: groupName || undefined,
+      engagements: [],
+    };
+    const existing = loadClients();
+    saveClients([...existing, newClient]);
+    toast.success("Client added successfully");
     navigate("/clients");
   };
 
@@ -909,7 +943,62 @@ export default function AddNewClientV2() {
                   </div>
                 </div>
                 <InlineField label="Group Name" hint="Use to group related clients together.">
-                  <Input placeholder="e.g., Smith Family Group" />
+                  {showNewGroupInput ? (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="New group name"
+                        value={newGroupInput}
+                        onChange={e => setNewGroupInput(e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          const trimmed = newGroupInput.trim();
+                          if (trimmed && !clientGroups.includes(trimmed)) {
+                            const updated = [...clientGroups, trimmed];
+                            setClientGroups(updated);
+                            saveClientGroups(updated);
+                          }
+                          setGroupName(newGroupInput.trim() || groupName);
+                          setNewGroupInput("");
+                          setShowNewGroupInput(false);
+                        }}
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => { setNewGroupInput(""); setShowNewGroupInput(false); }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Select value={groupName} onValueChange={setGroupName}>
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Select a group (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {clientGroups.map(g => (
+                            <SelectItem key={g} value={g}>{g}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowNewGroupInput(true)}
+                      >
+                        + New
+                      </Button>
+                    </div>
+                  )}
                 </InlineField>
                 <InlineField label="Entity Type" required>
                   <Select
