@@ -28,6 +28,7 @@ export interface Client {
  industryType?: string;
  hasQuebecPersonalInfo?: boolean;
  isUsTaxpayer?: boolean;
+ groupName?: string;
 }
 
 export const clientsData: Client[] = [
@@ -532,3 +533,36 @@ export const clientsData: Client[] = [
   ],
  },
 ];
+
+export const CLIENT_GROUPS_KEY = 'cds_client_groups_v1';
+export const CLIENTS_KEY = 'cds_clients_v1';
+
+export const SEED_GROUPS: string[] = [
+ 'Smith Family Group',
+ 'Northline Holdings',
+ 'Harbor Group',
+];
+
+export function loadClientGroups(): string[] {
+ try {
+  const raw = localStorage.getItem(CLIENT_GROUPS_KEY);
+  if (raw) return JSON.parse(raw);
+ } catch {}
+ return SEED_GROUPS;
+}
+
+export function saveClientGroups(groups: string[]): void {
+ try { localStorage.setItem(CLIENT_GROUPS_KEY, JSON.stringify(groups)); } catch {}
+}
+
+export function loadClients(): Client[] {
+ try {
+  const raw = localStorage.getItem(CLIENTS_KEY);
+  if (raw) return JSON.parse(raw);
+ } catch {}
+ return clientsData;
+}
+
+export function saveClients(list: Client[]): void {
+ try { localStorage.setItem(CLIENTS_KEY, JSON.stringify(list)); } catch {}
+}

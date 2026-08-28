@@ -32,7 +32,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { clientsData } from "@/data/clientsData";
+import { clientsData, loadClients, Client } from "@/data/clientsData";
 
 function getActiveFirm() {
   try {
@@ -133,7 +133,7 @@ export default function Clients() {
  const [partnerSearch, setPartnerSearch] = useState("");
  const [activeTab, setActiveTab] = useState("my-clients");
  const [selectedClient, setSelectedClient] = useState<string | null>(null);
- const [clientList, setClientList] = useState(clientsData);
+ const [clientList, setClientList] = useState<Client[]>(() => loadClients());
  const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
  const [industryFilter, setIndustryFilter] = useState<string>("all");
  const [activeFirm, setActiveFirm] = useState(getActiveFirm);
@@ -360,74 +360,100 @@ export default function Clients() {
  </td>
  </tr>
  )}
- {filteredClients.map((client) => (
- <tr
- key={client.id}
- className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${selectedClient === client.id ? 'bg-primary/5' : ''}`}
- style={{ maxHeight: '50px' }}
- onClick={() => setSelectedClient(client.id)}
- >
- <td className="px-6 py-2 whitespace-nowrap">
- <Checkbox checked={selectedClient === client.id} />
- </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={client.id} query={searchQuery} /></td>
- <td className="px-6 py-2 whitespace-nowrap">
- <Link to={`/clients/${client.id}`} className="text-sm text-link font-medium hover:underline" onClick={e => e.stopPropagation()}>
- <Highlight text={client.entityName} query={searchQuery} />
- </Link>
- </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
- <td className="px-4 py-2 text-sm whitespace-nowrap">
- <span className={cn(
-  "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
-  client.clientCountry === "us"
-   ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
-   : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
- )}>
-  {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
- </span>
- </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.industryType || '—'}</td>
- <td className="px-6 py-2 whitespace-nowrap"><StatusBadge status={client.status} /></td>
- <td className="px-6 py-2 whitespace-nowrap"><IntegrationCell type={client.integration} /></td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
- <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap"><Highlight text={client.email} query={searchQuery} /></td>
- <td className="px-6 py-2 whitespace-nowrap">
- <span className="text-sm text-link cursor-pointer hover:underline">{client.repository}</span>
- </td>
- <td className="px-6 py-2 whitespace-nowrap">
- <div className="flex items-center gap-1">
- <span className="text-sm text-primary">{client.assignedPartner}</span>
- <Users className="h-3.5 w-3.5 text-primary" />
- </div>
- </td>
- <td className="px-6 py-2 whitespace-nowrap">
- {client.assignedTeam ? (
- <div className="flex items-center gap-1">
- <span className="text-sm text-foreground">{client.assignedTeam}</span>
- <Users className="h-3.5 w-3.5 text-muted-foreground" />
- </div>
- ) : (
- <Users className="h-3.5 w-3.5 text-primary" />
- )}
- </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.cellPhone || '-'}</td>
- <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements.length}</td>
- <td className="px-6 py-2 whitespace-nowrap">
- <div className="flex items-center gap-2">
- <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement" onClick={(e) => handleCreateEngagement(client.id, e)}>
- <ClipboardPlus className="h-4 w-4 text-link" />
- </button>
- <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client" onClick={(e) => handleEditClient(client.id, e)}>
- <Pencil className="h-4 w-4 text-link" />
- </button>
- <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client" onClick={(e) => handleDeleteClient(client.id, e)}>
- <Trash2 className="h-4 w-4 text-destructive" />
- </button>
- </div>
- </td>
- </tr>
- ))}
+ {(() => {
+   const grouped: Record<string, Client[]> = {};
+   const ungrouped: Client[] = [];
+   filteredClients.forEach(c => {
+     if (c.groupName) {
+       (grouped[c.groupName] = grouped[c.groupName] || []).push(c);
+     } else {
+       ungrouped.push(c);
+     }
+   });
+   const renderClientRow = (client: Client) => (
+     <tr
+       key={client.id}
+       className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${selectedClient === client.id ? 'bg-primary/5' : ''}`}
+       style={{ maxHeight: '50px' }}
+       onClick={() => setSelectedClient(client.id)}
+     >
+       <td className="px-6 py-2 whitespace-nowrap">
+         <Checkbox checked={selectedClient === client.id} />
+       </td>
+       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={client.id} query={searchQuery} /></td>
+       <td className="px-6 py-2 whitespace-nowrap">
+         <Link to={`/clients/${client.id}`} className="text-sm text-link font-medium hover:underline" onClick={e => e.stopPropagation()}>
+           <Highlight text={client.entityName} query={searchQuery} />
+         </Link>
+       </td>
+       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
+       <td className="px-4 py-2 text-sm whitespace-nowrap">
+         <span className={cn(
+           "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+           client.clientCountry === "us"
+             ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
+             : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
+         )}>
+           {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+         </span>
+       </td>
+       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.industryType || '—'}</td>
+       <td className="px-6 py-2 whitespace-nowrap"><StatusBadge status={client.status} /></td>
+       <td className="px-6 py-2 whitespace-nowrap"><IntegrationCell type={client.integration} /></td>
+       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
+       <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap"><Highlight text={client.email} query={searchQuery} /></td>
+       <td className="px-6 py-2 whitespace-nowrap">
+         <span className="text-sm text-link cursor-pointer hover:underline">{client.repository}</span>
+       </td>
+       <td className="px-6 py-2 whitespace-nowrap">
+         <div className="flex items-center gap-1">
+           <span className="text-sm text-primary">{client.assignedPartner}</span>
+           <Users className="h-3.5 w-3.5 text-primary" />
+         </div>
+       </td>
+       <td className="px-6 py-2 whitespace-nowrap">
+         {client.assignedTeam ? (
+           <div className="flex items-center gap-1">
+             <span className="text-sm text-foreground">{client.assignedTeam}</span>
+             <Users className="h-3.5 w-3.5 text-muted-foreground" />
+           </div>
+         ) : (
+           <Users className="h-3.5 w-3.5 text-primary" />
+         )}
+       </td>
+       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.cellPhone || '-'}</td>
+       <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements.length}</td>
+       <td className="px-6 py-2 whitespace-nowrap">
+         <div className="flex items-center gap-2">
+           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement" onClick={(e) => handleCreateEngagement(client.id, e)}>
+             <ClipboardPlus className="h-4 w-4 text-link" />
+           </button>
+           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client" onClick={(e) => handleEditClient(client.id, e)}>
+             <Pencil className="h-4 w-4 text-link" />
+           </button>
+           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client" onClick={(e) => handleDeleteClient(client.id, e)}>
+             <Trash2 className="h-4 w-4 text-destructive" />
+           </button>
+         </div>
+       </td>
+     </tr>
+   );
+   return (
+     <>
+       {Object.entries(grouped).map(([groupName, clients]) => (
+         <React.Fragment key={groupName}>
+           <tr className="bg-muted/40">
+             <td colSpan={16} className="px-6 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+               {groupName}
+             </td>
+           </tr>
+           {clients.map(renderClientRow)}
+         </React.Fragment>
+       ))}
+       {ungrouped.map(renderClientRow)}
+     </>
+   );
+ })()}
  </tbody>
  </table>
  </div>
