@@ -456,6 +456,7 @@ export default function Clients() {
                </td>
              </tr>
              {!isCollapsed && clients.map(renderClientRow)}
+             <tr aria-hidden="true"><td colSpan={16} className="p-0 border-b-[3px] border-border" /></tr>
            </React.Fragment>
          );
        })}
