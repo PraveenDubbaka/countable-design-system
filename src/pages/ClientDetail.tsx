@@ -132,23 +132,23 @@ export default function ClientDetail() {
  </button>
 
  {client.groupName && (() => {
- const siblings = loadClients().filter(
-  c => c.groupName === client.groupName && c.id !== client.id
+ const allGroupMembers = loadClients().filter(
+  c => c.groupName === client.groupName
  );
- if (siblings.length === 0) return null;
+ if (allGroupMembers.length <= 1) return null;
  return (
   <div className="flex items-center gap-3 px-4 py-2.5 bg-muted/50 border border-border rounded-lg text-sm">
   <span className="text-muted-foreground font-medium shrink-0">Group:</span>
   <span className="font-semibold text-foreground">{client.groupName}</span>
   <span className="text-border">·</span>
-  <Select onValueChange={id => navigate(`/clients/${id}`)}>
-   <SelectTrigger className="h-7 w-48 text-xs">
-   <SelectValue placeholder="Go to sibling…" />
+  <Select value={client.id} onValueChange={id => { if (id !== client.id) navigate(`/clients/${id}`); }}>
+   <SelectTrigger className="h-7 w-52 text-xs">
+   <SelectValue />
    </SelectTrigger>
    <SelectContent>
-   {siblings.map(s => (
-    <SelectItem key={s.id} value={s.id} className="text-xs">
-    {s.clientCountry === 'us' ? '🇺🇸' : '🇨🇦'} {s.entityName}
+   {allGroupMembers.map(m => (
+    <SelectItem key={m.id} value={m.id} className="text-xs">
+    {m.clientCountry === 'us' ? '🇺🇸' : '🇨🇦'} {m.entityName}
     </SelectItem>
    ))}
    </SelectContent>
