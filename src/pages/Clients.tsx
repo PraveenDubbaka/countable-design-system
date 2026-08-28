@@ -19,7 +19,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
+import { Search, ChevronDown, ChevronRight, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -134,6 +134,7 @@ export default function Clients() {
  const [activeTab, setActiveTab] = useState("my-clients");
  const [selectedClient, setSelectedClient] = useState<string | null>(null);
  const [clientList, setClientList] = useState<Client[]>(() => loadClients());
+ const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
  const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
  const [industryFilter, setIndustryFilter] = useState<string>("all");
  const [activeFirm, setActiveFirm] = useState(getActiveFirm);
@@ -440,35 +441,47 @@ export default function Clients() {
    );
    return (
      <>
-       {Object.entries(grouped).map(([groupName, clients]) => (
-         <React.Fragment key={groupName}>
-           <tr className="bg-muted/40 border-y border-border/60">
-             <td colSpan={16} className="px-6 py-2">
-               <div className="flex items-center gap-3">
-                 <span className="text-xs font-semibold text-foreground uppercase tracking-wider">{groupName}</span>
-                 <span className="text-[11px] text-muted-foreground">
-                   {clients.length} {clients.length === 1 ? 'client' : 'clients'}
-                 </span>
-                 <div className="flex items-center gap-1">
-                   {Array.from(new Set(clients.map(c => c.clientCountry))).map(country => (
-                     <span
-                       key={country}
-                       className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${
-                         country === 'us'
-                           ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40'
-                           : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40'
-                       }`}
-                     >
-                       {country === 'us' ? '🇺🇸 US' : '🇨🇦 CA'}
-                     </span>
-                   ))}
+       {Object.entries(grouped).map(([groupName, clients]) => {
+         const isCollapsed = collapsedGroups.has(groupName);
+         const toggleCollapse = () => setCollapsedGroups(prev => {
+           const next = new Set(prev);
+           next.has(groupName) ? next.delete(groupName) : next.add(groupName);
+           return next;
+         });
+         return (
+           <React.Fragment key={groupName}>
+             <tr className="bg-muted/40 border-y border-border/60 cursor-pointer select-none hover:bg-muted/60 transition-colors" onClick={toggleCollapse}>
+               <td colSpan={16} className="px-6 py-2">
+                 <div className="flex items-center gap-3">
+                   {isCollapsed
+                     ? <ChevronRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                     : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                   }
+                   <span className="text-xs font-semibold text-foreground uppercase tracking-wider">{groupName}</span>
+                   <span className="text-[11px] text-muted-foreground">
+                     {clients.length} {clients.length === 1 ? 'client' : 'clients'}
+                   </span>
+                   <div className="flex items-center gap-1">
+                     {Array.from(new Set(clients.map(c => c.clientCountry))).map(country => (
+                       <span
+                         key={country}
+                         className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${
+                           country === 'us'
+                             ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40'
+                             : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40'
+                         }`}
+                       >
+                         {country === 'us' ? '🇺🇸 US' : '🇨🇦 CA'}
+                       </span>
+                     ))}
+                   </div>
                  </div>
-               </div>
-             </td>
-           </tr>
-           {clients.map(renderClientRow)}
-         </React.Fragment>
-       ))}
+               </td>
+             </tr>
+             {!isCollapsed && clients.map(renderClientRow)}
+           </React.Fragment>
+         );
+       })}
        {ungrouped.map(renderClientRow)}
      </>
    );
