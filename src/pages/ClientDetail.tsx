@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { loadClients } from "@/data/clientsData";
 import type { ClientEngagement } from "@/data/clientsData";
@@ -136,22 +137,22 @@ export default function ClientDetail() {
  );
  if (siblings.length === 0) return null;
  return (
-  <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border border-border rounded-lg text-sm">
+  <div className="flex items-center gap-3 px-4 py-2.5 bg-muted/50 border border-border rounded-lg text-sm">
   <span className="text-muted-foreground font-medium shrink-0">Group:</span>
   <span className="font-semibold text-foreground">{client.groupName}</span>
-  <span className="text-border mx-1">·</span>
-  <div className="flex items-center gap-2 flex-wrap">
+  <span className="text-border">·</span>
+  <Select onValueChange={id => navigate(`/clients/${id}`)}>
+   <SelectTrigger className="h-7 w-48 text-xs">
+   <SelectValue placeholder="Go to sibling…" />
+   </SelectTrigger>
+   <SelectContent>
    {siblings.map(s => (
-   <button
-    key={s.id}
-    onClick={() => navigate(`/clients/${s.id}`)}
-    className="flex items-center gap-1 text-link hover:underline text-xs font-medium"
-   >
-    {s.clientCountry === 'us' ? '🇺🇸' : '🇨🇦'}
-    {s.entityName}
-   </button>
+    <SelectItem key={s.id} value={s.id} className="text-xs">
+    {s.clientCountry === 'us' ? '🇺🇸' : '🇨🇦'} {s.entityName}
+    </SelectItem>
    ))}
-  </div>
+   </SelectContent>
+  </Select>
   </div>
  );
  })()}
