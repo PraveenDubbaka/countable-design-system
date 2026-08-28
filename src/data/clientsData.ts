@@ -539,7 +539,7 @@ export const clientsData: Client[] = [
 ];
 
 export const CLIENT_GROUPS_KEY = 'cds_client_groups_v1';
-export const CLIENTS_KEY = 'cds_clients_v1';
+export const CLIENTS_KEY = 'cds_clients_v2';
 
 export const SEED_GROUPS: string[] = [
  'Morrison Logistics Group',
