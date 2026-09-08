@@ -27,6 +27,7 @@ import { StyledCard } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NewAdjEntryModal, type AdjLine, type AdjEntryMeta } from "@/components/NewAdjEntryModal";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { getUnresolvedDuplicateCount } from "@/data/mergeAccountsData";
 import {
  ChevronDown,
  ChevronLeft,
@@ -76,7 +77,7 @@ const FILTER_CATEGORIES = [
 
 type FilterId = typeof FILTER_CATEGORIES[number]["id"];
 // Engagement data for breadcrumb
-const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
+export const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
  "AUD-US-Dec312024": { id: "AUD-US-Dec312024", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2024", status: "In Progress" },
  "AUD-SL-Mar312024": { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", status: "In Progress" },
  "AUD-HFL-Dec312025": { id: "AUD-HFL-Dec312025", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2025", status: "In Progress" },
@@ -262,6 +263,8 @@ export default function TrialBalance() {
  const status = contextEng?.status || engagement?.status || "In Progress";
  const uniqueClients = getUniqueClients();
  const clientEngagements = getEngagementsForClient(clientName);
+ const duplicateCount = getUnresolvedDuplicateCount(engagementId);
+ const duplicatesPending = duplicateCount > 0;
 
  const trialBalanceBreadcrumb = (
  <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
@@ -609,22 +612,30 @@ export default function TrialBalance() {
 
  <div className="flex items-center gap-2">
  {/* Actions dropdown - Add / Merge / Delete / Unmap / Auto Map */}
+ <Tooltip>
  <DropdownMenu>
+ <TooltipTrigger asChild>
  <DropdownMenuTrigger asChild>
  <ExpandableIconButton
- variant="secondary"
- icon={<Wrench className="h-4 w-4" />}
+ variant={duplicatesPending ? undefined : "secondary"}
+ icon={duplicatesPending ? <AlertTriangle className="h-4 w-4" /> : <Wrench className="h-4 w-4" />}
  label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>}
+ className={duplicatesPending ? "bg-amber-50 border-2 border-amber-500 text-amber-700 hover:bg-amber-100" : undefined}
  />
  </DropdownMenuTrigger>
+ </TooltipTrigger>
  <DropdownMenuContent align="end" className="w-44">
  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
  <Plus className="h-4 w-4 text-muted-foreground" />
  <span>Add</span>
  </DropdownMenuItem>
- <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+ <DropdownMenuItem
+ className="flex items-center gap-2 cursor-pointer"
+ onClick={() => navigate(`/engagements/${engagementId}/merge-accounts`)}
+ >
  <GitMerge className="h-4 w-4 text-muted-foreground" />
- <span>Merge</span>
+ <span className="flex-1">Merge</span>
+ {duplicatesPending && <AlertTriangle className="h-4 w-4 text-amber-600" />}
  </DropdownMenuItem>
  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
  <Trash2 className="h-4 w-4 text-destructive" />
@@ -650,6 +661,12 @@ export default function TrialBalance() {
  </DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>
+ {duplicatesPending && (
+ <TooltipContent side="top" className="bg-card text-foreground border border-border shadow-md">
+ {duplicateCount} duplicate account{duplicateCount === 1 ? "" : "s"} found
+ </TooltipContent>
+ )}
+ </Tooltip>
 
  {/* Refresh button beside Actions */}
  <Tooltip>
