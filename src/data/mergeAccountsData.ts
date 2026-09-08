@@ -40,7 +40,7 @@ const baseGroups: DuplicateGroup[] = [
     id: "g1",
     rows: [
       { accNo: "1424", description: "Assets: Cash and Cash Equivalents", original: 1153, adj: 0, final: 1153, py1: 1153, py2: 1153 },
-      { accNo: "1424", description: "Assets: Inventory", original: 1553, adj: 20.2, final: 1553, py1: 1553, py2: 1553 },
+      { accNo: "1424", description: "Assets: Inventory", original: 1153, adj: 20.2, final: 1153, py1: 1153, py2: 1153 },
     ],
   },
   {
