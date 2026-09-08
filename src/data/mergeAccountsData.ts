@@ -35,21 +35,32 @@ export function pruneExpiredHistory(entries: MergeHistoryEntry[]): MergeHistoryE
   return entries.filter((e) => new Date(e.resolvedAt).getTime() >= cutoff);
 }
 
+// Merge eligibility rule (per CPT-13596 clarification): a pair can only be
+// merged when at least one row's Original is 0 — that's the signature of a
+// split import (one row carries this year's balance, the other only carries
+// prior-year balances left over from before a re-import created a fresh row).
+// Two rows that both carry a real non-zero Original — whether equal or not —
+// are never auto-mergeable and always route to a support ticket instead.
 const baseGroups: DuplicateGroup[] = [
+  // Eligible — clean split: row0 has this year's balance, row1 is the old
+  // stub carrying only prior-year balances forward.
   {
     id: "g1",
     rows: [
-      { accNo: "1424", description: "Assets: Cash and Cash Equivalents", original: 1153, adj: 0, final: 1153, py1: 1153, py2: 1153 },
-      { accNo: "1424", description: "Assets: Inventory", original: 1153, adj: 20.2, final: 1153, py1: 1153, py2: 1153 },
+      { accNo: "1424", description: "Assets: Cash and Cash Equivalents", original: 1200, adj: 0, final: 1200, py1: 0, py2: 0 },
+      { accNo: "1424", description: "Assets: Inventory", original: 0, adj: 0, final: 0, py1: 1100, py2: 1300 },
     ],
   },
+  // Eligible, but the stub row (row1) carries an adjusting entry — blocks
+  // merging until the adjusting entry is removed.
   {
     id: "g2",
     rows: [
-      { accNo: "1233", description: "Liabilities: Accounts Payable", original: 1255, adj: 0, final: 1255, py1: 1255, py2: 1255 },
-      { accNo: "1211", description: "Liabilities: Accounts Payable", original: 1288, adj: 0, final: 1288, py1: 1288, py2: 1288 },
+      { accNo: "1120", description: "Assets: Cash and Cash Equivalents", original: 1353, adj: 0, final: 1353, py1: 1353, py2: 1353 },
+      { accNo: "1101", description: "Assets: Cash and Cash Equivalents", original: 0, adj: 20.2, final: 20.2, py1: 0, py2: 0 },
     ],
   },
+  // Not eligible — same non-zero Original on both rows.
   {
     id: "g3",
     rows: [
@@ -57,18 +68,20 @@ const baseGroups: DuplicateGroup[] = [
       { accNo: "1124", description: "Cash Flow: Financing Activities", original: 1253, adj: 0, final: 1253, py1: 1253, py2: 1253 },
     ],
   },
+  // Not eligible — different non-zero Original on both rows.
   {
     id: "g4",
     rows: [
-      { accNo: "1120", description: "Assets: Cash and Cash Equivalents", original: 1353, adj: 0, final: 1353, py1: 1353, py2: 1353 },
-      { accNo: "1101", description: "Assets: Cash and Cash Equivalents", original: 1353, adj: 0, final: 1353, py1: 1353, py2: 1353 },
+      { accNo: "1233", description: "Liabilities: Accounts Payable", original: 1255, adj: 0, final: 1255, py1: 1255, py2: 1255 },
+      { accNo: "1211", description: "Liabilities: Accounts Payable", original: 1288, adj: 0, final: 1288, py1: 1288, py2: 1288 },
     ],
   },
+  // Eligible — a second clean split example.
   {
     id: "g5",
     rows: [
       { accNo: "1300", description: "Prepaid Expenses", original: 845, adj: 0, final: 845, py1: 845, py2: 845 },
-      { accNo: "1305", description: "Prepaid Expenses - Insurance", original: 845, adj: 0, final: 845, py1: 845, py2: 845 },
+      { accNo: "1305", description: "Prepaid Expenses - Insurance", original: 0, adj: 0, final: 0, py1: 0, py2: 845 },
     ],
   },
 ];
