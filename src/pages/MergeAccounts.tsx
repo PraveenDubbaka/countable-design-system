@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -15,7 +14,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
-import { engagementsData } from "@/pages/TrialBalance";
+import { engagementsData } from "@/data/engagementsData";
 import {
   getMergeGroupsForEngagement,
   pruneExpiredHistory,
@@ -151,9 +150,13 @@ function MergeConflictIcon({ className }: { className?: string }) {
 
 const colWidths = { acc: "w-16", desc: "flex-1 min-w-0", num: "w-20" };
 
-export default function MergeAccounts() {
-  const navigate = useNavigate();
-  const { engagementId } = useParams();
+interface MergeAccountsProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  engagementId?: string;
+}
+
+export default function MergeAccounts({ open, onOpenChange, engagementId }: MergeAccountsProps) {
   const engId = engagementId ?? "default";
   const engagement = engagementId ? engagementsData[engagementId] : undefined;
 
@@ -191,8 +194,6 @@ export default function MergeAccounts() {
 
     setDecisions((prev) => ({ ...prev, [groupId]: { action, rowIndex } }));
   };
-
-  const goToTrialBalance = () => navigate(`/engagements/${engagementId}/trial-balance`);
 
   const handleSave = () => {
     const resolvedIds = Object.keys(decisions);
@@ -253,7 +254,9 @@ export default function MergeAccounts() {
   const yearEndLabel = engagement?.yearEnd ?? "Dec 31, 2024";
 
   return (
-    <Layout title="Engagements" hideSidebar>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="p-0 gap-0 max-w-6xl w-[95vw] max-h-[88vh] overflow-hidden flex flex-col rounded-lg">
       <div className="flex-1 flex flex-col min-w-0 overflow-auto">
         {/* Engagement sub-header */}
         <div className="w-full bg-primary text-primary-foreground px-6 py-2.5 flex items-center justify-between text-sm">
@@ -263,7 +266,9 @@ export default function MergeAccounts() {
 
         {/* Title row */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 flex-wrap gap-3">
-          <h1 className="text-xl font-semibold text-foreground">Merge accounts</h1>
+          <DialogTitle asChild>
+            <h1 className="text-xl font-semibold text-foreground">Merge accounts</h1>
+          </DialogTitle>
           <div className="flex items-center gap-3">
             {activeTab === "pending" && decidedCount > 0 && (
               <span className="flex items-center gap-1.5 text-sm font-medium text-[#12B76A]">
@@ -271,7 +276,7 @@ export default function MergeAccounts() {
                 Accounts selected to merge: {decidedCount} of {groups.length}
               </span>
             )}
-            <Button variant="outline" onClick={goToTrialBalance}>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             {activeTab === "pending" && (
@@ -477,6 +482,8 @@ export default function MergeAccounts() {
           </TabsContent>
         </Tabs>
       </div>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={warningOpen} onOpenChange={setWarningOpen}>
         <AlertDialogContent className="max-w-[400px] rounded-xl">
@@ -499,6 +506,6 @@ export default function MergeAccounts() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Layout>
+    </>
   );
 }

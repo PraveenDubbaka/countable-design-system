@@ -28,6 +28,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { NewAdjEntryModal, type AdjLine, type AdjEntryMeta } from "@/components/NewAdjEntryModal";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { getUnresolvedDuplicateCount } from "@/data/mergeAccountsData";
+import { engagementsData } from "@/data/engagementsData";
+import MergeAccounts from "@/pages/MergeAccounts";
 import {
  ChevronDown,
  ChevronLeft,
@@ -76,14 +78,6 @@ const FILTER_CATEGORIES = [
 ] as const;
 
 type FilterId = typeof FILTER_CATEGORIES[number]["id"];
-// Engagement data for breadcrumb
-export const engagementsData: Record<string, { id: string; client: string; type: string; yearEnd: string; status: string }> = {
- "AUD-US-Dec312024": { id: "AUD-US-Dec312024", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2024", status: "In Progress" },
- "AUD-SL-Mar312024": { id: "AUD-SL-Mar312024", client: "Shipping Line Inc.", type: "Audit (AUD)", yearEnd: "Mar 31, 2024", status: "In Progress" },
- "AUD-HFL-Dec312025": { id: "AUD-HFL-Dec312025", client: "Harbor Freight Logistics LLC", type: "Audit (AUD)", yearEnd: "Dec 31, 2025", status: "In Progress" },
- "REV-HFL-Dec312024": { id: "REV-HFL-Dec312024", client: "Harbor Freight Logistics LLC", type: "Review (REV)", yearEnd: "Dec 31, 2024", status: "In Progress" },
- "COM-HFL-Dec312023": { id: "COM-HFL-Dec312023", client: "Harbor Freight Logistics LLC", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", status: "In Progress" },
-};
 
 const getUniqueClients = () => {
  const clients = new Set<string>();
@@ -193,6 +187,7 @@ export default function TrialBalance() {
  const zeroAccCount = 0;
  const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
  const [adjModalOpen, setAdjModalOpen] = useState(false);
+ const [mergeModalOpen, setMergeModalOpen] = useState(false);
  const [selectedAdjRow, setSelectedAdjRow] = useState<{ accNo: string; description: string } | null>(null);
  const [trialBalanceData, setTrialBalanceData] = useState([...baseTrialBalanceData]);
  const [activeFilters, setActiveFilters] = useState<Set<FilterId>>(new Set());
@@ -631,7 +626,7 @@ export default function TrialBalance() {
  </DropdownMenuItem>
  <DropdownMenuItem
  className="flex items-center gap-2 cursor-pointer"
- onClick={() => navigate(`/engagements/${engagementId}/merge-accounts`)}
+ onClick={() => setMergeModalOpen(true)}
  >
  <GitMerge className="h-4 w-4 text-muted-foreground" />
  <span className="flex-1">Merge</span>
@@ -930,6 +925,7 @@ export default function TrialBalance() {
    yearEnd={staticEng?.yearEnd ?? "Dec 31, 2024"}
    prefillRow={selectedAdjRow ?? undefined}
  />
+ <MergeAccounts open={mergeModalOpen} onOpenChange={setMergeModalOpen} engagementId={engagementId} />
  {/* Right Panel */}
  <EngagementRightPanel />
  </div>
