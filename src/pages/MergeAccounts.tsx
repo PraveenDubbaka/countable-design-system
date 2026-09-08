@@ -311,10 +311,11 @@ export default function MergeAccounts() {
               const decision = decisions[group.id];
               const disableDown = group.rows[0].source === "xero";
               const rowTint = (rowIndex: 0 | 1) => rowTintClass(decision?.action, decision?.rowIndex, rowIndex);
-              // Per the AC: two rows sharing an account number/description but with
-              // different Original balances aren't a safe automatic duplicate — that's
-              // a backend data issue, not something this screen can resolve.
-              const originalMismatch = group.rows[0].original !== group.rows[1].original;
+              // Merge is only possible when at least one row is the "stub" left
+              // over from a split import — signaled by an Original of 0. Two rows
+              // that both carry a real non-zero Original (equal or not) can't be
+              // auto-merged and need a support ticket instead.
+              const requiresSupportTicket = group.rows[0].original !== 0 && group.rows[1].original !== 0;
 
               return (
                 <div key={group.id} className="rounded-lg border border-border">
@@ -368,7 +369,7 @@ export default function MergeAccounts() {
                             icon={<CornerLeftUp className="h-4 w-4" />}
                             label="Merge Up"
                             selected={decision?.action === "up"}
-                            disabled={originalMismatch}
+                            disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "up")}
                           />
                           <MergeActionButton
@@ -376,7 +377,7 @@ export default function MergeAccounts() {
                             icon={<CornerDownLeft className="h-4 w-4" />}
                             label="Merge Down"
                             selected={decision?.action === "down"}
-                            disabled={disableDown || originalMismatch}
+                            disabled={disableDown || requiresSupportTicket}
                             onClick={() => decide(group.id, "down")}
                           />
                           <MergeActionButton
@@ -384,7 +385,7 @@ export default function MergeAccounts() {
                             icon={<Ban className="h-4 w-4" />}
                             label="Ignore"
                             selected={decision?.action === "ignore"}
-                            disabled={originalMismatch}
+                            disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "ignore")}
                           />
                         </div>
@@ -393,7 +394,7 @@ export default function MergeAccounts() {
                             type="button"
                             aria-label="Delete this account"
                             aria-pressed={decision?.action === "delete" && decision.rowIndex === 0}
-                            disabled={originalMismatch}
+                            disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "delete", 0)}
                             className={`text-destructive hover:text-destructive/80 rounded disabled:opacity-40 disabled:pointer-events-none ${
                               decision?.action === "delete" && decision.rowIndex === 0 ? "ring-2 ring-destructive" : ""
@@ -405,7 +406,7 @@ export default function MergeAccounts() {
                             type="button"
                             aria-label="Delete this account"
                             aria-pressed={decision?.action === "delete" && decision.rowIndex === 1}
-                            disabled={originalMismatch}
+                            disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "delete", 1)}
                             className={`text-destructive hover:text-destructive/80 rounded disabled:opacity-40 disabled:pointer-events-none ${
                               decision?.action === "delete" && decision.rowIndex === 1 ? "ring-2 ring-destructive" : ""
@@ -418,10 +419,10 @@ export default function MergeAccounts() {
                     </div>
                   </div>
 
-                  {originalMismatch && (
+                  {requiresSupportTicket && (
                     <div className="flex items-center gap-2 px-4 py-2 rounded-b-lg bg-amber-50 border-t border-amber-200 text-xs text-amber-800">
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-600" />
-                      Please raise a support ticket to fix the merge issue for accounts with different original amounts.
+                      Please raise a support ticket to fix the merge issue for these accounts.
                     </div>
                   )}
                 </div>
