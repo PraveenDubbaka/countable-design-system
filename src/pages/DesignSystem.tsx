@@ -29,6 +29,7 @@ import { CompletionIcon } from "@/components/icons/CompletionIcon";
 import { WordDocIcon } from "@/components/icons/WordDocIcon";
 import { AddItemAboveIcon, AddItemBelowIcon } from "@/components/icons/AddItemIcons";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
+import { countableLogos, type CountableLogoAsset } from "@/data/countableLogos";
 
 /* ─── Token data ─── */
 interface Token { css: string; label: string; hsl: string; hex: string; }
@@ -305,6 +306,102 @@ function IconCard({ name, children, refKey }: { name: string; children: React.Re
  );
 }
 
+/* ─── Logo ─── */
+function triggerDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+const LOGO_EXPORT_SCALE = 6;
+
+function LogoCard({ asset }: { asset: CountableLogoAsset }) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const isDark = asset.background === "dark";
+  const slug = asset.id;
+
+  const getSvgSource = () => {
+    const svg = containerRef.current?.querySelector("svg");
+    if (!svg) return null;
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    if (!clone.getAttribute("xmlns")) clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    return new XMLSerializer().serializeToString(clone);
+  };
+
+  const downloadSvg = () => {
+    const source = getSvgSource();
+    if (!source) return;
+    triggerDownload(new Blob([source], { type: "image/svg+xml;charset=utf-8" }), `countable-${slug}.svg`);
+    sonnerToast.success(`Downloaded countable-${slug}.svg`);
+  };
+
+  // Rasterizes the live SVG onto an offscreen canvas at a higher resolution
+  // than the on-page preview. PNG keeps transparency; JPG has none, so it
+  // gets the surface color this variant is designed for painted in first.
+  const downloadRaster = (format: "png" | "jpg") => {
+    const source = getSvgSource();
+    if (!source) return;
+    const svgBlob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = asset.width * LOGO_EXPORT_SCALE;
+      canvas.height = asset.height * LOGO_EXPORT_SCALE;
+      const ctx = canvas.getContext("2d");
+      URL.revokeObjectURL(url);
+      if (!ctx) return;
+      if (format === "jpg") {
+        ctx.fillStyle = isDark ? "#0A3159" : "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const mime = format === "png" ? "image/png" : "image/jpeg";
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          triggerDownload(blob, `countable-${slug}.${format}`);
+          sonnerToast.success(`Downloaded countable-${slug}.${format}`);
+        },
+        mime,
+        format === "jpg" ? 0.95 : undefined
+      );
+    };
+    img.onerror = () => sonnerToast.error(`Couldn't render countable-${slug}.${format}`);
+    img.src = url;
+  };
+
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div
+        ref={containerRef}
+        className={`flex items-center justify-center p-8 h-32 ${isDark ? "bg-[#0A3159]" : "bg-white"}`}
+        dangerouslySetInnerHTML={{ __html: asset.svg }}
+      />
+      <div className="p-4 space-y-3">
+        <div>
+          <p className="text-body-sm font-medium text-foreground">{asset.name}</p>
+          <p className="text-label-sm text-muted-foreground mt-0.5">{asset.description}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={downloadSvg} className="gap-1.5 flex-1">
+            <Download className="h-3.5 w-3.5" /> SVG
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => downloadRaster("png")} className="gap-1.5 flex-1">
+            <Download className="h-3.5 w-3.5" /> PNG
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => downloadRaster("jpg")} className="gap-1.5 flex-1">
+            <Download className="h-3.5 w-3.5" /> JPG
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Page ─── */
 export default function DesignSystem() {
  const [checkboxChecked, setCheckboxChecked] = useState(false);
@@ -352,6 +449,7 @@ export default function DesignSystem() {
  <Tabs defaultValue="overview" className="w-full">
  <TabsList className="flex flex-wrap h-auto gap-1 bg-muted p-1">
  <TabsTrigger value="overview">Overview</TabsTrigger>
+ <TabsTrigger value="logo">Logo</TabsTrigger>
  <TabsTrigger value="header">Header</TabsTrigger>
  <TabsTrigger value="menu">Global Menu</TabsTrigger>
  <TabsTrigger value="icons">Icons</TabsTrigger>
@@ -390,6 +488,29 @@ export default function DesignSystem() {
  <li><strong className="text-foreground">Layout & Motion</strong> — radii, elevation, spacing, easing.</li>
  <li><strong className="text-foreground">Components</strong> — live samples (buttons, inputs, badges, dialogs, etc.).</li>
  </ul>
+ </Section>
+ </TabsContent>
+
+ {/* ───────── LOGO ───────── */}
+ <TabsContent value="logo" className="space-y-6 mt-6">
+ <Section
+ title="Countable Logo"
+ description="Official brand marks, sourced directly from countable.co. Use the color lockup on light backgrounds and the white lockup on navy or dark surfaces — don't recolor, stretch, or add effects."
+ >
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+ {countableLogos.map((asset) => (
+ <LogoCard key={asset.id} asset={asset} />
+ ))}
+ </div>
+ </Section>
+
+ <Section title="Usage Notes">
+ <div className="rounded-xl border border-border bg-card p-5 space-y-1">
+ <SpecRow label="Clear space" value="Keep at least the height of the icon mark as empty margin on all sides." />
+ <SpecRow label="Minimum size" value="Full lockup: 120px wide. Icon mark alone: 20px wide." />
+ <SpecRow label="Color" value={<>Icon uses a blue gradient (<span className="font-mono">#2A7BCB → #1C63A6</span>); wordmark uses navy (<span className="font-mono">#0A3159</span>) on light, white on dark.</>} />
+ <SpecRow label="Don't" value="Recolor the mark, separate the icon from the wordmark in the full lockup, rotate, or apply drop shadows/outlines." />
+ </div>
  </Section>
  </TabsContent>
 
