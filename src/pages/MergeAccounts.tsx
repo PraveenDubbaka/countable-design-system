@@ -71,7 +71,7 @@ function rowTintClass(action: MergeDecision | undefined, actionRowIndex: 0 | 1 |
     case "down":
       return targetRow === 1 ? "bg-[#12B76A]/10" : "bg-card";
     case "ignore":
-      return "bg-[#12B76A]/10";
+      return "bg-amber-500/10";
     case "delete":
       return actionRowIndex === targetRow ? "bg-destructive/10" : "bg-card";
     default:
@@ -109,10 +109,14 @@ function MergeActionButton({
   onClick: () => void;
   disabled?: boolean;
   selected?: boolean;
-  tone: "success" | "destructive";
+  tone: "success" | "warning" | "destructive";
 }) {
   const toneClasses =
-    tone === "success" ? "bg-[#12B76A] hover:bg-[#0e9c5a] text-white" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground";
+    tone === "success"
+      ? "bg-[#12B76A] hover:bg-[#0e9c5a] text-white"
+      : tone === "warning"
+        ? "bg-amber-500 hover:bg-amber-600 text-white"
+        : "bg-destructive hover:bg-destructive/90 text-destructive-foreground";
   return (
     <button
       type="button"
@@ -148,7 +152,7 @@ function MergeConflictIcon({ className }: { className?: string }) {
   );
 }
 
-const colWidths = { acc: "w-16", desc: "flex-1 min-w-0", num: "w-20" };
+const colWidths = { acc: "w-16", desc: "flex-1 min-w-0", num: "w-20 text-right" };
 
 interface MergeAccountsProps {
   open: boolean;
@@ -386,7 +390,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                             onClick={() => decide(group.id, "down")}
                           />
                           <MergeActionButton
-                            tone="destructive"
+                            tone="warning"
                             icon={<Ban className="h-4 w-4" />}
                             label="Ignore"
                             selected={decision?.action === "ignore"}
