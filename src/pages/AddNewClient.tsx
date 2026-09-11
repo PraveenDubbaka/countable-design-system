@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -676,18 +676,36 @@ export default function AddNewClient() {
  </div>
  </div>
  <InlineField label="Group Name" hint="Use to group related clients together.">
-   <div className="flex gap-2">
-     <Select value={groupName} onValueChange={v => { setGroupName(v); if (v !== "__new__") setNewGroupInput(""); }}>
+   <div className="flex gap-2 items-center">
+     <Select
+       value={groupName}
+       onValueChange={v => {
+         const resolved = v === "__none__" ? "" : v;
+         setGroupName(resolved);
+         if (resolved !== "__new__") setNewGroupInput("");
+       }}
+     >
        <SelectTrigger className={groupName === "__new__" ? "flex-none w-44" : "flex-1"}>
          <SelectValue placeholder="Select a group (optional)" />
        </SelectTrigger>
        <SelectContent>
+         <SelectItem value="__none__" className="text-muted-foreground">No group</SelectItem>
          {clientGroups.map(g => (
            <SelectItem key={g} value={g}>{g}</SelectItem>
          ))}
          <SelectItem value="__new__">New group...</SelectItem>
        </SelectContent>
      </Select>
+     {groupName && groupName !== "__new__" && (
+       <button
+         type="button"
+         aria-label="Clear group selection"
+         onClick={() => setGroupName("")}
+         className="shrink-0 h-9 w-9 flex items-center justify-center rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+       >
+         <X className="h-4 w-4" />
+       </button>
+     )}
      {groupName === "__new__" && (
        <Input
          placeholder="Group name"
