@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText, ChevronLeft, CalendarDays, UserPlus, RefreshCw, CheckCircle2, X } from "lucide-react";
-import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+import { ArrowLeft, Building2, User, FileText, ChevronLeft, CalendarDays, Plus, CheckCircle2, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -598,24 +597,12 @@ const MonthDayPicker = ({
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-type EntryMode = "choose" | "manual" | "source-select" | "source-connecting" | "source-connected";
+type EntryMode = "choose" | "manual" | "source-connecting" | "source-connected";
 
 const SOURCE_CARDS = [
-  {
-    value: "qbo",
-    label: "QuickBooks Online",
-    logo: <img src={intuitQuickbooksLogo} alt="QuickBooks Online" className="h-8 object-contain" />,
-  },
-  {
-    value: "xero",
-    label: "Xero",
-    logo: <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center text-white font-bold text-sm">X</div>,
-  },
-  {
-    value: "sage",
-    label: "Sage",
-    logo: <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-sm">S</div>,
-  },
+  { value: "qbo", label: "QuickBooks Online" },
+  { value: "xero", label: "Xero" },
+  { value: "sage", label: "Sage" },
 ];
 
 const INDUSTRY_TYPES = [
@@ -632,6 +619,55 @@ const INDUSTRY_TYPES = [
   "Technology",
   "Transportation & Logistics",
 ];
+
+// Icon-only marks cropped from the real brand assets (dropping the pre-baked
+// button chrome/wordmark) so all three "Connect to X" buttons can share one
+// consistent button shell instead of three differently-sized graphics.
+const QuickBooksIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
+    <path d="m30.77,61.54c16.99,0,30.77-13.78,30.77-30.77S47.76,0,30.77,0,0,13.78,0,30.77s13.77,30.77,30.77,30.77Z" fill="#2ca01c"/>
+    <path d="m20.51,18.8c-6.61,0-11.97,5.36-11.97,11.97s5.35,11.96,11.97,11.96h1.71v-4.44h-1.71c-4.15,0-7.52-3.37-7.52-7.52,0-4.15,3.37-7.52,7.52-7.52h4.11v23.25c0,2.45,1.99,4.44,4.44,4.44V18.8h-8.55,0Zm20.52,23.93c6.61,0,11.97-5.36,11.97-11.96s-5.35-11.96-11.97-11.96h-1.71v4.44h1.71c4.15,0,7.52,3.37,7.52,7.52s-3.37,7.52-7.52,7.52h-4.11V15.04c0-2.45-1.99-4.44-4.44-4.44v32.13h8.55s0,0,0,0Z" fill="#fff"/>
+  </svg>
+);
+
+const XeroIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="25 7 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
+    <path d="M39.5 34C46.4036 34 52 28.4036 52 21.5C52 14.5964 46.4036 9 39.5 9C32.5964 9 27 14.5964 27 21.5C27 28.4036 32.5964 34 39.5 34Z" fill="#1AB4D7"/>
+    <path d="M32.9835 21.4643L35.1168 19.3258C35.1875 19.2537 35.227 19.1583 35.227 19.0571C35.227 18.8461 35.0555 18.6748 34.8446 18.6748C34.7418 18.6748 34.6455 18.7151 34.5729 18.7886C34.5726 18.7891 32.4415 20.9189 32.4415 20.9189L30.3007 18.7854C30.2284 18.7141 30.1325 18.6748 30.0309 18.6748C29.8202 18.6748 29.6487 18.846 29.6487 19.0568C29.6487 19.1595 29.6897 19.256 29.7634 19.3287L31.8963 21.4613L29.7645 23.5971C29.6895 23.6709 29.6487 23.7676 29.6487 23.8708C29.6487 24.0817 29.8202 24.2528 30.0309 24.2528C30.1327 24.2528 30.2286 24.2133 30.3007 24.1412L32.4382 22.0065L34.5676 24.1334C34.6432 24.2115 34.7406 24.2531 34.8446 24.2531C35.0553 24.2531 35.2267 24.0817 35.2267 23.8708C35.2267 23.7691 35.1873 23.6735 35.1156 23.6014L32.9835 21.4643Z" fill="white"/>
+    <path d="M45.6653 21.4635C45.6653 21.8465 45.9767 22.158 46.3602 22.158C46.7428 22.158 47.0543 21.8465 47.0543 21.4635C47.0543 21.0804 46.7428 20.7689 46.3602 20.7689C45.9767 20.7689 45.6653 21.0804 45.6653 21.4635Z" fill="white"/>
+    <path d="M44.3481 21.464C44.3481 20.3549 45.2503 19.4525 46.3595 19.4525C47.4682 19.4525 48.3707 20.3549 48.3707 21.464C48.3707 22.5728 47.4682 23.4749 46.3595 23.4749C45.2503 23.4749 44.3481 22.5728 44.3481 21.464ZM43.5568 21.464C43.5568 23.0092 44.8141 24.2663 46.3595 24.2663C47.9049 24.2663 49.1629 23.0092 49.1629 21.464C49.1629 19.9186 47.9049 18.6611 46.3595 18.6611C44.8141 18.6611 43.5568 19.9186 43.5568 21.464Z" fill="white"/>
+    <path d="M43.3578 18.709L43.2403 18.7086C42.8872 18.7086 42.5468 18.82 42.2624 19.0391C42.2249 18.8676 42.0717 18.7386 41.8891 18.7386C41.679 18.7386 41.5106 18.907 41.5101 19.1175C41.5101 19.1183 41.5114 23.838 41.5114 23.838C41.5119 24.0482 41.6834 24.219 41.8936 24.219C42.1038 24.219 42.2752 24.0482 42.2758 23.8375C42.2758 23.8366 42.2759 20.935 42.2759 20.935C42.2759 19.9676 42.3644 19.5769 43.1931 19.4734C43.2696 19.4639 43.353 19.4653 43.3533 19.4653C43.5801 19.4576 43.7412 19.3017 43.7412 19.0912C43.7412 18.8804 43.5692 18.709 43.3578 18.709Z" fill="white"/>
+    <path d="M36.0188 21.0025C36.0188 20.9921 36.0196 20.9812 36.0201 20.9704C36.242 20.0932 37.0365 19.4441 37.9826 19.4441C38.9402 19.4441 39.7419 20.1092 39.9524 21.0025H36.0188ZM40.7351 20.9304C40.5704 20.1506 40.1435 19.51 39.4934 19.0987C38.5431 18.4953 37.2882 18.5287 36.3703 19.1815C35.6216 19.7141 35.1894 20.5854 35.1894 21.483C35.1894 21.7081 35.2165 21.9352 35.273 22.1588C35.5557 23.271 36.5118 24.1129 37.6517 24.2524C37.99 24.2934 38.3192 24.2738 38.6601 24.1855C38.9531 24.1142 39.2366 23.9954 39.4978 23.828C39.7689 23.6537 39.9954 23.4239 40.2147 23.1488C40.2192 23.1438 40.2236 23.1393 40.2281 23.134C40.3803 22.9452 40.3521 22.6766 40.1848 22.5485C40.0437 22.4403 39.8068 22.3965 39.6204 22.6352C39.5803 22.6923 39.5356 22.751 39.4864 22.8097C39.3382 22.9735 39.1543 23.1322 38.934 23.2552C38.6536 23.405 38.3341 23.4906 37.9945 23.4925C36.8827 23.4801 36.2878 22.7041 36.0762 22.1502C36.0393 22.0468 36.0108 21.9395 35.9909 21.829C35.9883 21.8083 35.9864 21.7884 35.9856 21.77C36.2155 21.77 39.9752 21.7694 39.9752 21.7694C40.5221 21.7579 40.8165 21.3718 40.7351 20.9304Z" fill="white"/>
+  </svg>
+);
+
+const SageIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
+    <rect width="32" height="32" rx="7" fill="#000000" />
+    <text x="16" y="22.5" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif" fontWeight="700" fontSize="19" fill="#ffffff">S</text>
+  </svg>
+);
+
+function ConnectSourceButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="h-11 w-full rounded-lg border border-border bg-[#F4F4F4] hover:bg-muted text-sm font-semibold text-foreground transition-colors flex items-center justify-center gap-2"
+    >
+      <span className="w-6 h-6 shrink-0">{icon}</span>
+      {label}
+    </button>
+  );
+}
 
 export default function AddNewClientV2() {
   const navigate = useNavigate();
@@ -754,10 +790,9 @@ export default function AddNewClientV2() {
   // Header back action varies by screen
   const handleHeaderBack = () => {
     if (entryMode === "choose") { navigate("/clients"); return; }
-    if (entryMode === "source-select") { setEntryMode("choose"); return; }
-    if (entryMode === "source-connecting") { setEntryMode("source-select"); return; }
+    if (entryMode === "source-connecting") { setEntryMode("choose"); return; }
     if (entryMode === "manual") {
-      if (legalEntityName) { setEntryMode("source-select"); } else { navigate("/clients"); }
+      if (legalEntityName) { setEntryMode("choose"); } else { navigate("/clients"); }
     }
   };
 
@@ -780,7 +815,7 @@ export default function AddNewClientV2() {
             </Button>
             <Button
               className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
-              disabled={entryMode === "choose" || entryMode === "source-select" || entryMode === "source-connecting"}
+              disabled={entryMode === "choose" || entryMode === "source-connecting"}
               onClick={handleAdd}
             >
               Add Client
@@ -791,75 +826,52 @@ export default function AddNewClientV2() {
         {/* ── SCREEN: choose ─────────────────────────────────────────────────── */}
         {entryMode === "choose" && (
           <div className="flex-1 flex items-center justify-center px-6">
-            <div className="text-center max-w-xl w-full">
-              <h2 className="text-lg font-semibold text-foreground mb-2">How would you like to add this client?</h2>
-              <p className="text-sm text-muted-foreground mb-8">
-                You can fill in the details manually, or connect to an accounting source and we'll pull the information in for you.
-              </p>
-              <div className="flex gap-4 justify-center">
-                <button
-                  type="button"
-                  onClick={() => setEntryMode("manual")}
-                  className="flex-1 max-w-xs cursor-pointer border rounded-xl p-6 text-left hover:border-primary transition-colors bg-card group"
-                >
-                  <UserPlus className="h-8 w-8 text-primary mb-4" />
-                  <p className="text-sm font-semibold text-foreground mb-1">Add Manually</p>
-                  <p className="text-xs text-muted-foreground">Fill in client details yourself using the form.</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEntryMode("source-select")}
-                  className="flex-1 max-w-xs cursor-pointer border rounded-xl p-6 text-left hover:border-primary transition-colors bg-card group"
-                >
-                  <RefreshCw className="h-8 w-8 text-primary mb-4" />
-                  <p className="text-sm font-semibold text-foreground mb-1">Connect from Source</p>
-                  <p className="text-xs text-muted-foreground">Link QuickBooks Online, Xero, or Sage and we'll import the client information automatically.</p>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+            <div className="max-w-3xl w-full">
+              <h2 className="text-lg font-semibold text-foreground mb-8">Import via integration</h2>
+              <div className="flex gap-10 items-stretch">
+                {/* Connect integration */}
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground mb-1">Select client accounting source</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    We'll connect to your client's accounting software and import their information.
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <ConnectSourceButton
+                      icon={<QuickBooksIcon className="w-full h-full" />}
+                      label="Connect to QuickBooks"
+                      onClick={() => { setSelectedSource("qbo"); setEntryMode("source-connecting"); }}
+                    />
+                    <ConnectSourceButton
+                      icon={<XeroIcon className="w-full h-full" />}
+                      label="Connect to Xero"
+                      onClick={() => { setSelectedSource("xero"); setEntryMode("source-connecting"); }}
+                    />
+                    <ConnectSourceButton
+                      icon={<SageIcon className="w-full h-full" />}
+                      label="Connect to Sage"
+                      onClick={() => { setSelectedSource("sage"); setEntryMode("source-connecting"); }}
+                    />
+                  </div>
+                </div>
 
-        {/* ── SCREEN: source-select ───────────────────────────────────────────── */}
-        {entryMode === "source-select" && (
-          <div className="flex-1 flex flex-col items-center justify-center px-6">
-            <div className="w-full max-w-xl">
-              <button
-                type="button"
-                onClick={() => setEntryMode("choose")}
-                className="flex items-center gap-1 text-sm text-link hover:underline mb-6"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Back
-              </button>
-              <h2 className="text-lg font-semibold text-foreground mb-1">Select your accounting source</h2>
-              <p className="text-sm text-muted-foreground mb-6">
-                We'll connect to your client's accounting software and import their information.
-              </p>
-              <div className="flex gap-4 mb-6">
-                {SOURCE_CARDS.map(s => (
+                {/* Divider */}
+                <div className="w-px bg-border" />
+
+                {/* Manual fallback */}
+                <div className="flex-1 flex flex-col justify-center">
+                  <p className="text-sm font-semibold text-foreground mb-4">
+                    Fill in client details yourself using the form.
+                  </p>
                   <button
-                    key={s.value}
                     type="button"
-                    onClick={() => setSelectedSource(s.value)}
-                    className={`flex-1 border rounded-xl p-5 cursor-pointer text-left transition-colors ${
-                      selectedSource === s.value
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary bg-card"
-                    }`}
+                    onClick={() => setEntryMode("manual")}
+                    className="self-start h-11 px-4 rounded-lg border border-border bg-card hover:bg-muted/40 text-sm font-semibold text-foreground transition-colors flex items-center gap-2"
                   >
-                    <div className="mb-3">{s.logo}</div>
-                    <p className="text-sm font-medium text-foreground">{s.label}</p>
+                    <Plus className="h-4 w-4" />
+                    Add Manually
                   </button>
-                ))}
+                </div>
               </div>
-              <Button
-                className="h-10 px-6 bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
-                disabled={!selectedSource}
-                onClick={() => setEntryMode("source-connecting")}
-              >
-                Connect
-              </Button>
             </div>
           </div>
         )}
@@ -943,18 +955,36 @@ export default function AddNewClientV2() {
                   </div>
                 </div>
                 <InlineField label="Group Name" hint="Use to group related clients together.">
-                  <div className="flex gap-2">
-                    <Select value={groupName} onValueChange={v => { setGroupName(v); if (v !== "__new__") setNewGroupInput(""); }}>
+                  <div className="flex gap-2 items-center">
+                    <Select
+                      value={groupName}
+                      onValueChange={v => {
+                        const resolved = v === "__none__" ? "" : v;
+                        setGroupName(resolved);
+                        if (resolved !== "__new__") setNewGroupInput("");
+                      }}
+                    >
                       <SelectTrigger className={groupName === "__new__" ? "flex-none w-44" : "flex-1"}>
                         <SelectValue placeholder="Select a group (optional)" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="__none__" className="text-muted-foreground">No group</SelectItem>
                         {clientGroups.map(g => (
                           <SelectItem key={g} value={g}>{g}</SelectItem>
                         ))}
                         <SelectItem value="__new__">New group...</SelectItem>
                       </SelectContent>
                     </Select>
+                    {groupName && groupName !== "__new__" && (
+                      <button
+                        type="button"
+                        aria-label="Clear group selection"
+                        onClick={() => setGroupName("")}
+                        className="shrink-0 h-9 w-9 flex items-center justify-center rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
                     {groupName === "__new__" && (
                       <Input
                         placeholder="Group name"
