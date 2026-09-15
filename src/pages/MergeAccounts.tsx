@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -14,6 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { CURRENT_USER } from "@/lib/useTimeEntries";
 import { engagementsData } from "@/data/engagementsData";
 import {
   getMergeGroupsForEngagement,
@@ -23,7 +25,7 @@ import {
   type MergeDecision,
   type MergeHistoryEntry,
 } from "@/data/mergeAccountsData";
-import { CornerLeftUp, CornerDownLeft, Ban, Trash2, Info, Save, Undo2, AlertTriangle } from "lucide-react";
+import { CornerDownLeft, EyeOff, Trash2, Info, Save, Undo2, AlertTriangle } from "lucide-react";
 
 const RESOLVED_KEY = (engId: string) => `merge-accounts-resolved-${engId}`;
 const HISTORY_KEY = (engId: string) => `merge-accounts-history-${engId}`;
@@ -138,6 +140,20 @@ function MergeActionButton({
   );
 }
 
+function MergeUpIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M7.50016 3.33331L3.3335 7.49998L7.50016 11.6666M3.3335 7.49998H8.66683C11.4671 7.49998 12.8672 7.49998 13.9368 8.04495C14.8776 8.52431 15.6425 9.28922 16.1219 10.23C16.6668 11.2996 16.6668 12.6997 16.6668 15.5V16.6666"
+        stroke="currentColor"
+        strokeWidth="1.66667"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function MergeConflictIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -152,7 +168,13 @@ function MergeConflictIcon({ className }: { className?: string }) {
   );
 }
 
-const colWidths = { acc: "w-16", desc: "flex-1 min-w-0", num: "w-20 text-right" };
+// actions is fixed so the header and every row reserve identical space —
+// otherwise the flex-1 Description column resolves to a different width on
+// each (the header's plain "Actions" label is narrower than a row's button
+// toolbar), throwing every column after it out of alignment. The width is
+// sized to fit a fully hover-expanded button (icon + label) plus the other
+// two buttons compact, so the reveal never overlaps or shifts neighboring cells.
+const colWidths = { acc: "w-16", desc: "flex-1 min-w-0", num: "w-20 text-right", actions: "w-[200px]" };
 
 interface MergeAccountsProps {
   open: boolean;
@@ -179,8 +201,25 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
     return pruned;
   });
   const [warningOpen, setWarningOpen] = useState(false);
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
 
   const decidedCount = Object.keys(decisions).length;
+
+  // Cancel discards any staged (not-yet-saved) decisions — confirm first so a
+  // stray click can't silently lose in-progress work on the pending list.
+  const handleCancelClick = () => {
+    if (decidedCount > 0) {
+      setCancelConfirmOpen(true);
+    } else {
+      onOpenChange(false);
+    }
+  };
+
+  const handleConfirmDiscard = () => {
+    setDecisions({});
+    setCancelConfirmOpen(false);
+    onOpenChange(false);
+  };
 
   // The row being dropped is the only one whose adjusting entries matter —
   // Merge Up drops rows[1], Merge Down drops rows[0], Delete drops whichever
@@ -207,7 +246,14 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
     const newEntries: MergeHistoryEntry[] = resolvedIds.map((id) => {
       const group = groups.find((g) => g.id === id)!;
       const staged = decisions[id];
-      return { groupId: id, decision: staged.action, rowIndex: staged.rowIndex, rows: group.rows, resolvedAt };
+      return {
+        groupId: id,
+        decision: staged.action,
+        rowIndex: staged.rowIndex,
+        rows: group.rows,
+        resolvedAt,
+        resolvedBy: CURRENT_USER.name,
+      };
     });
 
     const prevResolved = readJsonFromLocalStorage<string[]>(RESOLVED_KEY(engId), []);
@@ -251,7 +297,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
     );
 
     setGroups((prev) => [...prev, { id: entry.groupId, rows: entry.rows }]);
-    toast.success("Reverted — account restored to Matching Duplicates");
+    toast.success("Reverted — account restored to Duplicates");
     setActiveTab("pending");
   };
 
@@ -259,7 +305,16 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog
+        open={open}
+        onOpenChange={(next) => {
+          // Route every dismiss path (Escape, overlay click, the built-in ×)
+          // through the same discard guard as the Cancel button — otherwise
+          // they'd silently drop staged decisions the button now protects.
+          if (!next) handleCancelClick();
+          else onOpenChange(next);
+        }}
+      >
         <DialogContent className="p-0 gap-0 max-w-6xl w-[95vw] max-h-[88vh] overflow-hidden flex flex-col rounded-lg">
       <div className="flex-1 flex flex-col min-w-0 overflow-auto">
         {/* Engagement sub-header */}
@@ -271,7 +326,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
         {/* Title row */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 flex-wrap gap-3">
           <DialogTitle asChild>
-            <h1 className="text-xl font-semibold text-foreground">Merge accounts</h1>
+            <h1 className="text-xl font-semibold text-foreground">Resolve duplicate accounts</h1>
           </DialogTitle>
           <div className="flex items-center gap-3">
             {activeTab === "pending" && decidedCount > 0 && (
@@ -280,7 +335,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                 Accounts selected to merge: {decidedCount} of {groups.length}
               </span>
             )}
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="outline" onClick={handleCancelClick}>
               Cancel
             </Button>
             {activeTab === "pending" && (
@@ -295,7 +350,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pending" | "history")} className="px-6 pb-6">
           <TabsList>
             <TabsTrigger value="pending" className="gap-1.5">
-              Matching Duplicates
+              Duplicates
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
@@ -322,9 +377,16 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
               const rowTint = (rowIndex: 0 | 1) => rowTintClass(decision?.action, decision?.rowIndex, rowIndex);
               // Merge is only possible when at least one row is the "stub" left
               // over from a split import — signaled by an Original of 0. Two rows
-              // that both carry a real non-zero Original (equal or not) can't be
-              // auto-merged and need a support ticket instead.
-              const requiresSupportTicket = group.rows[0].original !== 0 && group.rows[1].original !== 0;
+              // that both carry a real non-zero Original can never be auto-merged
+              // (there's no safe stub to discard), regardless of whether the two
+              // Originals agree. But per Atin, a support ticket is only needed when
+              // they genuinely conflict (different non-zero Originals) — matching
+              // Originals just mean the data already agrees, so Delete/Ignore stay
+              // available with no warning banner.
+              const bothOriginalsNonZero = group.rows[0].original !== 0 && group.rows[1].original !== 0;
+              const originalsMatch = group.rows[0].original === group.rows[1].original;
+              const mergeBlocked = bothOriginalsNonZero;
+              const requiresSupportTicket = bothOriginalsNonZero && !originalsMatch;
 
               return (
                 <div key={group.id} className="rounded-lg border border-border">
@@ -337,96 +399,78 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                     <div className={colWidths.num}>Final</div>
                     <div className={colWidths.num}>PY1</div>
                     <div className={colWidths.num}>PY2</div>
-                    <div className="w-[168px] text-right pr-1">Actions</div>
+                    <div className={`${colWidths.actions} text-right pr-1`}>Actions</div>
                   </div>
 
-                  {/* Rows + actions */}
-                  <div className="flex items-stretch">
-                    <div className="flex-1 min-w-0">
-                      {group.rows.map((row, i) => (
-                        <div
-                          key={i}
-                          className={`flex items-center gap-4 px-4 py-3 transition-colors ${
-                            i === 0 ? "border-b border-border/60" : "rounded-bl-lg"
-                          } ${rowTint(i as 0 | 1)}`}
-                        >
-                          <div className={`${colWidths.acc} font-semibold text-foreground`}>{row.accNo}</div>
-                          <div className={`${colWidths.desc} flex items-center gap-2 text-link truncate`}>
-                            <span className="truncate">{row.description}</span>
-                            {row.source === "xero" && <XeroSourceBadge />}
-                          </div>
-                          <div className={`${colWidths.num} text-foreground`}>{fmt(row.original)}</div>
-                          <div className={`${colWidths.num} text-foreground`}>{fmt(row.adj)}</div>
-                          <div className={`${colWidths.num} text-foreground`}>{fmt(row.final)}</div>
-                          <div className={`${colWidths.num} text-foreground`}>{fmt(row.py1)}</div>
-                          <div className={`${colWidths.num} text-foreground`}>{fmt(row.py2)}</div>
+                  {/* Rows — each row carries its own inline action toolbar, revealed
+                      on hover/focus so it doesn't compete with the data at rest. */}
+                  {group.rows.map((row, i) => {
+                    const rowIndex = i as 0 | 1;
+                    const isTop = rowIndex === 0;
+                    return (
+                      <div
+                        key={i}
+                        className={`group/row flex items-center gap-4 px-4 py-3 transition-colors ${
+                          isTop ? "border-b border-border/60" : "rounded-b-lg"
+                        } ${rowTint(rowIndex)}`}
+                      >
+                        <div className={`${colWidths.acc} font-semibold text-foreground`}>{row.accNo}</div>
+                        <div className={`${colWidths.desc} flex items-center gap-2 text-link truncate`}>
+                          <span className="truncate">{row.description}</span>
+                          {row.source === "xero" && <XeroSourceBadge />}
                         </div>
-                      ))}
-                    </div>
+                        <div className={`${colWidths.num} ${requiresSupportTicket ? "font-semibold text-amber-700" : "text-foreground"}`}>
+                          {fmt(row.original)}
+                        </div>
+                        <div className={`${colWidths.num} ${row.adj !== 0 ? "font-semibold text-amber-700" : "text-foreground"}`}>
+                          {fmt(row.adj)}
+                        </div>
+                        <div className={`${colWidths.num} text-foreground`}>{fmt(row.final)}</div>
+                        <div className={`${colWidths.num} text-foreground`}>{fmt(row.py1)}</div>
+                        <div className={`${colWidths.num} text-foreground`}>{fmt(row.py2)}</div>
 
-                    {/* Actions column — background split to match each row's tint;
-                        the buttons float centered on top spanning both halves. */}
-                    <div className="w-[168px] relative rounded-br-lg overflow-hidden">
-                      <div className="absolute inset-0 flex flex-col">
-                        <div className={`flex-1 transition-colors ${rowTint(0)}`} />
-                        <div className={`flex-1 border-t border-border/60 transition-colors ${rowTint(1)}`} />
-                      </div>
-                      <div className="relative flex items-stretch h-full">
-                        <div className="flex-1 flex items-center gap-1.5 pl-2">
+                        <div
+                          className={`${colWidths.actions} shrink-0 flex items-center justify-end gap-1.5 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity`}
+                        >
+                          {isTop ? (
+                            <MergeActionButton
+                              tone="success"
+                              icon={<MergeUpIcon className="h-4 w-4" />}
+                              label="Merge Up"
+                              selected={decision?.action === "up"}
+                              disabled={mergeBlocked}
+                              onClick={() => decide(group.id, "up")}
+                            />
+                          ) : (
+                            <MergeActionButton
+                              tone="success"
+                              icon={<CornerDownLeft className="h-4 w-4" />}
+                              label="Merge Down"
+                              selected={decision?.action === "down"}
+                              disabled={disableDown || mergeBlocked}
+                              onClick={() => decide(group.id, "down")}
+                            />
+                          )}
                           <MergeActionButton
-                            tone="success"
-                            icon={<CornerLeftUp className="h-4 w-4" />}
-                            label="Merge Up"
-                            selected={decision?.action === "up"}
+                            tone="destructive"
+                            icon={<Trash2 className="h-4 w-4" />}
+                            label="Delete"
+                            selected={decision?.action === "delete" && decision.rowIndex === rowIndex}
                             disabled={requiresSupportTicket}
-                            onClick={() => decide(group.id, "up")}
-                          />
-                          <MergeActionButton
-                            tone="success"
-                            icon={<CornerDownLeft className="h-4 w-4" />}
-                            label="Merge Down"
-                            selected={decision?.action === "down"}
-                            disabled={disableDown || requiresSupportTicket}
-                            onClick={() => decide(group.id, "down")}
+                            onClick={() => decide(group.id, "delete", rowIndex)}
                           />
                           <MergeActionButton
                             tone="warning"
-                            icon={<Ban className="h-4 w-4" />}
+                            icon={<EyeOff className="h-4 w-4" />}
                             label="Ignore"
                             selected={decision?.action === "ignore"}
                             disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "ignore")}
                           />
                         </div>
-                        <div className="w-9 flex flex-col justify-around items-center py-1 pr-3">
-                          <button
-                            type="button"
-                            aria-label="Delete this account"
-                            aria-pressed={decision?.action === "delete" && decision.rowIndex === 0}
-                            disabled={requiresSupportTicket}
-                            onClick={() => decide(group.id, "delete", 0)}
-                            className={`text-destructive hover:text-destructive/80 rounded disabled:opacity-40 disabled:pointer-events-none ${
-                              decision?.action === "delete" && decision.rowIndex === 0 ? "ring-2 ring-destructive" : ""
-                            }`}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                          <button
-                            type="button"
-                            aria-label="Delete this account"
-                            aria-pressed={decision?.action === "delete" && decision.rowIndex === 1}
-                            disabled={requiresSupportTicket}
-                            onClick={() => decide(group.id, "delete", 1)}
-                            className={`text-destructive hover:text-destructive/80 rounded disabled:opacity-40 disabled:pointer-events-none ${
-                              decision?.action === "delete" && decision.rowIndex === 1 ? "ring-2 ring-destructive" : ""
-                            }`}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })}
 
                   {requiresSupportTicket && (
                     <div className="flex items-center gap-2 px-4 py-2 rounded-b-lg bg-amber-50 border-t border-amber-200 text-xs text-amber-800">
@@ -453,7 +497,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
               <div key={entry.groupId} className="rounded-lg border border-border overflow-hidden">
                 <div className="flex items-center justify-between gap-4 px-4 py-2 bg-muted/60 text-xs font-medium text-muted-foreground">
                   <span>
-                    {decisionLabel(entry)} · {formatResolvedAt(entry.resolvedAt)}
+                    {decisionLabel(entry)} · {entry.resolvedBy ?? CURRENT_USER.name} · {formatResolvedAt(entry.resolvedAt)}
                   </span>
                   <Button size="sm" variant="outline" className="h-7 gap-1.5" onClick={() => handleRevert(entry.groupId)}>
                     <Undo2 className="h-3.5 w-3.5" />
@@ -506,6 +550,29 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
           <AlertDialogFooter>
             <AlertDialogAction className="w-full" onClick={() => setWarningOpen(false)}>
               Ok
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={cancelConfirmOpen} onOpenChange={setCancelConfirmOpen}>
+        <AlertDialogContent className="max-w-[400px] rounded-xl">
+          <AlertDialogHeader className="flex flex-col items-center text-center gap-3">
+            <div className="w-14 h-14 rounded-full bg-amber-500/10 flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-amber-600" />
+            </div>
+            <AlertDialogTitle className="text-base font-semibold">
+              Discard {decidedCount} unsaved change{decidedCount === 1 ? "" : "s"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
+              You've made decisions on {decidedCount} duplicate{decidedCount === 1 ? "" : "s"} that haven't been
+              saved. Closing now will discard {decidedCount === 1 ? "it" : "them"}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setCancelConfirmOpen(false)}>Keep editing</AlertDialogCancel>
+            <AlertDialogAction className={buttonVariants({ variant: "destructive" })} onClick={handleConfirmDiscard}>
+              Discard changes
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

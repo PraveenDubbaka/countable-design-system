@@ -26,6 +26,7 @@ export interface MergeHistoryEntry {
   rowIndex?: 0 | 1;
   rows: [DuplicateAccountRow, DuplicateAccountRow];
   resolvedAt: string;
+  resolvedBy: string;
 }
 
 export const HISTORY_RETENTION_DAYS = 15;
