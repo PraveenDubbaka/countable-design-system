@@ -256,7 +256,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
             {decidedCount > 0 && (
               <span className="flex items-center gap-1.5 text-sm font-medium text-[#12B76A]">
                 <Save className="h-4 w-4" />
-                Accounts selected to merge: {decidedCount} of {groups.length}
+                Accounts selected to resolve: {decidedCount} of {groups.length}
               </span>
             )}
             <Button variant="outline" onClick={handleCancelClick}>
