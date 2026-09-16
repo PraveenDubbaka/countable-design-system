@@ -353,20 +353,20 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                           {isTop ? (
                             <MergeActionButton
                               tone="success"
-                              icon={<MergeUpIcon className="h-4 w-4" />}
-                              label="Merge Up"
-                              selected={decision?.action === "up"}
-                              disabled={mergeBlocked}
-                              onClick={() => decide(group.id, "up")}
-                            />
-                          ) : (
-                            <MergeActionButton
-                              tone="success"
                               icon={<CornerDownLeft className="h-4 w-4" />}
                               label="Merge Down"
                               selected={decision?.action === "down"}
                               disabled={disableDown || mergeBlocked}
                               onClick={() => decide(group.id, "down")}
+                            />
+                          ) : (
+                            <MergeActionButton
+                              tone="success"
+                              icon={<MergeUpIcon className="h-4 w-4" />}
+                              label="Merge Up"
+                              selected={decision?.action === "up"}
+                              disabled={mergeBlocked}
+                              onClick={() => decide(group.id, "up")}
                             />
                           )}
                           <MergeActionButton
