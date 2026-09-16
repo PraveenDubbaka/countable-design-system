@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,43 +14,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
-import { CURRENT_USER } from "@/lib/useTimeEntries";
 import { engagementsData } from "@/data/engagementsData";
-import {
-  getMergeGroupsForEngagement,
-  pruneExpiredHistory,
-  HISTORY_RETENTION_DAYS,
-  type DuplicateGroup,
-  type MergeDecision,
-  type MergeHistoryEntry,
-} from "@/data/mergeAccountsData";
-import { CornerDownLeft, EyeOff, Trash2, Info, Save, Undo2, AlertTriangle } from "lucide-react";
+import { getMergeGroupsForEngagement, type DuplicateGroup, type MergeDecision } from "@/data/mergeAccountsData";
+import { CornerDownLeft, EyeOff, Trash2, Info, Save, AlertTriangle } from "lucide-react";
 
 const RESOLVED_KEY = (engId: string) => `merge-accounts-resolved-${engId}`;
-const HISTORY_KEY = (engId: string) => `merge-accounts-history-${engId}`;
 const XERO_LOGO_URL = "https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg";
 
 const fmt = (n: number) => {
   const v = n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return n < 0 ? `(${v.replace("-", "")})` : v;
-};
-
-const formatResolvedAt = (iso: string) =>
-  new Date(iso).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
-
-const decisionLabel = (entry: MergeHistoryEntry) => {
-  switch (entry.decision) {
-    case "up":
-      return `Merged into ${entry.rows[0].accNo} — ${entry.rows[0].description}`;
-    case "down":
-      return `Merged into ${entry.rows[1].accNo} — ${entry.rows[1].description}`;
-    case "ignore":
-      return "Marked as not a duplicate — both accounts kept";
-    case "delete": {
-      const row = entry.rowIndex !== undefined ? entry.rows[entry.rowIndex] : undefined;
-      return row ? `Deleted ${row.accNo} — ${row.description}` : "Deleted";
-    }
-  }
 };
 
 // A staged (not-yet-saved) decision for one duplicate group. "delete" is the
@@ -61,10 +33,9 @@ interface StagedDecision {
   rowIndex?: 0 | 1;
 }
 
-// Shared by the pending list (staged decisions) and History (saved decisions):
 // Merge Up/Down tints only the surviving row, Ignore tints both (both kept),
-// Delete tints only the specific row that was removed — so a glance at either
-// tab shows exactly what happened to each row.
+// Delete tints only the specific row that was removed — so a glance at the
+// pending list shows exactly what a staged decision will do to each row.
 function rowTintClass(action: MergeDecision | undefined, actionRowIndex: 0 | 1 | undefined, targetRow: 0 | 1): string {
   if (!action) return "bg-card";
   switch (action) {
@@ -186,20 +157,12 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
   const engId = engagementId ?? "default";
   const engagement = engagementId ? engagementsData[engagementId] : undefined;
 
-  const [activeTab, setActiveTab] = useState<"pending" | "history">("pending");
-
   const [groups, setGroups] = useState<DuplicateGroup[]>(() => {
     const all = getMergeGroupsForEngagement(engagementId);
     const resolved = readJsonFromLocalStorage<string[]>(RESOLVED_KEY(engId), []);
     return all.filter((g) => !resolved.includes(g.id));
   });
   const [decisions, setDecisions] = useState<Record<string, StagedDecision>>({});
-  const [history, setHistory] = useState<MergeHistoryEntry[]>(() => {
-    const raw = readJsonFromLocalStorage<MergeHistoryEntry[]>(HISTORY_KEY(engId), []);
-    const pruned = pruneExpiredHistory(raw);
-    if (pruned.length !== raw.length) writeJsonToLocalStorage(HISTORY_KEY(engId), pruned);
-    return pruned;
-  });
   const [warningOpen, setWarningOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
 
@@ -242,27 +205,8 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
     const resolvedIds = Object.keys(decisions);
     if (resolvedIds.length === 0) return;
 
-    const resolvedAt = new Date().toISOString();
-    const newEntries: MergeHistoryEntry[] = resolvedIds.map((id) => {
-      const group = groups.find((g) => g.id === id)!;
-      const staged = decisions[id];
-      return {
-        groupId: id,
-        decision: staged.action,
-        rowIndex: staged.rowIndex,
-        rows: group.rows,
-        resolvedAt,
-        resolvedBy: CURRENT_USER.name,
-      };
-    });
-
     const prevResolved = readJsonFromLocalStorage<string[]>(RESOLVED_KEY(engId), []);
     writeJsonToLocalStorage(RESOLVED_KEY(engId), [...prevResolved, ...resolvedIds]);
-
-    const prevHistory = pruneExpiredHistory(readJsonFromLocalStorage<MergeHistoryEntry[]>(HISTORY_KEY(engId), []));
-    const nextHistory = [...newEntries, ...prevHistory];
-    writeJsonToLocalStorage(HISTORY_KEY(engId), nextHistory);
-    setHistory(nextHistory);
 
     setGroups((prev) => prev.filter((g) => !resolvedIds.includes(g.id)));
     setDecisions({});
@@ -279,26 +223,6 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
     } else {
       toast.success(`${otherCount} record${otherCount === 1 ? "" : "s"} updated.`);
     }
-    setActiveTab("history");
-  };
-
-  const handleRevert = (groupId: string) => {
-    const entry = history.find((h) => h.groupId === groupId);
-    if (!entry) return;
-
-    const nextHistory = history.filter((h) => h.groupId !== groupId);
-    setHistory(nextHistory);
-    writeJsonToLocalStorage(HISTORY_KEY(engId), nextHistory);
-
-    const prevResolved = readJsonFromLocalStorage<string[]>(RESOLVED_KEY(engId), []);
-    writeJsonToLocalStorage(
-      RESOLVED_KEY(engId),
-      prevResolved.filter((id) => id !== groupId)
-    );
-
-    setGroups((prev) => [...prev, { id: entry.groupId, rows: entry.rows }]);
-    toast.success("Reverted — account restored to Duplicates");
-    setActiveTab("pending");
   };
 
   const yearEndLabel = engagement?.yearEnd ?? "Dec 31, 2024";
@@ -329,7 +253,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
             <h1 className="text-xl font-semibold text-foreground">Resolve duplicate accounts</h1>
           </DialogTitle>
           <div className="flex items-center gap-3">
-            {activeTab === "pending" && decidedCount > 0 && (
+            {decidedCount > 0 && (
               <span className="flex items-center gap-1.5 text-sm font-medium text-[#12B76A]">
                 <Save className="h-4 w-4" />
                 Accounts selected to merge: {decidedCount} of {groups.length}
@@ -338,34 +262,28 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
             <Button variant="outline" onClick={handleCancelClick}>
               Cancel
             </Button>
-            {activeTab === "pending" && (
-              <Button disabled={decidedCount === 0} onClick={handleSave} className="gap-1.5">
-                <Save className="h-4 w-4" />
-                Save
-              </Button>
-            )}
+            <Button disabled={decidedCount === 0} onClick={handleSave} className="gap-1.5">
+              <Save className="h-4 w-4" />
+              Save
+            </Button>
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pending" | "history")} className="px-6 pb-6">
-          <TabsList>
-            <TabsTrigger value="pending" className="gap-1.5">
-              Duplicates
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  These accounts appear more than once in your trial balance. Choose which record to keep, or mark as
-                  not a duplicate.
-                </TooltipContent>
-              </Tooltip>
-            </TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
-          </TabsList>
+        <div className="px-6 pb-6">
+          <div className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-1">
+            Duplicates
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                These accounts appear more than once in your trial balance. Choose which record to keep, or mark as
+                not a duplicate.
+              </TooltipContent>
+            </Tooltip>
+          </div>
 
-          {/* Pending duplicates */}
-          <TabsContent value="pending" className="pt-4 flex flex-col gap-4">
+          <div className="pt-3 flex flex-col gap-4">
             {groups.length === 0 && (
               <div className="text-sm text-muted-foreground px-2 py-8 text-center">
                 No matching duplicates remaining.
@@ -378,15 +296,15 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
               // Merge is only possible when at least one row is the "stub" left
               // over from a split import — signaled by an Original of 0. Two rows
               // that both carry a real non-zero Original can never be auto-merged
-              // (there's no safe stub to discard), regardless of whether the two
-              // Originals agree. But per Atin, a support ticket is only needed when
-              // they genuinely conflict (different non-zero Originals) — matching
-              // Originals just mean the data already agrees, so Delete/Ignore stay
-              // available with no warning banner.
+              // (there's no safe stub to discard), whether or not the two Originals
+              // agree — no support ticket needed either way, per today's discussion:
+              // Delete/Ignore stay available with no warning banner regardless.
               const bothOriginalsNonZero = group.rows[0].original !== 0 && group.rows[1].original !== 0;
               const originalsMatch = group.rows[0].original === group.rows[1].original;
               const mergeBlocked = bothOriginalsNonZero;
-              const requiresSupportTicket = bothOriginalsNonZero && !originalsMatch;
+              // Purely a visual flag — highlights the Original cells when they
+              // genuinely conflict, so it's easy to spot before choosing Delete.
+              const originalsConflict = bothOriginalsNonZero && !originalsMatch;
 
               return (
                 <div key={group.id} className="rounded-lg border border-border">
@@ -419,7 +337,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                           <span className="truncate">{row.description}</span>
                           {row.source === "xero" && <XeroSourceBadge />}
                         </div>
-                        <div className={`${colWidths.num} ${requiresSupportTicket ? "font-semibold text-amber-700" : "text-foreground"}`}>
+                        <div className={`${colWidths.num} ${originalsConflict ? "font-semibold text-amber-700" : "text-foreground"}`}>
                           {fmt(row.original)}
                         </div>
                         <div className={`${colWidths.num} ${row.adj !== 0 ? "font-semibold text-amber-700" : "text-foreground"}`}>
@@ -456,7 +374,6 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                             icon={<Trash2 className="h-4 w-4" />}
                             label="Delete"
                             selected={decision?.action === "delete" && decision.rowIndex === rowIndex}
-                            disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "delete", rowIndex)}
                           />
                           <MergeActionButton
@@ -464,71 +381,17 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                             icon={<EyeOff className="h-4 w-4" />}
                             label="Ignore"
                             selected={decision?.action === "ignore"}
-                            disabled={requiresSupportTicket}
                             onClick={() => decide(group.id, "ignore")}
                           />
                         </div>
                       </div>
                     );
                   })}
-
-                  {requiresSupportTicket && (
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-b-lg bg-amber-50 border-t border-amber-200 text-xs text-amber-800">
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-600" />
-                      Please raise a support ticket to fix the merge issue for these accounts.
-                    </div>
-                  )}
                 </div>
               );
             })}
-          </TabsContent>
-
-          {/* History */}
-          <TabsContent value="history" className="pt-4 flex flex-col gap-4">
-            <div className="px-4 py-2.5 rounded-md bg-muted/60 text-xs text-muted-foreground flex items-center gap-1.5">
-              <Info className="h-3.5 w-3.5 shrink-0" />
-              History is available for {HISTORY_RETENTION_DAYS} days from the date of the save action.
-            </div>
-
-            {history.length === 0 && (
-              <div className="text-sm text-muted-foreground px-2 py-8 text-center">No merge history yet.</div>
-            )}
-            {history.map((entry) => (
-              <div key={entry.groupId} className="rounded-lg border border-border overflow-hidden">
-                <div className="flex items-center justify-between gap-4 px-4 py-2 bg-muted/60 text-xs font-medium text-muted-foreground">
-                  <span>
-                    {decisionLabel(entry)} · {entry.resolvedBy ?? CURRENT_USER.name} · {formatResolvedAt(entry.resolvedAt)}
-                  </span>
-                  <Button size="sm" variant="outline" className="h-7 gap-1.5" onClick={() => handleRevert(entry.groupId)}>
-                    <Undo2 className="h-3.5 w-3.5" />
-                    Revert
-                  </Button>
-                </div>
-                <div>
-                  {entry.rows.map((row, i) => (
-                    <div
-                      key={i}
-                      className={`flex items-center gap-4 px-4 py-3 text-muted-foreground transition-colors ${
-                        i === 0 ? "border-b border-border/60" : ""
-                      } ${rowTintClass(entry.decision, entry.rowIndex, i as 0 | 1)}`}
-                    >
-                      <div className={`${colWidths.acc} font-semibold`}>{row.accNo}</div>
-                      <div className={`${colWidths.desc} flex items-center gap-2 truncate`}>
-                        <span className="truncate">{row.description}</span>
-                        {row.source === "xero" && <XeroSourceBadge />}
-                      </div>
-                      <div className={colWidths.num}>{fmt(row.original)}</div>
-                      <div className={colWidths.num}>{fmt(row.adj)}</div>
-                      <div className={colWidths.num}>{fmt(row.final)}</div>
-                      <div className={colWidths.num}>{fmt(row.py1)}</div>
-                      <div className={colWidths.num}>{fmt(row.py2)}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </div>
         </DialogContent>
       </Dialog>

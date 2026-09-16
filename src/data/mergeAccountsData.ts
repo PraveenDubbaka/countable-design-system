@@ -18,24 +18,6 @@ export interface DuplicateGroup {
 
 export type MergeDecision = "up" | "down" | "ignore" | "delete";
 
-export interface MergeHistoryEntry {
-  groupId: string;
-  decision: MergeDecision;
-  // Which row a "delete" applied to — irrelevant for up/down/ignore, which
-  // always act on the whole pair.
-  rowIndex?: 0 | 1;
-  rows: [DuplicateAccountRow, DuplicateAccountRow];
-  resolvedAt: string;
-  resolvedBy: string;
-}
-
-export const HISTORY_RETENTION_DAYS = 15;
-
-export function pruneExpiredHistory(entries: MergeHistoryEntry[]): MergeHistoryEntry[] {
-  const cutoff = Date.now() - HISTORY_RETENTION_DAYS * 24 * 60 * 60 * 1000;
-  return entries.filter((e) => new Date(e.resolvedAt).getTime() >= cutoff);
-}
-
 // Merge eligibility rule (per CPT-13596 clarification): a pair can only be
 // merged when at least one row's Original is 0 — that's the signature of a
 // split import (one row carries this year's balance, the other only carries
