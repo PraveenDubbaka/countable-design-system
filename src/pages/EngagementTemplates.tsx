@@ -378,20 +378,15 @@ function MapTemplatePanel({
  </button>
  </div>
  <div className="px-3 py-2 border-b border-border/40 space-y-2">
- <div className="flex gap-1">
- <button
- onClick={() => setCountry("CA")}
- className={cn("flex-1 h-7 rounded text-xs font-medium transition-colors", country === "CA" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80")}
- >
- 🇨🇦 Canada
- </button>
- <button
- onClick={() => setCountry("US")}
- className={cn("flex-1 h-7 rounded text-xs font-medium transition-colors", country === "US" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80")}
- >
- 🇺🇸 United States
- </button>
- </div>
+ <Select value={country} onValueChange={v => setCountry(v as "CA" | "US")}>
+ <SelectTrigger className="h-8 text-xs font-medium w-full">
+ <SelectValue />
+ </SelectTrigger>
+ <SelectContent>
+ <SelectItem value="CA">🇨🇦 Canada</SelectItem>
+ <SelectItem value="US">🇺🇸 United States</SelectItem>
+ </SelectContent>
+ </Select>
  <div className="relative">
  <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
  <Input
