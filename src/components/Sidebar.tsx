@@ -132,6 +132,7 @@ export interface SavedChecklist {
  name: string;
  folderId: string;
  folderName: string;
+ country?: "CA" | "US" | "both";
  data?: any; // Full checklist data for editing
 }
 
@@ -182,6 +183,11 @@ const initialTemplates: Template[] = [{
 }, {
  id: "8",
  name: "Audit Checklists",
+ type: "folder",
+ children: []
+}, {
+ id: "9",
+ name: "US Audit Checklists",
  type: "folder",
  children: []
 }];
@@ -1159,9 +1165,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
- const SEED_VERSION = "4";
+ const SEED_VERSION = "5";
  const seedAllChecklists = (): SavedChecklist[] => {
- // Compilation Checklists (folder id "5")
+ // Compilation Checklists (folder id "5") — CA
  const compilationItems: { id: string; generator: () => any }[] = [
  { id: "default-compilation-cac", generator: generateClientAcceptanceContinuanceChecklist },
  { id: "default-compilation-independence", generator: generateIndependenceChecklist },
@@ -1172,9 +1178,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  ];
  const compilationSeeds: SavedChecklist[] = compilationItems.map(({ id, generator }) => {
  const data = generator();
- return { id, name: data.title, folderId: "5", folderName: "Compilation Checklists", data };
+ return { id, name: data.title, folderId: "5", folderName: "Compilation Checklists", country: "CA" as const, data };
  });
- // Review Checklists (folder id "7") — items from global review templates
+ // Review Checklists (folder id "7") — CA
  const reviewNames = [
  "New Engagement Acceptance",
  "Existing Engagement Continuance",
@@ -1190,9 +1196,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  name,
  folderId: "7",
  folderName: "Review Checklists",
+ country: "CA" as const,
  }));
- // Audit Checklists — Canada CAS items (shared by both "Audit Checklists" and "Northline Holdings")
- const auditNames = [
+ // Audit Checklists — Canada CAS items (shared by "Audit Checklists" id "8" and "Northline Holdings" id "1")
+ const caAuditNames = [
  "408 Initial Audit Engagements",
  "410 New/Existing Engagement — Acceptance/Continuance",
  "500 Observation & Inspection",
@@ -1208,21 +1215,54 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  "MR Management Representation Letter",
  "DC Disclosure Checklist",
  ];
- // Audit Checklists folder (id "8")
- const auditSeeds: SavedChecklist[] = auditNames.map((name, i) => ({
+ const auditSeeds: SavedChecklist[] = caAuditNames.map((name, i) => ({
  id: `default-audit-ca-${i + 1}`,
  name,
  folderId: "8",
  folderName: "Audit Checklists",
+ country: "CA" as const,
  }));
- // Northline Holdings folder (id "1") — same audit checklists for this client
- const northlineSeeds: SavedChecklist[] = auditNames.map((name, i) => ({
+ const northlineSeeds: SavedChecklist[] = caAuditNames.map((name, i) => ({
  id: `default-northline-audit-${i + 1}`,
  name,
  folderId: "1",
  folderName: "Northline Holdings",
+ country: "CA" as const,
  }));
- const seeded = [...compilationSeeds, ...reviewSeeds, ...auditSeeds, ...northlineSeeds];
+ // US Audit Checklists (folder id "9") — Pacific Rim Corp (id "3") shares same items
+ const usAuditNames = [
+ "Assessing Acceptability of Financial Reporting Framework",
+ "Audit Team Competency Matrix",
+ "Auditor's Declaration — Code of Ethics",
+ "Declaration of Conflict of Interest",
+ "Declaration of NO Conflict of Interest",
+ "Assessment of Ethical Threats and Safeguards",
+ "Audit Engagement Letter",
+ "Understanding the Entity and Its Environment",
+ "Determining Materiality",
+ "Overall Audit Strategy and Audit Plan",
+ "Direct Assistance — Internal Auditors Agreement",
+ "Evaluating Misstatements",
+ "Analytical Procedures — End of Audit",
+ "Management Representation Letter",
+ "Auditor's Report — Fair Presentation Framework",
+ "Auditor's Report — Compliance Framework",
+ ];
+ const usAuditSeeds: SavedChecklist[] = usAuditNames.map((name, i) => ({
+ id: `default-audit-us-${i + 1}`,
+ name,
+ folderId: "9",
+ folderName: "US Audit Checklists",
+ country: "US" as const,
+ }));
+ const pacificRimSeeds: SavedChecklist[] = usAuditNames.map((name, i) => ({
+ id: `default-pacific-rim-audit-${i + 1}`,
+ name,
+ folderId: "3",
+ folderName: "Pacific Rim Corp",
+ country: "US" as const,
+ }));
+ const seeded = [...compilationSeeds, ...reviewSeeds, ...auditSeeds, ...northlineSeeds, ...usAuditSeeds, ...pacificRimSeeds];
  writeJsonToLocalStorage("savedChecklists", seeded);
  localStorage.setItem("savedChecklistsVersion", SEED_VERSION);
  return seeded;

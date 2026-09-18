@@ -42,6 +42,7 @@ const initialTemplates: Template[] = [
  { id: "6", name: "Summit Industrial Inc.", type: "folder", children: [] },
  { id: "7", name: "Review Checklists", type: "folder", children: [] },
  { id: "8", name: "Audit Checklists", type: "folder", children: [] },
+ { id: "9", name: "US Audit Checklists", type: "folder", children: [] },
 ];
 
 export function AddToMyTemplatesDialog({

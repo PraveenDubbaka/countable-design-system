@@ -330,33 +330,38 @@ function MapTemplatePanel({
  category?: CategoryType;
  engagementCountry?: "CA" | "US";
 }) {
+ const [country, setCountry] = useState<"CA" | "US">(engagementCountry ?? "CA");
  const [search, setSearch] = useState("");
  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
- // savedChecklists — flat folder → items
- // Seed with the hardcoded "My Templates" folder definitions so all folders appear even when empty
- const CHECKLIST_FOLDER_DEFS = [
- { id: "1", name: "Northline Holdings" },
- { id: "2", name: "Fairmont Group" },
- { id: "3", name: "Pacific Rim Corp" },
- { id: "4", name: "Cedar Valley Enterprises" },
- { id: "5", name: "Compilation Checklists" },
- { id: "6", name: "Summit Industrial Inc." },
- { id: "7", name: "Review Checklists" },
- { id: "8", name: "Audit Checklists" },
+ const CHECKLIST_FOLDER_DEFS: { id: string; name: string; country: "CA" | "US" | "both" }[] = [
+ { id: "1", name: "Northline Holdings", country: "CA" },
+ { id: "2", name: "Fairmont Group", country: "CA" },
+ { id: "3", name: "Pacific Rim Corp", country: "US" },
+ { id: "4", name: "Cedar Valley Enterprises", country: "CA" },
+ { id: "5", name: "Compilation Checklists", country: "CA" },
+ { id: "6", name: "Summit Industrial Inc.", country: "CA" },
+ { id: "7", name: "Review Checklists", country: "CA" },
+ { id: "8", name: "Audit Checklists", country: "CA" },
+ { id: "9", name: "US Audit Checklists", country: "US" },
  ];
- const allChecklists = readJsonFromLocalStorage<{ id: string; name: string; folderId: string; folderName: string }[]>("savedChecklists", []);
+ const staticFolderIds = new Set(CHECKLIST_FOLDER_DEFS.map(f => f.id));
+ const allChecklists = readJsonFromLocalStorage<{ id: string; name: string; folderId: string; folderName: string; country?: "CA" | "US" | "both" }[]>("savedChecklists", []);
  type ChecklistFolder = { id: string; name: string; items: string[] };
  const checklistFolderMap: Record<string, ChecklistFolder> = {};
- // Start with all hardcoded folders (shows them even if empty)
- CHECKLIST_FOLDER_DEFS.forEach(f => {
+ // Pre-populate with static folders filtered by selected country
+ CHECKLIST_FOLDER_DEFS
+ .filter(f => f.country === "both" || f.country === country)
+ .forEach(f => {
  checklistFolderMap[`cl-${f.id}`] = { id: `cl-${f.id}`, name: f.name, items: [] };
  });
- // Add items and any dynamic folders (user-created with folder-* ids)
+ // Add items from savedChecklists; dynamic (user-created) folders show in both countries
  allChecklists.forEach(c => {
  const key = `cl-${c.folderId}`;
+ if (!staticFolderIds.has(c.folderId)) {
  if (!checklistFolderMap[key]) checklistFolderMap[key] = { id: key, name: c.folderName, items: [] };
- checklistFolderMap[key].items.push(c.name);
+ }
+ if (checklistFolderMap[key]) checklistFolderMap[key].items.push(c.name);
  });
  const checklistFolders = Object.values(checklistFolderMap)
  .map(f => ({ ...f, items: search ? f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) : f.items }))
@@ -372,7 +377,21 @@ function MapTemplatePanel({
  <X className="h-4 w-4" />
  </button>
  </div>
- <div className="px-3 py-2 border-b border-border/40">
+ <div className="px-3 py-2 border-b border-border/40 space-y-2">
+ <div className="flex gap-1">
+ <button
+ onClick={() => setCountry("CA")}
+ className={cn("flex-1 h-7 rounded text-xs font-medium transition-colors", country === "CA" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80")}
+ >
+ 🇨🇦 Canada
+ </button>
+ <button
+ onClick={() => setCountry("US")}
+ className={cn("flex-1 h-7 rounded text-xs font-medium transition-colors", country === "US" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80")}
+ >
+ 🇺🇸 United States
+ </button>
+ </div>
  <div className="relative">
  <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
  <Input
