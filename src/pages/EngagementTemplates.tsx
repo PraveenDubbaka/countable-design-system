@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { ChevronDown, Plus, LayoutGrid, FileText, ClipboardList, Trash2, GripVertical, X, Copy, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Layout } from "@/components/Layout";
 import {
@@ -291,16 +292,34 @@ function EditableRow({
 }
 
 // ── Map Template Panel ──
+function getFolderCountry(folderName: string): "CA" | "US" | "both" {
+ const lower = folderName.toLowerCase();
+ if (lower.includes("united states") || lower.endsWith(" us")) return "US";
+ if (lower.includes("canada") || lower.endsWith(" ca")) return "CA";
+ return "both";
+}
+
+function getEngagementCountry(t: MyEngagementTemplate): "CA" | "US" | undefined {
+ const f = (t.folderId + " " + (t.sourceTemplateId ?? "")).toLowerCase();
+ if (f.includes("audit-us") || f.includes("-us ") || f.endsWith("-us")) return "US";
+ if (f.includes("audit-ca") || f.includes("-ca ") || f.endsWith("-ca")) return "CA";
+ return undefined;
+}
+
 function MapTemplatePanel({
  open,
  onClose,
  onSelect,
+ category,
+ engagementCountry,
 }: {
  open: boolean;
  onClose: () => void;
  onSelect: (name: string) => void;
+ category?: CategoryType;
+ engagementCountry?: "CA" | "US";
 }) {
- const [mapTab, setMapTab] = useState<"my" | "global">("my");
+ const [country, setCountry] = useState<"CA" | "US">(engagementCountry ?? "CA");
  const [search, setSearch] = useState("");
  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
@@ -313,16 +332,21 @@ function MapTemplatePanel({
  myFolders[c.folderId].items.push(c.name);
  });
 
- const globalFolders = [
- { id: "comp", name: "Compilation", items: ["Client Acceptance and Continuance", "Independence", "Knowledge of the Business", "Planning", "Withdrawal", "Completion"] },
- { id: "rev", name: "Review", items: ["New engagement acceptance", "Existing engagement continuance", "Understanding the entity - Basics", "Engagement Planning", "Completion", "Subsequent events"] },
- { id: "tax", name: "Tax", items: ["Completion"] },
- ];
+ // Filter by country (folders with no country keyword show for both)
+ const countryFiltered = Object.values(myFolders).filter(f => {
+ const fc = getFolderCountry(f.name);
+ return fc === "both" || fc === country;
+ });
 
- const folders = mapTab === "my" ? Object.values(myFolders) : globalFolders;
+ // Filter by category: savedChecklists are all checklists, so only show for checklist rows
+ const isChecklist = !category || category === "checklist";
+
+ // Apply search
  const filtered = search
- ? folders.map(f => ({...f, items: f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) })).filter(f => f.items.length > 0)
- : folders;
+ ? countryFiltered.map(f => ({ ...f, items: f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) })).filter(f => f.items.length > 0)
+ : countryFiltered;
+
+ const countryMismatch = engagementCountry && country !== engagementCountry;
 
  if (!open) return null;
 
@@ -334,20 +358,25 @@ function MapTemplatePanel({
  <X className="h-4 w-4" />
  </button>
  </div>
- <div className="flex border-b border-border">
- {(["my", "global"] as const).map(tab => (
- <button
- key={tab}
- onClick={() => setMapTab(tab)}
- className={cn(
- "flex-1 py-2 text-sm font-medium transition-all border-b-2",
- mapTab === tab ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-foreground"
- )}
- >
- {tab === "my" ? "My Templates" : "Global Templates"}
- </button>
- ))}
+ <div className="px-3 py-2 border-b border-border">
+ <Select value={country} onValueChange={v => setCountry(v as "CA" | "US")}>
+ <SelectTrigger className="h-8 text-xs font-medium w-full">
+ <SelectValue />
+ </SelectTrigger>
+ <SelectContent>
+ <SelectItem value="CA">🇨🇦 Canada</SelectItem>
+ <SelectItem value="US">🇺🇸 United States</SelectItem>
+ </SelectContent>
+ </Select>
  </div>
+ {countryMismatch && (
+ <div className="mx-3 mt-2 flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+ <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-500" />
+ <span>
+ This engagement is for {engagementCountry === "CA" ? "🇨🇦 Canada" : "🇺🇸 United States"}. Mapping a {country === "CA" ? "Canadian" : "US"} template may not be appropriate.
+ </span>
+ </div>
+ )}
  <div className="px-3 py-2 border-b border-border/40">
  <div className="relative">
  <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -360,7 +389,11 @@ function MapTemplatePanel({
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-2">
- {filtered.length === 0 ? (
+ {!isChecklist ? (
+ <p className="text-sm text-muted-foreground text-center py-8">
+ No {category} templates saved in My Templates
+ </p>
+ ) : filtered.length === 0 ? (
  <p className="text-sm text-muted-foreground text-center py-8">No templates found</p>
  ) : filtered.map(folder => (
  <div key={folder.id}>
@@ -408,7 +441,7 @@ function MyTemplateEditor({
  const [editingTitle, setEditingTitle] = useState(false);
  const [titleDraft, setTitleDraft] = useState(template.name);
  const [mapPanelOpen, setMapPanelOpen] = useState(false);
- const [mapTarget, setMapTarget] = useState<{ sectionId: string; rowId: string } | null>(null);
+ const [mapTarget, setMapTarget] = useState<{ sectionId: string; rowId: string; category?: CategoryType } | null>(null);
  const titleInputRef = useRef<HTMLInputElement>(null);
 
  // Reset when template changes
@@ -575,7 +608,8 @@ function MyTemplateEditor({
  onDeleteRow={(rowId) => handleDeleteRow(section.id, rowId)}
  onAddRow={() => handleAddRow(section.id)}
  onOpenMapPanel={(rowId) => {
- setMapTarget({ sectionId: section.id, rowId });
+ const row = data.sections.find(s => s.id === section.id)?.rows.find(r => r.id === rowId);
+ setMapTarget({ sectionId: section.id, rowId, category: row?.category });
  setMapPanelOpen(true);
  }}
  />
@@ -594,6 +628,8 @@ function MyTemplateEditor({
  setMapPanelOpen(false);
  setMapTarget(null);
  }}
+ category={mapTarget?.category}
+ engagementCountry={getEngagementCountry(data)}
  />
 
  {/* Overlay when panel open */}
