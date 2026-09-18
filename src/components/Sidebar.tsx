@@ -145,22 +145,22 @@ export interface CustomSection {
 }
 const initialTemplates: Template[] = [{
  id: "1",
- name: "Before Release V22Comp",
+ name: "Northline Holdings",
  type: "folder",
  children: []
 }, {
  id: "2",
- name: "Before Release V22 Revi...",
+ name: "Fairmont Group",
  type: "folder",
  children: []
 }, {
  id: "3",
- name: "Carissa_13208",
+ name: "Pacific Rim Corp",
  type: "folder",
  children: []
 }, {
  id: "4",
- name: "carisa 37.3",
+ name: "Cedar Valley Enterprises",
  type: "folder",
  children: []
 }, {
@@ -171,7 +171,7 @@ const initialTemplates: Template[] = [{
  children: []
 }, {
  id: "6",
- name: "release 38 before",
+ name: "Summit Industrial Inc.",
  type: "folder",
  children: []
 }, {
@@ -181,7 +181,7 @@ const initialTemplates: Template[] = [{
  children: []
 }, {
  id: "8",
- name: "Tax Release",
+ name: "Audit Checklists",
  type: "folder",
  children: []
 }];
@@ -1159,8 +1159,10 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
- const seedDefaultCompilationChecklists = (): SavedChecklist[] => {
- const items: { id: string; generator: () => any }[] = [
+ const SEED_VERSION = "3";
+ const seedAllChecklists = (): SavedChecklist[] => {
+ // Compilation Checklists (folder id "5")
+ const compilationItems: { id: string; generator: () => any }[] = [
  { id: "default-compilation-cac", generator: generateClientAcceptanceContinuanceChecklist },
  { id: "default-compilation-independence", generator: generateIndependenceChecklist },
  { id: "default-compilation-kcb", generator: generateKnowledgeOfClientBusinessChecklist },
@@ -1168,31 +1170,69 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "default-compilation-el", generator: generateEngagementLetterChecklist },
  { id: "default-compilation-mr", generator: generateManagementResponsibilityChecklist },
  ];
- const seeded: SavedChecklist[] = items.map(({ id, generator }) => {
+ const compilationSeeds: SavedChecklist[] = compilationItems.map(({ id, generator }) => {
  const data = generator();
- return {
- id,
- name: data.title,
- folderId: "5",
- folderName: "Compilation Checklists",
- data,
- };
+ return { id, name: data.title, folderId: "5", folderName: "Compilation Checklists", data };
  });
+ // Review Checklists (folder id "7") — items from global review templates
+ const reviewNames = [
+ "New Engagement Acceptance",
+ "Existing Engagement Continuance",
+ "Understanding the Entity — Basics",
+ "Understanding the Entity — Systems",
+ "Engagement Planning",
+ "Subsequent Events",
+ "Withdrawal",
+ "Completion",
+ ];
+ const reviewSeeds: SavedChecklist[] = reviewNames.map((name, i) => ({
+ id: `default-review-${i + 1}`,
+ name,
+ folderId: "7",
+ folderName: "Review Checklists",
+ }));
+ // Audit Checklists (folder id "8") — Canada CAS audit checklists
+ const auditNames = [
+ "408 Initial Audit Engagements",
+ "410 New/Existing Engagement — Acceptance/Continuance",
+ "500 Observation & Inspection",
+ "501-B Preliminary Analytical",
+ "505 Mgmt Inquiries",
+ "525 Going Concern",
+ "530 Pervasive Risks",
+ "Independent Auditor's Report",
+ "AIM Misstatements",
+ "FAR Final Analytical Review",
+ "SE Subsequent Events",
+ "GC Going Concern (Final Assessment)",
+ "MR Management Representation Letter",
+ "DC Disclosure Checklist",
+ ];
+ const auditSeeds: SavedChecklist[] = auditNames.map((name, i) => ({
+ id: `default-audit-ca-${i + 1}`,
+ name,
+ folderId: "8",
+ folderName: "Audit Checklists",
+ }));
+ const seeded = [...compilationSeeds, ...reviewSeeds, ...auditSeeds];
  writeJsonToLocalStorage("savedChecklists", seeded);
+ localStorage.setItem("savedChecklistsVersion", SEED_VERSION);
  return seeded;
  };
 
  const loadSavedChecklists = () => {
+ const version = localStorage.getItem("savedChecklistsVersion");
+ if (version !== SEED_VERSION) {
+ // Outdated or missing version — re-seed with updated defaults
+ setSavedChecklists(seedAllChecklists());
+ return;
+ }
  const parsed = readJsonFromLocalStorage<unknown>("savedChecklists", []);
  if (Array.isArray(parsed) && parsed.length > 0) {
  setSavedChecklists(parsed as SavedChecklist[]);
- } else if (Array.isArray(parsed)) {
- // Empty list — seed Compilation defaults so the user sees them on first load.
- setSavedChecklists(seedDefaultCompilationChecklists());
  } else {
- // Reset corrupted legacy value so it can't crash future loads.
  removeLocalStorageKey("savedChecklists");
- setSavedChecklists(seedDefaultCompilationChecklists());
+ setSavedChecklists(seedAllChecklists());
  }
  };
  loadSavedChecklists();

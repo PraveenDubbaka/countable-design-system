@@ -34,14 +34,14 @@ interface AddToMyTemplatesDialogProps {
 }
 
 const initialTemplates: Template[] = [
- { id: "1", name: "Before Release V22Comp", type: "folder", children: [] },
- { id: "2", name: "Before Release V22 Revi...", type: "folder", children: [] },
- { id: "3", name: "Carissa_13208", type: "folder", children: [] },
- { id: "4", name: "carisa 37.3", type: "folder", children: [] },
+ { id: "1", name: "Northline Holdings", type: "folder", children: [] },
+ { id: "2", name: "Fairmont Group", type: "folder", children: [] },
+ { id: "3", name: "Pacific Rim Corp", type: "folder", children: [] },
+ { id: "4", name: "Cedar Valley Enterprises", type: "folder", children: [] },
  { id: "5", name: "Compilation Checklists", type: "folder", children: [] },
- { id: "6", name: "release 38 before", type: "folder", children: [] },
+ { id: "6", name: "Summit Industrial Inc.", type: "folder", children: [] },
  { id: "7", name: "Review Checklists", type: "folder", children: [] },
- { id: "8", name: "Tax Release", type: "folder", children: [] },
+ { id: "8", name: "Audit Checklists", type: "folder", children: [] },
 ];
 
 export function AddToMyTemplatesDialog({

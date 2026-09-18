@@ -336,14 +336,14 @@ function MapTemplatePanel({
  // savedChecklists — flat folder → items
  // Seed with the hardcoded "My Templates" folder definitions so all folders appear even when empty
  const CHECKLIST_FOLDER_DEFS = [
- { id: "1", name: "Before Release V22Comp" },
- { id: "2", name: "Before Release V22 Revi..." },
- { id: "3", name: "Carissa_13208" },
- { id: "4", name: "carisa 37.3" },
+ { id: "1", name: "Northline Holdings" },
+ { id: "2", name: "Fairmont Group" },
+ { id: "3", name: "Pacific Rim Corp" },
+ { id: "4", name: "Cedar Valley Enterprises" },
  { id: "5", name: "Compilation Checklists" },
- { id: "6", name: "release 38 before" },
+ { id: "6", name: "Summit Industrial Inc." },
  { id: "7", name: "Review Checklists" },
- { id: "8", name: "Tax Release" },
+ { id: "8", name: "Audit Checklists" },
  ];
  const allChecklists = readJsonFromLocalStorage<{ id: string; name: string; folderId: string; folderName: string }[]>("savedChecklists", []);
  type ChecklistFolder = { id: string; name: string; items: string[] };
