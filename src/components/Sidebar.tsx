@@ -1159,7 +1159,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
- const SEED_VERSION = "3";
+ const SEED_VERSION = "4";
  const seedAllChecklists = (): SavedChecklist[] => {
  // Compilation Checklists (folder id "5")
  const compilationItems: { id: string; generator: () => any }[] = [
@@ -1191,7 +1191,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  folderId: "7",
  folderName: "Review Checklists",
  }));
- // Audit Checklists (folder id "8") — Canada CAS audit checklists
+ // Audit Checklists — Canada CAS items (shared by both "Audit Checklists" and "Northline Holdings")
  const auditNames = [
  "408 Initial Audit Engagements",
  "410 New/Existing Engagement — Acceptance/Continuance",
@@ -1208,13 +1208,21 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  "MR Management Representation Letter",
  "DC Disclosure Checklist",
  ];
+ // Audit Checklists folder (id "8")
  const auditSeeds: SavedChecklist[] = auditNames.map((name, i) => ({
  id: `default-audit-ca-${i + 1}`,
  name,
  folderId: "8",
  folderName: "Audit Checklists",
  }));
- const seeded = [...compilationSeeds, ...reviewSeeds, ...auditSeeds];
+ // Northline Holdings folder (id "1") — same audit checklists for this client
+ const northlineSeeds: SavedChecklist[] = auditNames.map((name, i) => ({
+ id: `default-northline-audit-${i + 1}`,
+ name,
+ folderId: "1",
+ folderName: "Northline Holdings",
+ }));
+ const seeded = [...compilationSeeds, ...reviewSeeds, ...auditSeeds, ...northlineSeeds];
  writeJsonToLocalStorage("savedChecklists", seeded);
  localStorage.setItem("savedChecklistsVersion", SEED_VERSION);
  return seeded;
