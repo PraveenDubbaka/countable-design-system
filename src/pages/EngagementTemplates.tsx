@@ -330,41 +330,8 @@ function MapTemplatePanel({
  category?: CategoryType;
  engagementCountry?: "CA" | "US";
 }) {
- const [country, setCountry] = useState<"CA" | "US">(engagementCountry ?? "CA");
  const [search, setSearch] = useState("");
  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
- const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set());
-
- const allTemplates = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
-
- const countryFiltered = allTemplates.filter(t => {
- const tc = getTemplateCountry(t);
- return tc === "both" || tc === country;
- });
-
- const searchFiltered = search
- ? countryFiltered.filter(t => t.name.toLowerCase().includes(search.toLowerCase()))
- : countryFiltered;
-
- type TypeGroup = { type: string; templates: MyEngagementTemplate[] };
- type ClientFolder = { id: string; name: string; typeGroups: TypeGroup[] };
- const folderMap: Record<string, ClientFolder> = {};
-
- searchFiltered.forEach(t => {
- if (!folderMap[t.folderId]) folderMap[t.folderId] = { id: t.folderId, name: t.folderName, typeGroups: [] };
- const type = getTemplateType(t);
- let tg = folderMap[t.folderId].typeGroups.find(g => g.type === type);
- if (!tg) { tg = { type, templates: [] }; folderMap[t.folderId].typeGroups.push(tg); }
- tg.templates.push(t);
- });
-
- Object.values(folderMap).forEach(f => {
- f.typeGroups.sort((a, b) =>
-  TYPE_ORDER.indexOf(a.type as typeof TYPE_ORDER[number]) - TYPE_ORDER.indexOf(b.type as typeof TYPE_ORDER[number])
- );
- });
-
- const clientFolders = Object.values(folderMap);
 
  // savedChecklists — flat folder → items
  // Seed with the hardcoded "My Templates" folder definitions so all folders appear even when empty
@@ -395,8 +362,6 @@ function MapTemplatePanel({
  .map(f => ({ ...f, items: search ? f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) : f.items }))
  .filter(f => !search || f.items.length > 0 || f.name.toLowerCase().includes(search.toLowerCase()));
 
- const countryMismatch = engagementCountry && country !== engagementCountry;
-
  if (!open) return null;
 
  return (
@@ -407,25 +372,6 @@ function MapTemplatePanel({
  <X className="h-4 w-4" />
  </button>
  </div>
- <div className="px-3 py-2 border-b border-border">
- <Select value={country} onValueChange={v => setCountry(v as "CA" | "US")}>
- <SelectTrigger className="h-8 text-xs font-medium w-full">
- <SelectValue />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="CA">🇨🇦 Canada</SelectItem>
- <SelectItem value="US">🇺🇸 United States</SelectItem>
- </SelectContent>
- </Select>
- </div>
- {countryMismatch && (
- <div className="mx-3 mt-2 flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
- <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-500" />
- <span>
- This engagement is for {engagementCountry === "CA" ? "🇨🇦 Canada" : "🇺🇸 United States"}. Mapping a {country === "CA" ? "Canadian" : "US"} template may not be appropriate.
- </span>
- </div>
- )}
  <div className="px-3 py-2 border-b border-border/40">
  <div className="relative">
  <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.5"/><path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -438,58 +384,9 @@ function MapTemplatePanel({
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-2">
- {clientFolders.length === 0 && checklistFolders.length === 0 ? (
+ {checklistFolders.length === 0 ? (
  <p className="text-sm text-muted-foreground text-center py-8">No templates found</p>
- ) : (
- <>
- {clientFolders.map(folder => (
- <div key={folder.id}>
- <div
- className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none"
- onClick={() => setExpandedFolders(prev => {
- const next = new Set(prev);
- next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
- return next;
- })}
- >
- <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", expandedFolders.has(folder.id) ? "rotate-0" : "-rotate-90")} />
- <FolderSolidIcon className="h-4 w-4 text-primary" />
- <span className="truncate flex-1">{folder.name}</span>
- </div>
- {expandedFolders.has(folder.id) && folder.typeGroups.map(tg => {
- const typeKey = `${folder.id}:${tg.type}`;
- return (
- <div key={tg.type}>
- <div
- className="flex items-center gap-2 py-1 pl-6 pr-2 rounded-md cursor-pointer hover:bg-muted/50 text-xs font-medium text-muted-foreground select-none"
- onClick={() => setExpandedTypes(prev => {
- const next = new Set(prev);
- next.has(typeKey) ? next.delete(typeKey) : next.add(typeKey);
- return next;
- })}
- >
- <ChevronDown className={cn("h-3 w-3 transition-transform", expandedTypes.has(typeKey) ? "rotate-0" : "-rotate-90")} />
- <span>{tg.type}</span>
- </div>
- {expandedTypes.has(typeKey) && tg.templates.map(t => (
- <div
- key={t.id}
- className="flex items-center gap-2 py-1.5 pl-12 pr-2 rounded-md cursor-pointer hover:bg-primary/10 text-sm select-none"
- onClick={() => { onSelect(t.name); onClose(); }}
- >
- <ChecklistIcon className="h-3.5 w-3.5 flex-shrink-0" />
- <span className="truncate">{t.name}</span>
- </div>
- ))}
- </div>
- );
- })}
- </div>
- ))}
- {checklistFolders.length > 0 && clientFolders.length > 0 && (
- <div className="mx-2 my-1 border-t border-border/40" />
- )}
- {checklistFolders.map(folder => (
+ ) : checklistFolders.map(folder => (
  <div key={folder.id}>
  <div
  className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none"
@@ -502,8 +399,14 @@ function MapTemplatePanel({
  <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", expandedFolders.has(folder.id) ? "rotate-0" : "-rotate-90")} />
  <FolderSolidIcon className="h-4 w-4 text-amber-500" />
  <span className="truncate flex-1">{folder.name}</span>
+ {folder.items.length > 0 && (
+ <span className="text-xs text-muted-foreground ml-auto">{folder.items.length}</span>
+ )}
  </div>
- {expandedFolders.has(folder.id) && folder.items.map(itemName => (
+ {expandedFolders.has(folder.id) && (
+ folder.items.length === 0
+ ? <p className="py-1.5 pl-8 text-xs text-muted-foreground italic">No checklists saved here</p>
+ : folder.items.map(itemName => (
  <div
  key={itemName}
  className="flex items-center gap-2 py-1.5 pl-8 pr-2 rounded-md cursor-pointer hover:bg-primary/10 text-sm select-none"
@@ -512,11 +415,10 @@ function MapTemplatePanel({
  <ChecklistIcon className="h-3.5 w-3.5 flex-shrink-0" />
  <span className="truncate">{itemName}</span>
  </div>
- ))}
+ ))
+ )}
  </div>
  ))}
- </>
- )}
  </div>
  </div>
  );
