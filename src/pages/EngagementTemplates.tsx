@@ -292,17 +292,28 @@ function EditableRow({
 }
 
 // ── Map Template Panel ──
-function getFolderCountry(folderName: string): "CA" | "US" | "both" {
- const lower = folderName.toLowerCase();
- if (lower.includes("united states") || lower.endsWith(" us")) return "US";
- if (lower.includes("canada") || lower.endsWith(" ca")) return "CA";
+const TYPE_ORDER = ["Compilation", "Review", "Audit", "Tax", "Other"] as const;
+
+function getTemplateCountry(t: MyEngagementTemplate): "CA" | "US" | "both" {
+ const sid = (t.sourceTemplateId ?? "").toLowerCase();
+ if (sid === "audit6100" || sid === "audit6200") return "US";
+ if (sid === "audit5100" || sid === "audit5101") return "CA";
  return "both";
 }
 
+function getTemplateType(t: MyEngagementTemplate): string {
+ const sid = (t.sourceTemplateId ?? "").toLowerCase();
+ if (sid.startsWith("comp")) return "Compilation";
+ if (sid.startsWith("rev")) return "Review";
+ if (sid.startsWith("audit")) return "Audit";
+ if (sid.startsWith("tax")) return "Tax";
+ return "Other";
+}
+
 function getEngagementCountry(t: MyEngagementTemplate): "CA" | "US" | undefined {
- const f = (t.folderId + " " + (t.sourceTemplateId ?? "")).toLowerCase();
- if (f.includes("audit-us") || f.includes("-us ") || f.endsWith("-us")) return "US";
- if (f.includes("audit-ca") || f.includes("-ca ") || f.endsWith("-ca")) return "CA";
+ const sid = (t.sourceTemplateId ?? "").toLowerCase();
+ if (sid === "audit6100" || sid === "audit6200") return "US";
+ if (sid === "audit5100" || sid === "audit5101") return "CA";
  return undefined;
 }
 
@@ -322,30 +333,38 @@ function MapTemplatePanel({
  const [country, setCountry] = useState<"CA" | "US">(engagementCountry ?? "CA");
  const [search, setSearch] = useState("");
  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+ const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set());
 
- const savedChecklists = readJsonFromLocalStorage<{ id: string; name: string; folderId: string; folderName: string }[]>("savedChecklists", []);
+ const allTemplates = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
 
- // Group by folder
- const myFolders: Record<string, { id: string; name: string; items: string[] }> = {};
- savedChecklists.forEach(c => {
- if (!myFolders[c.folderId]) myFolders[c.folderId] = { id: c.folderId, name: c.folderName, items: [] };
- myFolders[c.folderId].items.push(c.name);
+ const countryFiltered = allTemplates.filter(t => {
+ const tc = getTemplateCountry(t);
+ return tc === "both" || tc === country;
  });
 
- // Filter by country (folders with no country keyword show for both)
- const countryFiltered = Object.values(myFolders).filter(f => {
- const fc = getFolderCountry(f.name);
- return fc === "both" || fc === country;
- });
-
- // Filter by category: savedChecklists are all checklists, so only show for checklist rows
- const isChecklist = !category || category === "checklist";
-
- // Apply search
- const filtered = search
- ? countryFiltered.map(f => ({ ...f, items: f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) })).filter(f => f.items.length > 0)
+ const searchFiltered = search
+ ? countryFiltered.filter(t => t.name.toLowerCase().includes(search.toLowerCase()))
  : countryFiltered;
 
+ type TypeGroup = { type: string; templates: MyEngagementTemplate[] };
+ type ClientFolder = { id: string; name: string; typeGroups: TypeGroup[] };
+ const folderMap: Record<string, ClientFolder> = {};
+
+ searchFiltered.forEach(t => {
+ if (!folderMap[t.folderId]) folderMap[t.folderId] = { id: t.folderId, name: t.folderName, typeGroups: [] };
+ const type = getTemplateType(t);
+ let tg = folderMap[t.folderId].typeGroups.find(g => g.type === type);
+ if (!tg) { tg = { type, templates: [] }; folderMap[t.folderId].typeGroups.push(tg); }
+ tg.templates.push(t);
+ });
+
+ Object.values(folderMap).forEach(f => {
+ f.typeGroups.sort((a, b) =>
+  TYPE_ORDER.indexOf(a.type as typeof TYPE_ORDER[number]) - TYPE_ORDER.indexOf(b.type as typeof TYPE_ORDER[number])
+ );
+ });
+
+ const clientFolders = Object.values(folderMap);
  const countryMismatch = engagementCountry && country !== engagementCountry;
 
  if (!open) return null;
@@ -389,13 +408,9 @@ function MapTemplatePanel({
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-2">
- {!isChecklist ? (
- <p className="text-sm text-muted-foreground text-center py-8">
- No {category} templates saved in My Templates
- </p>
- ) : filtered.length === 0 ? (
+ {clientFolders.length === 0 ? (
  <p className="text-sm text-muted-foreground text-center py-8">No templates found</p>
- ) : filtered.map(folder => (
+ ) : clientFolders.map(folder => (
  <div key={folder.id}>
  <div
  className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none"
@@ -409,16 +424,34 @@ function MapTemplatePanel({
  <FolderSolidIcon className="h-4 w-4 text-primary" />
  <span className="truncate flex-1">{folder.name}</span>
  </div>
- {expandedFolders.has(folder.id) && folder.items.map(item => (
+ {expandedFolders.has(folder.id) && folder.typeGroups.map(tg => {
+ const typeKey = `${folder.id}:${tg.type}`;
+ return (
+ <div key={tg.type}>
  <div
- key={item}
- className="flex items-center gap-2 py-1.5 pl-8 pr-2 rounded-md cursor-pointer hover:bg-primary/10 text-sm select-none"
- onClick={() => { onSelect(item); onClose(); }}
+ className="flex items-center gap-2 py-1 pl-6 pr-2 rounded-md cursor-pointer hover:bg-muted/50 text-xs font-medium text-muted-foreground select-none"
+ onClick={() => setExpandedTypes(prev => {
+ const next = new Set(prev);
+ next.has(typeKey) ? next.delete(typeKey) : next.add(typeKey);
+ return next;
+ })}
+ >
+ <ChevronDown className={cn("h-3 w-3 transition-transform", expandedTypes.has(typeKey) ? "rotate-0" : "-rotate-90")} />
+ <span>{tg.type}</span>
+ </div>
+ {expandedTypes.has(typeKey) && tg.templates.map(t => (
+ <div
+ key={t.id}
+ className="flex items-center gap-2 py-1.5 pl-12 pr-2 rounded-md cursor-pointer hover:bg-primary/10 text-sm select-none"
+ onClick={() => { onSelect(t.name); onClose(); }}
  >
  <ChecklistIcon className="h-3.5 w-3.5 flex-shrink-0" />
- <span className="truncate">{item}</span>
+ <span className="truncate">{t.name}</span>
  </div>
  ))}
+ </div>
+ );
+ })}
  </div>
  ))}
  </div>
