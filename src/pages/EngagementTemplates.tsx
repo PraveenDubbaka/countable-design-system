@@ -367,9 +367,25 @@ function MapTemplatePanel({
  const clientFolders = Object.values(folderMap);
 
  // savedChecklists — flat folder → items
+ // Seed with the hardcoded "My Templates" folder definitions so all folders appear even when empty
+ const CHECKLIST_FOLDER_DEFS = [
+ { id: "1", name: "Before Release V22Comp" },
+ { id: "2", name: "Before Release V22 Revi..." },
+ { id: "3", name: "Carissa_13208" },
+ { id: "4", name: "carisa 37.3" },
+ { id: "5", name: "Compilation Checklists" },
+ { id: "6", name: "release 38 before" },
+ { id: "7", name: "Review Checklists" },
+ { id: "8", name: "Tax Release" },
+ ];
  const allChecklists = readJsonFromLocalStorage<{ id: string; name: string; folderId: string; folderName: string }[]>("savedChecklists", []);
  type ChecklistFolder = { id: string; name: string; items: string[] };
  const checklistFolderMap: Record<string, ChecklistFolder> = {};
+ // Start with all hardcoded folders (shows them even if empty)
+ CHECKLIST_FOLDER_DEFS.forEach(f => {
+ checklistFolderMap[`cl-${f.id}`] = { id: `cl-${f.id}`, name: f.name, items: [] };
+ });
+ // Add items and any dynamic folders (user-created with folder-* ids)
  allChecklists.forEach(c => {
  const key = `cl-${c.folderId}`;
  if (!checklistFolderMap[key]) checklistFolderMap[key] = { id: key, name: c.folderName, items: [] };
@@ -377,7 +393,7 @@ function MapTemplatePanel({
  });
  const checklistFolders = Object.values(checklistFolderMap)
  .map(f => ({ ...f, items: search ? f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) : f.items }))
- .filter(f => !search || f.items.length > 0);
+ .filter(f => !search || f.items.length > 0 || f.name.toLowerCase().includes(search.toLowerCase()));
 
  const countryMismatch = engagementCountry && country !== engagementCountry;
 
