@@ -397,7 +397,7 @@ function MapTemplatePanel({
  })}
  >
  <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", expandedFolders.has(folder.id) ? "rotate-0" : "-rotate-90")} />
- <FolderSolidIcon className="h-4 w-4 text-amber-500" />
+ <FolderSolidIcon className="h-4 w-4 text-primary" />
  <span className="truncate flex-1">{folder.name}</span>
  {folder.items.length > 0 && (
  <span className="text-xs text-muted-foreground ml-auto">{folder.items.length}</span>
