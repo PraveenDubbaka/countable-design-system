@@ -334,6 +334,58 @@ function MapTemplatePanel({
  const [search, setSearch] = useState("");
  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
+ const isLetterMode = category === "letter";
+
+ const LETTER_FOLDER_DEFS: { id: string; name: string; country: "CA" | "US" | "both"; items: string[] }[] = [
+ { id: "ltr-compilation", name: "Compilation", country: "CA", items: [
+ "Engagement Letter — Compilation (Corp)",
+ "Management Responsibility & Acknowledgement CSRS 4200 (Corp)",
+ ]},
+ { id: "ltr-review", name: "Review", country: "CA", items: [
+ "Engagement Letter Review — Master (Corp)",
+ "Management Representation Letter Review (Corp)",
+ "Review Findings Letter (Corp)",
+ "Letter to a Predecessor (Corp)",
+ "Letter to a Successor (Corp)",
+ "Request for Management Assistance (Corp)",
+ ]},
+ { id: "ltr-tax", name: "Tax", country: "CA", items: [
+ "Tax Engagement Letter",
+ ]},
+ { id: "ltr-additional", name: "Additional Letters", country: "both", items: [
+ "Closing Cover Letter",
+ "Letter to Lawyer (Long Form)",
+ "Letter to Lawyer (Short Form)",
+ "Letter to Predecessor Accountant",
+ "Letter to Successor Accountant",
+ ]},
+ { id: "ltr-audit-ca", name: "Audit — Canada", country: "CA", items: [
+ "Audit Engagement Letter (CAS/ASPE)",
+ "Audit Engagement Letter (CAS/ASNPO)",
+ "Management Representation Letter (CAS 580)",
+ "Communication with Those Charged with Governance — Planning (CAS 260)",
+ "Communication with Those Charged with Governance — Final (CAS 260)",
+ "Inquiry to Legal Counsel (Lawyer's Letter)",
+ "Communication to Predecessor Auditor",
+ "Letter to Management — Significant Deficiencies (CAS 265)",
+ "Letter to a predecessor accounting firm",
+ ]},
+ { id: "ltr-audit-us", name: "Audit — United States", country: "US", items: [
+ "Audit Engagement Letter (GAAS/US GAAP)",
+ "Management Representation Letter (AU-C 580)",
+ "Communication with Those Charged with Governance — Planning (AU-C 260)",
+ "Communication with Those Charged with Governance — Final (AU-C 260)",
+ "Inquiry to Legal Counsel",
+ "Letter to Management — Significant Deficiencies (AU-C 265)",
+ "Communication to Predecessor Auditor (AU-C 210)",
+ ]},
+ ];
+
+ const letterFolders = LETTER_FOLDER_DEFS
+ .filter(f => f.country === "both" || f.country === country)
+ .map(f => ({ ...f, items: search ? f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) : f.items }))
+ .filter(f => !search || f.items.length > 0 || f.name.toLowerCase().includes(search.toLowerCase()));
+
  const CHECKLIST_FOLDER_DEFS: { id: string; name: string; country: "CA" | "US" | "both" }[] = [
  { id: "1", name: "Northline Holdings", country: "CA" },
  { id: "2", name: "Fairmont Group", country: "CA" },
@@ -406,9 +458,9 @@ function MapTemplatePanel({
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-2">
- {checklistFolders.length === 0 ? (
+ {(isLetterMode ? letterFolders : checklistFolders).length === 0 ? (
  <p className="text-sm text-muted-foreground text-center py-8">No templates found</p>
- ) : checklistFolders.map(folder => (
+ ) : (isLetterMode ? letterFolders : checklistFolders).map(folder => (
  <div key={folder.id}>
  <div
  className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none"
@@ -427,14 +479,16 @@ function MapTemplatePanel({
  </div>
  {expandedFolders.has(folder.id) && (
  folder.items.length === 0
- ? <p className="py-1.5 pl-8 text-xs text-muted-foreground italic">No checklists saved here</p>
+ ? <p className="py-1.5 pl-8 text-xs text-muted-foreground italic">No templates saved here</p>
  : folder.items.map(itemName => (
  <div
  key={itemName}
  className="flex items-center gap-2 py-1.5 pl-8 pr-2 rounded-md cursor-pointer hover:bg-primary/10 text-sm select-none"
  onClick={() => { onSelect(itemName); onClose(); }}
  >
- <ChecklistIcon className="h-3.5 w-3.5 flex-shrink-0" />
+ {isLetterMode
+ ? <LetterIcon className="h-3.5 w-3.5 flex-shrink-0 [&_path]:stroke-current text-indigo-600" />
+ : <ChecklistIcon className="h-3.5 w-3.5 flex-shrink-0" />}
  <span className="truncate">{itemName}</span>
  </div>
  ))
