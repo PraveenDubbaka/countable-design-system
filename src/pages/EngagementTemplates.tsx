@@ -365,6 +365,20 @@ function MapTemplatePanel({
  });
 
  const clientFolders = Object.values(folderMap);
+
+ // savedChecklists — flat folder → items
+ const allChecklists = readJsonFromLocalStorage<{ id: string; name: string; folderId: string; folderName: string }[]>("savedChecklists", []);
+ type ChecklistFolder = { id: string; name: string; items: string[] };
+ const checklistFolderMap: Record<string, ChecklistFolder> = {};
+ allChecklists.forEach(c => {
+ const key = `cl-${c.folderId}`;
+ if (!checklistFolderMap[key]) checklistFolderMap[key] = { id: key, name: c.folderName, items: [] };
+ checklistFolderMap[key].items.push(c.name);
+ });
+ const checklistFolders = Object.values(checklistFolderMap)
+ .map(f => ({ ...f, items: search ? f.items.filter(i => i.toLowerCase().includes(search.toLowerCase())) : f.items }))
+ .filter(f => !search || f.items.length > 0);
+
  const countryMismatch = engagementCountry && country !== engagementCountry;
 
  if (!open) return null;
@@ -408,9 +422,11 @@ function MapTemplatePanel({
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-2">
- {clientFolders.length === 0 ? (
+ {clientFolders.length === 0 && checklistFolders.length === 0 ? (
  <p className="text-sm text-muted-foreground text-center py-8">No templates found</p>
- ) : clientFolders.map(folder => (
+ ) : (
+ <>
+ {clientFolders.map(folder => (
  <div key={folder.id}>
  <div
  className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none"
@@ -454,6 +470,37 @@ function MapTemplatePanel({
  })}
  </div>
  ))}
+ {checklistFolders.length > 0 && clientFolders.length > 0 && (
+ <div className="mx-2 my-1 border-t border-border/40" />
+ )}
+ {checklistFolders.map(folder => (
+ <div key={folder.id}>
+ <div
+ className="flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none"
+ onClick={() => setExpandedFolders(prev => {
+ const next = new Set(prev);
+ next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
+ return next;
+ })}
+ >
+ <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", expandedFolders.has(folder.id) ? "rotate-0" : "-rotate-90")} />
+ <FolderSolidIcon className="h-4 w-4 text-amber-500" />
+ <span className="truncate flex-1">{folder.name}</span>
+ </div>
+ {expandedFolders.has(folder.id) && folder.items.map(itemName => (
+ <div
+ key={itemName}
+ className="flex items-center gap-2 py-1.5 pl-8 pr-2 rounded-md cursor-pointer hover:bg-primary/10 text-sm select-none"
+ onClick={() => { onSelect(itemName); onClose(); }}
+ >
+ <ChecklistIcon className="h-3.5 w-3.5 flex-shrink-0" />
+ <span className="truncate">{itemName}</span>
+ </div>
+ ))}
+ </div>
+ ))}
+ </>
+ )}
  </div>
  </div>
  );
