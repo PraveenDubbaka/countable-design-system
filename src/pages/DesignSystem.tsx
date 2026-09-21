@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { Layout } from "@/components/Layout";
 import {
  Copy, Download, Plus, Trash2, Search, Bell, Settings, Mail, Star,
- CheckCircle2, AlertCircle, AlertTriangle, Info, Sparkles, ChevronRight,
+ CheckCircle2, AlertCircle, AlertTriangle, Info, Sparkles, ChevronRight, ChevronLeft,
  Home, Folder, FileText, Users, Calendar, BarChart3, Zap, MessageSquare,
  Eye, Edit, MoreVertical, X, Check, ArrowRight, ArrowLeft, ChevronDown,
  Filter, RefreshCw, Upload, Save, Send, Paperclip, Mic, Image as ImageIcon,
@@ -401,6 +401,134 @@ function LogoCard({ asset }: { asset: CountableLogoAsset }) {
     </div>
   );
 }
+
+/* ─── Table & Pagination demo ─── */
+const TABLE_ROWS = [
+ { id: "AUD-RIV069-Jul312022", client: "Riverstone Media Group Inc.", yearEnd: "Jul 31, 2022", period: "Full Year", type: "Audit", status: "In Progress", created: "May 27, 2025 09:00 AM" },
+ { id: "COM-PAT-Dec312024", client: "Patel & Shah CPA", yearEnd: "Dec 31, 2024", period: "Full Year", type: "Compilation", status: "Complete", created: "Apr 15, 2025 02:30 PM" },
+ { id: "REV-GRE-Dec312024", client: "Grewal & Gupta CPA", yearEnd: "Dec 31, 2024", period: "Full Year", type: "Review", status: "Needs Review", created: "Mar 10, 2025 11:15 AM" },
+ { id: "AUD-FAB-Mar312025", client: "Faber & Associates LLP", yearEnd: "Mar 31, 2025", period: "Full Year", type: "Audit", status: "Setup", created: "Jun 01, 2025 08:00 AM" },
+ { id: "COM-CED-Dec312023", client: "Cedar Valley Enterprises", yearEnd: "Dec 31, 2023", period: "Full Year", type: "Compilation", status: "Complete", created: "Jan 20, 2025 03:45 PM" },
+ { id: "AUD-NOR-Sep302024", client: "Northline Holdings Ltd.", yearEnd: "Sep 30, 2024", period: "Full Year", type: "Audit", status: "In Progress", created: "Feb 28, 2025 10:00 AM" },
+ { id: "REV-SUM-Jun302024", client: "Summit Industrial Inc.", yearEnd: "Jun 30, 2024", period: "Full Year", type: "Review", status: "Complete", created: "Nov 15, 2024 09:30 AM" },
+ { id: "COM-FAI-Dec312024", client: "Fairmont Group", yearEnd: "Dec 31, 2024", period: "Full Year", type: "Compilation", status: "In Progress", created: "May 05, 2025 01:00 PM" },
+ { id: "AUD-PAC-Dec312023", client: "Pacific Rim Corp", yearEnd: "Dec 31, 2023", period: "Full Year", type: "Audit", status: "Complete", created: "Dec 10, 2024 08:45 AM" },
+ { id: "TAX-RIV-Dec312024", client: "Riverstone Media Group Inc.", yearEnd: "Dec 31, 2024", period: "Full Year", type: "Tax", status: "Needs Review", created: "Apr 30, 2025 04:15 PM" },
+ { id: "COM-SIN-Dec312024", client: "Singh & Partners", yearEnd: "Dec 31, 2024", period: "Full Year", type: "Compilation", status: "Setup", created: "Jun 10, 2025 07:30 AM" },
+ { id: "AUD-MAP-Mar312024", client: "Maple Leaf Financial Ltd.", yearEnd: "Mar 31, 2024", period: "Full Year", type: "Audit", status: "In Progress", created: "Mar 22, 2025 12:00 PM" },
+];
+
+const STATUS_STYLES: Record<string, string> = {
+ "In Progress": "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800",
+ "Complete":    "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800",
+ "Needs Review":"bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800",
+ "Setup":       "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900/30 dark:text-slate-400 dark:border-slate-700",
+};
+
+const ROWS_PER_PAGE = 5;
+
+function TablePaginationDemo() {
+ const [currentPage, setCurrentPage] = useState(1);
+ const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE);
+ const paged = TABLE_ROWS.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+
+ const pageNumbers = useMemo(() => {
+  const pages: (number | "...")[] = [];
+  if (totalPages <= 7) {
+   for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+   pages.push(1);
+   if (currentPage > 3) pages.push("...");
+   for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+   if (currentPage < totalPages - 2) pages.push("...");
+   pages.push(totalPages);
+  }
+  return pages;
+ }, [currentPage, totalPages]);
+
+ return (
+  <div className="rounded-xl border border-border bg-card overflow-hidden">
+   <div className="px-5 py-4 border-b border-border">
+    <h4 className="text-title-sm text-foreground">Table & Pagination</h4>
+   </div>
+   <div className="overflow-x-auto">
+    <table className="w-full">
+     <thead className="bg-muted/60 border-b border-border">
+      <tr>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Engagement ID</th>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client Name</th>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Year End</th>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Period</th>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Type</th>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
+       <th className="text-left px-5 py-3 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Date Created</th>
+      </tr>
+     </thead>
+     <tbody className="divide-y divide-border">
+      {paged.map(row => (
+       <tr key={row.id} className="hover:bg-muted/40 transition-colors">
+        <td className="px-5 py-3.5 text-sm font-medium text-primary whitespace-nowrap">{row.id}</td>
+        <td className="px-5 py-3.5 text-sm text-foreground whitespace-nowrap">{row.client}</td>
+        <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{row.yearEnd}</td>
+        <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{row.period}</td>
+        <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{row.type}</td>
+        <td className="px-5 py-3.5 whitespace-nowrap">
+         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_STYLES[row.status] ?? ""}`}>
+          {row.status}
+         </span>
+        </td>
+        <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">{row.created}</td>
+       </tr>
+      ))}
+     </tbody>
+    </table>
+   </div>
+   {/* Pagination bar */}
+   <div className="flex items-center justify-between px-5 py-3 border-t border-border bg-muted/20">
+    <span className="text-xs text-muted-foreground">
+     Showing {(currentPage - 1) * ROWS_PER_PAGE + 1}–{Math.min(currentPage * ROWS_PER_PAGE, TABLE_ROWS.length)} of {TABLE_ROWS.length} engagements
+    </span>
+    <div className="flex items-center gap-1">
+     <button
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage(p => p - 1)}
+      className="h-7 w-7 flex items-center justify-center rounded-md border border-border bg-card hover:bg-muted disabled:opacity-30 transition-colors"
+     >
+      <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
+     </button>
+     {pageNumbers.map((p, i) =>
+      p === "..." ? (
+       <span key={`ellipsis-${i}`} className="h-7 w-7 flex items-center justify-center text-xs text-muted-foreground">…</span>
+      ) : (
+       <button
+        key={p}
+        onClick={() => setCurrentPage(p as number)}
+        className={`h-7 w-7 flex items-center justify-center rounded-md text-xs font-semibold border transition-colors ${
+         currentPage === p
+          ? "bg-primary text-white border-primary"
+          : "border-border bg-card hover:bg-muted text-foreground"
+        }`}
+       >
+        {p}
+       </button>
+      )
+     )}
+     <button
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage(p => p + 1)}
+      className="h-7 w-7 flex items-center justify-center rounded-md border border-border bg-card hover:bg-muted disabled:opacity-30 transition-colors"
+     >
+      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+     </button>
+    </div>
+   </div>
+   <p className="px-5 pb-4 text-label-sm text-muted-foreground mt-2">
+    sticky thead · divide-y rows · hover:bg-muted/40 · pill status badge · prev/next + numbered pagination with ellipsis
+   </p>
+  </div>
+ );
+}
+
 
 /* ─── Page ─── */
 export default function DesignSystem() {
@@ -952,6 +1080,10 @@ export default function DesignSystem() {
  <p className="text-label-sm text-muted-foreground mt-2">Top-right · sonner library</p>
  </SampleCard>
  </div>
+
+ {/* Table & Pagination — full width */}
+ <TablePaginationDemo />
+
  </TabsContent>
  </Tabs>
  </div>
