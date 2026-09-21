@@ -443,7 +443,7 @@ function MapTemplatePanel({
  <div className="flex items-start gap-1.5 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 px-2.5 py-2 text-xs text-amber-700 dark:text-amber-400">
  <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
  <span>
- This template is from a {country === "US" ? "🇺🇸 US" : "🇨🇦 Canadian"} source but your engagement is {engagementCountry === "CA" ? "🇨🇦 Canadian" : "🇺🇸 US"}.
+ You are mapping a {country === "US" ? "🇺🇸 US" : "🇨🇦 Canadian"} template into a {engagementCountry === "CA" ? "🇨🇦 Canadian" : "🇺🇸 US"} audit template. The content may not align with {engagementCountry === "CA" ? "CAS or ASPE" : "US GAAS or US GAAP"} requirements.
  </span>
  </div>
  )}
