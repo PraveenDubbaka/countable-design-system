@@ -428,28 +428,36 @@ const STATUS_STYLES: Record<string, string> = {
 const ROWS_PER_PAGE = 5;
 
 function TablePaginationDemo() {
- const [currentPage, setCurrentPage] = useState(1);
- const totalPages = Math.ceil(TABLE_ROWS.length / ROWS_PER_PAGE);
+ const [page, setPage] = useState(1);
+
+ const total = TABLE_ROWS.length;
+ const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+ const currentPage = Math.min(page, totalPages);
+
+ const rangeStart = total === 0 ? 0 : (currentPage - 1) * ROWS_PER_PAGE + 1;
+ const rangeEnd = Math.min(currentPage * ROWS_PER_PAGE, total);
  const paged = TABLE_ROWS.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
 
- const pageNumbers = useMemo(() => {
-  const pages: (number | "...")[] = [];
-  if (totalPages <= 7) {
-   for (let i = 1; i <= totalPages; i++) pages.push(i);
-  } else {
-   pages.push(1);
-   if (currentPage > 3) pages.push("...");
-   for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
-   if (currentPage < totalPages - 2) pages.push("...");
-   pages.push(totalPages);
-  }
-  return pages;
- }, [currentPage, totalPages]);
+ const pageNumbers: (number | "…")[] = (() => {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+  const set = new Set<number>([
+   1, 2,
+   totalPages - 1, totalPages,
+   currentPage - 1, currentPage, currentPage + 1,
+  ]);
+  const nums = [...set].filter((n) => n >= 1 && n <= totalPages).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  nums.forEach((n, i) => {
+   if (i > 0 && n - (nums[i - 1] as number) > 1) out.push("…");
+   out.push(n);
+  });
+  return out;
+ })();
 
  return (
   <div className="rounded-xl border border-border bg-card overflow-hidden">
    <div className="px-5 py-4 border-b border-border">
-    <h4 className="text-title-sm text-foreground">Table & Pagination</h4>
+    <h4 className="text-title-sm text-foreground">Table &amp; Pagination</h4>
    </div>
    <div className="overflow-x-auto">
     <table className="w-full">
@@ -484,46 +492,50 @@ function TablePaginationDemo() {
     </table>
    </div>
    {/* Pagination bar */}
-   <div className="flex items-center justify-between px-5 py-3 border-t border-border bg-muted/20">
-    <span className="text-xs text-muted-foreground">
-     Showing {(currentPage - 1) * ROWS_PER_PAGE + 1}–{Math.min(currentPage * ROWS_PER_PAGE, TABLE_ROWS.length)} of {TABLE_ROWS.length} engagements
+   <div className="flex items-center justify-between px-6 py-3 border-t border-border flex-shrink-0 bg-card">
+    <span className="text-sm text-muted-foreground">
+     {total === 0
+      ? "No engagements"
+      : `Showing ${rangeStart}–${rangeEnd} of ${total} engagements`}
     </span>
     <div className="flex items-center gap-1">
-     <button
+     <Button
+      variant="outline"
+      size="sm"
+      className="h-8 w-8 p-0"
       disabled={currentPage === 1}
-      onClick={() => setCurrentPage(p => p - 1)}
-      className="h-7 w-7 flex items-center justify-center rounded-md border border-border bg-card hover:bg-muted disabled:opacity-30 transition-colors"
+      onClick={() => setPage((p) => Math.max(1, p - 1))}
      >
-      <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
-     </button>
+      <ChevronLeft className="h-4 w-4" />
+     </Button>
      {pageNumbers.map((p, i) =>
-      p === "..." ? (
-       <span key={`ellipsis-${i}`} className="h-7 w-7 flex items-center justify-center text-xs text-muted-foreground">…</span>
+      p === "…" ? (
+       <span key={`gap-${i}`} className="px-1 text-sm text-muted-foreground">…</span>
       ) : (
-       <button
+       <Button
         key={p}
-        onClick={() => setCurrentPage(p as number)}
-        className={`h-7 w-7 flex items-center justify-center rounded-md text-xs font-semibold border transition-colors ${
-         currentPage === p
-          ? "bg-primary text-white border-primary"
-          : "border-border bg-card hover:bg-muted text-foreground"
-        }`}
+        variant={p === currentPage ? "default" : "outline"}
+        size="sm"
+        className="h-8 w-8 p-0"
+        onClick={() => setPage(p as number)}
        >
         {p}
-       </button>
+       </Button>
       )
      )}
-     <button
-      disabled={currentPage === totalPages}
-      onClick={() => setCurrentPage(p => p + 1)}
-      className="h-7 w-7 flex items-center justify-center rounded-md border border-border bg-card hover:bg-muted disabled:opacity-30 transition-colors"
+     <Button
+      variant="outline"
+      size="sm"
+      className="h-8 w-8 p-0"
+      disabled={currentPage >= totalPages}
+      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
      >
-      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-     </button>
+      <ChevronRight className="h-4 w-4" />
+     </Button>
     </div>
    </div>
    <p className="px-5 pb-4 text-label-sm text-muted-foreground mt-2">
-    sticky thead · divide-y rows · hover:bg-muted/40 · pill status badge · prev/next + numbered pagination with ellipsis
+    sticky thead · divide-y rows · hover:bg-muted/40 · pill status badge · Button outline/default pagination with ellipsis
    </p>
   </div>
  );
