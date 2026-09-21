@@ -455,6 +455,7 @@ function TablePaginationDemo() {
  })();
 
  return (
+  <>
   <div className="rounded-xl border border-border bg-card overflow-hidden">
    <div className="px-5 py-4 border-b border-border">
     <h4 className="text-title-sm text-foreground">Table &amp; Pagination</h4>
@@ -534,10 +535,11 @@ function TablePaginationDemo() {
      </Button>
     </div>
    </div>
-   <p className="px-5 pb-4 text-label-sm text-muted-foreground mt-2">
-    sticky thead · divide-y rows · hover:bg-muted/40 · pill status badge · Button outline/default pagination with ellipsis
-   </p>
   </div>
+  <p className="text-label-sm text-muted-foreground mt-2">
+   sticky thead · divide-y rows · hover:bg-muted/40 · pill status badge · Button outline/default pagination with ellipsis
+  </p>
+  </>
  );
 }
 
