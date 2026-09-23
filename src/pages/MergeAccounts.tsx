@@ -16,7 +16,7 @@ import {
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { engagementsData } from "@/data/engagementsData";
 import { getMergeGroupsForEngagement, type DuplicateGroup, type MergeDecision } from "@/data/mergeAccountsData";
-import { CornerDownLeft, EyeOff, Trash2, Info, Save, AlertTriangle } from "lucide-react";
+import { CornerDownLeft, EyeOff, Trash2, Info, Save, AlertTriangle, Undo2 } from "lucide-react";
 
 const RESOLVED_KEY = (engId: string) => `merge-accounts-resolved-${engId}`;
 const XERO_LOGO_URL = "https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg";
@@ -33,23 +33,31 @@ interface StagedDecision {
   rowIndex?: 0 | 1;
 }
 
-// Merge Up/Down tints only the surviving row, Ignore tints both (both kept),
-// Delete tints only the specific row that was removed — so a glance at the
-// pending list shows exactly what a staged decision will do to each row.
+// Ignore tints both rows (both kept), Delete tints only the specific row
+// that was removed — a glance at the pending list shows exactly what a
+// staged decision will do. Merge (up/down) doesn't use this: those collapse
+// the pair into a single combined row instead of tinting two rows.
 function rowTintClass(action: MergeDecision | undefined, actionRowIndex: 0 | 1 | undefined, targetRow: 0 | 1): string {
-  if (!action) return "bg-card";
   switch (action) {
-    case "up":
-      return targetRow === 0 ? "bg-[#12B76A]/10" : "bg-card";
-    case "down":
-      return targetRow === 1 ? "bg-[#12B76A]/10" : "bg-card";
     case "ignore":
-      return "bg-amber-500/10";
+      return "bg-muted/60";
     case "delete":
-      return actionRowIndex === targetRow ? "bg-destructive/10" : "bg-card";
+      return actionRowIndex === targetRow ? "bg-muted/60" : "bg-card";
     default:
       return "bg-card";
   }
+}
+
+// Same style everywhere it appears — the combined row after a merge, the
+// deleted row after a delete, and both rows after an ignore all use this
+// one button to un-stage that decision before Save.
+function RevertButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button size="sm" variant="outline" className="h-7 gap-1.5 shrink-0" onClick={onClick}>
+      <Undo2 className="h-3.5 w-3.5" />
+      Revert
+    </Button>
+  );
 }
 
 function XeroSourceBadge() {
@@ -184,21 +192,33 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
     onOpenChange(false);
   };
 
-  // The row being dropped is the only one whose adjusting entries matter —
-  // Merge Up drops rows[1], Merge Down drops rows[0], Delete drops whichever
-  // row's own trash icon was clicked. The row that's kept is unaffected.
+  // Only a merge (up/down) needs the adjusting-entries guard — merging drops
+  // a whole row, so if that dropped row carries an adjusting entry, warn
+  // first. Delete doesn't trigger this: deleting a row with an adjusting
+  // entry is allowed outright.
   const decide = (groupId: string, action: MergeDecision, rowIndex?: 0 | 1) => {
     const group = groups.find((g) => g.id === groupId);
     if (!group) return;
 
-    const droppedRow =
-      action === "up" ? group.rows[1] : action === "down" ? group.rows[0] : action === "delete" ? group.rows[rowIndex!] : undefined;
-    if (droppedRow && droppedRow.adj !== 0) {
-      setWarningOpen(true);
-      return;
+    if (action === "up" || action === "down") {
+      const droppedRow = action === "up" ? group.rows[1] : group.rows[0];
+      if (droppedRow.adj !== 0) {
+        setWarningOpen(true);
+        return;
+      }
     }
 
     setDecisions((prev) => ({ ...prev, [groupId]: { action, rowIndex } }));
+  };
+
+  // Un-stages a decision before Save — the pair goes back to its normal,
+  // undecided two-row view with all hover actions available again.
+  const handleRevertDecision = (groupId: string) => {
+    setDecisions((prev) => {
+      const next = { ...prev };
+      delete next[groupId];
+      return next;
+    });
   };
 
   const handleSave = () => {
@@ -291,7 +311,6 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
             )}
             {groups.map((group) => {
               const decision = decisions[group.id];
-              const disableDown = group.rows[0].source === "xero";
               const rowTint = (rowIndex: 0 | 1) => rowTintClass(decision?.action, decision?.rowIndex, rowIndex);
               // Merge is only possible when at least one row is the "stub" left
               // over from a split import — signaled by an Original of 0. Two rows
@@ -305,6 +324,29 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
               // Purely a visual flag — highlights the Original cells when they
               // genuinely conflict, so it's easy to spot before choosing Delete.
               const originalsConflict = bothOriginalsNonZero && !originalsMatch;
+
+              // A staged merge collapses the pair into one preview row instead
+              // of tinting two — destination keeps its identity, and each
+              // numeric column sums both rows (safe because a merge can only
+              // be staged when the dropped row's ADJ is 0, so ADJ carries
+              // over unchanged either way).
+              const mergedRow =
+                decision?.action === "up" || decision?.action === "down"
+                  ? (() => {
+                      const destination = decision.action === "up" ? group.rows[0] : group.rows[1];
+                      const dropped = decision.action === "up" ? group.rows[1] : group.rows[0];
+                      return {
+                        accNo: destination.accNo,
+                        description: destination.description,
+                        source: destination.source,
+                        original: destination.original + dropped.original,
+                        adj: destination.adj + dropped.adj,
+                        final: destination.final + dropped.final,
+                        py1: destination.py1 + dropped.py1,
+                        py2: destination.py2 + dropped.py2,
+                      };
+                    })()
+                  : null;
 
               return (
                 <div key={group.id} className="rounded-lg border border-border">
@@ -320,73 +362,124 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
                     <div className={`${colWidths.actions} text-right pr-1`}>Actions</div>
                   </div>
 
-                  {/* Rows — each row carries its own inline action toolbar, revealed
-                      on hover/focus so it doesn't compete with the data at rest. */}
-                  {group.rows.map((row, i) => {
-                    const rowIndex = i as 0 | 1;
-                    const isTop = rowIndex === 0;
-                    return (
-                      <div
-                        key={i}
-                        className={`group/row flex items-center gap-4 px-4 py-3 transition-colors ${
-                          isTop ? "border-b border-border/60" : "rounded-b-lg"
-                        } ${rowTint(rowIndex)}`}
-                      >
-                        <div className={`${colWidths.acc} font-semibold text-foreground`}>{row.accNo}</div>
-                        <div className={`${colWidths.desc} flex items-center gap-2 text-link truncate`}>
-                          <span className="truncate">{row.description}</span>
-                          {row.source === "xero" && <XeroSourceBadge />}
-                        </div>
-                        <div className={`${colWidths.num} ${originalsConflict ? "font-semibold text-amber-700" : "text-foreground"}`}>
-                          {fmt(row.original)}
-                        </div>
-                        <div className={`${colWidths.num} ${row.adj !== 0 ? "font-semibold text-amber-700" : "text-foreground"}`}>
-                          {fmt(row.adj)}
-                        </div>
-                        <div className={`${colWidths.num} text-foreground`}>{fmt(row.final)}</div>
-                        <div className={`${colWidths.num} text-foreground`}>{fmt(row.py1)}</div>
-                        <div className={`${colWidths.num} text-foreground`}>{fmt(row.py2)}</div>
-
-                        <div
-                          className={`${colWidths.actions} shrink-0 flex items-center justify-end gap-1.5 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity`}
-                        >
-                          {isTop ? (
-                            <MergeActionButton
-                              tone="success"
-                              icon={<CornerDownLeft className="h-4 w-4" />}
-                              label="Merge Down"
-                              selected={decision?.action === "down"}
-                              disabled={disableDown || mergeBlocked}
-                              onClick={() => decide(group.id, "down")}
-                            />
-                          ) : (
-                            <MergeActionButton
-                              tone="success"
-                              icon={<MergeUpIcon className="h-4 w-4" />}
-                              label="Merge Up"
-                              selected={decision?.action === "up"}
-                              disabled={mergeBlocked}
-                              onClick={() => decide(group.id, "up")}
-                            />
-                          )}
-                          <MergeActionButton
-                            tone="destructive"
-                            icon={<Trash2 className="h-4 w-4" />}
-                            label="Delete"
-                            selected={decision?.action === "delete" && decision.rowIndex === rowIndex}
-                            onClick={() => decide(group.id, "delete", rowIndex)}
-                          />
-                          <MergeActionButton
-                            tone="warning"
-                            icon={<EyeOff className="h-4 w-4" />}
-                            label="Ignore"
-                            selected={decision?.action === "ignore"}
-                            onClick={() => decide(group.id, "ignore")}
-                          />
-                        </div>
+                  {mergedRow ? (
+                    // Merge preview — the two rows above collapse into this one.
+                    <div className="flex items-center gap-4 px-4 py-3 rounded-b-lg bg-[#12B76A]/10">
+                      <div className={`${colWidths.acc} font-semibold text-foreground`}>{mergedRow.accNo}</div>
+                      <div className={`${colWidths.desc} flex items-center gap-2 text-link truncate`}>
+                        <span className="truncate">{mergedRow.description}</span>
+                        {mergedRow.source === "xero" && <XeroSourceBadge />}
                       </div>
-                    );
-                  })}
+                      <div className={`${colWidths.num} text-foreground`}>{fmt(mergedRow.original)}</div>
+                      <div className={`${colWidths.num} text-foreground`}>{fmt(mergedRow.adj)}</div>
+                      <div className={`${colWidths.num} text-foreground`}>{fmt(mergedRow.final)}</div>
+                      <div className={`${colWidths.num} text-foreground`}>{fmt(mergedRow.py1)}</div>
+                      <div className={`${colWidths.num} text-foreground`}>{fmt(mergedRow.py2)}</div>
+                      <div className={`${colWidths.actions} shrink-0 flex items-center justify-end`}>
+                        <RevertButton onClick={() => handleRevertDecision(group.id)} />
+                      </div>
+                    </div>
+                  ) : (
+                    /* Rows — each row carries its own inline action toolbar, revealed
+                       on hover/focus so it doesn't compete with the data at rest.
+                       Once Delete/Ignore is staged, the toolbar is replaced by an
+                       always-visible Revert button. */
+                    group.rows.map((row, i) => {
+                      const rowIndex = i as 0 | 1;
+                      const isTop = rowIndex === 0;
+                      const isDeletedRow = decision?.action === "delete" && decision.rowIndex === rowIndex;
+                      const isIgnoredRow = decision?.action === "ignore";
+                      const isGrayedOut = isDeletedRow || isIgnoredRow;
+                      // A row synced from a connected source (e.g. Xero) is the
+                      // source of truth — it can only ever be the merge target,
+                      // never touched itself, so it gets no actions at all.
+                      const isSourceProtected = row.source === "xero";
+                      const strike = isDeletedRow ? "line-through" : "";
+
+                      return (
+                        <div
+                          key={i}
+                          className={`group/row flex items-center gap-4 px-4 py-3 transition-colors ${
+                            isTop ? "border-b border-border/60" : "rounded-b-lg"
+                          } ${rowTint(rowIndex)}`}
+                        >
+                          <div className={`${colWidths.acc} font-semibold ${strike} ${isGrayedOut ? "text-foreground/50" : "text-foreground"}`}>
+                            {row.accNo}
+                          </div>
+                          <div className={`${colWidths.desc} flex items-center gap-2 truncate ${strike} ${isGrayedOut ? "text-foreground/50" : "text-link"}`}>
+                            <span className="truncate">{row.description}</span>
+                            {row.source === "xero" && <XeroSourceBadge />}
+                          </div>
+                          <div
+                            className={`${colWidths.num} ${strike} ${
+                              isGrayedOut ? "text-foreground/50" : originalsConflict ? "font-semibold text-amber-700" : "text-foreground"
+                            }`}
+                          >
+                            {fmt(row.original)}
+                          </div>
+                          <div
+                            className={`${colWidths.num} ${strike} ${
+                              isGrayedOut ? "text-foreground/50" : row.adj !== 0 ? "font-semibold text-amber-700" : "text-foreground"
+                            }`}
+                          >
+                            {fmt(row.adj)}
+                          </div>
+                          <div className={`${colWidths.num} ${strike} ${isGrayedOut ? "text-foreground/50" : "text-foreground"}`}>{fmt(row.final)}</div>
+                          <div className={`${colWidths.num} ${strike} ${isGrayedOut ? "text-foreground/50" : "text-foreground"}`}>{fmt(row.py1)}</div>
+                          <div className={`${colWidths.num} ${strike} ${isGrayedOut ? "text-foreground/50" : "text-foreground"}`}>{fmt(row.py2)}</div>
+
+                          <div
+                            className={`${colWidths.actions} shrink-0 flex items-center justify-end gap-1.5 transition-opacity ${
+                              decision ? "" : "opacity-0 group-hover/row:opacity-100 focus-within:opacity-100"
+                            }`}
+                          >
+                            {isDeletedRow && (
+                              <>
+                                <span className="text-xs font-medium text-foreground/50">Deleted</span>
+                                <RevertButton onClick={() => handleRevertDecision(group.id)} />
+                              </>
+                            )}
+                            {isIgnoredRow && <RevertButton onClick={() => handleRevertDecision(group.id)} />}
+                            {!decision && !isSourceProtected && (
+                              <>
+                                {isTop ? (
+                                  <MergeActionButton
+                                    tone="success"
+                                    icon={<CornerDownLeft className="h-4 w-4" />}
+                                    label="Merge Down"
+                                    disabled={mergeBlocked}
+                                    onClick={() => decide(group.id, "down")}
+                                  />
+                                ) : (
+                                  <MergeActionButton
+                                    tone="success"
+                                    icon={<MergeUpIcon className="h-4 w-4" />}
+                                    label="Merge Up"
+                                    disabled={mergeBlocked}
+                                    onClick={() => decide(group.id, "up")}
+                                  />
+                                )}
+                                <MergeActionButton
+                                  tone="destructive"
+                                  icon={<Trash2 className="h-4 w-4" />}
+                                  label="Delete"
+                                  onClick={() => decide(group.id, "delete", rowIndex)}
+                                />
+                                <MergeActionButton
+                                  tone="warning"
+                                  icon={<EyeOff className="h-4 w-4" />}
+                                  label="Ignore"
+                                  onClick={() => decide(group.id, "ignore")}
+                                />
+                              </>
+                            )}
+                            {/* Renders no buttons at all: the surviving row in a Delete
+                                decision, or any source-protected (e.g. Xero) row. */}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               );
             })}
@@ -404,10 +497,7 @@ export default function MergeAccounts({ open, onOpenChange, engagementId }: Merg
             </div>
             <AlertDialogTitle className="text-base font-semibold">Merge Warning</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
-              This action cannot be performed as there are adjusting entries in the row which will be deleted.
-              <br />
-              <br />
-              Please remove the adjusting entry and then perform the merge action
+              This account has adjusting entries.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
