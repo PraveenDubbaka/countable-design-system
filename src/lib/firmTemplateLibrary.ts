@@ -1,4 +1,5 @@
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
+import { getEngagementMeta } from "@/store/engagementsStore";
 
 export type TemplateTypeId =
   | "engagements"
@@ -771,11 +772,14 @@ export function isDefault(lib: Library, t: FirmTemplate): boolean {
 
 export function linkedCount(
   t: FirmTemplate,
-  engagements: { templateId?: string }[]
+  engagements: { id: string }[]
 ): number {
   return (
     t.linkedSeed +
-    engagements.filter(e => e.templateId === t.id || e.templateId === t.source.refId).length
+    engagements.filter(e => {
+      const tid = getEngagementMeta(e.id).templateId;
+      return tid === t.id || tid === t.source.refId;
+    }).length
   );
 }
 
@@ -818,7 +822,7 @@ export function moveFolder(id: string, parentId: string | null): Library {
 
 export function deleteFolder(
   id: string,
-  engagements: { templateId?: string }[]
+  engagements: { id: string }[]
 ): { blocked: true; linked: number } | Library {
   const lib = load();
   const descendantIds = new Set<string>();
@@ -830,6 +834,24 @@ export function deleteFolder(
   const affected = lib.templates.filter(t => t.folderId && descendantIds.has(t.folderId));
   const totalLinked = affected.reduce((sum, t) => sum + linkedCount(t, engagements), 0);
   if (totalLinked > 0) return { blocked: true, linked: totalLinked };
+
+  // Remove source records for every deleted template
+  const deletedIds = new Set(affected.map(t => t.id));
+  const engSources = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
+  const clSources = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
+  const deletedRefIds = new Set(affected.map(t => t.source.refId));
+  writeJsonToLocalStorage(
+    "myEngagementTemplates",
+    engSources.filter(e => !deletedRefIds.has(e.id))
+  );
+  writeJsonToLocalStorage(
+    "savedChecklists",
+    clSources.filter(c => !deletedRefIds.has(c.id))
+  );
+  // Clear defaults pointing to deleted template ids
+  for (const k of Object.keys(lib.defaults)) {
+    if (deletedIds.has(lib.defaults[k])) delete lib.defaults[k];
+  }
 
   lib.folders = lib.folders.filter(f => !descendantIds.has(f.id));
   lib.templates = lib.templates.filter(t => !t.folderId || !descendantIds.has(t.folderId));
@@ -943,7 +965,7 @@ export function duplicateTemplate(id: string): Library {
 
 export function deleteTemplate(
   id: string,
-  engagements: { templateId?: string }[]
+  engagements: { id: string }[]
 ): { blocked: true } | Library {
   const lib = load();
   const t = lib.templates.find(t => t.id === id);

@@ -107,16 +107,14 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
 
   useEffect(() => {
     const onChanged = () => refresh();
+    const onFirmSwitched = () => { setOfficeFilter(getActiveOfficeId()); refresh(); };
     window.addEventListener("firmTemplateLibraryChanged", onChanged);
-    window.addEventListener("firmSwitched", () => {
-      setOfficeFilter(getActiveOfficeId());
-      refresh();
-    });
+    window.addEventListener("firmSwitched", onFirmSwitched);
     window.addEventListener("engagementTemplateSaved", onChanged);
     window.addEventListener("checklistSaved", onChanged);
     return () => {
       window.removeEventListener("firmTemplateLibraryChanged", onChanged);
-      window.removeEventListener("firmSwitched", onChanged);
+      window.removeEventListener("firmSwitched", onFirmSwitched);
       window.removeEventListener("engagementTemplateSaved", onChanged);
       window.removeEventListener("checklistSaved", onChanged);
     };

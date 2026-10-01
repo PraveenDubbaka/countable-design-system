@@ -479,7 +479,7 @@ export function NewFolderDialog({
 export interface TemplateActionsMenuProps {
   template: FirmTemplate;
   lib: Library;
-  engagements: { templateId?: string }[];
+  engagements: { id: string }[];
   onRename: () => void;
   onMoveToFolder: () => void;
   onAvailability: () => void;
