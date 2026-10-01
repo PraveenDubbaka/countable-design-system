@@ -171,7 +171,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 2,
       updatedAt: ago,
       source: { kind: "seed", refId: "audit5101" },
-      nav: { to: "/engagement-templates", state: { template: "audit5101" } },
+      nav: { to: "/engagement-templates?template=audit5101" },
     },
     {
       id: "seed-eng-audit6100",
@@ -191,7 +191,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 3,
       updatedAt: ago,
       source: { kind: "seed", refId: "audit6100" },
-      nav: { to: "/engagement-templates", state: { template: "audit6100" } },
+      nav: { to: "/engagement-templates?template=audit6100" },
     },
     {
       id: "seed-eng-comp4200a",
@@ -211,7 +211,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 0,
       updatedAt: ago,
       source: { kind: "seed", refId: "comp4200" },
-      nav: { to: "/engagement-templates", state: { template: "comp4200" } },
+      nav: { to: "/engagement-templates?template=comp4200" },
     },
     {
       id: "seed-eng-comp4200b",
@@ -231,7 +231,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 1,
       updatedAt: ago,
       source: { kind: "seed", refId: "comp4200" },
-      nav: { to: "/engagement-templates", state: { template: "comp4200" } },
+      nav: { to: "/engagement-templates?template=comp4200" },
     },
     {
       id: "seed-eng-rev2400",
@@ -251,7 +251,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 3,
       updatedAt: ago,
       source: { kind: "seed", refId: "rev2400" },
-      nav: { to: "/engagement-templates", state: { template: "rev2400" } },
+      nav: { to: "/engagement-templates?template=rev2400" },
     },
 
     // ── FINANCIAL STATEMENTS ─────────────────────────────────────────────────
@@ -273,7 +273,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 1,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-aspe-partner" },
-      nav: { to: "/financial-statement-templates", state: { template: "Partnership ASPE-Reviewed Financial Statements", source: "my" } },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Partnership ASPE-Reviewed Financial Statements")}&source=my` },
     },
     {
       id: "seed-fs-aspe-priv",
@@ -293,7 +293,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 0,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-aspe-priv" },
-      nav: { to: "/financial-statement-templates", state: { template: "CCPC ASPE-Reviewed Financial Statements", source: "my" } },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("CCPC ASPE-Reviewed Financial Statements")}&source=my` },
     },
     {
       id: "seed-fs-ifrs-pub",
@@ -313,7 +313,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 2,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-ifrs-pub" },
-      nav: { to: "/financial-statement-templates", state: { template: "Public Corporation IFRS-Reviewed Financial Statements", source: "my" } },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Public Corporation IFRS-Reviewed Financial Statements")}&source=my` },
     },
     {
       id: "seed-fs-usgaap-ccorp",
@@ -333,7 +333,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 3,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-usgaap-ccorp" },
-      nav: { to: "/financial-statement-templates", state: { template: "C-Corp GAAP-Compiled Financial Statements", source: "my" } },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("C-Corp GAAP-Compiled Financial Statements")}&source=my` },
     },
     {
       id: "seed-fs-taxbasis-pt",
@@ -353,7 +353,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 0,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-taxbasis-pt" },
-      nav: { to: "/financial-statement-templates", state: { template: "Pass-Through GAAP-Financial Statements — Income Tax Basis", source: "my" } },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Pass-Through GAAP-Financial Statements — Income Tax Basis")}&source=my` },
     },
 
     // ── LETTERS ──────────────────────────────────────────────────────────────
@@ -682,11 +682,22 @@ export function load(): Library {
   }
 
   // Repair stale nav on library engagement templates (state → query param)
+  let navRepaired = false;
   for (const t of lib.templates) {
     if (t.source.kind === "engagement" && t.nav && t.nav.to === "/engagement-templates" && !t.nav.to.includes("?")) {
       t.nav = { to: `/engagement-templates?myTemplate=${t.source.refId}` };
+      navRepaired = true;
+    }
+    // Repair seed templates whose nav still uses router state instead of query params
+    if (t.nav && t.nav.state && typeof (t.nav.state as Record<string, unknown>).template === "string") {
+      const state = t.nav.state as Record<string, unknown>;
+      const tpl = encodeURIComponent(String(state.template));
+      const src = state.source ? `&source=${state.source}` : "";
+      t.nav = { to: `${t.nav.to}?template=${tpl}${src}` };
+      navRepaired = true;
     }
   }
+  if (navRepaired) writeLibrary(lib);
 
   // Sync engagement templates
   const engSources = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
@@ -853,17 +864,15 @@ export function resolveBaseTemplateId(t: FirmTemplate): string | undefined {
   if (t.source.kind === "seed") {
     const nav = t.nav;
     if (!nav) return undefined;
-    // Seeds store template id in nav.state.template
+    // Primary: read template query param from nav.to
+    const qs = nav.to.split("?")[1] ?? "";
+    const qpTemplate = new URLSearchParams(qs).get("template");
+    if (qpTemplate && TEMPLATE_CONFIG[qpTemplate]) return qpTemplate;
+    // Fallback: nav.state?.template for any legacy data not yet repaired
     const stateTemplate = typeof (nav.state as Record<string, unknown> | undefined)?.template === "string"
       ? (nav.state as Record<string, unknown>).template as string
       : undefined;
     if (stateTemplate && TEMPLATE_CONFIG[stateTemplate]) return stateTemplate;
-    // Fallback: check query param in nav.to
-    const match = nav.to.match(/[?&]template=([^&]+)/);
-    if (match) {
-      const id = decodeURIComponent(match[1]);
-      if (TEMPLATE_CONFIG[id]) return id;
-    }
     return undefined;
   }
   if (t.source.kind === "engagement") {
