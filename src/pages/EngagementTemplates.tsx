@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Navigate } from "react-router-dom";
 import { ChevronDown, Plus, LayoutGrid, FileText, ClipboardList, Trash2, GripVertical, X, Copy, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -784,15 +784,7 @@ export default function EngagementTemplates() {
  </div>
  </>
  ) : (
- <div className="flex-1 flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
-  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary/60"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
-  </div>
-  <div className="space-y-1.5">
-   <p className="text-[15px] font-semibold text-foreground">Select a template from the sidebar</p>
-   <p className="text-sm text-muted-foreground max-w-[260px]">Choose a template on the left to preview its structure and sections</p>
-  </div>
- </div>
+ <Navigate to="/templates?type=engagements" replace />
  )}
  </div>
  </div>

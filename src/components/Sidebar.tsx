@@ -65,6 +65,7 @@ import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { FinancialStatementsPanelContent } from "@/components/FinancialStatementsPanelContent";
 import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
+import { FirmTemplatesTree } from "@/components/templates/FirmTemplatesTree";
 
 interface FirmProfile {
  id: string;
@@ -370,7 +371,7 @@ const engPickerTreeCA: TreeItem[] = [
  ]},
 ];
 
-const engPickerTreeUS: TreeItem[] = [
+export const engPickerTreeUS: TreeItem[] = [
  { id: "compilation-us", label: "Compilation", type: "folder", children: [
   { id: "comp-us-ssars21", label: "SSARS 21 — Compilation of Financial Statements", type: "file", suggested: true },
   { id: "comp-us-arc80", label: "AR-C 80 Compilation Engagement", type: "file" },
@@ -720,7 +721,7 @@ const LukaLogo = () => <LukaIcon size={28} />;
 
 // Dropdown menu items with colored icons
 const EngagementDropdownIcon = ({ className }: { className?: string }) => <svg className={className} width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const dropdownItems = [{
+export const dropdownItems = [{
  id: "engagements",
  label: "Engagements",
  icon: EngagementDropdownIcon,
@@ -1110,6 +1111,28 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  return () => window.removeEventListener("fs-template-panel-toggle", handler);
  }, []);
 
+ // Switch template type via event (from workspace)
+ useEffect(() => {
+ const handler = (e: Event) => {
+ const type = (e as CustomEvent<string>).detail;
+ handleDropdownSelect(type);
+ };
+ window.addEventListener("templates-type-change", handler);
+ return () => window.removeEventListener("templates-type-change", handler);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
+
+ // Open global templates panel (future: open a modal or navigate)
+ useEffect(() => {
+ const handler = () => {
+ // For now, navigate to the global templates tab if a panel exists
+ navigate("/templates?view=global");
+ };
+ window.addEventListener("open-global-templates", handler);
+ return () => window.removeEventListener("open-global-templates", handler);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
+
  // On templates pages: ensure panel is expanded (not stuck collapsed from edit mode)
  useEffect(() => {
  if (location.pathname.startsWith("/financial-statement-templates") || location.pathname.startsWith("/templates") || location.pathname.startsWith("/engagement-templates")) {
@@ -1313,18 +1336,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // remounts on the new page it reads the correct value from localStorage.
  localStorage.setItem("selectedDropdown", itemId);
  setSelectedDropdown(itemId);
- if (itemId === "engagements") {
- if (location.pathname !== "/engagement-templates") {
- navigate("/engagement-templates");
+ if (location.pathname === "/templates") {
+ // Already on the workspace — just switch the type param
+ setSearchParams({ type: itemId }, { replace: true });
  } else {
- setSearchParams({}, { replace: true });
- }
- } else if (itemId === "checklists") {
- navigate("/create", { state: { contentType: "checklists" } });
- } else {
- // financial-statements, letters, reports, notes, worksheets
- // Navigate to the builder with a clear flag so the placeholder is shown.
- navigate("/builder", { state: { clearContent: true } });
+ navigate(`/templates?type=${itemId}`);
  }
  };
  const toggleFolder = (id: string) => {
@@ -2176,7 +2192,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {navItems.map((item, index) => {
  const isTemplatesItem = item.label === "Templates";
  const isActive = isTemplatesItem
- ? (location.pathname === "/engagement-templates" || location.pathname === "/create" || location.pathname.startsWith("/financial-statement-templates"))
+ ? (location.pathname === "/engagement-templates" || location.pathname === "/create" || location.pathname.startsWith("/financial-statement-templates") || location.pathname === "/templates")
  : (item.route ? location.pathname === item.route : false);
  return <div key={index} className={`sidebar-item ${isActive ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""} ${item.route ? "cursor-pointer" : ""}`} title={!isNavExpanded ? item.label : undefined} onClick={() => {
  if (isTemplatesItem) {
@@ -3808,146 +3824,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </div>
 
  <div className={`flex-1 overflow-y-auto p-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {myEngagementTemplates.length === 0 ? (
- <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
- <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No templates yet</p>
- <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Click &ldquo;+&rdquo; to add from Global Templates</p>
- </div>
- ) : (() => {
- const q = engMySearchQuery.toLowerCase();
- const filtered = q ? myEngagementTemplates.filter(t => t.name.toLowerCase().includes(q) || t.folderName.toLowerCase().includes(q)) : myEngagementTemplates;
- if (filtered.length === 0) return (
- <div className="flex flex-col items-center justify-center h-24 gap-1 text-center px-4">
- <p className={cn("text-sm", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>No results for &ldquo;{engMySearchQuery}&rdquo;</p>
- </div>
- );
- // Group by folder
- const folders: Record<string, { id: string; name: string; templates: typeof myEngagementTemplates }> = {};
- filtered.forEach(t => {
- if (!folders[t.folderId]) folders[t.folderId] = { id: t.folderId, name: t.folderName, templates: [] };
- folders[t.folderId].templates.push(t);
- });
- return Object.values(folders).map(folder => {
- const allFolderSelected = folder.templates.every(t => engMySelectedIds.has(t.id));
- const someFolderSelected = !allFolderSelected && folder.templates.some(t => engMySelectedIds.has(t.id));
- return (
- <div key={folder.id}>
- {/* Folder row */}
- <div
- className={cn("group flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer hover:bg-muted/50 text-sm font-semibold select-none", hasDarkSecondary ? "text-white" : "text-foreground")}
- onClick={() => setEngMyFolderExpanded(prev => {
-  const next = new Set(prev);
-  next.has(folder.id) ? next.delete(folder.id) : next.add(folder.id);
-  return next;
- })}
- >
- <div
-  className={cn("h-4 w-4 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors",
-   allFolderSelected ? "bg-primary border-primary" : someFolderSelected ? "border-primary bg-primary/20" : (hasDarkSecondary ? "border-white/40" : "border-border")
-  )}
-  onClick={e => {
-   e.stopPropagation();
-   setEngMySelectedIds(prev => {
-    const next = new Set(prev);
-    if (allFolderSelected) { folder.templates.forEach(t => next.delete(t.id)); }
-    else { folder.templates.forEach(t => next.add(t.id)); }
-    return next;
-   });
-  }}
- >
-  {(allFolderSelected || someFolderSelected) && <Check className="h-2.5 w-2.5 text-white" />}
- </div>
- {engMyFolderExpanded.has(folder.id)
-  ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
-  : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />}
- <span className="truncate flex-1">{folder.name}</span>
- <span className={cn("text-xs group-hover:hidden", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>{folder.templates.length}</span>
- <DropdownMenu>
-  <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
-   <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
-    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
-   </button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent align="end" className="w-44">
-   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setEngMyCtxFolder(folder); setEngMyFolderRenameValue(folder.name); setEngMyFolderRenameOpen(true); }}>
-    <Pencil className="h-4 w-4 text-primary" /> Rename
-   </DropdownMenuItem>
-   <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={e => { e.stopPropagation(); setEngMyCtxFolder(folder); setEngMyFolderDeleteOpen(true); }}>
-    <Trash2 className="h-4 w-4" /> Delete
-   </DropdownMenuItem>
-  </DropdownMenuContent>
- </DropdownMenu>
- </div>
- {engMyFolderExpanded.has(folder.id) && folder.templates.map(t => {
- const isActive = searchParams.get("myTemplate") === t.id;
- const isSelected = engMySelectedIds.has(t.id);
- const isDefault = engMyDefaultId === t.id;
- const otherFolders = Object.values(
-  myEngagementTemplates.reduce((acc, x) => { acc[x.folderId] = { id: x.folderId, name: x.folderName }; return acc; }, {} as Record<string, {id: string; name: string}>)
- ).filter(f => f.id !== folder.id);
- return (
- <div
- key={t.id}
- className={cn(
- "group flex items-center gap-2 py-1.5 pl-6 pr-2 rounded-md cursor-pointer text-sm ml-1 font-medium select-none",
- isActive ? "bg-primary/10 text-primary" : (hasDarkSecondary ? "text-white/80 hover:bg-white/10" : "text-foreground hover:bg-muted/50")
- )}
- onClick={() => {
-  navigate("/engagement-templates");
-  setSearchParams({ myTemplate: t.id });
- }}
- >
- <div
-  className={cn("h-4 w-4 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors",
-   isSelected ? "bg-primary border-primary" : (hasDarkSecondary ? "border-white/40" : "border-border")
-  )}
-  onClick={e => {
-   e.stopPropagation();
-   setEngMySelectedIds(prev => {
-    const next = new Set(prev);
-    next.has(t.id) ? next.delete(t.id) : next.add(t.id);
-    return next;
-   });
-  }}
- >
-  {isSelected && <Check className="h-2.5 w-2.5 text-white" />}
- </div>
- <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 16" fill="none"><path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
- <span className="truncate flex-1">{t.name}{isDefault && <span className="ml-1 text-[10px] text-primary font-normal">(Default)</span>}</span>
- <DropdownMenu>
-  <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
-   <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0">
-    <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
-   </button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent align="end" className="w-48">
-   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); handleEngMySetDefault(t.id); }}>
-    <ArrowUpDown className="h-4 w-4 text-primary" /> {isDefault ? "Remove Default" : "Set as Default"}
-   </DropdownMenuItem>
-   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); handleEngMyTemplateDuplicate(t); }}>
-    <Copy className="h-4 w-4 text-primary" /> Duplicate
-   </DropdownMenuItem>
-   <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={e => { e.stopPropagation(); setEngMyCtxTemplate(t); setEngMyTemplateSingleDeleteOpen(true); }}>
-    <Trash2 className="h-4 w-4" /> Delete
-   </DropdownMenuItem>
-   <DropdownMenuSeparator />
-   <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setEngMyCtxTemplate(t); setEngMyTemplateRenameValue(t.name); setEngMyTemplateRenameOpen(true); }}>
-    <Pencil className="h-4 w-4 text-primary" /> Rename
-   </DropdownMenuItem>
-   {otherFolders.length > 0 && (
-    <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setEngMyCtxTemplate(t); setEngMyTemplateMoveTargetId(""); setEngMyTemplateMoveOpen(true); }}>
-     <Move className="h-4 w-4 text-primary" /> Move
-    </DropdownMenuItem>
-   )}
-  </DropdownMenuContent>
- </DropdownMenu>
- </div>
- );
- })}
- </div>
- );
- });
- })()}
+ <FirmTemplatesTree type="engagements" search={engMySearchQuery} dark={hasDarkSecondary} />
  </div>
 
  {/* Delete confirmation dialog */}
@@ -4159,32 +4036,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </div>
 
  <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {(() => {
- const sq = searchQuery.trim().toLowerCase();
- if (!sq) {
- return activeTab === "firm"
- ? templates.map(template => renderTemplate(template))
- : globalTemplates.map(template => renderGlobalTemplate(template));
- }
- const globalMatch = (t: GlobalTemplate): boolean =>
- t.name.toLowerCase().includes(sq) || (t.children?.some(globalMatch) ?? false);
- const myMatch = (t: Template): boolean =>
- t.name.toLowerCase().includes(sq) ||
- getChecklistsForFolder(t.id).some(c => c.name.toLowerCase().includes(sq)) ||
- (t.children?.some(myMatch) ?? false);
- const hasMatch = activeTab === "firm"
- ? templates.some(myMatch)
- : globalTemplates.some(globalMatch);
- if (!hasMatch) return (
- <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
- <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
- <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
- <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
- </div>
- );
- return activeTab === "firm"
- ? templates.map(template => renderTemplate(template))
- : globalTemplates.map(template => renderGlobalTemplate(template));
+ {activeTab === "firm"
+ ? <FirmTemplatesTree type="checklists" search={searchQuery} dark={hasDarkSecondary} />
+ : (() => {
+  const sq = searchQuery.trim().toLowerCase();
+  const globalMatch = (t: GlobalTemplate): boolean =>
+   t.name.toLowerCase().includes(sq) || (t.children?.some(globalMatch) ?? false);
+  if (sq && !globalTemplates.some(globalMatch)) return (
+   <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+    <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
+    <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
+    <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+   </div>
+  );
+  return globalTemplates.map(template => renderGlobalTemplate(template));
  })()}
  </div>
  </>
@@ -4221,23 +4086,20 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </div>
 
  <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm" ? (
- <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
- <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No worksheets yet</p>
- <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
- </div>
- ) : (() => {
- const sq = searchQuery.trim().toLowerCase();
- const wsMatch = (t: GlobalTemplate): boolean =>
- t.name.toLowerCase().includes(sq) || (t.children?.some(wsMatch) ?? false);
- if (sq && !globalWorksheets.some(wsMatch)) return (
- <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
- <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
- <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
- <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
- </div>
- );
- return globalWorksheets.map(t => renderGlobalTemplate(t, 0, toggleGlobalWorksheet));
+ {activeTab === "firm"
+ ? <FirmTemplatesTree type="worksheets" search={searchQuery} dark={hasDarkSecondary} />
+ : (() => {
+  const sq = searchQuery.trim().toLowerCase();
+  const wsMatch = (t: GlobalTemplate): boolean =>
+   t.name.toLowerCase().includes(sq) || (t.children?.some(wsMatch) ?? false);
+  if (sq && !globalWorksheets.some(wsMatch)) return (
+   <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
+    <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
+    <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
+    <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+   </div>
+  );
+  return globalWorksheets.map(t => renderGlobalTemplate(t, 0, toggleGlobalWorksheet));
  })()}
  </div>
  </>
@@ -4255,14 +4117,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </button>
  </div>
  <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm" ? (
- <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
- <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No reports yet</p>
- <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
- </div>
- ) : (
- globalReports.map(t => renderGlobalTemplate(t, 0, toggleGlobalReport))
- )}
+ {activeTab === "firm"
+ ? <FirmTemplatesTree type="reports" search={searchQuery} dark={hasDarkSecondary} />
+ : globalReports.map(t => renderGlobalTemplate(t, 0, toggleGlobalReport))}
  </div>
  </>
  ) : selectedDropdown === "letters" ? (
@@ -4279,14 +4136,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </button>
  </div>
  <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm" ? (
- <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
- <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white/70" : "text-muted-foreground")}>No letters yet</p>
- <p className={cn("text-xs", hasDarkSecondary ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
- </div>
- ) : (
- globalLetters.map(t => renderGlobalTemplate(t, 0, toggleGlobalLetter))
- )}
+ {activeTab === "firm"
+ ? <FirmTemplatesTree type="letters" search={searchQuery} dark={hasDarkSecondary} />
+ : globalLetters.map(t => renderGlobalTemplate(t, 0, toggleGlobalLetter))}
  </div>
  </>
  ) : selectedDropdown === "financial-statements" ? (
@@ -4294,34 +4146,17 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  <FinancialStatementsPanelContent hasDarkSecondary={hasDarkSecondary} />
  </div>
  ) : (
- /* Empty state for Notes */
- <div className={`flex-1 flex flex-col items-center justify-center gap-3 px-4 py-8 text-center ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {(() => {
- const item = dropdownItems.find(i => i.id === selectedDropdown);
- if (!item) return null;
- const Icon = item.icon;
- return <>
- <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", hasDarkSecondary ? "bg-white/10" : "bg-muted")}>
- <Icon className={`h-6 w-6 ${item.color}`} />
+ /* Notes */
+ <div className={`flex-1 flex flex-col overflow-hidden ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+ <div className={`p-3 pt-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  <div className="relative">
+   <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+   <Input placeholder="Search notes..." className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+  </div>
  </div>
- <div>
- <p className={cn("text-sm font-medium", hasDarkSecondary ? "text-white" : "text-foreground")}>
- No {item.label} yet
- </p>
- <p className={cn("text-xs mt-1", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>
- Templates you create will appear here
- </p>
+ <div className="flex-1 overflow-y-auto p-2 pt-0">
+  <FirmTemplatesTree type="notes" search={searchQuery} dark={hasDarkSecondary} />
  </div>
- <Button
- size="sm"
- className="mt-1 h-8 px-3 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
- onClick={() => navigate("/create", { state: { contentType: selectedDropdown } })}
- >
- <Plus className="h-3.5 w-3.5 mr-1" />
- Create {item.label.replace("Notes to Financial Statements", "Notes")}
- </Button>
- </>;
- })()}
  </div>
  )}
 

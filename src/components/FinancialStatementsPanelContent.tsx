@@ -13,6 +13,7 @@ import {
  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
+import { FirmTemplatesTree } from "@/components/templates/FirmTemplatesTree";
 import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
 import {
  myTemplatesByEntity,
@@ -575,7 +576,9 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
 
  {/* Template tree */}
  <div className="flex-1 overflow-y-auto px-2 pb-2">
- {activeData.length === 0 ? (
+ {activeTab === "my" ? (
+ <FirmTemplatesTree type="financial-statements" search={searchQuery} dark={hasDarkSecondary} />
+ ) : activeData.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-24 gap-2 text-center px-4">
  <p className={cn("text-sm", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>
  No templates for this selection
