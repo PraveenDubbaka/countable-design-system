@@ -1156,3 +1156,7 @@ export function addFromGlobal(
   writeLibrary(lib);
   return { ok: true, added: items.length };
 }
+
+export function isInFirmLibrary(lib: Library, globalId: string): boolean {
+  return lib.templates.some(t => t.globalId === globalId);
+}

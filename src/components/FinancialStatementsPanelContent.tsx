@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { Search, Plus, Trash2, Files, ChevronDown, MoreVertical, Copy, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { FirmTemplatesTree } from "@/components/templates/FirmTemplatesTree";
+import { GlobalFoldersNav } from "@/components/templates/GlobalFoldersNav";
 import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
 import {
  myTemplatesByEntity,
@@ -61,7 +62,16 @@ function collectAllLeafLabels(items: MenuItem[]): string[] {
 
 export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary }: Props) {
  const navigate = useNavigate();
+ const [searchParams, setSearchParams] = useSearchParams();
+ const location = useLocation();
+ const isGlobalWorkspace = location.pathname === "/templates" && searchParams.get("library") === "global";
  const [activeTab, setActiveTab] = useState<"my" | "global">("my");
+
+ useEffect(() => {
+  if (location.pathname !== "/templates") return;
+  const lib = searchParams.get("library");
+  setActiveTab(lib === "global" ? "global" : "my");
+ }, [searchParams, location.pathname]);
  const [selectedCountry, setSelectedCountry] = useState("US");
  const [selectedEntityType, setSelectedEntityType] = useState("C-Corp");
  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(["COMP", "GCOMP"]));
@@ -497,10 +507,16 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  : "1px solid hsl(var(--border))",
  }}
  >
- <button onClick={() => setActiveTab("my")} className={tabClass("my")}>
+ <button onClick={() => {
+  setActiveTab("my");
+  if (location.pathname === "/templates") setSearchParams(p => { p.delete("library"); return p; });
+ }} className={tabClass("my")}>
  My Templates
  </button>
- <button onClick={() => setActiveTab("global")} className={tabClass("global")}>
+ <button onClick={() => {
+  setActiveTab("global");
+  if (location.pathname === "/templates") setSearchParams(p => { p.set("library", "global"); return p; });
+ }} className={tabClass("global")}>
  Global Templates
  </button>
  </div>
@@ -578,6 +594,8 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  <div className="flex-1 overflow-y-auto px-2 pb-2">
  {activeTab === "my" ? (
  <FirmTemplatesTree type="financial-statements" search={searchQuery} dark={hasDarkSecondary} />
+ ) : isGlobalWorkspace ? (
+ <GlobalFoldersNav type="financial-statements" dark={hasDarkSecondary} />
  ) : activeData.length === 0 ? (
  <div className="flex flex-col items-center justify-center h-24 gap-2 text-center px-4">
  <p className={cn("text-sm", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>
