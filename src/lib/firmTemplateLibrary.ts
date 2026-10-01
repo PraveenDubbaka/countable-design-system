@@ -1,5 +1,7 @@
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { getEngagementMeta } from "@/store/engagementsStore";
+import { engPickerTreeUS } from "@/lib/globalTemplateTrees";
+import type { TreeItem } from "@/lib/engagementTemplatesData";
 
 export type TemplateTypeId =
   | "engagements"
@@ -73,8 +75,9 @@ export interface FirmTemplate {
   availableOfficeIds: string[];
   linkedSeed: number;
   updatedAt: string;
-  source: { kind: "seed" | "engagement" | "checklist"; refId: string };
+  source: { kind: "seed" | "engagement" | "checklist" | "global"; refId: string };
   nav: NavTarget;
+  globalId?: string;
 }
 
 export interface Library {
@@ -98,13 +101,18 @@ function writeLibrary(lib: Library) {
   dispatch();
 }
 
-// US engPickerTree leaf IDs (inlined to avoid circular dep with Sidebar.tsx)
-const US_ENG_LEAF_IDS = new Set([
-  "comp-us-ssars21", "comp-us-arc80",
-  "rev-us-ssars21", "rev-us-arc90",
-  "audit6100", "audit6200",
-  "tax-us-1120", "tax-us-1120s", "tax-us-1065",
-]);
+function buildUSLeafIds(items: TreeItem[]): Set<string> {
+  const out = new Set<string>();
+  const walk = (nodes: TreeItem[]) => {
+    for (const n of nodes) {
+      if (n.type === "folder") walk(n.children ?? []);
+      else out.add(n.id);
+    }
+  };
+  walk(items);
+  return out;
+}
+const US_ENG_LEAF_IDS = buildUSLeafIds(engPickerTreeUS);
 
 function thirteenDaysAgo(): string {
   return new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString();
@@ -1039,4 +1047,112 @@ export function clearDefault(id: string): Library {
 
 export function getDescendantTemplateCount(lib: Library, folderId: string): number {
   return descendantTemplateCount(lib, folderId);
+}
+
+const TYPE_LABEL: Partial<Record<TemplateTypeId, string>> = {
+  engagements: "Engagement",
+  "financial-statements": "Financial statements",
+  letters: "Letter",
+  checklists: "Checklist",
+  reports: "Report",
+  worksheets: "Worksheet",
+  notes: "Note",
+};
+
+function globalEngTypeToEngagementType(et: string): EngagementType {
+  if (et === "Audit" || et === "Review" || et === "Compilation" || et === "Tax") return et;
+  return "Any";
+}
+
+export function addFromGlobal(
+  items: import("@/lib/globalTemplateCatalog").GlobalItem[],
+  folderId: string | null,
+  officeIds: string[]
+): { ok: true; added: number } | { ok: false; duplicates: string[] } {
+  if (items.length === 0) return { ok: true, added: 0 };
+  const lib = load();
+  const type = items[0].type;
+  const folderName = folderId ? (lib.folders.find(f => f.id === folderId)?.name ?? "Templates") : "Templates";
+
+  // Duplicate check (case-insensitive) within the target folder
+  const existingNames = new Set(
+    lib.templates
+      .filter(t => t.type === type && t.folderId === folderId)
+      .map(t => t.name.toLowerCase())
+  );
+  const duplicates = items
+    .filter(item => existingNames.has(item.name.toLowerCase()))
+    .map(item => item.name);
+  if (duplicates.length > 0) return { ok: false, duplicates };
+
+  const now = new Date().toISOString();
+  const activeOffice = getActiveOfficeId();
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const jurisdiction: "CA" | "US" = item.region === "US" ? "US" : "CA";
+    const cornerTag = item.region === "CA" ? "CA" : item.region === "US" ? "US" : "CA & US";
+    const typeLabel = TYPE_LABEL[item.type] ?? item.type;
+    const newId = `global-${Date.now()}-${i}-${Math.random().toString(36).slice(2)}`;
+
+    let source: FirmTemplate["source"];
+    let nav: NavTarget;
+
+    if (item.type === "engagements") {
+      const refId = `my-eng-${Date.now()}-${i}`;
+      const engRecord: EngSource = {
+        id: refId,
+        name: item.name,
+        folderId: folderId ?? "root",
+        folderName,
+        sourceTemplateId: item.id,
+      };
+      const existing = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
+      writeJsonToLocalStorage("myEngagementTemplates", [...existing, engRecord]);
+      window.dispatchEvent(new CustomEvent("engagementTemplateSaved", { detail: engRecord }));
+      source = { kind: "engagement", refId };
+      nav = { to: "/engagement-templates", state: { myTemplate: refId } };
+    } else if (item.type === "checklists") {
+      const refId = `checklist-${Date.now()}-${i}`;
+      const clRecord: ChecklistSource = {
+        id: refId,
+        name: item.name,
+        folderId: folderId ?? "root",
+        folderName,
+      };
+      const existing = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
+      writeJsonToLocalStorage("savedChecklists", [...existing, clRecord]);
+      window.dispatchEvent(new CustomEvent("checklistSaved", { detail: clRecord }));
+      source = { kind: "checklist", refId };
+      nav = { to: "/builder", state: { checklistId: refId } };
+    } else {
+      source = { kind: "global", refId: item.id };
+      nav = item.nav;
+    }
+
+    lib.templates.push({
+      id: newId,
+      name: item.name,
+      subtitle: item.subtitle,
+      type: item.type,
+      folderId,
+      engagementType: globalEngTypeToEngagementType(item.engagementType),
+      framework: item.framework,
+      standards: undefined,
+      cornerTag,
+      tags: [typeLabel],
+      status: "draft",
+      jurisdiction,
+      ownerOfficeId: activeOffice,
+      availableOfficeIds: officeIds,
+      linkedSeed: 0,
+      updatedAt: now,
+      source,
+      nav,
+      globalId: item.id,
+    });
+  }
+
+  writeLibrary(lib);
+  return { ok: true, added: items.length };
 }
