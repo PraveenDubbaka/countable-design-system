@@ -1,7 +1,7 @@
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { getEngagementMeta } from "@/store/engagementsStore";
 import { engPickerTreeUS, getEngPickerTemplateView } from "@/lib/globalTemplateTrees";
-import { templateViewToMyTemplate, type MyEngagementTemplate, type TreeItem } from "@/lib/engagementTemplatesData";
+import { TEMPLATE_CONFIG, templateViewToMyTemplate, type MyEngagementTemplate, type TreeItem } from "@/lib/engagementTemplatesData";
 import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
 
 export type TemplateTypeId =
@@ -813,10 +813,112 @@ export function linkedCount(
   return (
     t.linkedSeed +
     engagements.filter(e => {
-      const tid = getEngagementMeta(e.id).templateId;
-      return tid === t.id || tid === t.source.refId;
+      const meta = getEngagementMeta(e.id);
+      const tid = meta.templateId;
+      return tid === t.id || tid === t.source.refId || meta.firmTemplateId === t.id;
     }).length
   );
+}
+
+export function toEngagementType(label: string): EngagementType {
+  const l = label.toLowerCase();
+  if (l.startsWith("audit")) return "Audit";
+  if (l.startsWith("review")) return "Review";
+  if (l.startsWith("compilation")) return "Compilation";
+  if (l.startsWith("t2") || l.includes("1120") || l.startsWith("tax")) return "Tax";
+  return "Any";
+}
+
+export function toFramework(standards: string): Framework {
+  const s = standards.toLowerCase();
+  if (s.includes("income tax basis") || s.includes("tax basis")) return "Tax basis";
+  if (s.includes("asnpo")) return "ASNPO";
+  if (s.includes("aspe")) return "ASPE";
+  if (s.includes("ifrs")) return "IFRS";
+  if (s.includes("us gaap")) return "US GAAP";
+  return "Any";
+}
+
+const ENG_PICKER_FALLBACK: Record<string, string> = {
+  "comp-us-ssars21": "comp4200",
+  "comp-us-arc80": "comp4200",
+  "rev-us-ssars21": "rev2400",
+  "rev-us-arc90": "rev2400",
+  "tax-us-1120": "tax-t2",
+  "tax-us-1120s": "tax-t2",
+  "tax-us-1065": "tax-t2",
+};
+
+export function resolveBaseTemplateId(t: FirmTemplate): string | undefined {
+  if (t.source.kind === "seed") {
+    const nav = t.nav;
+    if (!nav) return undefined;
+    // Seeds store template id in nav.state.template
+    const stateTemplate = typeof (nav.state as Record<string, unknown> | undefined)?.template === "string"
+      ? (nav.state as Record<string, unknown>).template as string
+      : undefined;
+    if (stateTemplate && TEMPLATE_CONFIG[stateTemplate]) return stateTemplate;
+    // Fallback: check query param in nav.to
+    const match = nav.to.match(/[?&]template=([^&]+)/);
+    if (match) {
+      const id = decodeURIComponent(match[1]);
+      if (TEMPLATE_CONFIG[id]) return id;
+    }
+    return undefined;
+  }
+  if (t.source.kind === "engagement") {
+    const engs = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
+    const eng = engs.find(e => e.id === t.source.refId);
+    if (!eng) return undefined;
+    const sid = eng.sourceTemplateId ?? "";
+    if (TEMPLATE_CONFIG[sid]) return sid;
+    const fallback = ENG_PICKER_FALLBACK[sid];
+    if (fallback && TEMPLATE_CONFIG[fallback]) return fallback;
+    return undefined;
+  }
+  return undefined;
+}
+
+export function getPickableEngagementTemplates(officeId: string): FirmTemplate[] {
+  const lib = load();
+  return lib.templates
+    .filter(t =>
+      t.type === "engagements" &&
+      t.status === "published" &&
+      t.availableOfficeIds.includes(officeId)
+    )
+    .sort((a, b) => {
+      const pathA = folderPath(lib, a.folderId).map(f => f.name).join(" / ") || "Root";
+      const pathB = folderPath(lib, b.folderId).map(f => f.name).join(" / ") || "Root";
+      if (pathA !== pathB) return pathA.localeCompare(pathB);
+      return a.name.localeCompare(b.name);
+    });
+}
+
+export function getEngagementDefault(
+  engagementTypeLabel: string,
+  standards: string,
+  officeId: string
+): FirmTemplate | null {
+  const lib = load();
+  const et = toEngagementType(engagementTypeLabel);
+  const fw = toFramework(standards);
+  const exactId = lib.defaults[`engagements|${et}|${fw}`];
+  const fallbackId = lib.defaults[`engagements|${et}|Any`];
+  const pickable = lib.templates.filter(t =>
+    t.type === "engagements" &&
+    t.status === "published" &&
+    t.availableOfficeIds.includes(officeId)
+  );
+  if (exactId) {
+    const found = pickable.find(t => t.id === exactId);
+    if (found) return found;
+  }
+  if (fallbackId) {
+    const found = pickable.find(t => t.id === fallbackId);
+    if (found) return found;
+  }
+  return null;
 }
 
 // ── ACTIONS ───────────────────────────────────────────────────────────────────

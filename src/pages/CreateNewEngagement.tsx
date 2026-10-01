@@ -15,6 +15,12 @@ import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import {
+  getEngagementDefault,
+  resolveBaseTemplateId,
+  getActiveOfficeId,
+  type FirmTemplate,
+} from "@/lib/firmTemplateLibrary";
 
 // Mirror of CLIENT_DATA in CreateEngagement.tsx — keep in sync if client data changes
 const CLIENT_DATA: Record<string, {
@@ -368,6 +374,9 @@ export default function CreateNewEngagement() {
   const [engagementId, setEngagementId] = useState("");
   const [engagementTemplate, setEngagementTemplate] = useState("");
   const [templateId, setTemplateId] = useState("");
+  const [firmTemplateId, setFirmTemplateId] = useState("");
+  const [userPickedTemplate, setUserPickedTemplate] = useState(false);
+  const [isFirmDefault, setIsFirmDefault] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [budget, setBudget] = useState("10000.00");
   const [accountingStandards, setAccountingStandards] = useState("");
@@ -408,23 +417,39 @@ export default function CreateNewEngagement() {
     ...Object.keys(CLIENT_DATA),
   ])).sort();
 
+  function applyDefault(typeLabel: string, standards: string) {
+    const t = getEngagementDefault(typeLabel, standards, getActiveOfficeId());
+    if (t) {
+      setTemplateId(resolveBaseTemplateId(t) ?? "");
+      setFirmTemplateId(t.id);
+      setEngagementTemplate(t.name);
+      setIsFirmDefault(true);
+    } else {
+      setTemplateId("");
+      setFirmTemplateId("");
+      setEngagementTemplate("");
+      setIsFirmDefault(false);
+    }
+  }
+
   const handleEngagementTypeChange = (newType: string) => {
     setEngagementType(newType);
     setEngagementId(deriveEngagementId(newType, clientName, currentYearEnd));
     const audit = newType === "Audit (AUD)";
+    let newStandards: string;
     if (audit) {
-      setEngagementTemplate("CAS Audit");
-      setTemplateId("");
-      setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
+      newStandards = "ASPE — Canadian Accounting Standards for Private Enterprises";
+      setAccountingStandards(newStandards);
       setPeriodType("Full Year");
       setAdditionalDisclosures("Full financial statements");
     } else {
-      setEngagementTemplate("Review Section 2400");
-      setTemplateId("");
-      setAccountingStandards("Section 2400 Review standards");
+      newStandards = "Section 2400 Review standards";
+      setAccountingStandards(newStandards);
       setPeriodType("Full year");
       setAdditionalDisclosures("Statement of cash flows");
     }
+    setUserPickedTemplate(false);
+    applyDefault(newType, newStandards);
   };
 
   const isFullYear = periodType === "Full Year";
@@ -574,6 +599,7 @@ export default function CreateNewEngagement() {
     setEngagementMeta(engagementId, {
       firstYearAudit,
       templateId: templateId || undefined,
+      firmTemplateId: firmTemplateId || undefined,
       accountingFramework: isAudit ? accountingStandards : undefined,
       accountingStandards,
       budget,
@@ -666,18 +692,28 @@ export default function CreateNewEngagement() {
                       </div>
                     </InlineRow>
                     <InlineRow label="Template" required>
-                      <div className="relative">
-                        <input type="text" value={engagementTemplate} onChange={e => setEngagementTemplate(e.target.value)} className={ic + " pr-10"} />
-                        <button type="button" onClick={() => setShowTemplatePicker(true)} className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded hover:text-primary">
-                          <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                        </button>
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1 min-w-0">
+                          <input type="text" readOnly value={engagementTemplate} onClick={() => setShowTemplatePicker(true)} className={ic + " pr-10 cursor-pointer"} />
+                          <button type="button" onClick={() => setShowTemplatePicker(true)} className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded hover:text-primary">
+                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                          </button>
+                        </div>
+                        {isFirmDefault && (
+                          <span className="shrink-0 text-[10px] font-medium text-muted-foreground border border-border rounded px-1.5 py-0.5 whitespace-nowrap">
+                            Firm default
+                          </span>
+                        )}
                       </div>
                     </InlineRow>
                     <InlineRow label="Budget ($)" required>
                       <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
                     </InlineRow>
                     <InlineRow label="Accounting Framework" required>
-                      <Select value={accountingStandards} onValueChange={setAccountingStandards}>
+                      <Select value={accountingStandards} onValueChange={v => {
+                        setAccountingStandards(v);
+                        if (!userPickedTemplate) applyDefault(engagementType, v);
+                      }}>
                         <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
                         <SelectContent>
                           {accountingStandardsOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
@@ -941,21 +977,26 @@ export default function CreateNewEngagement() {
           <TemplatePickerPanel
             open={showTemplatePicker}
             onClose={() => setShowTemplatePicker(false)}
-            suggestedTemplateId={
-              isAudit && accountingStandards.includes("ASNPO") ? "audit5101" :
-              isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :
-              isAudit ? "audit5100" :
-              engagementType.includes("Compilation") ? "comp4200" :
-              engagementType.includes("Review") ? "rev2400" :
-              undefined
-            }
-            onSelect={(id, name) => {
-              setTemplateId(id);
+            suggestedFirmTemplateId={getEngagementDefault(engagementType, accountingStandards, getActiveOfficeId())?.id}
+            onSelect={(baseId, name, t: FirmTemplate) => {
+              setTemplateId(baseId);
+              setFirmTemplateId(t.id);
               setEngagementTemplate(name);
-              if (id && TEMPLATE_CONFIG[id]) {
-                const cfg = TEMPLATE_CONFIG[id];
+              setUserPickedTemplate(true);
+              const suggestedId = getEngagementDefault(engagementType, accountingStandards, getActiveOfficeId())?.id;
+              setIsFirmDefault(t.id === suggestedId);
+              if (baseId && TEMPLATE_CONFIG[baseId]) {
+                const cfg = TEMPLATE_CONFIG[baseId];
                 setEngagementType(cfg.engagementTypeLabel);
-                setAccountingStandards(cfg.defaultFramework);
+                const frameworkToken =
+                  t.framework === "Tax basis" ? "Tax" :
+                  t.framework !== "Any" ? t.framework : null;
+                if (frameworkToken) {
+                  const match = accountingStandardsOptions.find(o => o.label.includes(frameworkToken));
+                  setAccountingStandards(match ? match.value : cfg.defaultFramework);
+                } else {
+                  setAccountingStandards(cfg.defaultFramework);
+                }
               }
             }}
           />
