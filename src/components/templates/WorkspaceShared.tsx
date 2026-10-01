@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Star, Link, Link2Off, MoreVertical, Eye, Copy, Pencil, FolderInput, Building2, BookOpen, Trash2, CheckCircle2 } from "lucide-react";
+import { Star, Link, Link2Off, MoreVertical, Eye, Copy, Pencil, FolderInput, Building2, BookOpen, Trash2, CheckCircle2, FileText, Table, NotebookPen } from "lucide-react";
+import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
+import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
+import { ReportIcon } from "@/components/icons/ReportIcon";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -35,8 +38,13 @@ import {
   isDefault as calcIsDefault,
   folderPath,
 } from "@/lib/firmTemplateLibrary";
-import { dropdownItems } from "@/components/Sidebar";
 import { useState } from "react";
+
+const EngagementDropdownIcon = ({ className }: { className?: string }) => (
+  <svg className={className} width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.08317 8.00016H4.90148C5.47248 8.00016 5.99448 8.32277 6.24984 8.8335C6.5052 9.34422 7.02719 9.66683 7.5982 9.66683H12.4015C12.9725 9.66683 13.4945 9.34422 13.7498 8.8335C14.0052 8.32277 14.5272 8.00016 15.0982 8.00016H17.9165M7.47197 1.3335H12.5277C13.4251 1.3335 13.8738 1.3335 14.2699 1.47013C14.6202 1.59096 14.9393 1.78816 15.204 2.04745C15.5034 2.34066 15.7041 2.742 16.1054 3.54464L17.9109 7.15558C18.0684 7.47057 18.1471 7.62806 18.2027 7.79312C18.252 7.9397 18.2876 8.09055 18.309 8.24372C18.3332 8.41618 18.3332 8.59227 18.3332 8.94443V10.6668C18.3332 12.067 18.3332 12.767 18.0607 13.3018C17.821 13.7722 17.4386 14.1547 16.9681 14.3943C16.4334 14.6668 15.7333 14.6668 14.3332 14.6668H5.6665C4.26637 14.6668 3.56631 14.6668 3.03153 14.3943C2.56112 14.1547 2.17867 13.7722 1.93899 13.3018C1.6665 12.767 1.6665 12.067 1.6665 10.6668V8.94443C1.6665 8.59227 1.6665 8.41618 1.69065 8.24372C1.71209 8.09055 1.7477 7.9397 1.79702 7.79312C1.85255 7.62806 1.9313 7.47057 2.0888 7.15558L3.89426 3.54464C4.29559 2.74199 4.49626 2.34066 4.79562 2.04745C5.06036 1.78816 5.37943 1.59096 5.72974 1.47013C6.12588 1.3335 6.57458 1.3335 7.47197 1.3335Z" stroke="#5599D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
 // ── TYPE_META ─────────────────────────────────────────────────────────────────
 
@@ -48,44 +56,44 @@ export const TYPE_META: Record<TemplateTypeId, {
 }> = {
   engagements: {
     label: "Engagements",
-    icon: dropdownItems[0].icon,
-    color: dropdownItems[0].color,
+    icon: EngagementDropdownIcon,
+    color: "text-blue-500",
     accent: "#1C63A6",
   },
   "financial-statements": {
     label: "Financial Statements",
-    icon: dropdownItems[1].icon,
-    color: dropdownItems[1].color,
+    icon: FinancialStatementsIcon,
+    color: "text-emerald-500",
     accent: "#10b981",
   },
   letters: {
     label: "Letters",
-    icon: dropdownItems[2].icon,
-    color: dropdownItems[2].color,
+    icon: FileText,
+    color: "text-purple-500",
     accent: "#a855f7",
   },
   checklists: {
     label: "Checklists",
-    icon: dropdownItems[3].icon,
-    color: dropdownItems[3].color,
+    icon: ChecklistIcon,
+    color: "text-orange-500",
     accent: "#f97316",
   },
   reports: {
     label: "Reports",
-    icon: dropdownItems[4].icon,
-    color: dropdownItems[4].color,
+    icon: ReportIcon,
+    color: "text-[#be185d]",
     accent: "#be185d",
   },
   notes: {
     label: "Notes to Financial Statements",
-    icon: dropdownItems[5].icon,
-    color: dropdownItems[5].color,
+    icon: NotebookPen,
+    color: "text-yellow-500",
     accent: "#eab308",
   },
   worksheets: {
     label: "Worksheets",
-    icon: dropdownItems[6].icon,
-    color: dropdownItems[6].color,
+    icon: Table,
+    color: "text-blue-400",
     accent: "#60a5fa",
   },
 };
