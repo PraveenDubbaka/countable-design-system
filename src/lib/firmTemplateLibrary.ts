@@ -1,7 +1,8 @@
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { getEngagementMeta } from "@/store/engagementsStore";
-import { engPickerTreeUS } from "@/lib/globalTemplateTrees";
-import type { TreeItem } from "@/lib/engagementTemplatesData";
+import { engPickerTreeUS, getEngPickerTemplateView } from "@/lib/globalTemplateTrees";
+import { templateViewToMyTemplate, type MyEngagementTemplate, type TreeItem } from "@/lib/engagementTemplatesData";
+import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
 
 export type TemplateTypeId =
   | "engagements"
@@ -621,7 +622,7 @@ interface ChecklistSource {
   name: string;
   folderId: string;
   folderName: string;
-  data?: { country?: string };
+  data?: any;
 }
 
 function engTypeFromId(sid: string): EngagementType {
@@ -658,6 +659,33 @@ export function load(): Library {
   if (!hasSeedFolders) {
     lib.folders = [...seedFolders(), ...lib.folders];
     lib.templates = [...seedTemplates(), ...lib.templates];
+  }
+
+  // Repair myEngagementTemplates: rebuild records without a sections array
+  {
+    const rawEngs = readJsonFromLocalStorage<Array<Record<string, unknown>>>("myEngagementTemplates", []);
+    if (rawEngs.some(e => !Array.isArray(e.sections))) {
+      const repairedEngs = rawEngs.map(e => {
+        if (Array.isArray(e.sections)) return e;
+        const sid = String(e.sourceTemplateId ?? "");
+        const view = getEngPickerTemplateView(sid);
+        const ts = new Date().toISOString();
+        const rebuilt: MyEngagementTemplate = view
+          ? templateViewToMyTemplate(view, String(e.folderId ?? "root"), String(e.folderName ?? ""), String(e.id ?? `my-eng-${Date.now()}`))
+          : { id: String(e.id ?? `my-eng-${Date.now()}`), name: String(e.name ?? ""), folderId: String(e.folderId ?? "root"), folderName: String(e.folderName ?? ""), sections: [], sourceTemplateId: sid, createdAt: String(e.createdAt ?? ts), updatedAt: String(e.updatedAt ?? ts) };
+        rebuilt.name = String(e.name ?? "");
+        rebuilt.sourceTemplateId = sid;
+        return rebuilt;
+      });
+      writeJsonToLocalStorage("myEngagementTemplates", repairedEngs);
+    }
+  }
+
+  // Repair stale nav on library engagement templates (state → query param)
+  for (const t of lib.templates) {
+    if (t.source.kind === "engagement" && t.nav && t.nav.to === "/engagement-templates" && !t.nav.to.includes("?")) {
+      t.nav = { to: `/engagement-templates?myTemplate=${t.source.refId}` };
+    }
   }
 
   // Sync engagement templates
@@ -1100,25 +1128,27 @@ export function addFromGlobal(
 
     if (item.type === "engagements") {
       const refId = `my-eng-${Date.now()}-${i}`;
-      const engRecord: EngSource = {
-        id: refId,
-        name: item.name,
-        folderId: folderId ?? "root",
-        folderName,
-        sourceTemplateId: item.id,
-      };
-      const existing = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
+      const view = getEngPickerTemplateView(item.id);
+      const engRecord: MyEngagementTemplate = view
+        ? templateViewToMyTemplate(view, folderId ?? "root", folderName, refId)
+        : { id: refId, name: item.name, folderId: folderId ?? "root", folderName, sections: [],
+            sourceTemplateId: item.id, createdAt: now, updatedAt: now };
+      engRecord.name = item.name;
+      engRecord.sourceTemplateId = item.id;
+      const existing = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
       writeJsonToLocalStorage("myEngagementTemplates", [...existing, engRecord]);
       window.dispatchEvent(new CustomEvent("engagementTemplateSaved", { detail: engRecord }));
       source = { kind: "engagement", refId };
-      nav = { to: "/engagement-templates", state: { myTemplate: refId } };
+      nav = { to: `/engagement-templates?myTemplate=${refId}` };
     } else if (item.type === "checklists") {
       const refId = `checklist-${Date.now()}-${i}`;
+      const checklistData = getGlobalTemplateChecklist(item.id);
       const clRecord: ChecklistSource = {
         id: refId,
         name: item.name,
         folderId: folderId ?? "root",
         folderName,
+        data: checklistData ? { ...checklistData, id: refId, title: item.name, createdAt: new Date(), updatedAt: new Date() } : undefined,
       };
       const existing = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
       writeJsonToLocalStorage("savedChecklists", [...existing, clRecord]);

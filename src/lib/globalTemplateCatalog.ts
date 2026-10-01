@@ -59,13 +59,28 @@ function getRegion(id: string, name: string, ancestorNames: string[]): "CA" | "U
 
 function getFramework(name: string, isFS = false): Framework {
   const n = name.toLowerCase();
+  if (n.includes("income tax basis") || n.includes("tax basis")) return "Tax basis";
   if (n.includes("asnpo")) return "ASNPO";
   if (n.includes("aspe")) return "ASPE";
   if (n.includes("ifrs")) return "IFRS";
   if (n.includes("us gaap")) return "US GAAP";
   if (isFS && n.includes("gaap")) return "US GAAP";
-  if (n.includes("income tax basis") || n.includes("tax basis")) return "Tax basis";
   return "Any";
+}
+
+function refineRegion(
+  region: "CA" | "US" | "Both",
+  framework: Framework,
+  name: string,
+  ancestorNames: string[]
+): "CA" | "US" | "Both" {
+  if (region !== "Both") return region;
+  if (framework === "ASPE" || framework === "ASNPO") return "CA";
+  if (framework === "US GAAP") return "US";
+  const all = [name, ...ancestorNames].join(" ");
+  if (/CSRS|CSRE|CAS |CPA Canada/i.test(all)) return "CA";
+  if (/SSARS|AR-C|AU-C|AICPA|PCAOB/i.test(all)) return "US";
+  return "Both";
 }
 
 function getEntityType(name: string): EntityType {
@@ -154,7 +169,9 @@ function walkGlobalTree(
       walkGlobalTree(item.children ?? [], type, [...ancestorNames, item.name], engType, out);
     } else {
       const engType = ancestorEngType ?? "Other";
-      const region = getRegion(item.id, item.name, ancestorNames);
+      const rawRegion = getRegion(item.id, item.name, ancestorNames);
+      const framework = getFramework(item.name);
+      const region = refineRegion(rawRegion, framework, item.name, ancestorNames);
       const regLabel = regionLabel(region);
       out.push({
         id: item.id,
@@ -162,7 +179,7 @@ function walkGlobalTree(
         subtitle: `${engType} · ${regLabel}`,
         type,
         engagementType: engType,
-        framework: getFramework(item.name),
+        framework,
         region,
         entityType: getEntityType(item.name),
         suggested: item.suggested ?? false,
