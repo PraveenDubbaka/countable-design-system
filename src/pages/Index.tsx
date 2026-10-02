@@ -493,6 +493,18 @@ export default function Index() {
  const found = Array.isArray(savedChecklists)
  ? savedChecklists.find((c: any) => c?.id === checklistId)
  : null;
+ if (found) {
+ if (found.contentType === "letters" || found.contentType === "reports") {
+ setIsReportTemplate(true);
+ setIsWorksheetTemplate(false);
+ } else if (found.contentType === "worksheets") {
+ setIsWorksheetTemplate(true);
+ setIsReportTemplate(false);
+ } else {
+ setIsReportTemplate(false);
+ setIsWorksheetTemplate(false);
+ }
+ }
  if (found?.data) {
  setChecklist(found.data);
  setIsSavedTemplate(true); // Mark as saved template for preview mode

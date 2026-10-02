@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, X, CheckSquare, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ import {
   TypeSelect,
   ViewToggle,
   Pagination,
+  goTo,
   type ViewMode,
   type PageSize,
 } from "./WorkspaceShared";
@@ -108,12 +110,14 @@ function GlobalItemCard({
   onToggle,
   inFirm,
   onAdd,
+  onPreview,
 }: {
   item: GlobalItem;
   selected: boolean;
   onToggle: () => void;
   inFirm: boolean;
   onAdd: () => void;
+  onPreview: () => void;
 }) {
   const meta = TYPE_META[item.type];
   const Icon = meta.icon;
@@ -146,6 +150,9 @@ function GlobalItemCard({
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 pt-1 border-t border-border">
+        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={onPreview}>
+          Preview
+        </Button>
         <Button
           size="sm"
           variant="outline"
@@ -166,12 +173,14 @@ function GlobalItemRow({
   onToggle,
   inFirm,
   onAdd,
+  onPreview,
 }: {
   item: GlobalItem;
   selected: boolean;
   onToggle: () => void;
   inFirm: boolean;
   onAdd: () => void;
+  onPreview: () => void;
 }) {
   const meta = TYPE_META[item.type];
   const Icon = meta.icon;
@@ -194,6 +203,9 @@ function GlobalItemRow({
         {inFirm && <InFirmChip />}
         {item.framework !== "Any" && <Chip label={item.framework} />}
       </div>
+      <Button size="sm" variant="outline" className="h-7 text-xs flex-shrink-0" onClick={onPreview}>
+        Preview
+      </Button>
       <Button
         size="sm"
         variant="outline"
@@ -208,6 +220,7 @@ function GlobalItemRow({
 }
 
 export function GlobalLibraryWorkspace({ type, gfolder, onTypeChange, onBackToFirm }: Props) {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [region, setRegion] = useState<"CA" | "US" | "all">(() => defaultRegion());
   const [framework, setFramework] = useState<Framework | "all">("all");
@@ -391,6 +404,7 @@ export function GlobalLibraryWorkspace({ type, gfolder, onTypeChange, onBackToFi
                 onToggle={() => toggleItem(item.id)}
                 inFirm={isInFirmLibrary(lib, item.id)}
                 onAdd={() => openAddDialog([item])}
+                onPreview={() => goTo(navigate, item.nav, { gt: item.id, type: item.type })}
               />
             ))}
           </div>
@@ -404,6 +418,7 @@ export function GlobalLibraryWorkspace({ type, gfolder, onTypeChange, onBackToFi
                 onToggle={() => toggleItem(item.id)}
                 inFirm={isInFirmLibrary(lib, item.id)}
                 onAdd={() => openAddDialog([item])}
+                onPreview={() => goTo(navigate, item.nav, { gt: item.id, type: item.type })}
               />
             ))}
           </div>

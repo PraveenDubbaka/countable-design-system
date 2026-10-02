@@ -200,6 +200,7 @@ export default function CreationDashboard() {
  folderName: folder?.name || 'Uncategorized',
  source: 'template',
  templateName: selectedTemplate,
+ contentType: contentType ?? "checklists",
  createdAt: new Date().toISOString(),
  data: null
  };
@@ -250,6 +251,7 @@ export default function CreationDashboard() {
  folderName: folder?.name || 'Uncategorized',
  source: 'file',
  fileName: uploadedFile?.name,
+ contentType: contentType ?? "checklists",
  createdAt: new Date().toISOString(),
  data: null
  };

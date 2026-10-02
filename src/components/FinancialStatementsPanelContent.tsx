@@ -416,124 +416,10 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
 
  return (
  <>
- {/* Country + entity compact pickers — sits directly below the Financial Statements dropdown */}
- <div className="px-3 pb-2 flex gap-2 relative">
- {/* Flag-only country picker */}
- <div className="relative shrink-0 self-stretch flex">
- <button
- onClick={() => { setCountryOpen(v => !v); setEntityOpen(false); }}
- className={cn(
- "px-2 rounded-lg text-sm flex items-center justify-center border shadow-sm w-full",
- hasDarkSecondary ? "bg-white/10 border-white/20" : "bg-card/80 border-border"
- )}
- style={{ minWidth: 36 }}
- title={selectedCountryObj.label}
- >
- <span>{selectedCountryObj.flag}</span>
- </button>
- {countryOpen && (
- <div className={cn(
- "absolute left-0 z-50 mt-1 rounded-lg border shadow-lg overflow-hidden",
- hasDarkSecondary ? "bg-[#1a2a3a] border-white/20" : "bg-card border-border"
- )} style={{ minWidth: 150 }}>
- {COUNTRIES.map(c => (
- <button
- key={c.code}
- className={cn(
- "w-full px-3 py-2 text-sm text-left flex items-center gap-2 transition-colors",
- hasDarkSecondary ? "hover:bg-white/10 text-white" : "hover:bg-muted text-foreground",
- c.code === selectedCountry && (hasDarkSecondary ? "bg-white/15" : "bg-primary/5 text-primary")
- )}
- onClick={() => {
- setSelectedCountry(c.code);
- setSelectedEntityType(c.code === "US" ? "C-Corp" : "Corporations");
- setCountryOpen(false);
- setExpandedFolders(new Set(["COMP", "GCOMP"]));
- }}
- >
- <span>{c.flag}</span>
- <span>{c.label}</span>
- </button>
- ))}
- </div>
- )}
- </div>
-
- {/* Entity type picker */}
- <div className="relative flex-1">
- <button
- onClick={() => { setEntityOpen(v => !v); setCountryOpen(false); }}
- className={cn(
- "w-full px-2.5 py-1.5 rounded-lg text-sm flex items-center justify-between border shadow-sm",
- hasDarkSecondary ? "bg-white/10 border-white/20 text-white" : "bg-card/80 border-border text-foreground"
- )}
- >
- <span className="truncate">{selectedEntityType}</span>
- <ChevronDown className="h-3.5 w-3.5 shrink-0 ml-1 text-muted-foreground" />
- </button>
- {entityOpen && (
- <div className={cn(
- "absolute left-0 right-0 z-50 mt-1 rounded-lg border shadow-lg overflow-hidden max-h-48 overflow-y-auto",
- hasDarkSecondary ? "bg-[#1a2a3a] border-white/20" : "bg-card border-border"
- )}>
- {entityTypes.map(e => (
- <button
- key={e}
- className={cn(
- "w-full px-3 py-2 text-sm text-left transition-colors",
- hasDarkSecondary ? "hover:bg-white/10 text-white" : "hover:bg-muted text-foreground",
- e === selectedEntityType && (hasDarkSecondary ? "bg-white/15" : "bg-primary/5 text-primary")
- )}
- onClick={() => {
- setSelectedEntityType(e);
- setEntityOpen(false);
- setExpandedFolders(new Set(["COMP", "GCOMP"]));
- }}
- >
- {e}
- </button>
- ))}
- </div>
- )}
- </div>
- </div>
-
- {/* Tabs */}
- <div
- className="flex mb-2"
- style={{
- borderBottom: hasDarkSecondary
- ? "1px solid rgba(255,255,255,0.15)"
- : "1px solid hsl(var(--border))",
- }}
- >
- <button onClick={() => {
-  setActiveTab("my");
-  if (location.pathname === "/templates") setSearchParams(p => { p.delete("library"); return p; });
- }} className={tabClass("my")}>
- My Templates
- </button>
- <button onClick={() => {
-  setActiveTab("global");
-  if (location.pathname === "/templates") setSearchParams(p => { p.set("library", "global"); return p; });
- }} className={tabClass("global")}>
- Global Templates
- </button>
- </div>
-
- {/* Toolbar */}
- <div className="p-3 pt-0 pb-2">
- <div className="flex gap-2">
- <div className="relative flex-1">
- <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
- <Input
- placeholder="Search"
- className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")}
- value={searchQuery}
- onChange={e => setSearchQuery(e.target.value)}
- />
- </div>
-
+ {/* Templates header */}
+ <div className="px-2 pb-1 pt-3 flex items-center justify-between">
+ <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
+ <div className="flex items-center gap-1">
  <Tooltip>
  <TooltipTrigger asChild>
  <button
@@ -545,65 +431,40 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  </TooltipTrigger>
  <TooltipContent>{allExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
  </Tooltip>
-
- {activeTab === "my" && (
- <>
- <Button size="icon" className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0">
- <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
- </Button>
- <Tooltip>
- <TooltipTrigger asChild>
- <Button
- size="icon"
- variant="secondary"
- className="h-8 w-8 text-destructive hover:text-destructive focus-visible:text-destructive flex-shrink-0"
- disabled={checkedMy.size === 0}
- onClick={handleDeleteSelected}
- >
- <Trash2 className="h-4 w-4" />
- </Button>
- </TooltipTrigger>
- <TooltipContent>
- {checkedMy.size > 0 ? `Delete ${checkedMy.size} selected` : "Select items to delete"}
- </TooltipContent>
- </Tooltip>
- </>
- )}
-
- {activeTab === "global" && (
  <Tooltip>
  <TooltipTrigger asChild>
  <Button
  size="icon"
  className="h-8 w-8 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm flex-shrink-0"
- disabled={checkedGlobal.size === 0}
- onClick={handleCopyToMy}
+ onClick={() => navigate("/templates?type=financial-statements&library=global")}
  >
- <Files className="h-4 w-4 text-primary-foreground" />
+ <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
  </Button>
  </TooltipTrigger>
- <TooltipContent>
- {checkedGlobal.size > 0 ? `Add ${checkedGlobal.size} selected to My Templates` : "Select templates to add"}
- </TooltipContent>
+ <TooltipContent>Browse Global Library</TooltipContent>
  </Tooltip>
- )}
+ </div>
+ </div>
+
+ {/* Search */}
+ <div className="px-3 pb-2">
+ <div className="relative">
+ <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+ <Input
+ placeholder="Search"
+ className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")}
+ value={searchQuery}
+ onChange={e => setSearchQuery(e.target.value)}
+ />
  </div>
  </div>
 
  {/* Template tree */}
  <div className="flex-1 overflow-y-auto px-2 pb-2">
- {activeTab === "my" ? (
- <FirmTemplatesTree type="financial-statements" search={searchQuery} dark={hasDarkSecondary} />
- ) : isGlobalWorkspace ? (
+ {isGlobalWorkspace ? (
  <GlobalFoldersNav type="financial-statements" dark={hasDarkSecondary} />
- ) : activeData.length === 0 ? (
- <div className="flex flex-col items-center justify-center h-24 gap-2 text-center px-4">
- <p className={cn("text-sm", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")}>
- No templates for this selection
- </p>
- </div>
  ) : (
- activeData.map((item, idx) => renderItem(item, 0, activeTab))
+ <FirmTemplatesTree type="financial-statements" search={searchQuery} dark={hasDarkSecondary} />
  )}
  </div>
  </>

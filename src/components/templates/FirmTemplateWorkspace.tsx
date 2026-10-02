@@ -385,8 +385,8 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
                         size="sm"
                         className="h-7 px-2.5 text-xs bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
                         disabled={!t.nav}
-                        onClick={() => goTo(navigate, t.nav)}
-                        title={!t.nav ? "Viewer not available in the prototype yet" : undefined}
+                        onClick={() => goTo(navigate, t.nav, { ft: t.id, type: t.type })}
+                        title={!t.nav ? (t.source.kind === "checklist" ? "This template has no content yet" : "Viewer not available in the prototype yet") : undefined}
                       >
                         View
                       </Button>
@@ -414,7 +414,7 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
                     i > 0 && "border-t border-border",
                     !t.nav && "opacity-70 cursor-default"
                   )}
-                  onClick={() => goTo(navigate, t.nav)}
+                  onClick={() => goTo(navigate, t.nav, { ft: t.id, type: t.type })}
                 >
                   <Icon className={cn("h-5 w-5 flex-shrink-0", tMeta.color)} />
                   <div className="flex-1 min-w-0">

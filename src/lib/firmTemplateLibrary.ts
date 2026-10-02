@@ -3,6 +3,7 @@ import { getEngagementMeta } from "@/store/engagementsStore";
 import { engPickerTreeUS, getEngPickerTemplateView } from "@/lib/globalTemplateTrees";
 import { TEMPLATE_CONFIG, templateViewToMyTemplate, type MyEngagementTemplate, type TreeItem } from "@/lib/engagementTemplatesData";
 import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
+import { getGlobalItems } from "@/lib/globalTemplateCatalog";
 
 export type TemplateTypeId =
   | "engagements"
@@ -622,7 +623,23 @@ interface ChecklistSource {
   name: string;
   folderId: string;
   folderName: string;
+  contentType?: string;
   data?: any;
+}
+
+const CL_TYPE_TAG_MAP: Record<string, { type: TemplateTypeId; tag: string }> = {
+  letters: { type: "letters", tag: "Letter" },
+  reports: { type: "reports", tag: "Report" },
+  worksheets: { type: "worksheets", tag: "Worksheet" },
+  notes: { type: "notes", tag: "Note" },
+};
+
+function clLibType(cl: ChecklistSource): TemplateTypeId {
+  return CL_TYPE_TAG_MAP[cl.contentType ?? ""]?.type ?? "checklists";
+}
+
+function clTags(cl: ChecklistSource): string[] {
+  return [CL_TYPE_TAG_MAP[cl.contentType ?? ""]?.tag ?? "Checklist"];
 }
 
 function engTypeFromId(sid: string): EngagementType {
@@ -781,12 +798,49 @@ export function load(): Library {
 
   // Sync checklists
   const clSources = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
+
+  // A7: repair savedChecklists records without data from global catalog
+  {
+    const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const globalChecklistItems = getGlobalItems("checklists");
+    let clRepaired = false;
+    for (const cl of clSources) {
+      if (cl.data) continue;
+      const norm = normalize(cl.name);
+      const match = globalChecklistItems.find(item => normalize(item.name) === norm);
+      if (match) {
+        const data = getGlobalTemplateChecklist(match.id);
+        if (data) {
+          cl.data = { ...data, id: cl.id, title: cl.name };
+          clRepaired = true;
+        }
+      }
+    }
+    if (clRepaired) writeJsonToLocalStorage("savedChecklists", clSources);
+  }
+
   const clRefIds = new Set(clSources.map(c => c.id));
+  const clSourceMap = new Map(clSources.map(c => [c.id, c]));
 
   // Drop stale checklist templates
   lib.templates = lib.templates.filter(
     t => t.source.kind !== "checklist" || clRefIds.has(t.source.refId)
   );
+
+  // A8 + A7: update existing checklist templates (type/tags/nav) from current source records
+  for (const t of lib.templates) {
+    if (t.source.kind !== "checklist") continue;
+    const cl = clSourceMap.get(t.source.refId);
+    if (!cl) continue;
+    const desiredType = clLibType(cl);
+    const desiredTags = clTags(cl);
+    if (!cl.data && t.nav) t.nav = null;
+    if (t.type !== desiredType) {
+      t.type = desiredType;
+      t.folderId = findOrCreateFolder(lib, desiredType, cl.folderName);
+      t.tags = desiredTags;
+    }
+  }
 
   // Import new checklists
   const existingClRefIds = new Set(
@@ -794,19 +848,20 @@ export function load(): Library {
   );
   for (const cl of clSources) {
     if (existingClRefIds.has(cl.id)) continue;
+    const clType = clLibType(cl);
     const jurisdiction: "CA" | "US" = cl.data?.country === "US" ? "US" : "CA";
     const owner = officeForJurisdiction(jurisdiction);
-    const folderId = findOrCreateFolder(lib, "checklists", cl.folderName);
+    const folderId = findOrCreateFolder(lib, clType, cl.folderName);
     lib.templates.push({
       id: `sync-cl-${cl.id}`,
       name: cl.name,
-      subtitle: "Checklist",
-      type: "checklists",
+      subtitle: clTags(cl)[0],
+      type: clType,
       folderId,
       engagementType: "Any",
       framework: "Any",
       cornerTag: "",
-      tags: ["Checklist"],
+      tags: clTags(cl),
       status: "draft",
       jurisdiction,
       ownerOfficeId: owner.id,
@@ -814,7 +869,7 @@ export function load(): Library {
       linkedSeed: 0,
       updatedAt: new Date().toISOString(),
       source: { kind: "checklist", refId: cl.id },
-      nav: { to: "/builder", state: { checklistId: cl.id } },
+      nav: cl.data ? { to: "/builder", state: { checklistId: cl.id } } : null,
     });
   }
 

@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { FolderSolidIcon } from "@/components/icons/FolderIcons";
 import { type TemplateTypeId } from "@/lib/firmTemplateLibrary";
@@ -10,6 +10,8 @@ interface GlobalFoldersNavProps {
 }
 
 export function GlobalFoldersNav({ type, dark }: GlobalFoldersNavProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const gfolder = searchParams.get("gfolder");
 
@@ -18,6 +20,10 @@ export function GlobalFoldersNav({ type, dark }: GlobalFoldersNavProps) {
   }
 
   function selectFolder(engType: string | null) {
+    if (location.pathname !== "/templates") {
+      navigate(`/templates?type=${type}&library=global${engType ? `&gfolder=${encodeURIComponent(engType)}` : ""}`);
+      return;
+    }
     setSearchParams(p => {
       if (engType) p.set("gfolder", engType);
       else p.delete("gfolder");

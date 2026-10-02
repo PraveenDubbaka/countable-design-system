@@ -335,7 +335,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const [globalWorksheets, setGlobalWorksheets] = useState<GlobalTemplate[]>(initialGlobalWorksheets);
  const [globalReports, setGlobalReports] = useState<GlobalTemplate[]>(initialGlobalReports);
  const [globalLetters, setGlobalLetters] = useState<GlobalTemplate[]>(initialGlobalLetters);
- const [activeTab, setActiveTab] = useState<"firm" | "master">("firm");
  const [searchQuery, setSearchQuery] = useState("");
  const { isCollapsed: isTemplatesPanelCollapsed, setIsCollapsed: setIsTemplatesPanelCollapsed } = useSecondaryPanel();
  const [selectedGlobalTemplate, setSelectedGlobalTemplate] = useState<string | null>("global-1-1");
@@ -685,12 +684,28 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  }
  }, [location.state]);
 
- // Sync active tab with library param
+ // A3: sync selectedDropdown from route
  useEffect(() => {
- if (location.pathname === "/templates") {
-  setActiveTab(isGlobalWorkspace ? "master" : "firm");
+ const validTypes = ["engagements", "checklists", "worksheets", "reports", "letters", "financial-statements", "notes"];
+ let next: string | null = null;
+ const type = searchParams.get("type");
+ if (location.pathname === "/templates" && type && validTypes.includes(type)) {
+  next = type;
+ } else if (location.pathname === "/engagement-templates") {
+  next = "engagements";
+ } else if (location.pathname === "/financial-statement-templates") {
+  next = "financial-statements";
+ } else if (location.pathname === "/builder") {
+  const btype = searchParams.get("type");
+  if (btype && validTypes.includes(btype)) next = btype;
  }
- }, [location.pathname, isGlobalWorkspace]);
+ if (next && next !== selectedDropdown) {
+  setSelectedDropdown(next);
+  localStorage.setItem("selectedDropdown", next);
+ }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [location.pathname, searchParams]);
+
  const [savedChecklists, setSavedChecklists] = useState<SavedChecklist[]>([]);
 
  // Context menu state
@@ -889,20 +904,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  }, { replace: true });
  } else {
  navigate(`/templates?type=${itemId}`);
- }
- };
- const selectLibraryTab = (tab: "firm" | "master") => {
- setActiveTab(tab);
- if (location.pathname === "/templates") {
-  setSearchParams(p => {
-   if (tab === "master") {
-    p.set("library", "global");
-   } else {
-    p.delete("library");
-    p.delete("gfolder");
-   }
-   return p;
-  }, { replace: true });
  }
  };
  const toggleFolder = (id: string) => {
@@ -3369,22 +3370,18 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     </TooltipTrigger>
     <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
    </Tooltip>
-   <Button
-    size="icon"
-    className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
-    onClick={() => navigate("/templates?type=engagements&library=global")}
-   >
-    <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
-   </Button>
-   <Button
-    size="icon"
-    variant="secondary"
-    className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive"
-    disabled={engMySelectedIds.size === 0}
-    onClick={() => setEngMyDeleteConfirmOpen(true)}
-   >
-    <Trash2 className="h-4 w-4" />
-   </Button>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <Button
+      size="icon"
+      className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
+      onClick={() => navigate("/templates?type=engagements&library=global")}
+     >
+      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+     </Button>
+    </TooltipTrigger>
+    <TooltipContent>Browse Global Library</TooltipContent>
+   </Tooltip>
   </div>
  </div>
 
@@ -3547,172 +3544,182 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  )
  ) : selectedDropdown === "checklists" ? (
  <>
- <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
- borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+ <div className={cn("flex items-center px-3 py-2 flex-shrink-0", isTemplatesPanelCollapsed ? "hidden" : "")} style={{
+  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
  }}>
- <button onClick={() => selectLibraryTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- My Templates
- </button>
- <button onClick={() => selectLibraryTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- Global Templates
- </button>
+  <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
  </div>
-
- <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- <div className="flex gap-2">
- <div className="relative flex-1">
- <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
- <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
- </div>
- <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")}>
- <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
- <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
- </svg>
- </button>
- {activeTab === "firm" && (
- <>
- <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm">
- <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
- </Button>
- <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive">
- <Trash2 className="h-4 w-4" />
- </Button>
- </>
- )}
- {activeTab === "master" && (
- <Tooltip>
- <TooltipTrigger asChild>
- <Button
- size="icon"
- className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm"
- disabled={selectedTemplates.size === 0}
- onClick={() => setBulkAddDialogOpen(true)}
- >
- <Files className="h-4 w-4 text-primary-foreground" />
- </Button>
- </TooltipTrigger>
- <TooltipContent>
- {selectedTemplates.size > 0
- ? `Add ${selectedTemplates.size} selected to My Templates`
- : "Select templates to add"}
- </TooltipContent>
- </Tooltip>
- )}
- </div>
- </div>
-
- <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm"
- ? <FirmTemplatesTree type="checklists" search={searchQuery} dark={hasDarkSecondary} />
- : isGlobalWorkspace
- ? <GlobalFoldersNav type="checklists" dark={hasDarkSecondary} />
- : (() => {
-  const sq = searchQuery.trim().toLowerCase();
-  const globalMatch = (t: GlobalTemplate): boolean =>
-   t.name.toLowerCase().includes(sq) || (t.children?.some(globalMatch) ?? false);
-  if (sq && !globalTemplates.some(globalMatch)) return (
-   <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
-    <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
-    <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
-    <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+ <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  <div className="flex gap-2">
+   <div className="relative flex-1">
+    <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+    <Input placeholder="Search" className={cn("pl-8 h-9 text-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40 border-0" : "")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
    </div>
-  );
-  return globalTemplates.map(template => renderGlobalTemplate(template));
- })()}
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")} onClick={handleEngMyExpandCollapseAll}>
+      {allEngMyExpanded ? (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      ) : (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      )}
+     </button>
+    </TooltipTrigger>
+    <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+   </Tooltip>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm" onClick={() => navigate("/templates?type=checklists&library=global")}>
+      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+     </Button>
+    </TooltipTrigger>
+    <TooltipContent>Browse Global Library</TooltipContent>
+   </Tooltip>
+  </div>
+ </div>
+ <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  {isGlobalWorkspace
+  ? <GlobalFoldersNav type="checklists" dark={hasDarkSecondary} />
+  : <FirmTemplatesTree type="checklists" search={searchQuery} dark={hasDarkSecondary} />}
  </div>
  </>
  ) : selectedDropdown === "worksheets" ? (
  <>
- <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
- borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+ <div className={cn("flex items-center px-3 py-2 flex-shrink-0", isTemplatesPanelCollapsed ? "hidden" : "")} style={{
+  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
  }}>
- <button onClick={() => selectLibraryTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- My Templates
- </button>
- <button onClick={() => selectLibraryTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- Global Templates
- </button>
+  <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
  </div>
-
- <div className={`p-3 pt-1 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- <div className="flex gap-2">
- <div className="relative flex-1">
- <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
- <Input placeholder="Search" className={cn("pl-8 h-8 text-sm border-0 shadow-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40" : "bg-card/80")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
- </div>
- {activeTab === "firm" && (
- <>
- <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm">
- <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
- </Button>
- <Button size="icon" variant="secondary" className="h-9 w-9 text-destructive hover:text-destructive focus-visible:text-destructive">
- <Trash2 className="h-4 w-4" />
- </Button>
- </>
- )}
- </div>
- </div>
-
- <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm"
- ? <FirmTemplatesTree type="worksheets" search={searchQuery} dark={hasDarkSecondary} />
- : isGlobalWorkspace
- ? <GlobalFoldersNav type="worksheets" dark={hasDarkSecondary} />
- : (() => {
-  const sq = searchQuery.trim().toLowerCase();
-  const wsMatch = (t: GlobalTemplate): boolean =>
-   t.name.toLowerCase().includes(sq) || (t.children?.some(wsMatch) ?? false);
-  if (sq && !globalWorksheets.some(wsMatch)) return (
-   <div className="flex flex-col items-center justify-center py-10 px-3 text-center">
-    <Search className={cn("h-6 w-6 mb-2", hasDarkSecondary ? "text-white/30" : "text-muted-foreground/40")} />
-    <p className={cn("text-xs font-medium", hasDarkSecondary ? "text-white/60" : "text-foreground")}>No results for &ldquo;{searchQuery}&rdquo;</p>
-    <p className={cn("text-[10px] mt-0.5", hasDarkSecondary ? "text-white/40" : "text-muted-foreground")}>Try a different term</p>
+ <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  <div className="flex gap-2">
+   <div className="relative flex-1">
+    <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+    <Input placeholder="Search" className={cn("pl-8 h-9 text-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40 border-0" : "")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
    </div>
-  );
-  return globalWorksheets.map(t => renderGlobalTemplate(t, 0, toggleGlobalWorksheet));
- })()}
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")} onClick={handleEngMyExpandCollapseAll}>
+      {allEngMyExpanded ? (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      ) : (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      )}
+     </button>
+    </TooltipTrigger>
+    <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+   </Tooltip>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm" onClick={() => navigate("/templates?type=worksheets&library=global")}>
+      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+     </Button>
+    </TooltipTrigger>
+    <TooltipContent>Browse Global Library</TooltipContent>
+   </Tooltip>
+  </div>
+ </div>
+ <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  {isGlobalWorkspace
+  ? <GlobalFoldersNav type="worksheets" dark={hasDarkSecondary} />
+  : <FirmTemplatesTree type="worksheets" search={searchQuery} dark={hasDarkSecondary} />}
  </div>
  </>
  ) : selectedDropdown === "reports" ? (
  <>
- {/* My / Global tabs */}
- <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
- borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+ <div className={cn("flex items-center px-3 py-2 flex-shrink-0", isTemplatesPanelCollapsed ? "hidden" : "")} style={{
+  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
  }}>
- <button onClick={() => selectLibraryTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- My Templates
- </button>
- <button onClick={() => selectLibraryTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- Global Templates
- </button>
+  <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
+ </div>
+ <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  <div className="flex gap-2">
+   <div className="relative flex-1">
+    <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+    <Input placeholder="Search" className={cn("pl-8 h-9 text-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40 border-0" : "")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+   </div>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")} onClick={handleEngMyExpandCollapseAll}>
+      {allEngMyExpanded ? (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      ) : (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      )}
+     </button>
+    </TooltipTrigger>
+    <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+   </Tooltip>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm" onClick={() => navigate("/templates?type=reports&library=global")}>
+      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+     </Button>
+    </TooltipTrigger>
+    <TooltipContent>Browse Global Library</TooltipContent>
+   </Tooltip>
+  </div>
  </div>
  <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm"
- ? <FirmTemplatesTree type="reports" search={searchQuery} dark={hasDarkSecondary} />
- : isGlobalWorkspace
- ? <GlobalFoldersNav type="reports" dark={hasDarkSecondary} />
- : globalReports.map(t => renderGlobalTemplate(t, 0, toggleGlobalReport))}
+  {isGlobalWorkspace
+  ? <GlobalFoldersNav type="reports" dark={hasDarkSecondary} />
+  : <FirmTemplatesTree type="reports" search={searchQuery} dark={hasDarkSecondary} />}
  </div>
  </>
  ) : selectedDropdown === "letters" ? (
  <>
- {/* My / Global tabs */}
- <div className={`flex mb-2 ${isTemplatesPanelCollapsed ? "hidden" : ""}`} style={{
- borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
+ <div className={cn("flex items-center px-3 py-2 flex-shrink-0", isTemplatesPanelCollapsed ? "hidden" : "")} style={{
+  borderBottom: hasDarkSecondary ? "1px solid rgba(255,255,255,0.15)" : "1px solid hsl(var(--border))"
  }}>
- <button onClick={() => selectLibraryTab("firm")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "firm" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- My Templates
- </button>
- <button onClick={() => selectLibraryTab("master")} className={`flex-1 py-2 px-1 text-sm font-medium transition-all text-center whitespace-nowrap border-b-[3px] ${activeTab === "master" ? (hasDarkSecondary ? "text-white border-white" : "text-primary border-primary") : (hasDarkSecondary ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground") + " border-transparent"}`}>
- Global Templates
- </button>
+  <span className={cn("text-sm font-semibold", hasDarkSecondary ? "text-white" : "text-foreground")}>Templates</span>
+ </div>
+ <div className={`p-3 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
+  <div className="flex gap-2">
+   <div className="relative flex-1">
+    <Search className={cn("absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4", hasDarkSecondary ? "text-white/50" : "text-muted-foreground")} />
+    <Input placeholder="Search" className={cn("pl-8 h-9 text-sm", hasDarkSecondary ? "bg-white/10 text-white placeholder:text-white/40 border-0" : "")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+   </div>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <button className={cn("h-9 w-9 rounded-md flex items-center justify-center transition-colors", hasDarkSecondary ? "bg-white/10 hover:bg-white/20" : "bg-primary/10 hover:bg-primary/20")} onClick={handleEngMyExpandCollapseAll}>
+      {allEngMyExpanded ? (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.08325 6.94412L2.08325 2.08301M2.08325 2.08301L6.24992 2.08301M2.08325 2.08301L6.94436 6.94412M14.5833 9.7219L14.5833 14.583M14.5833 14.583L10.4166 14.583M14.5833 14.583L9.72214 9.7219" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      ) : (
+       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.72214 6.94412L14.5833 2.08301M14.5833 2.08301H10.4166M14.5833 2.08301V6.24967M6.94436 9.7219L2.08325 14.583M2.08325 14.583H6.24992M2.08325 14.583L2.08325 10.4163" stroke={hasDarkSecondary ? "white" : "#074075"} strokeWidth="1.38889" strokeLinecap="round" strokeLinejoin="round" />
+       </svg>
+      )}
+     </button>
+    </TooltipTrigger>
+    <TooltipContent>{allEngMyExpanded ? "Collapse All" : "Expand All"}</TooltipContent>
+   </Tooltip>
+   <Tooltip>
+    <TooltipTrigger asChild>
+     <Button size="icon" className="h-9 w-9 bg-[#1C63A6] hover:bg-[#1a5a9e] shadow-sm" onClick={() => navigate("/templates?type=letters&library=global")}>
+      <Plus className="h-4 w-4 text-primary-foreground icon-plus" />
+     </Button>
+    </TooltipTrigger>
+    <TooltipContent>Browse Global Library</TooltipContent>
+   </Tooltip>
+  </div>
  </div>
  <div className={`flex-1 overflow-y-auto p-2 pt-0 ${isTemplatesPanelCollapsed ? "hidden" : ""}`}>
- {activeTab === "firm"
- ? <FirmTemplatesTree type="letters" search={searchQuery} dark={hasDarkSecondary} />
- : isGlobalWorkspace
- ? <GlobalFoldersNav type="letters" dark={hasDarkSecondary} />
- : globalLetters.map(t => renderGlobalTemplate(t, 0, toggleGlobalLetter))}
+  {isGlobalWorkspace
+  ? <GlobalFoldersNav type="letters" dark={hasDarkSecondary} />
+  : <FirmTemplatesTree type="letters" search={searchQuery} dark={hasDarkSecondary} />}
  </div>
  </>
  ) : selectedDropdown === "financial-statements" ? (

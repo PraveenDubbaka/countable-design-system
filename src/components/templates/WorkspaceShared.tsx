@@ -115,9 +115,17 @@ export function relativeTime(iso: string): string {
   return `${yrs} year${yrs === 1 ? "" : "s"} ago`;
 }
 
-export function goTo(navigate: ReturnType<typeof useNavigate>, nav: NavTarget) {
+export function goTo(navigate: ReturnType<typeof useNavigate>, nav: NavTarget, marker?: { ft?: string; gt?: string; type?: string }) {
   if (!nav) return;
-  navigate(nav.to, { state: nav.state ? { ...nav.state, timestamp: Date.now() } : undefined });
+  let to = nav.to;
+  if (marker) {
+    const parts: string[] = [];
+    if (marker.ft) parts.push(`ft=${encodeURIComponent(marker.ft)}`);
+    if (marker.gt) parts.push(`gt=${encodeURIComponent(marker.gt)}`);
+    if (marker.type) parts.push(`type=${encodeURIComponent(marker.type)}`);
+    if (parts.length) to = to.includes("?") ? `${to}&${parts.join("&")}` : `${to}?${parts.join("&")}`;
+  }
+  navigate(to, { state: nav.state ? { ...nav.state, timestamp: Date.now() } : undefined });
 }
 
 // ── CHIPS ─────────────────────────────────────────────────────────────────────
