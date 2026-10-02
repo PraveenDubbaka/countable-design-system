@@ -716,6 +716,29 @@ export function load(): Library {
     if (seedNavRepaired) writeLibrary(lib);
   }
 
+  // Repair folder cycles: if a folder's parentId chain revisits a folder, break the cycle
+  {
+    let cycleRepaired = false;
+    for (const folder of lib.folders) {
+      const seen = new Set<string>();
+      seen.add(folder.id);
+      let cur = folder.parentId;
+      let broken = false;
+      while (cur && !broken) {
+        if (seen.has(cur)) {
+          // Cycle detected — sever this folder's parentId link
+          folder.parentId = null;
+          cycleRepaired = true;
+          broken = true;
+        } else {
+          seen.add(cur);
+          cur = lib.folders.find(f => f.id === cur)?.parentId ?? null;
+        }
+      }
+    }
+    if (cycleRepaired) writeLibrary(lib);
+  }
+
   // Sync engagement templates
   const engSources = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
   const engRefIds = new Set(engSources.map(e => e.id));
@@ -820,10 +843,12 @@ export function folderPath(lib: Library, folderId: string | null): Folder[] {
   return path;
 }
 
-function descendantTemplateCount(lib: Library, folderId: string): number {
+function descendantTemplateCount(lib: Library, folderId: string, visited = new Set<string>()): number {
+  if (visited.has(folderId)) return 0; // cycle guard
+  visited.add(folderId);
   const childIds = lib.folders.filter(f => f.parentId === folderId).map(f => f.id);
   const direct = lib.templates.filter(t => t.folderId === folderId).length;
-  return direct + childIds.reduce((sum, id) => sum + descendantTemplateCount(lib, id), 0);
+  return direct + childIds.reduce((sum, id) => sum + descendantTemplateCount(lib, id, visited), 0);
 }
 
 export function defaultKey(t: FirmTemplate): string {
@@ -971,13 +996,16 @@ export function renameFolder(id: string, name: string): Library {
 
 export function moveFolder(id: string, parentId: string | null): Library {
   const lib = load();
-  // Cycle check: parentId must not be a descendant of id
-  const isDescendant = (testId: string): boolean => {
-    if (testId === id) return true;
-    const children = lib.folders.filter(f => f.parentId === testId);
-    return children.some(c => isDescendant(c.id));
-  };
-  if (parentId && isDescendant(parentId)) return lib; // no-op on cycle
+  // Cycle check: walk upward from parentId; if we reach id, the move would create a cycle
+  if (parentId) {
+    let cur: string | null = parentId;
+    const seen = new Set<string>();
+    while (cur && !seen.has(cur)) {
+      if (cur === id) return lib; // target is the folder itself or one of its descendants: no-op
+      seen.add(cur);
+      cur = lib.folders.find(f => f.id === cur)?.parentId ?? null;
+    }
+  }
   const folder = lib.folders.find(f => f.id === id);
   if (folder) folder.parentId = parentId;
   writeLibrary(lib);
@@ -991,6 +1019,7 @@ export function deleteFolder(
   const lib = load();
   const descendantIds = new Set<string>();
   const collect = (fid: string) => {
+    if (descendantIds.has(fid)) return; // cycle guard
     descendantIds.add(fid);
     lib.folders.filter(f => f.parentId === fid).forEach(c => collect(c.id));
   };
