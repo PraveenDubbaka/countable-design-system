@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { MoreVertical, FolderPlus } from "lucide-react";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { MoreVertical, FolderPlus, Layers, FolderInput } from "lucide-react";
 import { Star } from "lucide-react";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import {
@@ -9,7 +9,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   type TemplateTypeId,
@@ -23,6 +32,7 @@ import {
   createFolder,
   renameFolder,
   deleteFolder,
+  moveFolder,
   renameTemplate,
   moveTemplate,
   duplicateTemplate,
@@ -40,7 +50,6 @@ import {
   DeleteConfirmDialog,
   NewFolderDialog,
   TemplateActionsMenu,
-  TYPE_META,
 } from "./WorkspaceShared";
 
 interface Props {
@@ -49,12 +58,103 @@ interface Props {
   dark?: boolean;
 }
 
+// Local dialog for moving a folder (MoveToFolderDialog takes FirmTemplate, not Folder)
+function MoveFolderDialog({
+  open,
+  onOpenChange,
+  lib,
+  folder,
+  type,
+  onMove,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  lib: Library;
+  folder: Folder;
+  type: TemplateTypeId;
+  onMove: (parentId: string | null) => void;
+}) {
+  const [selected, setSelected] = useState<string | null>(null);
+
+  // Collect all descendant IDs of folder (including itself) to disable
+  const disabledIds = new Set<string>();
+  disabledIds.add(folder.id);
+  const collectDescendants = (id: string) => {
+    lib.folders.filter(f => f.parentId === id).forEach(f => {
+      disabledIds.add(f.id);
+      collectDescendants(f.id);
+    });
+  };
+  collectDescendants(folder.id);
+
+  // Build flat list with depth for rendering
+  const allFolders = lib.folders.filter(f => f.type === type);
+  const rows: { folder: Folder; depth: number }[] = [];
+  const addRows = (parentId: string | null, depth: number) => {
+    allFolders.filter(f => f.parentId === parentId).forEach(f => {
+      rows.push({ folder: f, depth });
+      addRows(f.id, depth + 1);
+    });
+  };
+  addRows(null, 0);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Move folder</DialogTitle>
+          <DialogDescription>Choose a destination for "{folder.name}".</DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="h-48 rounded-md border p-2 my-2">
+          {/* Root option */}
+          <div
+            className={cn(
+              "flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer text-sm",
+              selected === null ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}
+            onClick={() => setSelected(null)}
+          >
+            <FolderSolidIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span>Root (no parent)</span>
+          </div>
+          {rows.map(({ folder: f, depth }) => {
+            const disabled = disabledIds.has(f.id);
+            return (
+              <div
+                key={f.id}
+                className={cn(
+                  "flex items-center gap-2 py-1.5 px-2 rounded text-sm",
+                  disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer hover:bg-muted",
+                  selected === f.id && !disabled ? "bg-primary/10 text-primary" : ""
+                )}
+                style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}
+                onClick={() => { if (!disabled) setSelected(f.id); }}
+              >
+                <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="truncate">{f.name}</span>
+              </div>
+            );
+          })}
+        </ScrollArea>
+        <DialogFooter>
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button size="sm" onClick={() => { onMove(selected); onOpenChange(false); }}>Move</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function FirmTemplatesTree({ type, search, dark = false }: Props) {
   const navigate = useNavigate();
-  const [, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { engagements } = useEngagements();
   const [lib, setLib] = useState<Library>(() => load());
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+
+  const folderParam = searchParams.get("folder");
+  const onTemplatesPage = location.pathname === "/templates";
 
   // Dialog state
   const [renameTarget, setRenameTarget] = useState<FirmTemplate | null>(null);
@@ -62,7 +162,9 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
   const [deleteBlockedTarget, setDeleteBlockedTarget] = useState<{ t: FirmTemplate; linked: number } | null>(null);
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<FirmTemplate | null>(null);
   const [renameFolderTarget, setRenameFolderTarget] = useState<Folder | null>(null);
-  const [newSubfolderParent, setNewSubfolderParent] = useState<string | null>(null);
+  const [moveFolderTarget, setMoveFolderTarget] = useState<Folder | null>(null);
+  // undefined = closed; null = root; string = specific parent
+  const [newSubfolderParent, setNewSubfolderParent] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
     const onChanged = () => setLib(load());
@@ -77,6 +179,21 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
       window.removeEventListener("checklistSaved", onChanged);
     };
   }, []);
+
+  // Auto-expand ancestors of active folder
+  useEffect(() => {
+    if (!folderParam) return;
+    const toExpand = new Set<string>();
+    // Walk ancestors
+    let current = lib.folders.find(f => f.id === folderParam);
+    while (current?.parentId) {
+      toExpand.add(current.parentId);
+      current = lib.folders.find(f => f.id === current!.parentId);
+    }
+    if (toExpand.size > 0) {
+      setExpandedFolders(prev => new Set([...prev, ...toExpand]));
+    }
+  }, [folderParam, lib.folders]);
 
   const activeOfficeId = getActiveOfficeId();
   const q = search.trim().toLowerCase();
@@ -132,10 +249,50 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
     }
   }
 
+  function handleFolderClick(folder: Folder) {
+    if (onTemplatesPage) {
+      // Set folder param, keep type; also expand
+      setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.set("folder", folder.id);
+        return next;
+      });
+      setExpandedFolders(prev => new Set([...prev, folder.id]));
+    } else {
+      navigate(`/templates?type=${type}&folder=${folder.id}`);
+    }
+  }
+
+  // Recursive descendant template count
+  function countDescendants(folderId: string): number {
+    let count = allTemplates.filter(t => t.folderId === folderId).length;
+    allFolders.filter(f => f.parentId === folderId).forEach(f => {
+      count += countDescendants(f.id);
+    });
+    return count;
+  }
+
+  function handleDeleteFolder(folder: Folder) {
+    const result = deleteFolder(folder.id, engagements);
+    if (!("blocked" in result)) {
+      // If we deleted the currently-selected folder, clear param
+      if (folderParam === folder.id) {
+        setSearchParams(prev => {
+          const next = new URLSearchParams(prev);
+          next.delete("folder");
+          return next;
+        });
+      }
+      refresh();
+    }
+  }
+
+  const textClass = dark ? "text-white/80" : "text-foreground";
+  const hoverClass = dark ? "hover:bg-white/10" : "hover:bg-muted/50";
+  const activeClass = dark ? "bg-white/10 text-white" : "bg-primary/10 text-primary";
+
   function renderTemplate(t: FirmTemplate) {
     const isDefaultNow = calcIsDefault(lib, t);
-    const textClass = dark ? "text-white/80" : "text-foreground";
-    const hoverClass = dark ? "hover:bg-white/10" : "hover:bg-muted/50";
 
     return (
       <div
@@ -178,26 +335,33 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
 
   function renderFolder(folder: Folder) {
     const isExpanded = expandedFolders.has(folder.id);
-    const folderTemplates = allTemplates.filter(t => t.folderId === folder.id);
+    const isActive = folderParam === folder.id;
     const childFolders = allFolders.filter(f => f.parentId === folder.id);
-    const hasContent = folderTemplates.length > 0 || childFolders.length > 0;
-    const textClass = dark ? "text-white" : "text-foreground";
-    const hoverClass = dark ? "hover:bg-white/10" : "hover:bg-muted/50";
+    const folderTemplates = allTemplates.filter(t => t.folderId === folder.id);
+    const count = countDescendants(folder.id);
+    const folderTextClass = isActive ? (dark ? "text-white" : "text-primary") : (dark ? "text-white" : "text-foreground");
+    const folderBgClass = isActive ? activeClass : "";
 
     return (
       <div key={folder.id}>
         <div
-          className={cn("group flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer text-sm font-semibold select-none", hoverClass, textClass)}
-          onClick={() => toggleFolder(folder.id)}
+          className={cn("group flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer text-sm font-semibold select-none", isActive ? folderBgClass : hoverClass, folderTextClass)}
+          onClick={() => handleFolderClick(folder)}
         >
-          {isExpanded
-            ? <FolderMinusIcon className="h-4 w-4 text-primary flex-shrink-0" />
-            : <FolderPlusIcon className="h-4 w-4 text-primary flex-shrink-0" />
-          }
+          {/* Expand/collapse icon — own element to stop propagation */}
+          <span
+            className="flex-shrink-0"
+            onClick={e => { e.stopPropagation(); toggleFolder(folder.id); }}
+          >
+            {isExpanded
+              ? <FolderMinusIcon className="h-4 w-4 text-primary" />
+              : <FolderPlusIcon className="h-4 w-4 text-primary" />
+            }
+          </span>
           <FolderSolidIcon className="h-4 w-4 text-primary flex-shrink-0" />
           <span className="truncate flex-1">{folder.name}</span>
           <span className={cn("text-xs group-hover:hidden", dark ? "text-white/40" : "text-muted-foreground")}>
-            {folderTemplates.length + childFolders.length}
+            {count}
           </span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
@@ -212,17 +376,12 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
               <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setRenameFolderTarget(folder); }}>
                 <span className="h-4 w-4 text-primary text-base leading-none">✏</span> Rename
               </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={e => { e.stopPropagation(); setMoveFolderTarget(folder); }}>
+                <FolderInput className="h-4 w-4 text-primary" /> Move to…
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="gap-2 cursor-pointer text-destructive focus:text-destructive"
-                onClick={e => {
-                  e.stopPropagation();
-                  const result = deleteFolder(folder.id, engagements);
-                  if ("blocked" in result) {
-                    // toast blocked
-                  } else {
-                    refresh();
-                  }
-                }}
+                onClick={e => { e.stopPropagation(); handleDeleteFolder(folder); }}
               >
                 <span className="h-4 w-4 text-destructive text-base leading-none">🗑</span> Delete
               </DropdownMenuItem>
@@ -241,30 +400,59 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
 
   const rootTemplates = allTemplates.filter(t => !t.folderId);
   const hasAny = allTemplates.length > 0 || rootFolders.length > 0;
-
-  if (!hasAny) {
-    return (
-      <div className="flex flex-col items-center justify-center h-24 gap-2 text-center px-4">
-        <p className={cn("text-sm font-medium", dark ? "text-white/70" : "text-muted-foreground")}>No templates yet</p>
-        <p className={cn("text-xs", dark ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
-      </div>
-    );
-  }
-
-  if (q && allTemplates.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-24 gap-1 text-center px-4">
-        <p className={cn("text-sm", dark ? "text-white/50" : "text-muted-foreground")}>No results for &ldquo;{search}&rdquo;</p>
-      </div>
-    );
-  }
+  const hasNoFolders = rootFolders.length === 0;
 
   return (
     <>
-      <div className="space-y-0.5">
-        {rootFolders.map(renderFolder)}
-        {rootTemplates.map(renderTemplate)}
+      {/* All templates row */}
+      <div
+        className={cn(
+          "group flex items-center gap-2 py-1.5 px-2 rounded-md cursor-pointer text-sm font-semibold select-none mb-0.5",
+          !folderParam ? activeClass : hoverClass,
+          !folderParam ? (dark ? "text-white" : "text-primary") : (dark ? "text-white" : "text-foreground")
+        )}
+        onClick={() => {
+          setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.delete("folder");
+            return next;
+          });
+        }}
+      >
+        <Layers className="h-4 w-4 flex-shrink-0" />
+        <span className="flex-1">All templates</span>
+        {hasNoFolders && (
+          <button
+            className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted-foreground/10 rounded transition-opacity flex-shrink-0"
+            onClick={e => { e.stopPropagation(); setNewSubfolderParent(null); }}
+            title="New folder"
+          >
+            <FolderPlus className="h-3.5 w-3.5 text-muted-foreground" />
+          </button>
+        )}
       </div>
+
+      {!hasAny ? (
+        <div className="flex flex-col items-center justify-center h-24 gap-2 text-center px-4">
+          <p className={cn("text-sm font-medium", dark ? "text-white/70" : "text-muted-foreground")}>No templates yet</p>
+          <p className={cn("text-xs", dark ? "text-white/40" : "text-muted-foreground/70")}>Copy from Global Templates to get started</p>
+          <button
+            className={cn("text-xs font-medium mt-1", dark ? "text-white/60 hover:text-white/90" : "text-primary hover:underline")}
+            onClick={() => setNewSubfolderParent(null)}
+          >
+            New folder
+          </button>
+        </div>
+      ) : q && allTemplates.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-24 gap-1 text-center px-4">
+          <p className={cn("text-sm", dark ? "text-white/50" : "text-muted-foreground")}>No results for &ldquo;{search}&rdquo;</p>
+        </div>
+      ) : (
+        <div className="space-y-0.5">
+          {rootFolders.map(renderFolder)}
+          {rootTemplates.map(renderTemplate)}
+        </div>
+      )}
 
       {/* Rename template dialog */}
       {renameTarget && (
@@ -319,11 +507,28 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
         />
       )}
 
-      {/* New subfolder */}
+      {/* Move folder */}
+      {moveFolderTarget && (
+        <MoveFolderDialog
+          open={!!moveFolderTarget}
+          onOpenChange={v => !v && setMoveFolderTarget(null)}
+          lib={lib}
+          folder={moveFolderTarget}
+          type={type}
+          onMove={parentId => { moveFolder(moveFolderTarget.id, parentId); refresh(); setMoveFolderTarget(null); }}
+        />
+      )}
+
+      {/* New subfolder — undefined=closed, null=root, string=specific parent */}
       <NewFolderDialog
-        open={newSubfolderParent !== null}
-        onOpenChange={v => !v && setNewSubfolderParent(null)}
-        onCreate={name => { if (newSubfolderParent !== null) { createFolder(type, name, newSubfolderParent); refresh(); } }}
+        open={newSubfolderParent !== undefined}
+        onOpenChange={v => !v && setNewSubfolderParent(undefined)}
+        onCreate={name => {
+          if (newSubfolderParent !== undefined) {
+            createFolder(type, name, newSubfolderParent);
+            refresh();
+          }
+        }}
       />
     </>
   );

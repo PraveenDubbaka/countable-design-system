@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FolderOpen, FileText, ChevronRight, FolderPlus, Plus } from "lucide-react";
+import { Search, FolderOpen, FileText, ChevronRight, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,28 +11,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreVertical, ChevronLeft, ChevronRight as ChevRight } from "lucide-react";
-import { FolderSolidIcon } from "@/components/icons/FolderIcons";
 import { cn } from "@/lib/utils";
 import {
   type TemplateTypeId,
   type FirmTemplate,
   type Library,
   getActiveOfficeId,
-  getOffices,
   linkedCount as calcLinkedCount,
   isDefault as calcIsDefault,
   folderPath,
   load,
-  createFolder,
-  renameFolder,
-  deleteFolder,
   renameTemplate,
   moveTemplate,
   duplicateTemplate,
@@ -41,7 +29,6 @@ import {
   setDefault,
   clearDefault,
   setAvailability,
-  getDescendantTemplateCount,
 } from "@/lib/firmTemplateLibrary";
 import { useEngagements } from "@/store/EngagementsContext";
 import {
@@ -61,7 +48,6 @@ import {
   AvailabilityDialog,
   DeleteBlockedDialog,
   DeleteConfirmDialog,
-  NewFolderDialog,
   relativeTime,
   goTo,
   type ViewMode,
@@ -101,7 +87,6 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
   const [availabilityTarget, setAvailabilityTarget] = useState<FirmTemplate | null>(null);
   const [deleteBlockedTarget, setDeleteBlockedTarget] = useState<{ t: FirmTemplate; linked: number } | null>(null);
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<FirmTemplate | null>(null);
-  const [newFolderOpen, setNewFolderOpen] = useState(false);
 
   function refresh() { setLib(load()); }
 
@@ -132,32 +117,25 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
   // Breadcrumb
   const crumbs = folderId ? folderPath(lib, folderId) : [];
 
-  // Folders to display
-  const displayFolders = folderId
-    ? lib.folders.filter(f => f.parentId === folderId && (type === "all" || f.type === type))
-    : lib.folders.filter(f => f.parentId === null && (type === "all" || f.type === type));
-
   // Templates pool
   const typeTemplates = type === "all"
     ? lib.templates
     : lib.templates.filter(t => t.type === type);
 
-  const poolTemplates = folderId
-    ? typeTemplates.filter(t => t.folderId === folderId)
-    : typeTemplates.filter(t => !t.folderId || lib.folders.find(f => f.id === t.folderId) === undefined
-        ? true
-        : lib.folders.find(f => f.id === t.folderId)?.parentId === null ? !folderId : false
-    );
-
-  // For root view, show all templates under any folder + root-level
-  const rootTemplates = folderId
-    ? typeTemplates.filter(t => t.folderId === folderId)
-    : typeTemplates;
-
-  // Apply filters
+  // Apply filters (folder scope includes all descendants)
   const filtered = useMemo(() => {
-    let list = folderId
-      ? typeTemplates.filter(t => t.folderId === folderId)
+    let folderIds: Set<string> | null = null;
+    if (folderId) {
+      folderIds = new Set<string>();
+      const collect = (id: string) => {
+        folderIds!.add(id);
+        lib.folders.filter(f => f.parentId === id).forEach(f => collect(f.id));
+      };
+      collect(folderId);
+    }
+
+    let list = folderIds
+      ? typeTemplates.filter(t => t.folderId != null && folderIds!.has(t.folderId))
       : typeTemplates;
 
     if (officeFilter !== "all") {
@@ -189,9 +167,7 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
     return list;
   }, [typeTemplates, folderId, officeFilter, statusFilter, linkFilter, search, sort, engagements, lib]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pagedTemplates = filtered.slice((page - 1) * pageSize, page * pageSize);
-
   const hasFilters = search || officeFilter !== getActiveOfficeId() || statusFilter !== "any" || linkFilter !== "any";
 
   function clearAll() {
@@ -208,7 +184,6 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
     else setDeleteConfirmTarget(t);
   }
 
-  // Type label
   const typeLabel = type === "all" ? "All templates" : TYPE_META[type].label;
   const showCreate = type !== "all" && ["letters", "checklists", "reports", "notes"].includes(type);
 
@@ -280,15 +255,6 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
           <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={clearAll}>Clear all</Button>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 h-8"
-            disabled={type === "all"}
-            onClick={() => setNewFolderOpen(true)}
-          >
-            <FolderPlus className="h-3.5 w-3.5" /> New folder
-          </Button>
           <ViewToggle value={viewMode} onChange={saveViewMode} />
         </div>
       </div>
@@ -297,23 +263,22 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
       <div className="flex items-center gap-3 px-6 py-2 border-b border-border flex-shrink-0 flex-wrap">
         <div className="flex items-center gap-1 text-sm text-muted-foreground flex-1 min-w-0">
           {crumbs.length > 0 ? (
-            <nav className="flex items-center gap-1 text-sm">
-              <button className="hover:text-foreground transition-colors" onClick={() => onFolderChange(null)}>
-                All templates
-              </button>
-              {crumbs.map((crumb, i) => (
+            <div className="flex items-center gap-1">
+              <span className="text-muted-foreground">All templates</span>
+              {crumbs.map(crumb => (
                 <span key={crumb.id} className="flex items-center gap-1">
                   <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
-                  {i === crumbs.length - 1 ? (
-                    <span className="text-foreground font-medium">{crumb.name}</span>
-                  ) : (
-                    <button className="hover:text-foreground transition-colors" onClick={() => onFolderChange(crumb.id)}>
-                      {crumb.name}
-                    </button>
-                  )}
+                  <span className="text-foreground font-medium">{crumb.name}</span>
                 </span>
               ))}
-            </nav>
+              <button
+                className="ml-1 p-0.5 hover:bg-muted rounded"
+                onClick={() => onFolderChange(null)}
+                title="Clear folder filter"
+              >
+                <X className="h-3 w-3 text-muted-foreground" />
+              </button>
+            </div>
           ) : (
             <span>
               <span className="font-medium text-foreground">{typeLabel}</span>
@@ -333,64 +298,19 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
-        {/* Folders row */}
-        {displayFolders.length > 0 && (
-          <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Folders</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-              {displayFolders.map(folder => {
-                const count = getDescendantTemplateCount(lib, folder.id);
-                const folderMeta = type !== "all" ? TYPE_META[type] : TYPE_META[folder.type];
-                const FolderIcon = folderMeta.icon;
-                return (
-                  <div
-                    key={folder.id}
-                    className="group relative flex items-center gap-2 p-3 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-sm cursor-pointer transition-all"
-                    onClick={() => onFolderChange(folder.id)}
-                  >
-                    <FolderSolidIcon className="h-5 w-5 text-primary flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{folder.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{count} template{count !== 1 ? "s" : ""}</p>
-                    </div>
-                    <div className="flex items-center gap-1 ml-auto flex-shrink-0">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
-                          <button className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-muted rounded transition-opacity">
-                            <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-36">
-                          <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive" onClick={e => {
-                            e.stopPropagation();
-                            const result = deleteFolder(folder.id, engagements);
-                            if ("blocked" in result) {
-                              toast.error(`Cannot delete: ${result.linked} template${result.linked > 1 ? "s are" : " is"} in use.`);
-                            } else {
-                              refresh();
-                              toast.success("Folder deleted");
-                            }
-                          }}>
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Templates */}
         {pagedTemplates.length === 0 && filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
             {hasFilters ? (
               <>
                 <p className="text-base font-medium text-foreground">No templates match your filters</p>
                 <Button variant="outline" size="sm" onClick={clearAll}>Clear all</Button>
+              </>
+            ) : folderId ? (
+              <>
+                <p className="text-base font-medium text-foreground">
+                  No templates in {crumbs[crumbs.length - 1]?.name ?? "this folder"}
+                </p>
+                <Button variant="outline" size="sm" onClick={onOpenGlobal}>Browse Global Library</Button>
               </>
             ) : (
               <>
@@ -413,7 +333,8 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
             {pagedTemplates.map(t => {
               const linked = calcLinkedCount(t, engagements);
               const isDefaultNow = calcIsDefault(lib, t);
-              const folderName = t.folderId ? lib.folders.find(f => f.id === t.folderId)?.name ?? "Root" : "Root";
+              const tPath = folderPath(lib, t.folderId);
+              const folderLabel = tPath.length > 0 ? tPath.map(f => f.name).join(" / ") : "Root";
               const tMeta = TYPE_META[t.type];
 
               return (
@@ -446,7 +367,7 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
                     )}
                   </div>
                   <div className="flex items-center justify-between px-4 py-2.5 border-t border-border mt-auto">
-                    <span className="text-[11px] text-muted-foreground">{folderName} · {relativeTime(t.updatedAt)}</span>
+                    <span className="text-[11px] text-muted-foreground truncate max-w-[120px]">{folderLabel} · {relativeTime(t.updatedAt)}</span>
                     <div className="flex items-center gap-1">
                       <TemplateActionsMenu
                         template={t}
@@ -478,12 +399,12 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
             })}
           </div>
         ) : (
-          /* List view */
           <div className="rounded-xl border border-border overflow-hidden">
             {pagedTemplates.map((t, i) => {
               const linked = calcLinkedCount(t, engagements);
               const isDefaultNow = calcIsDefault(lib, t);
-              const folderName = t.folderId ? lib.folders.find(f => f.id === t.folderId)?.name ?? "Root" : "Root";
+              const tPath = folderPath(lib, t.folderId);
+              const folderLabel = tPath.length > 0 ? tPath.map(f => f.name).join(" / ") : "Root";
               const tMeta = TYPE_META[t.type];
               const Icon = tMeta.icon;
 
@@ -503,7 +424,7 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
                       <p className="text-sm font-medium text-foreground truncate">{t.name}</p>
                       {isDefaultNow && <DefaultBadge />}
                     </div>
-                    <p className="text-[11px] text-muted-foreground truncate">{folderName} · {t.subtitle}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{folderLabel} · {t.subtitle}</p>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <OfficeTag officeId={t.ownerOfficeId} />
@@ -576,17 +497,6 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
           onDelete={() => { deleteTemplate(deleteConfirmTarget.id, engagements); refresh(); toast.success("Template deleted"); setDeleteConfirmTarget(null); }}
         />
       )}
-      <NewFolderDialog
-        open={newFolderOpen}
-        onOpenChange={setNewFolderOpen}
-        onCreate={name => {
-          if (type !== "all") {
-            createFolder(type, name, folderId);
-            refresh();
-            toast.success(`Folder "${name}" created`);
-          }
-        }}
-      />
     </div>
   );
 }
