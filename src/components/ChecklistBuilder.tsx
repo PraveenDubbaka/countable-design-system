@@ -70,9 +70,10 @@ interface ChecklistBuilderProps {
  initialPreviewMode?: boolean;
  isGlobalTemplate?: boolean;
  isSavedTemplate?: boolean;
+ hideOwnActions?: boolean;
 }
 
-export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false, isGlobalTemplate = false, isSavedTemplate = false }: ChecklistBuilderProps) {
+export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMode = false, isGlobalTemplate = false, isSavedTemplate = false, hideOwnActions = false }: ChecklistBuilderProps) {
  const [isEditingTitle, setIsEditingTitle] = useState(false);
  const [showAddMenu, setShowAddMenu] = useState(false);
  const [pendingAddType, setPendingAddType] = useState<'empty' | 'template' | 'form' | null>(null);
@@ -488,13 +489,15 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </span>
  )}
  </div>
+ {!hideOwnActions && (
+ <>
  <AlertDialog>
  <Tooltip>
  <TooltipTrigger asChild>
  <AlertDialogTrigger asChild>
- <Button 
- variant="outline" 
- size="icon" 
+ <Button
+ variant="outline"
+ size="icon"
  className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
  >
  <Copy className="h-4 w-4" />
@@ -518,14 +521,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </AlertDialogFooter>
  </AlertDialogContent>
  </AlertDialog>
- 
+
  <AlertDialog>
  <Tooltip>
  <TooltipTrigger asChild>
  <AlertDialogTrigger asChild>
- <Button 
- variant="outline" 
- size="icon" 
+ <Button
+ variant="outline"
+ size="icon"
  className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
  >
  <Trash2 className="h-4 w-4" />
@@ -543,7 +546,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </AlertDialogHeader>
  <AlertDialogFooter>
  <AlertDialogCancel>Cancel</AlertDialogCancel>
- <AlertDialogAction 
+ <AlertDialogAction
  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
  onClick={() => toast.success('Checklist deleted')}
  >
@@ -552,12 +555,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </AlertDialogFooter>
  </AlertDialogContent>
  </AlertDialog>
- 
+ </>
+ )}
+
 
  <Tooltip>
  <TooltipTrigger asChild>
- <Button 
- variant="outline" 
+ <Button
+ variant="outline"
  size="sm"
  className="h-9 gap-2"
  onClick={() => {
@@ -651,13 +656,15 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  <TooltipContent>Save</TooltipContent>
  </Tooltip>
  
+ {!hideOwnActions && (
+ <>
  <AlertDialog>
  <Tooltip>
  <TooltipTrigger asChild>
  <AlertDialogTrigger asChild>
- <Button 
- variant="outline" 
- size="icon" 
+ <Button
+ variant="outline"
+ size="icon"
  className="h-9 w-9 hover:bg-[#1C63A6] hover:text-white hover:border-[#1C63A6] transition-colors"
  >
  <Copy className="h-4 w-4" />
@@ -681,14 +688,14 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </AlertDialogFooter>
  </AlertDialogContent>
  </AlertDialog>
- 
+
  <AlertDialog>
  <Tooltip>
  <TooltipTrigger asChild>
  <AlertDialogTrigger asChild>
- <Button 
- variant="outline" 
- size="icon" 
+ <Button
+ variant="outline"
+ size="icon"
  className="h-9 w-9 bg-destructive text-white border-destructive hover:bg-destructive/90 transition-colors"
  >
  <Trash2 className="h-4 w-4" />
@@ -706,7 +713,7 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </AlertDialogHeader>
  <AlertDialogFooter>
  <AlertDialogCancel>Cancel</AlertDialogCancel>
- <AlertDialogAction 
+ <AlertDialogAction
  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
  onClick={() => toast.success('Checklist deleted')}
  >
@@ -715,6 +722,8 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  </AlertDialogFooter>
  </AlertDialogContent>
  </AlertDialog>
+ </>
+ )}
  </TooltipProvider>
  ) : (
  <TooltipProvider>

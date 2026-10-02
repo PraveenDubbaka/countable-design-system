@@ -80,6 +80,7 @@ export interface FirmTemplate {
   source: { kind: "seed" | "engagement" | "checklist" | "global"; refId: string };
   nav: NavTarget;
   globalId?: string;
+  editable?: boolean;
 }
 
 export interface Library {
@@ -756,6 +757,69 @@ export function load(): Library {
     if (cycleRepaired) writeLibrary(lib);
   }
 
+  // B1: Repair seed templates — create backing records and convert to editable sources
+  {
+    let seedRepaired = false;
+    const engsRec = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
+    const clsRec = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
+    const engRecIds = new Set(engsRec.map(e => e.id));
+    const clRecIds = new Set(clsRec.map(c => c.id));
+
+    for (const t of lib.templates) {
+      if (t.source.kind !== "seed") continue;
+      const recId = `seed-rec-${t.id}`;
+
+      if (t.type === "engagements") {
+        if (!engRecIds.has(recId)) {
+          const sid = t.source.refId;
+          const view = getEngPickerTemplateView(sid);
+          const folderId = t.folderId ?? "root";
+          const folderName = lib.folders.find(f => f.id === folderId)?.name ?? "";
+          const ts = new Date().toISOString();
+          const rec: MyEngagementTemplate = view
+            ? templateViewToMyTemplate(view, folderId, folderName, recId)
+            : { id: recId, name: t.name, folderId, folderName, sections: [], sourceTemplateId: sid, createdAt: ts, updatedAt: ts };
+          rec.name = t.name;
+          rec.sourceTemplateId = sid;
+          engsRec.push(rec);
+          engRecIds.add(recId);
+        }
+        t.source = { kind: "engagement", refId: recId };
+        t.nav = { to: `/engagement-templates?myTemplate=${recId}` };
+        seedRepaired = true;
+      } else {
+        const clRecId = `seed-cl-rec-${t.id}`;
+        const globalId = t.source.refId;
+        const data = getGlobalTemplateChecklist(globalId);
+        if (data) {
+          if (!clRecIds.has(clRecId)) {
+            const cl: ChecklistSource = {
+              id: clRecId,
+              name: t.name,
+              folderId: t.folderId ?? "root",
+              folderName: lib.folders.find(f => f.id === t.folderId)?.name ?? "",
+              contentType: t.type,
+              data: { ...data, id: clRecId, title: t.name },
+            };
+            clsRec.push(cl);
+            clRecIds.add(clRecId);
+          }
+          t.source = { kind: "checklist", refId: clRecId };
+          t.nav = { to: "/builder", state: { checklistId: clRecId } };
+        } else {
+          t.editable = false;
+        }
+        seedRepaired = true;
+      }
+    }
+
+    if (seedRepaired) {
+      writeJsonToLocalStorage("myEngagementTemplates", engsRec);
+      writeJsonToLocalStorage("savedChecklists", clsRec);
+      writeLibrary(lib);
+    }
+  }
+
   // Sync engagement templates
   const engSources = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
   const engRefIds = new Set(engSources.map(e => e.id));
@@ -1191,7 +1255,7 @@ export function duplicateTemplate(id: string): Library {
       engs.push(clone);
       writeJsonToLocalStorage("myEngagementTemplates", engs);
       copy.source = { kind: "engagement", refId: cloneRefId };
-      copy.nav = { to: "/engagement-templates", state: { myTemplate: cloneRefId } };
+      copy.nav = { to: `/engagement-templates?myTemplate=${cloneRefId}` };
     }
   } else if (src.source.kind === "checklist") {
     const cls = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
@@ -1367,6 +1431,27 @@ export function addFromGlobal(
       window.dispatchEvent(new CustomEvent("checklistSaved", { detail: clRecord }));
       source = { kind: "checklist", refId };
       nav = { to: "/builder", state: { checklistId: refId } };
+    } else if (item.type === "letters" || item.type === "reports" || item.type === "worksheets" || item.type === "notes") {
+      const checklistData = getGlobalTemplateChecklist(item.id);
+      if (checklistData) {
+        const refId = `checklist-global-${Date.now()}-${i}`;
+        const clRecord: ChecklistSource = {
+          id: refId,
+          name: item.name,
+          folderId: folderId ?? "root",
+          folderName,
+          contentType: item.type,
+          data: { ...checklistData, id: refId, title: item.name, createdAt: new Date(), updatedAt: new Date() },
+        };
+        const existingCls = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
+        writeJsonToLocalStorage("savedChecklists", [...existingCls, clRecord]);
+        window.dispatchEvent(new CustomEvent("checklistSaved", { detail: clRecord }));
+        source = { kind: "checklist", refId };
+        nav = { to: "/builder", state: { checklistId: refId } };
+      } else {
+        source = { kind: "global", refId: item.id };
+        nav = item.nav;
+      }
     } else {
       source = { kind: "global", refId: item.id };
       nav = item.nav;
@@ -1392,6 +1477,7 @@ export function addFromGlobal(
       source,
       nav,
       globalId: item.id,
+      ...(source.kind === "global" && item.type !== "financial-statements" ? { editable: false } : {}),
     });
   }
 

@@ -1972,9 +1972,10 @@ interface TemplatePreviewProps {
  onPublish?: (templateName: string) => void;
  onUnpublish?: (templateName: string) => void;
  isPublished?: boolean;
+ hideOwnActions?: boolean;
 }
 
-const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSidebar, onPublish, onUnpublish, isPublished = false }: TemplatePreviewProps) => {
+const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSidebar, onPublish, onUnpublish, isPublished = false, hideOwnActions = false }: TemplatePreviewProps) => {
  const initialDocs = getDocsForTemplate(selectedTemplate);
  const [docs, setDocs] = useState<DocItem[]>(initialDocs);
  const [activeDoc, setActiveDoc] = useState(1);
@@ -2078,11 +2079,11 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
  </svg>
  </button>
  <h2 className="text-base font-bold text-foreground">Edit {activeDocItem?.label || "Document"}</h2>
- {isPublished ? (
+ {!hideOwnActions && (isPublished ? (
  <Badge variant="success" icon={<BadgeCheck size={13} />}>Published</Badge>
  ) : (
  <Badge variant="notStarted" icon={<FileText size={13} />}>Draft</Badge>
- )}
+ ))}
  </div>
  <div className="flex items-center gap-2">
  <Button
@@ -2124,11 +2125,11 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
  <h2 className="text-lg font-semibold text-foreground">
  {title}
  </h2>
- {isPublished ? (
+ {!hideOwnActions && (isPublished ? (
  <Badge variant="success" icon={<BadgeCheck size={13} />}>Published</Badge>
  ) : isMyTemplates ? (
  <Badge variant="notStarted" icon={<FileText size={13} />}>Draft</Badge>
- ) : null}
+ ) : null)}
  </div>
  {isMyTemplates ? (
  <div className="flex items-center gap-2">
@@ -2161,6 +2162,8 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
  <Pencil size={14} />
  Edit
  </Button>
+ {!hideOwnActions && (
+ <>
  <Button variant="outline" size="sm" onClick={() => {}} title="Duplicate template">
  <Copy size={14} />
  Duplicate
@@ -2182,6 +2185,8 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
  <Trash2 size={14} />
  Delete
  </Button>
+ </>
+ )}
  </div>
  ) : (
  <Button size="sm" onClick={() => setCopyModalOpen(true)}>

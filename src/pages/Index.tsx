@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
+import { TemplateDetailHeader } from '@/components/templates/TemplateDetailHeader';
+import { GlobalTemplateHeader } from '@/components/templates/GlobalTemplateHeader';
+import { load as loadLibrary } from '@/lib/firmTemplateLibrary';
 import { ChecklistBuilder } from '@/components/ChecklistBuilder';
 import { Checklist, GenerationScope, Section, Question } from '@/types/checklist';
 import { RichTextToolbarProvider } from '@/contexts/RichTextToolbarContext';
@@ -391,6 +394,9 @@ const updateChecklistInStorage = (checklistId: string, checklistData: Checklist)
 export default function Index() {
  const location = useLocation();
  const navigate = useNavigate();
+ const [searchParams] = useSearchParams();
+ const ftParam = searchParams.get("ft");
+ const gtParam = searchParams.get("gt");
 
  const [checklist, setChecklist] = useState<Checklist | null>(null);
  const [isGenerating, setIsGenerating] = useState(false);
@@ -401,6 +407,10 @@ export default function Index() {
  const [isWorksheetTemplate, setIsWorksheetTemplate] = useState(false);
  const [currentGlobalTemplateId, setCurrentGlobalTemplateId] = useState<string | null>(null);
  const [globalWorksheetComponent, setGlobalWorksheetComponent] = useState<React.ReactNode | null>(null);
+
+ // Lifted editing state for LetterView when driven by TemplateDetailHeader
+ const [letterIsEditing, setLetterIsEditing] = useState(false);
+ const letterSaveRef = useRef<(() => void) | null>(null);
 
  const handleGenerate = async (prompt: string, scope: GenerationScope, savedChecklistId?: string, checklistName?: string) => {
  setIsGenerating(true);
@@ -554,14 +564,33 @@ export default function Index() {
  toast.success('Checklist saved');
  };
 
+ // Determine editable from firm library when ft is present
+ const ftTemplate = ftParam ? loadLibrary().templates.find(t => t.id === ftParam) : null;
+ const ftEditable = ftTemplate ? ftTemplate.editable !== false : true;
+ const ftIsLetter = isReportTemplate;
+ const ftIsWorksheet = isWorksheetTemplate;
+
  return (
  <RichTextToolbarProvider>
- <Layout 
+ <Layout
  title="Templates"
- showActions={!!checklist}
- showBackButton={!!checklist}
+ showActions={!!checklist && !ftParam}
+ showBackButton={!!checklist && !ftParam}
  onBack={handleBack}
  >
+
+ {/* Consistent header from firm library */}
+ {ftParam && (
+ <TemplateDetailHeader
+ firmTemplateId={ftParam}
+ canEdit={ftEditable && (ftIsLetter || false)}
+ isEditing={ftIsLetter ? letterIsEditing : undefined}
+ onEdit={ftIsLetter ? () => setLetterIsEditing(true) : undefined}
+ onSave={ftIsLetter ? () => { letterSaveRef.current?.(); setLetterIsEditing(false); } : undefined}
+ onCancel={ftIsLetter ? () => setLetterIsEditing(false) : undefined}
+ />
+ )}
+ {gtParam && <GlobalTemplateHeader globalId={gtParam} />}
 
  {isGenerating ? (
  <div className="flex-1 flex items-center justify-center h-full">
@@ -579,12 +608,22 @@ export default function Index() {
  ) : globalWorksheetComponent ? (
  <div className="flex-1 overflow-auto">{globalWorksheetComponent}</div>
  ) : checklist && isWorksheetTemplate ? (
+ <>
+ {ftParam && !ftEditable && (
+ <p className="text-sm text-muted-foreground px-6 py-2 italic">This worksheet's layout is fixed in the prototype.</p>
+ )}
  <WorksheetView checklist={checklist} onUpdate={handleChecklistUpdate} />
+ </>
  ) : checklist && isReportTemplate ? (
  <LetterView
  checklist={checklist}
  onUpdate={handleChecklistUpdate}
  variant="report"
+ isEditing={ftParam ? letterIsEditing : undefined}
+ onEditStart={ftParam ? () => setLetterIsEditing(true) : undefined}
+ onSaveEdits={ftParam ? () => { handleDirectSave(); setLetterIsEditing(false); } : undefined}
+ onCancelEdits={ftParam ? () => setLetterIsEditing(false) : undefined}
+ saveRef={ftParam ? letterSaveRef : undefined}
  />
  ) : checklist ? (
  <ChecklistBuilder
@@ -594,6 +633,7 @@ export default function Index() {
  initialPreviewMode={isGlobalTemplatePreview || isSavedTemplate}
  isGlobalTemplate={isGlobalTemplatePreview}
  isSavedTemplate={isSavedTemplate}
+ hideOwnActions={!!ftParam}
  />
  ) : (
  <div className="flex-1 flex items-center justify-center h-full">

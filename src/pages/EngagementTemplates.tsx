@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Navigate } from "react-router-dom";
+import { TemplateDetailHeader } from "@/components/templates/TemplateDetailHeader";
+import { GlobalTemplateHeader } from "@/components/templates/GlobalTemplateHeader";
 import { ChevronDown, Plus, LayoutGrid, FileText, ClipboardList, Trash2, GripVertical, X, Copy, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -505,10 +507,12 @@ function MyTemplateEditor({
  template,
  onSaved,
  onDeleted,
+ hideOwnActions,
 }: {
  template: MyEngagementTemplate;
  onSaved: (updated: MyEngagementTemplate) => void;
  onDeleted: () => void;
+ hideOwnActions?: boolean;
 }) {
  const [data, setData] = useState<MyEngagementTemplate>(template);
  const [isDirty, setIsDirty] = useState(false);
@@ -622,7 +626,9 @@ function MyTemplateEditor({
  <>
  <div className="flex-1 bg-background flex flex-col overflow-hidden">
  {/* Header */}
+ {(!hideOwnActions || isDirty) && (
  <div className="flex items-center justify-between px-7 pt-4 pb-3.5 border-b border-border flex-shrink-0">
+ {!hideOwnActions && (
  <div>
  {editingTitle ? (
  <Input
@@ -643,7 +649,8 @@ function MyTemplateEditor({
  </h1>
  )}
  </div>
- <div className="flex items-center gap-2">
+ )}
+ <div className="flex items-center gap-2 ml-auto">
  {isDirty && (
  <Button
  size="sm"
@@ -653,6 +660,8 @@ function MyTemplateEditor({
  Save changes
  </Button>
  )}
+ {!hideOwnActions && (
+ <>
  <Button
  size="sm"
  variant="outline"
@@ -669,8 +678,11 @@ function MyTemplateEditor({
  >
  <Trash2 className="h-3.5 w-3.5" /> Delete
  </Button>
+ </>
+ )}
  </div>
  </div>
+ )}
 
  {/* Sections */}
  <div className="flex-1 overflow-y-auto p-6 space-y-5">
@@ -720,6 +732,7 @@ export default function EngagementTemplates() {
  const navigate = useNavigate();
  const selectedId = searchParams.get("template");
  const myTemplateId = searchParams.get("myTemplate");
+ const ftParam = searchParams.get("ft");
 
  const activeView = selectedId ? allTemplateViews[selectedId] : null;
 
@@ -752,11 +765,15 @@ export default function EngagementTemplates() {
  {/* Right Panel */}
  <div className="flex-1 bg-background flex flex-col overflow-hidden">
  {myTemplateId && myTemplate ? (
+ <>
+ {ftParam && <TemplateDetailHeader firmTemplateId={ftParam} />}
  <MyTemplateEditor
  template={myTemplate}
  onSaved={handleTemplateSaved}
  onDeleted={handleTemplateDeleted}
+ hideOwnActions={!!ftParam}
  />
+ </>
  ) : myTemplateId && !myTemplate ? (
  <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
  <span className="text-5xl opacity-40">📄</span>
@@ -764,7 +781,9 @@ export default function EngagementTemplates() {
  </div>
  ) : activeView ? (
  <>
- {/* Header */}
+ {selectedId ? (
+ <GlobalTemplateHeader globalId={selectedId} />
+ ) : (
  <div className="flex items-center justify-between px-7 pt-4 pb-3.5 border-b border-border flex-shrink-0">
  <div>
  <h1 className="text-xl font-bold text-foreground">{activeView.title}</h1>
@@ -773,8 +792,7 @@ export default function EngagementTemplates() {
  <Plus className="h-4 w-4 mr-1" /> My Templates
  </Button>
  </div>
-
-
+ )}
 
  {/* Sections */}
  <div className="flex-1 overflow-y-auto p-6 space-y-5">
