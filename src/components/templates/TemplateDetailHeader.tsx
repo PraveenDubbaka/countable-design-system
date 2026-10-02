@@ -240,10 +240,14 @@ export function TemplateDetailHeader({
             <StatusChip status={template.status} />
             {isDefaultNow && <DefaultBadge />}
             <LinkChip linked={linked} />
-            <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground border border-border", typeMeta.color)}>
-              {template.engagementType !== "Any" && <span>{template.engagementType}</span>}
-              {template.framework !== "Any" && <span className="opacity-60">· {template.framework}</span>}
-            </span>
+            {(template.engagementType !== "Any" || template.framework !== "Any") && (
+              <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground border border-border", typeMeta.color)}>
+                {[
+                  template.engagementType !== "Any" ? template.engagementType : null,
+                  template.framework !== "Any" ? template.framework : null,
+                ].filter(Boolean).join(" · ")}
+              </span>
+            )}
             {template.availableOfficeIds.map(id => (
               <OfficeTag key={id} officeId={id} />
             ))}

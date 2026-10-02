@@ -135,6 +135,11 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
   const folderParam = searchParams.get("folder");
+  const ftParam = searchParams.get("ft");
+  const ftFolderId = !folderParam && ftParam
+    ? (lib.templates.find(t => t.id === ftParam)?.folderId ?? null)
+    : null;
+  const activeFolderId = folderParam ?? ftFolderId;
   const onTemplatesPage = location.pathname === "/templates";
 
   // Dialog state
@@ -144,6 +149,7 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
   const [newSubfolderParent, setNewSubfolderParent] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
+    setLib(load());
     const onChanged = () => setLib(load());
     window.addEventListener("firmTemplateLibraryChanged", onChanged);
     window.addEventListener("firmSwitched", onChanged);
@@ -159,9 +165,9 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
 
   // Auto-expand ancestors of the selected folder
   useEffect(() => {
-    if (!folderParam) return;
+    if (!activeFolderId) return;
     const toExpand = new Set<string>();
-    let current = lib.folders.find(f => f.id === folderParam);
+    let current = lib.folders.find(f => f.id === activeFolderId);
     while (current?.parentId) {
       toExpand.add(current.parentId);
       current = lib.folders.find(f => f.id === current!.parentId);
@@ -169,7 +175,7 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
     if (toExpand.size > 0) {
       setExpandedFolders(prev => new Set([...prev, ...toExpand]));
     }
-  }, [folderParam, lib.folders]);
+  }, [activeFolderId, lib.folders]);
 
   const activeOfficeId = getActiveOfficeId();
   const q = search.trim().toLowerCase();
@@ -229,7 +235,7 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
   function refresh() { setLib(load()); }
 
   function handleFolderClick(folder: Folder) {
-    if (folderParam === folder.id) {
+    if (activeFolderId === folder.id) {
       // Already selected — toggle expand/collapse only
       toggleFolder(folder.id);
       return;
@@ -265,7 +271,7 @@ export function FirmTemplatesTree({ type, search, dark = false }: Props) {
 
   function renderFolder(folder: Folder) {
     const isExpanded = expandedFolders.has(folder.id);
-    const isActive = folderParam === folder.id;
+    const isActive = activeFolderId === folder.id;
     const childFolders = allFolders.filter(f => f.parentId === folder.id &&
       (visibleFolderIds === null || visibleFolderIds.has(f.id)));
     const directCount = allTemplates.filter(t => t.folderId === folder.id).length;

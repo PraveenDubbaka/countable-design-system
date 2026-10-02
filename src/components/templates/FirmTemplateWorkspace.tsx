@@ -91,6 +91,7 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
   function refresh() { setLib(load()); }
 
   useEffect(() => {
+    refresh();
     const onChanged = () => refresh();
     const onFirmSwitched = () => { setOfficeFilter(getActiveOfficeId()); refresh(); };
     window.addEventListener("firmTemplateLibraryChanged", onChanged);

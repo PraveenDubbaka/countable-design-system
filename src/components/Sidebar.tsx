@@ -842,10 +842,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  folderName: "Pacific Rim Corp",
  country: "US" as const,
  }));
- const seeded = [...compilationSeeds, ...reviewSeeds, ...auditSeeds, ...northlineSeeds, ...usAuditSeeds, ...pacificRimSeeds];
- writeJsonToLocalStorage("savedChecklists", seeded);
+ const freshDefaults = [...compilationSeeds, ...reviewSeeds, ...auditSeeds, ...northlineSeeds, ...usAuditSeeds, ...pacificRimSeeds];
+ // Merge: preserve user/library records (non-default-* ids), replace default-* with fresh seeds
+ const existing = readJsonFromLocalStorage<SavedChecklist[]>("savedChecklists", []);
+ const userRecords = existing.filter(c => !c.id.startsWith("default-"));
+ const merged = [...freshDefaults, ...userRecords];
+ writeJsonToLocalStorage("savedChecklists", merged);
  localStorage.setItem("savedChecklistsVersion", SEED_VERSION);
- return seeded;
+ window.dispatchEvent(new CustomEvent("checklistSaved"));
+ return merged;
  };
 
  const loadSavedChecklists = () => {

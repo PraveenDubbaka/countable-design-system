@@ -2122,9 +2122,11 @@ const TemplatePreview = ({ selectedTemplate, isMyTemplates = false, onCollapseSi
  ) : (
  <>
  <div className="flex items-center gap-3">
+ {!hideOwnActions && (
  <h2 className="text-lg font-semibold text-foreground">
  {title}
  </h2>
+ )}
  {!hideOwnActions && (isPublished ? (
  <Badge variant="success" icon={<BadgeCheck size={13} />}>Published</Badge>
  ) : isMyTemplates ? (

@@ -672,11 +672,14 @@ export function load(): Library {
     defaults: raw.defaults ?? {},
   };
 
+  let libChanged = false;
+
   // Seed on first load
   const hasSeedFolders = lib.folders.some(f => f.id.startsWith("sf-"));
   if (!hasSeedFolders) {
     lib.folders = [...seedFolders(), ...lib.folders];
     lib.templates = [...seedTemplates(), ...lib.templates];
+    libChanged = true;
   }
 
   // Repair myEngagementTemplates: rebuild records without a sections array
@@ -700,11 +703,10 @@ export function load(): Library {
   }
 
   // Repair stale nav on library engagement templates (state → query param)
-  let navRepaired = false;
   for (const t of lib.templates) {
     if (t.source.kind === "engagement" && t.nav && t.nav.to === "/engagement-templates" && !t.nav.to.includes("?")) {
       t.nav = { to: `/engagement-templates?myTemplate=${t.source.refId}` };
-      navRepaired = true;
+      libChanged = true;
     }
     // Repair seed templates whose nav still uses router state instead of query params
     if (t.nav && t.nav.state && typeof (t.nav.state as Record<string, unknown>).template === "string") {
@@ -712,31 +714,27 @@ export function load(): Library {
       const tpl = encodeURIComponent(String(state.template));
       const src = state.source ? `&source=${state.source}` : "";
       t.nav = { to: `${t.nav.to}?template=${tpl}${src}` };
-      navRepaired = true;
+      libChanged = true;
     }
   }
-  if (navRepaired) writeLibrary(lib);
 
   // Repair seed template navs: always follow the code definition
   {
     const seedNavMap = new Map<string, NavTarget>(
       seedTemplates().map(s => [s.id, s.nav])
     );
-    let seedNavRepaired = false;
     for (const t of lib.templates) {
       if (t.source.kind !== "seed" || !seedNavMap.has(t.id)) continue;
       const canonicalNav = seedNavMap.get(t.id) as NavTarget;
       if (JSON.stringify(t.nav) !== JSON.stringify(canonicalNav)) {
         t.nav = canonicalNav;
-        seedNavRepaired = true;
+        libChanged = true;
       }
     }
-    if (seedNavRepaired) writeLibrary(lib);
   }
 
   // Repair folder cycles: if a folder's parentId chain revisits a folder, break the cycle
   {
-    let cycleRepaired = false;
     for (const folder of lib.folders) {
       const seen = new Set<string>();
       seen.add(folder.id);
@@ -746,7 +744,7 @@ export function load(): Library {
         if (seen.has(cur)) {
           // Cycle detected — sever this folder's parentId link
           folder.parentId = null;
-          cycleRepaired = true;
+          libChanged = true;
           broken = true;
         } else {
           seen.add(cur);
@@ -754,12 +752,11 @@ export function load(): Library {
         }
       }
     }
-    if (cycleRepaired) writeLibrary(lib);
   }
 
   // B1: Repair seed templates — create backing records and convert to editable sources
   {
-    let seedRepaired = false;
+    let sourceDataChanged = false;
     const engsRec = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
     const clsRec = readJsonFromLocalStorage<ChecklistSource[]>("savedChecklists", []);
     const engRecIds = new Set(engsRec.map(e => e.id));
@@ -783,11 +780,12 @@ export function load(): Library {
           rec.sourceTemplateId = sid;
           engsRec.push(rec);
           engRecIds.add(recId);
+          sourceDataChanged = true;
         }
         t.source = { kind: "engagement", refId: recId };
         t.nav = { to: `/engagement-templates?myTemplate=${recId}` };
-        seedRepaired = true;
-      } else {
+        libChanged = true;
+      } else if (t.type === "letters" || t.type === "reports" || t.type === "worksheets") {
         const clRecId = `seed-cl-rec-${t.id}`;
         const globalId = t.source.refId;
         const data = getGlobalTemplateChecklist(globalId);
@@ -803,20 +801,27 @@ export function load(): Library {
             };
             clsRec.push(cl);
             clRecIds.add(clRecId);
+            sourceDataChanged = true;
           }
           t.source = { kind: "checklist", refId: clRecId };
           t.nav = { to: "/builder", state: { checklistId: clRecId } };
-        } else {
+          libChanged = true;
+        } else if (t.editable !== false) {
           t.editable = false;
+          libChanged = true;
         }
-        seedRepaired = true;
+      } else if (t.type === "financial-statements" || t.type === "notes") {
+        // FS and notes seeds: leave untouched; remove any incorrectly set editable:false
+        if (t.editable === false) {
+          t.editable = undefined;
+          libChanged = true;
+        }
       }
     }
 
-    if (seedRepaired) {
+    if (sourceDataChanged) {
       writeJsonToLocalStorage("myEngagementTemplates", engsRec);
       writeJsonToLocalStorage("savedChecklists", clsRec);
-      writeLibrary(lib);
     }
   }
 
@@ -825,9 +830,13 @@ export function load(): Library {
   const engRefIds = new Set(engSources.map(e => e.id));
 
   // Drop stale engagement templates
-  lib.templates = lib.templates.filter(
-    t => t.source.kind !== "engagement" || engRefIds.has(t.source.refId)
-  );
+  {
+    const before = lib.templates.length;
+    lib.templates = lib.templates.filter(
+      t => t.source.kind !== "engagement" || engRefIds.has(t.source.refId)
+    );
+    if (lib.templates.length !== before) libChanged = true;
+  }
 
   // Import new engagement templates
   const existingEngRefIds = new Set(
@@ -858,6 +867,7 @@ export function load(): Library {
       source: { kind: "engagement", refId: eng.id },
       nav: { to: "/engagement-templates", state: { myTemplate: eng.id } },
     });
+    libChanged = true;
   }
 
   // Sync checklists
@@ -887,9 +897,13 @@ export function load(): Library {
   const clSourceMap = new Map(clSources.map(c => [c.id, c]));
 
   // Drop stale checklist templates
-  lib.templates = lib.templates.filter(
-    t => t.source.kind !== "checklist" || clRefIds.has(t.source.refId)
-  );
+  {
+    const before = lib.templates.length;
+    lib.templates = lib.templates.filter(
+      t => t.source.kind !== "checklist" || clRefIds.has(t.source.refId)
+    );
+    if (lib.templates.length !== before) libChanged = true;
+  }
 
   // A8 + A7: update existing checklist templates (type/tags/nav) from current source records
   for (const t of lib.templates) {
@@ -898,11 +912,12 @@ export function load(): Library {
     if (!cl) continue;
     const desiredType = clLibType(cl);
     const desiredTags = clTags(cl);
-    if (!cl.data && t.nav) t.nav = null;
+    if (!cl.data && t.nav) { t.nav = null; libChanged = true; }
     if (t.type !== desiredType) {
       t.type = desiredType;
       t.folderId = findOrCreateFolder(lib, desiredType, cl.folderName);
       t.tags = desiredTags;
+      libChanged = true;
     }
   }
 
@@ -935,9 +950,10 @@ export function load(): Library {
       source: { kind: "checklist", refId: cl.id },
       nav: cl.data ? { to: "/builder", state: { checklistId: cl.id } } : null,
     });
+    libChanged = true;
   }
 
-  writeJsonToLocalStorage(STORAGE_KEY, lib);
+  if (libChanged) writeJsonToLocalStorage(STORAGE_KEY, lib);
   return lib;
 }
 
