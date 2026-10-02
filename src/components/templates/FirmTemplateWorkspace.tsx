@@ -122,20 +122,10 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
     ? lib.templates
     : lib.templates.filter(t => t.type === type);
 
-  // Apply filters (folder scope includes all descendants)
+  // Apply filters (folder scope: direct members only)
   const filtered = useMemo(() => {
-    let folderIds: Set<string> | null = null;
-    if (folderId) {
-      folderIds = new Set<string>();
-      const collect = (id: string) => {
-        folderIds!.add(id);
-        lib.folders.filter(f => f.parentId === id).forEach(f => collect(f.id));
-      };
-      collect(folderId);
-    }
-
-    let list = folderIds
-      ? typeTemplates.filter(t => t.folderId != null && folderIds!.has(t.folderId))
+    let list = folderId
+      ? typeTemplates.filter(t => t.folderId === folderId)
       : typeTemplates;
 
     if (officeFilter !== "all") {
@@ -307,10 +297,18 @@ export function FirmTemplateWorkspace({ type, folderId, onTypeChange, onFolderCh
               </>
             ) : folderId ? (
               <>
-                <p className="text-base font-medium text-foreground">
-                  No templates in {crumbs[crumbs.length - 1]?.name ?? "this folder"}
-                </p>
-                <Button variant="outline" size="sm" onClick={onOpenGlobal}>Browse Global Library</Button>
+                {lib.folders.some(f => f.parentId === folderId) ? (
+                  <p className="text-base font-medium text-foreground">
+                    No templates in {crumbs[crumbs.length - 1]?.name ?? "this folder"}. Open a subfolder in the left menu to see its templates.
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-base font-medium text-foreground">
+                      No templates in {crumbs[crumbs.length - 1]?.name ?? "this folder"}
+                    </p>
+                    <Button variant="outline" size="sm" onClick={onOpenGlobal}>Browse Global Library</Button>
+                  </>
+                )}
               </>
             ) : (
               <>
