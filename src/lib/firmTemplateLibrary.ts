@@ -293,7 +293,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 0,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-aspe-priv" },
-      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("CCPC ASPE-Reviewed Financial Statements")}&source=my` },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Corporations ASPE-Reviewed Financial Statements")}&source=my` },
     },
     {
       id: "seed-fs-ifrs-pub",
@@ -313,7 +313,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 2,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-ifrs-pub" },
-      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Public Corporation IFRS-Reviewed Financial Statements")}&source=my` },
+      nav: null,
     },
     {
       id: "seed-fs-usgaap-ccorp",
@@ -353,7 +353,7 @@ function seedTemplates(): FirmTemplate[] {
       linkedSeed: 0,
       updatedAt: ago,
       source: { kind: "seed", refId: "fs-taxbasis-pt" },
-      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Pass-Through GAAP-Financial Statements — Income Tax Basis")}&source=my` },
+      nav: { to: `/financial-statement-templates?template=${encodeURIComponent("Partnership GAAP-Financial Statements — Income Tax Basis")}&source=my` },
     },
 
     // ── LETTERS ──────────────────────────────────────────────────────────────
@@ -698,6 +698,23 @@ export function load(): Library {
     }
   }
   if (navRepaired) writeLibrary(lib);
+
+  // Repair seed template navs: always follow the code definition
+  {
+    const seedNavMap = new Map<string, NavTarget>(
+      seedTemplates().map(s => [s.id, s.nav])
+    );
+    let seedNavRepaired = false;
+    for (const t of lib.templates) {
+      if (t.source.kind !== "seed" || !seedNavMap.has(t.id)) continue;
+      const canonicalNav = seedNavMap.get(t.id) as NavTarget;
+      if (JSON.stringify(t.nav) !== JSON.stringify(canonicalNav)) {
+        t.nav = canonicalNav;
+        seedNavRepaired = true;
+      }
+    }
+    if (seedNavRepaired) writeLibrary(lib);
+  }
 
   // Sync engagement templates
   const engSources = readJsonFromLocalStorage<EngSource[]>("myEngagementTemplates", []);
