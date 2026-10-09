@@ -65,33 +65,46 @@ function SectionBlock({ section }: { section: TemplateSection }) {
  <div className="overflow-hidden">
  <table className="w-full border-collapse table-fixed">
  <colgroup>
- <col style={{ width: '35%' }} />
- <col style={{ width: '22%' }} />
- <col style={{ width: '43%' }} />
+ <col style={{ width: '28%' }} />
+ <col style={{ width: '16%' }} />
+ <col style={{ width: '18%' }} />
+ <col style={{ width: '38%' }} />
  </colgroup>
  <thead>
  <tr className="border-t border-border">
  <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Section</th>
+ <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Standard</th>
  <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Category</th>
  <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Mapped template</th>
  </tr>
  </thead>
  <tbody>
- {section.rows.map((row, i) => (
- <tr key={i} className="hover:bg-muted/20">
- <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.section}</td>
- <td className="px-6 py-3 border-b border-border/40">
- <CategoryBadge category={row.category} />
- </td>
- <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.mappedTemplate}</td>
- </tr>
- ))}
+ {section.rows.map((row, i) => {
+   const { name, standard } = parseSectionStandard(row.section);
+   return (
+   <tr key={i} className="hover:bg-muted/20">
+    <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{name}</td>
+    <td className="px-6 py-3.5 border-b border-border/40 text-sm text-muted-foreground">{standard}</td>
+    <td className="px-6 py-3 border-b border-border/40">
+     <CategoryBadge category={row.category} />
+    </td>
+    <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{row.mappedTemplate}</td>
+   </tr>
+   );
+  })}
  </tbody>
  </table>
  </div>
  )}
  </div>
  );
+}
+
+// ── Parse parenthetical standard reference from section names like "420 Materiality (AU-C 320 / SAB 99)" ──
+function parseSectionStandard(section: string): { name: string; standard: string } {
+  const match = section.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  if (match) return { name: match[1].trim(), standard: match[2].trim() };
+  return { name: section, standard: "" };
 }
 
 // ── Standards Banner ──
