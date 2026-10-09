@@ -73,18 +73,18 @@ function SectionBlock({ section }: { section: TemplateSection }) {
  <thead>
  <tr className="border-t border-border">
  <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Section</th>
- <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Standard</th>
+ <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Ref.</th>
  <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Category</th>
  <th className="px-6 py-2.5 text-sm font-semibold text-foreground bg-muted/30 border-b border-border text-left">Mapped template</th>
  </tr>
  </thead>
  <tbody>
  {section.rows.map((row, i) => {
-   const { name, standard } = parseSectionStandard(row.section);
+   const { ref, name } = parseSectionRef(row.section);
    return (
    <tr key={i} className="hover:bg-muted/20">
     <td className="px-6 py-3.5 border-b border-border/40 text-sm text-foreground">{name}</td>
-    <td className="px-6 py-3.5 border-b border-border/40 text-sm text-muted-foreground">{standard}</td>
+    <td className="px-6 py-3.5 border-b border-border/40 text-sm text-muted-foreground font-mono">{ref}</td>
     <td className="px-6 py-3 border-b border-border/40">
      <CategoryBadge category={row.category} />
     </td>
@@ -100,11 +100,12 @@ function SectionBlock({ section }: { section: TemplateSection }) {
  );
 }
 
-// ── Parse parenthetical standard reference from section names like "420 Materiality (AU-C 320 / SAB 99)" ──
-function parseSectionStandard(section: string): { name: string; standard: string } {
-  const match = section.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-  if (match) return { name: match[1].trim(), standard: match[2].trim() };
-  return { name: section, standard: "" };
+// ── Extract leading section code (e.g. "408", "AL1.1", "501-A") from section names ──
+function parseSectionRef(section: string): { ref: string; name: string } {
+  // Match numeric codes like "408", alphanumeric like "501-A", or letter+number like "AL1.1"
+  const match = section.match(/^(\d+[A-Za-z0-9.\-]*|[A-Z]{1,3}\d+[A-Za-z0-9.\-]*)\s+(.+)$/);
+  if (match) return { ref: match[1], name: match[2] };
+  return { ref: "", name: section };
 }
 
 // ── Standards Banner ──
