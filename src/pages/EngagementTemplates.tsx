@@ -100,10 +100,10 @@ function SectionBlock({ section }: { section: TemplateSection }) {
  );
 }
 
-// ── Extract leading section code (e.g. "408", "AL1.1", "501-A") from section names ──
+// ── Extract leading section code (e.g. "408", "AL1.1", "501-A", "AIM", "DC", "SO") from section names ──
 function parseSectionRef(section: string): { ref: string; name: string } {
-  // Match numeric codes like "408", alphanumeric like "501-A", or letter+number like "AL1.1"
-  const match = section.match(/^(\d+[A-Za-z0-9.\-]*|[A-Z]{1,3}\d+[A-Za-z0-9.\-]*)\s+(.+)$/);
+  // Match: numeric "408", alphanumeric "501-A", letter+number "AL1.1", or pure uppercase abbrev "AIM"/"DC"/"SO"
+  const match = section.match(/^(\d+[A-Za-z0-9.\-]*|[A-Z]{1,3}\d+[A-Za-z0-9.\-]*|[A-Z]{2,4})\s+(.+)$/);
   if (match) return { ref: match[1], name: match[2] };
   return { ref: "", name: section };
 }
