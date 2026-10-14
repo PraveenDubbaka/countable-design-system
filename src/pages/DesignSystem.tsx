@@ -22,6 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { toast as sonnerToast } from "sonner";
+import { PageBanner } from "@/components/ui/page-banner";
 import { BookIcon } from "@/components/icons/BookIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { LetterIcon } from "@/components/icons/LetterIcon";
@@ -1129,6 +1130,19 @@ export default function DesignSystem() {
  </div>
  <p className="text-label-sm text-muted-foreground mt-2">Top-right · sonner library</p>
  </SampleCard>
+
+ {/* Page Banners — full width */}
+ <div className="col-span-full">
+ <SampleCard title="Page Banners">
+  <div className="space-y-3">
+  <PageBanner variant="info" title="Info" description="This action may affect other users in your workspace." onDismiss={() => {}} />
+  <PageBanner variant="success" title="Success" description="Your changes have been saved successfully." onDismiss={() => {}} />
+  <PageBanner variant="warning" title="Warning" description="This engagement has not been reviewed in the last 30 days." onDismiss={() => {}} />
+  <PageBanner variant="error" title="Error" description="Failed to save. Please check your connection and try again." onDismiss={() => {}} />
+  </div>
+  <p className="text-label-sm text-muted-foreground mt-3">Full-width · 4 variants · optional dismiss · PageBanner component</p>
+ </SampleCard>
+ </div>
  </div>
 
  {/* Table & Pagination — full width */}
