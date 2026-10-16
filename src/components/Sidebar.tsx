@@ -24,7 +24,7 @@ const DEFAULT_CA_SO_HIDDEN: Record<string, string[]> = {
 };
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Headphones, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
@@ -1948,16 +1948,6 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
 
 
- {/* Support */}
- <Tooltip>
- <TooltipTrigger asChild>
- <div className={`sidebar-item cursor-pointer ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""}`}>
- <Headphones className="h-5 w-5 icon-bounce" />
- {isNavExpanded && <span className="text-sm font-medium">Support</span>}
- </div>
- </TooltipTrigger>
- {!isNavExpanded && <TooltipContent side="right">Support</TooltipContent>}
- </Tooltip>
 
  {/* Firm badge — icon-only, always at bottom */}
  <div className={cn("pb-3 pt-1", isNavExpanded ? "px-2" : "flex justify-center")}>

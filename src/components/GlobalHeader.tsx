@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import userAvatar from "@/assets/user-avatar.png";
-import { Bell, User, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid, Clock, Eye } from "lucide-react";
+import { Bell, User, Moon, Sun, Zap, UserCircle, Building2, Settings, CreditCard, Monitor, Gift, LogOut, Check, Trash2, Search, MoreVertical, Type, ChevronDown, LayoutGrid, Clock, Eye, Headphones } from "lucide-react";
 import { subscribeEnabled, getEnabled, subscribeEngagements, getEngagements, type TrackedEngagement, logEngagementTime } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
 import { LukaIcon } from "@/components/LukaIcon";
@@ -424,6 +424,16 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  </ScrollArea>
  </PopoverContent>
  </Popover>
+
+ {/* Support */}
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <div className="flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
+ <Headphones className="h-5 w-5 text-white/80 icon-bounce" />
+ </div>
+ </TooltipTrigger>
+ <TooltipContent>Support</TooltipContent>
+ </Tooltip>
 
  {/* User Profile Dropdown */}
  <DropdownMenu>
