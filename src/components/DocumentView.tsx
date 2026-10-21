@@ -4,7 +4,7 @@ import {
  Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy,
  GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft,
  Paperclip, ToggleLeft, Menu, DollarSign, FileText, Upload, File, X,
- Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3,
+ Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3, Lock,
  Hash, MessageSquare, BookOpen, List, Heading1, CaseSensitive, Undo2,
  Eye, EyeOff, CheckCircle2, PenLine } from
 'lucide-react';
@@ -1357,14 +1357,6 @@ function QuestionInlineColumns({
  currentType={question.answerType}
  onTypeChange={(t) => onUpdate({...question, answerType: t, answer: '' })} />
  }
- {canEdit &&
- <button
- onClick={() => onUpdate({...question, showResponse: false, answerType: 'none', answer: '' } as any)}
- className="absolute -top-1 -right-1 p-0.5 bg-background border border-border rounded-full text-muted-foreground hover:text-red-500 hover:border-red-300 opacity-0 group-hover/resp:opacity-100 transition-opacity shadow-sm z-10"
- title="Remove response">
- <X className="h-3 w-3" />
- </button>
- }
  </div>
  </>
  );
@@ -1399,14 +1391,6 @@ function QuestionInlineColumns({
  )}
 
  </div>
- {canEdit &&
- <button
- onClick={() => onUpdate({...question, showExplanation: false, explanation: '' } as any)}
- className="absolute -top-1 -right-1 p-0.5 bg-background border border-border rounded-full text-muted-foreground hover:text-red-500 hover:border-red-300 opacity-0 group-hover/exp:opacity-100 transition-opacity shadow-sm z-10"
- title="Remove explanation">
- <X className="h-3 w-3" />
- </button>
- }
  </div>
  </>
  );
@@ -1442,44 +1426,11 @@ function QuestionInlineColumns({
  }}
  isCompactMode={isCompactMode}
  disabled={isPreviewMode} />
- {canEdit &&
- <button
- onClick={() => onUpdate({...question, showReference: false, reference: null, references: [] } as any)}
- className="absolute -top-1 -right-1 p-0.5 bg-background border border-border rounded-full text-muted-foreground hover:text-red-500 hover:border-red-300 opacity-0 group-hover/ref:opacity-100 transition-opacity shadow-sm z-10"
- title="Remove reference">
- <X className="h-3 w-3" />
- </button>
- }
  </div>
  </>
  );
  })()}
 
- {/* Add column button */}
- {canEdit && hiddenColumns.length > 0 &&
- <Popover>
- <PopoverTrigger asChild>
- <button
- onClick={(e) => e.stopPropagation()}
- className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md border border-dashed border-border text-muted-foreground hover:text-primary hover:border-primary hover:bg-primary/5 transition-colors ml-1"
- title="Add column">
- <Plus className="h-3.5 w-3.5" />
- </button>
- </PopoverTrigger>
- <PopoverContent align="end" className="w-44 p-1 bg-popover border-border shadow-xl z-50" sideOffset={5}>
- <div className="text-xs font-medium text-muted-foreground px-2 py-1.5">Add Column</div>
- {hiddenColumns.map((col) =>
- <button
- key={col.key}
- onClick={() => onUpdate({...question, [col.key]: true } as any)}
- className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded hover:bg-muted transition-colors text-foreground">
- <Plus className="h-3.5 w-3.5 text-muted-foreground" />
- {col.label}
- </button>
- )}
- </PopoverContent>
- </Popover>
- }
  </div>
  );
 }
@@ -1527,10 +1478,12 @@ function DocumentQuestionBlock({
  };
 
  const [kebabOpen, setKebabOpen] = useState(false);
+ const [pendingRemove, setPendingRemove] = useState<null | 'response' | 'explanation' | 'reference'>(null);
  const { id: globalOpenId, set: setGlobalOpenId } = useContext(KebabOpenCtx);
  const handleKebabOpenChange = (open: boolean) => {
  setKebabOpen(open);
  setGlobalOpenId(open ? question.id : null);
+ if (!open) setPendingRemove(null);
  };
  const showKebab = globalOpenId === null || globalOpenId === question.id;
 
@@ -1692,6 +1645,74 @@ function DocumentQuestionBlock({
  })}
  </DropdownMenuSubContent>
  </DropdownMenuSub>
+ {/* Columns submenu */}
+ {!isCompactMode && (
+ <DropdownMenuSub>
+ <DropdownMenuSubTrigger className="px-3 py-2 text-sm">
+ <Columns2 className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Columns
+ </DropdownMenuSubTrigger>
+ <DropdownMenuSubContent className="min-w-[190px] p-1">
+ {/* Question — always present, locked */}
+ <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
+ <span className="w-4 shrink-0 flex items-center justify-center">
+ <Check className="h-3 w-3" />
+ </span>
+ <span className="flex-1">Question</span>
+ <Lock className="h-3 w-3 shrink-0" title="Question column cannot be removed" />
+ </div>
+ {([
+ { key: 'response' as const, showKey: 'showResponse', label: 'Answer',
+ hasContent: !!question.answer,
+ remove: () => onUpdate({...question, showResponse: false, answerType: 'none', answer: ''} as any),
+ add: () => onUpdate({...question, showResponse: true} as any) },
+ { key: 'explanation' as const, showKey: 'showExplanation', label: 'Explanation',
+ hasContent: !!question.explanation,
+ remove: () => onUpdate({...question, showExplanation: false, explanation: ''} as any),
+ add: () => onUpdate({...question, showExplanation: true} as any) },
+ { key: 'reference' as const, showKey: 'showReference', label: 'Reference',
+ hasContent: !!((question as any).references?.length || (question as any).reference),
+ remove: () => onUpdate({...question, showReference: false, reference: null, references: []} as any),
+ add: () => onUpdate({...question, showReference: true} as any) },
+ ]).map((col) => {
+ const isShown = (question as any)[col.showKey] !== false;
+ return pendingRemove === col.key ? (
+ <div key={col.key} className="px-3 py-2">
+ <p className="text-xs text-foreground mb-2">Remove {col.label}? Its content will be deleted.</p>
+ <div className="flex gap-1.5">
+ <button
+ onClick={(e) => { e.stopPropagation(); setPendingRemove(null); }}
+ className="flex-1 text-xs py-1 rounded bg-muted hover:bg-muted/80 text-foreground transition-colors"
+ >Cancel</button>
+ <button
+ onClick={(e) => { e.stopPropagation(); col.remove(); setPendingRemove(null); handleKebabOpenChange(false); }}
+ className="flex-1 text-xs py-1 rounded bg-destructive hover:bg-destructive/80 text-destructive-foreground transition-colors"
+ >Remove</button>
+ </div>
+ </div>
+ ) : (
+ <DropdownMenuItem
+ key={col.key}
+ onSelect={(e) => {
+ e.preventDefault();
+ if (isShown) {
+ if (col.hasContent) { setPendingRemove(col.key); }
+ else { col.remove(); }
+ } else {
+ col.add();
+ }
+ }}
+ className="flex items-center gap-2 px-3 py-2 text-sm"
+ >
+ <span className="w-4 shrink-0 flex items-center justify-center">
+ {isShown && <Check className="h-3 w-3" />}
+ </span>
+ {col.label}
+ </DropdownMenuItem>
+ );
+ })}
+ </DropdownMenuSubContent>
+ </DropdownMenuSub>
+ )}
  <DropdownMenuSeparator />
  {/* Delete */}
  <DropdownMenuItem
