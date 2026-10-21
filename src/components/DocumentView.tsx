@@ -2268,18 +2268,15 @@ function LayoutIcon({ columns, isActive }: {columns: number;isActive?: boolean;}
 
 function BetweenSectionToolbar({
  onAddSection
-
-
 }: {onAddSection: () => void;}) {
  return (
- <div className="flex items-center justify-center py-2 group/between">
- <div className="flex items-center gap-1 opacity-0 group-hover/between:opacity-100 transition-opacity bg-background border border-border rounded-lg shadow-sm px-1.5 py-1">
+ <div className="flex items-center justify-center">
+ <div className="flex items-center gap-1 bg-background border border-border rounded-lg shadow-sm px-1.5 py-1">
  <button
  type="button"
  onMouseDown={(e) => {e.preventDefault();e.stopPropagation();onAddSection();}}
  className="p-2 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors flex items-center gap-1.5 text-xs"
  title="Add section">
-
  <FileText className="h-4 w-4" />
  <span>Add section</span>
  </button>
@@ -2456,7 +2453,7 @@ export function DocumentView({
  onDragEnd={handleDragEnd}>
 
  <div
- className={`dv-document ${!isPreviewMode ? 'dv-edit-mode' : ''}`}
+ className={`dv-document flex flex-col gap-6 ${!isPreviewMode ? 'dv-edit-mode' : ''}`}
  onClickCapture={(e) => {
  // "See Appendix B" inline links open the document viewer instead of
  // anchor-scrolling (capture phase: question rows stopPropagation on bubble)
@@ -2560,15 +2557,15 @@ export function DocumentView({
  isGlobalTemplate={isGlobalTemplate} />
  )}
 
- {/* Between-section toolbar — Gamma style */}
- {!isPreviewMode &&
- <BetweenSectionToolbar
- onAddSection={() => handleAddCategoryAtPosition(idx, 'below')} />
-
- }
  </Fragment>
  )}
  </SortableContext>
+
+ {/* Add section — bottom of checklist, edit mode only */}
+ {!isPreviewMode && (
+ <BetweenSectionToolbar
+ onAddSection={() => handleAddCategoryAtPosition(checklist.sections.length - 1, 'below')} />
+ )}
 
  {/* Sign Off — appears at the bottom of every checklist */}
  <ChecklistSignOff checklist={checklist} isPreviewMode={isPreviewMode} isEngagementMode={isEngagementMode} />
