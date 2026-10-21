@@ -262,7 +262,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
         <PopoverTrigger asChild>
           <button
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors shrink-0"
+            className="flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors shrink-0 whitespace-nowrap"
           >
             <Paperclip className="h-3.5 w-3.5" />
             <span>+ Ref</span>

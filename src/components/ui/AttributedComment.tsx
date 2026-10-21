@@ -29,6 +29,19 @@ function formatAt(iso: string): string {
   });
 }
 
+function formatAtLong(iso: string): { date: string; time: string } {
+  const d = new Date(iso);
+  const date = d.toLocaleString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+  const time = d.toLocaleString("en-CA", { hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase().replace(/\./g, '');
+  return { date, time };
+}
+
+function resolveDisplayName(by: string): string {
+  if (by === "LUKA") return "Luka";
+  if (by === CURRENT_USER.initials) return CURRENT_USER.name;
+  return by;
+}
+
 const STORAGE_PREFIX = "attr:comment:";
 
 // ── Hook for use with custom inputs (e.g. AITextarea) ──────────────────────
@@ -70,6 +83,20 @@ export function AttributionBadge({ attr }: { attr: Attribution | null }) {
       }`}
     >
       {attr.by} · {formatAt(attr.at)}
+    </span>
+  );
+}
+
+export function AttributionLine({ attr }: { attr: Attribution | null }) {
+  if (!attr) return null;
+  const { date, time } = formatAtLong(attr.at);
+  const name = resolveDisplayName(attr.by);
+  return (
+    <span
+      className="text-[11px] text-muted-foreground font-normal leading-tight"
+      style={{ userSelect: "text", cursor: "text" }}
+    >
+      {`Last updated by ${name} on ${date} at ${time}`}
     </span>
   );
 }
