@@ -762,10 +762,10 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
  checklist={checklist}
  onUpdate={onUpdate}
- isPreviewMode={isPreviewMode}
+ isPreviewMode={!isInEditMode}
  isCompactMode={isCompactMode}
- selectedQuestions={isPreviewMode ? new Set<string>() : selectedQuestions}
- onSelectionChange={isPreviewMode ? undefined : setSelectedQuestions}
+ selectedQuestions={!isInEditMode ? new Set<string>() : selectedQuestions}
+ onSelectionChange={!isInEditMode ? undefined : setSelectedQuestions}
  isGlobalTemplate={isGlobalTemplate}
  />
 
