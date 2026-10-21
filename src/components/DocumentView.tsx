@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, useEffect, Fragment } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
 import { sanitizeHtml } from '@/lib/sanitize';
 import {
  Plus, Trash2, ChevronDown, ChevronRight, MoreHorizontal, Copy,
@@ -1272,31 +1271,11 @@ function QuestionInlineColumns({
  {/* Column 1: Question */}
  <div className="flex items-center gap-2 min-w-0 overflow-hidden" style={{ flex: `0 0 ${widths[0] * 100}%` }}>
  {showNumbering && <>
- {/* Checkbox + Number: checkbox appears on hover in edit mode */}
+ {/* Row number */}
  <div className="shrink-0 w-8 flex items-center justify-start">
- {onSelectionChange ? (
- <>
- <span
- className={`dv-number text-xs font-medium text-muted-foreground select-none w-8 text-left ${isSelected ? 'hidden' : 'group-hover/q:hidden'}`}
- >
- {num}
- </span>
- <label
- className={`items-center justify-center cursor-pointer ${isSelected ? 'flex' : 'hidden group-hover/q:flex'}`}
- onClick={(e) => e.stopPropagation()}
- >
- <Checkbox
- checked={isSelected}
- onCheckedChange={(checked) => onSelectionChange(!!checked)}
- className="h-4 w-4"
- />
- </label>
- </>
- ) : (
  <span className="dv-number text-xs font-medium text-muted-foreground select-none w-8 text-left">
  {num}
  </span>
- )}
  </div>
  <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: 'var(--dv-separator)' }} />
  </>}
@@ -1541,7 +1520,7 @@ function DocumentQuestionBlock({
  setIsEditing(false);
  };
 
- const [menuOpen, setMenuOpen] = useState(false);
+ const [kebabOpen, setKebabOpen] = useState(false);
 
  // Border management — same as ColumnBlockRow
  const borders: BorderStyle[] = (question as any).borders || ['none'];
@@ -1583,136 +1562,11 @@ function DocumentQuestionBlock({
  ref={setNodeRef}
  style={style}
  data-question-id={question.id}
- onClick={(e) => {
- if (onSelectionChange && !isSub && !isPreviewMode && (e.target as HTMLElement).closest('[data-drag-handle]')) {
- e.stopPropagation();
- onSelectionChange(!isSelected);
- }
- }}
  className={`dv-question group/q relative hover:z-30 ${isSub ? 'dv-sub-question' : ''} ${
  isDragging ? 'z-10 ring-2 ring-primary/30 rounded-lg' : ''} ${
  isApplying ? 'ring-2 ring-primary ring-inset animate-pulse' : ''} ${
  isSelected && !isSub ? 'bg-[#f2f9ff] dark:bg-muted/20' : ''}`}
  tabIndex={-1}>
-
- {/* Floating "..." border menu centered above — same as ColumnBlockRow */}
- {canEdit &&
- <div className={`absolute -top-4 left-1/2 -translate-x-1/2 z-20 transition-opacity ${isFocused || menuOpen ? 'opacity-100' : 'opacity-0 group-hover/q:opacity-100'}`}>
- <Popover open={menuOpen} onOpenChange={setMenuOpen}>
- <PopoverTrigger asChild>
- <button
- onMouseDown={(e) => e.preventDefault()}
- className="flex items-center justify-center w-7 h-5 rounded-[4px] bg-muted border border-border text-muted-foreground hover:text-foreground hover:bg-background shadow-sm transition-colors">
- <MoreHorizontal className="h-3.5 w-3.5" />
- </button>
- </PopoverTrigger>
- <PopoverContent align="center" side="top" sideOffset={4} className="w-48 p-1.5 bg-popover border-border shadow-xl z-50">
- <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1">Borders</p>
- {BORDER_OPTIONS.map((opt) =>
- <button
- key={opt.value}
- onClick={() => toggleBorder(opt.value)}
- className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${
- (opt.value === 'none' ? hasBorder('none') : hasBorder(opt.value)) ?
- 'bg-primary/10 text-primary font-medium' :
- 'text-popover-foreground hover:bg-muted'}`
- }>
- <span className="w-3.5 h-3.5 flex items-center justify-center">
- {(opt.value === 'none' ? hasBorder('none') : hasBorder(opt.value)) && <Check className="h-3 w-3" />}
- </span>
- {opt.label}
- </button>
- )}
- <div className="border-t border-border mt-1 pt-1">
- <button
- onClick={() => {onDelete();setMenuOpen(false);}}
- className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs text-destructive hover:bg-destructive/10 transition-colors">
- <Trash2 className="h-3.5 w-3.5" />
- Delete item
- </button>
- </div>
- </PopoverContent>
- </Popover>
- </div>
- }
-
- {/* Floating toolbar — anchored above the row, like the border menu */}
- {canEdit &&
- <div className="absolute -top-4 z-20 pb-4" style={{ left: 'calc(50% + 24px)' }} onClick={(e) => e.stopPropagation()}>
- <div className="dv-question-toolbar flex items-center gap-1 whitespace-nowrap">
-
- <TooltipProvider delayDuration={400}>
- {onAddAtPosition &&
- <>
- <Tooltip>
- <TooltipTrigger asChild>
- <button onClick={(e) => {e.stopPropagation();onAddAtPosition('above');}}
- className="p-1.5 rounded-[4px] border border-border bg-background shadow-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
- <AddItemAboveIcon className="h-3.5 w-3.5" />
- </button>
- </TooltipTrigger>
- <TooltipContent side="top" className="text-xs">Insert above</TooltipContent>
- </Tooltip>
- <Tooltip>
- <TooltipTrigger asChild>
- <button onClick={(e) => {e.stopPropagation();onAddAtPosition('below');}}
- className="p-1.5 rounded-[4px] border border-border bg-background shadow-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
- <AddItemBelowIcon className="h-3.5 w-3.5" />
- </button>
- </TooltipTrigger>
- <TooltipContent side="top" className="text-xs">Insert below</TooltipContent>
- </Tooltip>
- </>
- }
- {!isSub && onAddSubItem &&
- <Tooltip>
- <TooltipTrigger asChild>
- <button onClick={(e) => {e.stopPropagation();onAddSubItem();}}
- className="p-1.5 rounded-[4px] border border-border bg-background shadow-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
- <PlusCircle className="h-3.5 w-3.5" />
- </button>
- </TooltipTrigger>
- <TooltipContent side="top" className="text-xs">Sub-item</TooltipContent>
- </Tooltip>
- }
-
- {/* Required toggle */}
- {(!isEngagementMode || question.isUserAdded) &&
- <Tooltip>
- <TooltipTrigger asChild>
- <button onClick={(e) => {e.stopPropagation();onUpdate({...question, required: !question.required});}}
- className={`p-1.5 rounded-[4px] border border-border bg-background shadow-sm hover:bg-muted transition-colors ${question.required ? 'text-red-500' : 'text-muted-foreground hover:text-foreground'}`}>
- <Asterisk className="h-3.5 w-3.5" />
- </button>
- </TooltipTrigger>
- <TooltipContent side="top" className="text-xs">{question.required ? 'Remove required' : 'Mark as required'}</TooltipContent>
- </Tooltip>
- }
-
- {onDuplicate &&
- <Tooltip>
- <TooltipTrigger asChild>
- <button onClick={(e) => {e.stopPropagation();onDuplicate();}}
- className="p-1.5 rounded-[4px] border border-border bg-background shadow-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
- <Copy className="h-3.5 w-3.5" />
- </button>
- </TooltipTrigger>
- <TooltipContent side="top" className="text-xs">Duplicate</TooltipContent>
- </Tooltip>
- }
- <Tooltip>
- <TooltipTrigger asChild>
- <button onClick={(e) => {e.stopPropagation();onDelete();}}
- className="p-1.5 rounded-[4px] border border-border bg-background shadow-sm hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </TooltipTrigger>
- <TooltipContent side="top" className="text-xs">Delete</TooltipContent>
- </Tooltip>
- </TooltipProvider>
- </div>
- </div>
- }
 
  {/* Loading indicator */}
  {isApplying &&
@@ -1723,6 +1577,56 @@ function DocumentQuestionBlock({
 
  {/* Content row with inline drag handle */}
  <div className={`relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
+ {/* Kebab menu — left gutter, top-aligned, monday.com style */}
+ {canEdit && (
+ <div className={`absolute left-0.5 top-2 z-20 transition-opacity duration-100 ${kebabOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover/q:opacity-100 group-hover/q:pointer-events-auto'}`}>
+ <DropdownMenu open={kebabOpen} onOpenChange={setKebabOpen}>
+ <DropdownMenuTrigger asChild>
+ <button
+ onMouseDown={(e) => e.preventDefault()}
+ onClick={(e) => e.stopPropagation()}
+ className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ aria-label="Row actions"
+ >
+ <MoreHorizontal className="h-3.5 w-3.5" />
+ </button>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent side="right" align="start" sideOffset={6} className="w-48">
+ {onAddAtPosition && <>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('above'); setKebabOpen(false); }}>
+ <AddItemAboveIcon className="h-4 w-4 mr-2 shrink-0" />Insert above
+ </DropdownMenuItem>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('below'); setKebabOpen(false); }}>
+ <AddItemBelowIcon className="h-4 w-4 mr-2 shrink-0" />Insert below
+ </DropdownMenuItem>
+ </>}
+ {!isSub && onAddSubItem && (
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddSubItem(); setKebabOpen(false); }}>
+ <PlusCircle className="h-4 w-4 mr-2 shrink-0" />Add sub-question
+ </DropdownMenuItem>
+ )}
+ {(!isEngagementMode || question.isUserAdded) && (
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onUpdate({...question, required: !question.required}); setKebabOpen(false); }}>
+ <Asterisk className="h-4 w-4 mr-2 shrink-0" />Mark as required
+ {question.required && <Check className="h-3.5 w-3.5 ml-auto" />}
+ </DropdownMenuItem>
+ )}
+ {onDuplicate && (
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDuplicate(); setKebabOpen(false); }}>
+ <Copy className="h-4 w-4 mr-2 shrink-0" />Duplicate
+ </DropdownMenuItem>
+ )}
+ <DropdownMenuSeparator />
+ <DropdownMenuItem
+ onClick={(e) => { e.stopPropagation(); onDelete(); setKebabOpen(false); }}
+ className="text-destructive focus:text-destructive focus:bg-destructive/10"
+ >
+ <Trash2 className="h-4 w-4 mr-2 shrink-0" />Delete
+ </DropdownMenuItem>
+ </DropdownMenuContent>
+ </DropdownMenu>
+ </div>
+ )}
  {/* Drag handle on left — absolutely positioned to not affect number alignment */}
  {!isPreviewMode &&
  <div
