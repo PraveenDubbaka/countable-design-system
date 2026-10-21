@@ -1198,8 +1198,9 @@ function QuestionInlineColumns({
  if (stored && stored.length === visibleCols.length) return stored;
  const otherCount = visibleCols.length - 1;
  if (otherCount === 0) return [1];
- // Reference column gets a minimal fixed width; extra space goes to Question
- const refWidth = 0.08;
+ // Reference column — widened to fit "[+Ref] CP-1, GL-1 … ⌄" on one line.
+ // Extra width vs old 0.08 taken entirely from the Explanation column.
+ const refWidth = 0.17;
  const hasRef = visibleCols.includes('reference');
  const normalOtherCount = hasRef ? otherCount - 1 : otherCount;
  if (normalOtherCount === 0 && hasRef) return [1 - refWidth, refWidth];
@@ -1211,9 +1212,10 @@ function QuestionInlineColumns({
  const hasExplanation = visibleCols.includes('explanation');
  const responseTotal = hasResponse ? responseWidth : 0;
  const questionAndExplWidth = remaining - responseTotal;
- // Split remaining between question (45%) and explanation (55%)
- const questionWidth = hasExplanation ? questionAndExplWidth * 0.45 : questionAndExplWidth;
- const explanationWidth = hasExplanation ? questionAndExplWidth * 0.55 : 0;
+ // Keep question at ≈34.5% of total (0.507 of questionAndExplWidth at refWidth=0.17)
+ // so widening the ref column takes width only from explanation.
+ const questionWidth = hasExplanation ? questionAndExplWidth * 0.507 : questionAndExplWidth;
+ const explanationWidth = hasExplanation ? questionAndExplWidth * 0.493 : 0;
  
  const widths: number[] = [];
  for (let i = 0; i < visibleCols.length; i++) {
