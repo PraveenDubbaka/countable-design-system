@@ -1577,9 +1577,12 @@ function DocumentQuestionBlock({
 
  {/* Content row with inline drag handle */}
  <div className={`relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
- {/* Kebab menu — left gutter, top-aligned, monday.com style */}
+ {/* Kebab menu — outside card left border, in gutter, aligned with section drag handle */}
  {canEdit && (
- <div className={`absolute left-0.5 top-2 z-20 transition-opacity duration-100 ${kebabOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover/q:opacity-100 group-hover/q:pointer-events-auto'}`}>
+ <>
+ {/* Invisible hover bridge: keeps group-hover/q alive as cursor crosses card border to the button */}
+ <div className="absolute inset-y-0 right-full w-8 pointer-events-auto" />
+ <div className={`absolute -left-[5px] top-1/2 -translate-y-1/2 -translate-x-full z-20 transition-opacity duration-100 ${kebabOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover/q:opacity-100 group-hover/q:pointer-events-auto'}`}>
  <DropdownMenu open={kebabOpen} onOpenChange={setKebabOpen}>
  <DropdownMenuTrigger asChild>
  <button
@@ -1591,7 +1594,7 @@ function DocumentQuestionBlock({
  <MoreHorizontal className="h-3.5 w-3.5" />
  </button>
  </DropdownMenuTrigger>
- <DropdownMenuContent side="right" align="start" sideOffset={6} className="w-48">
+ <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[220px]">
  {onAddAtPosition && <>
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('above'); setKebabOpen(false); }}>
  <AddItemAboveIcon className="h-4 w-4 mr-2 shrink-0" />Insert above
@@ -1626,6 +1629,7 @@ function DocumentQuestionBlock({
  </DropdownMenuContent>
  </DropdownMenu>
  </div>
+ </>
  )}
  {/* Drag handle on left — absolutely positioned to not affect number alignment */}
  {!isPreviewMode &&
