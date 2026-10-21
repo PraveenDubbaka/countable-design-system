@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback, useEffect, Fragment } from 'react';
+import { useState, useRef, useCallback, useEffect, Fragment, createContext, useContext } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
 import {
- Plus, Trash2, ChevronDown, ChevronRight, MoreHorizontal, Copy,
+ Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy,
  GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft,
  Paperclip, ToggleLeft, Menu, DollarSign, FileText, Upload, File, X,
  Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3,
@@ -15,7 +15,8 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { Input } from '@/components/ui/input';
 import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { AppendixBFaqDialog } from '@/components/AppendixBFaqDialog';
 import { EditOptionsPopover } from '@/components/EditOptionsPopover';
@@ -31,6 +32,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { CURRENT_USER, ROLE_LABELS } from '@/lib/useTimeEntries';
 import { ChecklistSignOff } from '@/components/ChecklistSignOff';
 import { useAttribution, AttributionBadge } from '@/components/ui/AttributedComment';
+
+const KebabOpenCtx = createContext<{ id: string | null; set: (id: string | null) => void }>({ id: null, set: () => {} });
 
 const CURRENT_USER_ASSIGNEE: Assignee = {
  id: 'current-user',
@@ -1521,6 +1524,12 @@ function DocumentQuestionBlock({
  };
 
  const [kebabOpen, setKebabOpen] = useState(false);
+ const { id: globalOpenId, set: setGlobalOpenId } = useContext(KebabOpenCtx);
+ const handleKebabOpenChange = (open: boolean) => {
+ setKebabOpen(open);
+ setGlobalOpenId(open ? question.id : null);
+ };
+ const showKebab = globalOpenId === null || globalOpenId === question.id;
 
  // Border management — same as ColumnBlockRow
  const borders: BorderStyle[] = (question as any).borders || ['none'];
@@ -1582,8 +1591,12 @@ function DocumentQuestionBlock({
  <>
  {/* Invisible hover bridge: keeps group-hover/q alive as cursor crosses card border to the button */}
  <div className="absolute inset-y-0 right-full w-8 pointer-events-auto" />
- <div className={`absolute -left-[5px] top-1/2 -translate-y-1/2 -translate-x-full z-20 transition-opacity duration-100 ${kebabOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none group-hover/q:opacity-100 group-hover/q:pointer-events-auto'}`}>
- <DropdownMenu open={kebabOpen} onOpenChange={setKebabOpen}>
+ <div className={`absolute -left-[5px] top-1/2 -translate-y-1/2 -translate-x-full z-20 transition-opacity duration-100 ${
+ !showKebab ? 'opacity-0 pointer-events-none' :
+ kebabOpen ? 'opacity-100 pointer-events-auto' :
+ 'opacity-0 pointer-events-none group-hover/q:opacity-100 group-hover/q:pointer-events-auto'
+ }`}>
+ <DropdownMenu open={kebabOpen} onOpenChange={handleKebabOpenChange}>
  <DropdownMenuTrigger asChild>
  <button
  onMouseDown={(e) => e.preventDefault()}
@@ -1594,34 +1607,55 @@ function DocumentQuestionBlock({
  <MoreHorizontal className="h-3.5 w-3.5" />
  </button>
  </DropdownMenuTrigger>
- <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[220px]">
- {onAddAtPosition && <>
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('above'); setKebabOpen(false); }}>
- <AddItemAboveIcon className="h-4 w-4 mr-2 shrink-0" />Insert above
- </DropdownMenuItem>
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('below'); setKebabOpen(false); }}>
- <AddItemBelowIcon className="h-4 w-4 mr-2 shrink-0" />Insert below
- </DropdownMenuItem>
- </>}
- {!isSub && onAddSubItem && (
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddSubItem(); setKebabOpen(false); }}>
- <PlusCircle className="h-4 w-4 mr-2 shrink-0" />Add sub-question
- </DropdownMenuItem>
- )}
+ <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[200px] p-1">
+ {/* Required toggle — keeps menu open */}
  {(!isEngagementMode || question.isUserAdded) && (
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onUpdate({...question, required: !question.required}); setKebabOpen(false); }}>
- <Asterisk className="h-4 w-4 mr-2 shrink-0" />Mark as required
- {question.required && <Check className="h-3.5 w-3.5 ml-auto" />}
- </DropdownMenuItem>
- )}
- {onDuplicate && (
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDuplicate(); setKebabOpen(false); }}>
- <Copy className="h-4 w-4 mr-2 shrink-0" />Duplicate
+ <DropdownMenuItem
+ onSelect={(e) => { e.preventDefault(); onUpdate({...question, required: !question.required}); }}
+ className="flex items-center justify-between py-2 cursor-pointer"
+ >
+ <span>Required</span>
+ <Switch
+ checked={!!question.required}
+ onCheckedChange={(checked) => onUpdate({...question, required: checked})}
+ onClick={(e) => e.stopPropagation()}
+ className="ml-4 shrink-0 h-5 w-9 pointer-events-none"
+ />
  </DropdownMenuItem>
  )}
  <DropdownMenuSeparator />
+ {/* Add sub-item */}
+ {!isSub && onAddSubItem && (
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddSubItem(); handleKebabOpenChange(false); }}>
+ <Plus className="h-4 w-4 mr-2 shrink-0" />Add sub-item
+ </DropdownMenuItem>
+ )}
+ {/* Add item group */}
+ {onAddAtPosition && (
+ <>
+ <DropdownMenuSeparator />
+ <DropdownMenuLabel className="px-3 py-1 text-xs font-normal text-muted-foreground">Add item</DropdownMenuLabel>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('above'); handleKebabOpenChange(false); }}>
+ <ChevronUp className="h-4 w-4 mr-2 shrink-0" />Above this item
+ </DropdownMenuItem>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('below'); handleKebabOpenChange(false); }}>
+ <ChevronDown className="h-4 w-4 mr-2 shrink-0" />Below this item
+ </DropdownMenuItem>
+ </>
+ )}
+ <DropdownMenuSeparator />
+ {/* Duplicate */}
+ {onDuplicate && (
+ <>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDuplicate(); handleKebabOpenChange(false); }}>
+ <Copy className="h-4 w-4 mr-2 shrink-0" />Duplicate
+ </DropdownMenuItem>
+ <DropdownMenuSeparator />
+ </>
+ )}
+ {/* Delete */}
  <DropdownMenuItem
- onClick={(e) => { e.stopPropagation(); onDelete(); setKebabOpen(false); }}
+ onClick={(e) => { e.stopPropagation(); onDelete(); handleKebabOpenChange(false); }}
  className="text-destructive focus:text-destructive focus:bg-destructive/10"
  >
  <Trash2 className="h-4 w-4 mr-2 shrink-0" />Delete
@@ -2214,6 +2248,7 @@ export function DocumentView({
  const [activeData, setActiveData] = useState<{type: string;text: string;} | null>(null);
  const [noteExpanded, setNoteExpanded] = useState(true);
  const [appendixBOpen, setAppendixBOpen] = useState(false);
+ const [openKebabId, setOpenKebabId] = useState<string | null>(null);
 
  const sensors = useSensors(
  useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -2352,6 +2387,7 @@ export function DocumentView({
  };
 
  return (
+ <KebabOpenCtx.Provider value={{ id: openKebabId, set: setOpenKebabId }}>
  <DndContext
  sensors={sensors}
  collisionDetection={closestCenter}
@@ -2496,6 +2532,7 @@ export function DocumentView({
 
  {/* Appendix B document viewer (Form 410 CA) */}
  <AppendixBFaqDialog open={appendixBOpen} onOpenChange={setAppendixBOpen} />
- </DndContext>);
+ </DndContext>
+ </KebabOpenCtx.Provider>);
 
 }
