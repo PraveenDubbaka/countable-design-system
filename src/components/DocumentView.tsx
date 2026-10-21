@@ -1200,7 +1200,7 @@ function QuestionInlineColumns({
  if (otherCount === 0) return [1];
  // Reference column — widened to fit "[+Ref] CP-1, GL-1 … ⌄" on one line.
  // Extra width vs old 0.08 taken entirely from the Explanation column.
- const refWidth = 0.17;
+ const refWidth = 0.10;
  const hasRef = visibleCols.includes('reference');
  const normalOtherCount = hasRef ? otherCount - 1 : otherCount;
  if (normalOtherCount === 0 && hasRef) return [1 - refWidth, refWidth];
@@ -1212,10 +1212,10 @@ function QuestionInlineColumns({
  const hasExplanation = visibleCols.includes('explanation');
  const responseTotal = hasResponse ? responseWidth : 0;
  const questionAndExplWidth = remaining - responseTotal;
- // Keep question at ≈34.5% of total (0.507 of questionAndExplWidth at refWidth=0.17)
- // so widening the ref column takes width only from explanation.
- const questionWidth = hasExplanation ? questionAndExplWidth * 0.507 : questionAndExplWidth;
- const explanationWidth = hasExplanation ? questionAndExplWidth * 0.493 : 0;
+ // Question stays at ≈34.5% of total (0.46 × 0.75 = 0.345); freed ref width
+ // goes to explanation (0.54 × 0.75 = 0.405 of total, up from 0.335).
+ const questionWidth = hasExplanation ? questionAndExplWidth * 0.46 : questionAndExplWidth;
+ const explanationWidth = hasExplanation ? questionAndExplWidth * 0.54 : 0;
  
  const widths: number[] = [];
  for (let i = 0; i < visibleCols.length; i++) {
@@ -1302,7 +1302,7 @@ function QuestionInlineColumns({
  <TooltipTrigger asChild>
  <div
  onClick={() => { if (canEdit) { draftRef.current = question.text; setIsEditing(true); } }}
- className={`question-content text-sm text-foreground flex-1 line-clamp-1 overflow-hidden p-1.5 border-2 border-transparent rounded-md box-border ${canEdit ? 'cursor-text' : ''}`}
+ className={`question-content text-sm text-foreground flex-1 line-clamp-1 overflow-hidden px-1.5 py-0 border-2 border-transparent rounded-md box-border [&_p]:m-0 [&_p]:inline ${canEdit ? 'cursor-text' : ''}`}
  dangerouslySetInnerHTML={{ __html: sanitizeHtml(question.text) }} />
  </TooltipTrigger>
  <TooltipContent side="top" className="bg-popover text-popover-foreground border border-border shadow-lg max-w-md">
@@ -1440,6 +1440,7 @@ function QuestionInlineColumns({
  onUpdate({...question, references: [], reference: null } as any);
  }
  }}
+ isCompactMode={isCompactMode}
  disabled={isPreviewMode} />
  {canEdit &&
  <button
