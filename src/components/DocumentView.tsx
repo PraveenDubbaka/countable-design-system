@@ -1550,10 +1550,11 @@ function DocumentQuestionBlock({
  onUpdate({...question, borders: next.length ? next : ['none'] } as any);
  };
 
- const showTop = hasAll || hasBorder('top');
+ const showTop = !isSub && (hasAll || hasBorder('top'));
  const showRight = hasAll || hasBorder('right');
  const showBottom = hasAll || hasBorder('bottom');
  const showLeft = hasAll || hasBorder('left');
+ const showSeparator = hasAll || hasBorder('separator');
  const hasAnyBorder = !hasBorder('none') && borders.length > 0;
 
  const outerBorderStyle = isFocused
@@ -1571,7 +1572,7 @@ function DocumentQuestionBlock({
  ref={setNodeRef}
  style={style}
  data-question-id={question.id}
- className={`dv-question group/q relative hover:z-30 ${isSub ? 'dv-sub-question' : ''} ${
+ className={`dv-question relative hover:z-30 ${isSub ? 'dv-sub-question' : ''} ${
  isDragging ? 'z-10 ring-2 ring-primary/30 rounded-lg' : ''} ${
  isApplying ? 'ring-2 ring-primary ring-inset animate-pulse' : ''} ${
  isSelected && !isSub ? 'bg-[#f2f9ff] dark:bg-muted/20' : ''}`}
@@ -1584,8 +1585,8 @@ function DocumentQuestionBlock({
  </div>
  }
 
- {/* Content row with inline drag handle */}
- <div className={`relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
+ {/* Content row — group/q scoped here only, so sub-items don't inherit hover */}
+ <div className={`group/q relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
  {/* Kebab menu — outside card left border, in gutter, aligned with section drag handle */}
  {canEdit && (
  <>
@@ -1657,18 +1658,35 @@ function DocumentQuestionBlock({
  <LayoutGrid className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Borders
  </DropdownMenuSubTrigger>
  <DropdownMenuSubContent className="min-w-[180px] p-1">
- {BORDER_OPTIONS.map((opt) => (
+ {BORDER_OPTIONS.map((opt) => {
+ // Effective check: reflects what actually renders, not just raw array membership
+ const isPreset = opt.value === 'all' || opt.value === 'none';
+ const isDisabled = opt.value === 'top' && isSub;
+ const isChecked = (() => {
+ if (opt.value === 'none') return !hasAnyBorder;
+ if (opt.value === 'all') return hasAll || (hasBorder('top') && hasBorder('right') && hasBorder('bottom') && hasBorder('left'));
+ if (opt.value === 'separator') return showSeparator;
+ return hasAll || hasBorder(opt.value);
+ })();
+ return (
  <DropdownMenuItem
  key={opt.value}
- onClick={(e) => { e.stopPropagation(); toggleBorder(opt.value); handleKebabOpenChange(false); }}
+ disabled={isDisabled}
+ onSelect={(e) => {
+ e.preventDefault(); // prevent auto-close on all options
+ if (isDisabled) return;
+ toggleBorder(opt.value);
+ if (isPreset) handleKebabOpenChange(false); // presets close everything; side-toggles stay open
+ }}
  className="flex items-center gap-2 px-3 py-2 text-sm"
  >
  <span className="w-4 shrink-0 flex items-center justify-center">
- {hasBorder(opt.value) && <Check className="h-3 w-3" />}
+ {isChecked && <Check className="h-3 w-3" />}
  </span>
  {opt.label}
  </DropdownMenuItem>
- ))}
+ );
+ })}
  </DropdownMenuSubContent>
  </DropdownMenuSub>
  <DropdownMenuSeparator />
