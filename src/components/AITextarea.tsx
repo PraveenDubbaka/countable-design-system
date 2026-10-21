@@ -35,12 +35,14 @@ interface AITextareaProps {
  maxLength?: number;
  onPlaceholderChange?: (newPlaceholder: string) => void;
  onAIGenerate?: () => void;
+ onEditStart?: () => void;
+ onEditEnd?: () => void;
 }
 
-export function AITextarea({ 
- value, 
- onChange, 
- placeholder = "Enter your detailed answer...", 
+export function AITextarea({
+ value,
+ onChange,
+ placeholder = "Enter your detailed answer...",
  disabled = false,
  className,
  minHeight = "100px",
@@ -48,7 +50,9 @@ export function AITextarea({
  isCompactMode = false,
  maxLength = 500,
  onPlaceholderChange,
- onAIGenerate
+ onAIGenerate,
+ onEditStart,
+ onEditEnd,
 }: AITextareaProps) {
  const [isAIOpen, setIsAIOpen] = useState(false);
  const [isProcessing, setIsProcessing] = useState(false);
@@ -107,7 +111,11 @@ export function AITextarea({
  editorRef.current.focus();
  updateToolbarPosition();
  setShowToolbar(true);
+ onEditStart?.();
+ } else if (!isEditing) {
+ onEditEnd?.();
  }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [isEditing, updateToolbarPosition]);
 
  const { isListening, transcript, toggleListening, isSupported, error } = useVoiceToText({

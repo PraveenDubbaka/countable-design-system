@@ -1170,6 +1170,7 @@ function QuestionInlineColumns({
  const containerRef = useRef<HTMLDivElement>(null);
  const resizingRef = useRef<{ colIdx: number; startX: number; startWidths: number[] } | null>(null);
  const expAttr = useAttribution(`dv-exp-${question.id}`);
+ const [expExpanded, setExpExpanded] = useState(false);
 
  // Auto-stamp when explanation content exists but attribution was never stored
  useEffect(() => {
@@ -1365,6 +1366,7 @@ function QuestionInlineColumns({
  {/* Separator + Explanation */}
  {showExplanation && (() => {
  const widthIdx = visibleCols.indexOf('explanation');
+ const expIsExpanded = !isCompactMode || expExpanded;
  return (
  <>
  <div
@@ -1376,20 +1378,21 @@ function QuestionInlineColumns({
  <div className="flex items-center min-w-0 overflow-visible px-2 relative group/exp"
  style={{ flex: `0 0 ${widths[widthIdx] * 100}%` }}>
  <div className="w-full">
- <div onBlur={() => { if (question.explanation) expAttr.stamp(); }}>
  <AITextarea
  value={question.explanation || ''}
  onChange={(val) => { onUpdate({...question, explanation: val }); }}
  onAIGenerate={() => expAttr.stamp('LUKA')}
  placeholder={question.explanationPlaceholder || "Explanation"}
- minHeight="40px" />
- </div>
- {isEngagementMode && expAttr.attr && (
+ minHeight="40px"
+ isCompactMode={isCompactMode && !expExpanded}
+ onEditStart={() => setExpExpanded(true)}
+ onEditEnd={() => { if (question.explanation) expAttr.stamp(); setExpExpanded(false); }}
+ />
+ {isEngagementMode && expAttr.attr && expIsExpanded && (
  <div className="mt-1.5 mb-1 px-1.5">
  <AttributionLine attr={expAttr.attr} />
  </div>
  )}
-
  </div>
  </div>
  </>
