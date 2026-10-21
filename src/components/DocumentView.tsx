@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { Input } from '@/components/ui/input';
 import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { AppendixBFaqDialog } from '@/components/AppendixBFaqDialog';
@@ -1646,13 +1646,32 @@ function DocumentQuestionBlock({
  <DropdownMenuSeparator />
  {/* Duplicate */}
  {onDuplicate && (
- <>
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDuplicate(); handleKebabOpenChange(false); }}>
  <Copy className="h-4 w-4 mr-2 shrink-0" />Duplicate
  </DropdownMenuItem>
- <DropdownMenuSeparator />
- </>
  )}
+ <DropdownMenuSeparator />
+ {/* Borders submenu */}
+ <DropdownMenuSub>
+ <DropdownMenuSubTrigger className="px-3 py-2 text-sm">
+ <LayoutGrid className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Borders
+ </DropdownMenuSubTrigger>
+ <DropdownMenuSubContent className="min-w-[180px] p-1">
+ {BORDER_OPTIONS.map((opt) => (
+ <DropdownMenuItem
+ key={opt.value}
+ onClick={(e) => { e.stopPropagation(); toggleBorder(opt.value); handleKebabOpenChange(false); }}
+ className="flex items-center gap-2 px-3 py-2 text-sm"
+ >
+ <span className="w-4 shrink-0 flex items-center justify-center">
+ {hasBorder(opt.value) && <Check className="h-3 w-3" />}
+ </span>
+ {opt.label}
+ </DropdownMenuItem>
+ ))}
+ </DropdownMenuSubContent>
+ </DropdownMenuSub>
+ <DropdownMenuSeparator />
  {/* Delete */}
  <DropdownMenuItem
  onClick={(e) => { e.stopPropagation(); onDelete(); handleKebabOpenChange(false); }}
