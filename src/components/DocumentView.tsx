@@ -1937,8 +1937,8 @@ export function DocumentSectionBlock({
  style={{...style, borderColor: 'var(--dv-separator)', scrollMarginTop: '160px' }}
  className={`dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors ${isGlobalTemplate ? '' : 'focus-within:border-primary'} ${isDragging ? 'z-10' : ''}`}>
 
- {/* Section header */}
- <div className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-0 relative border-b" style={{ borderColor: 'var(--dv-separator)', height: '48px', minHeight: '48px' }}>
+ {/* Section header — grows with wrapped titles; py-[3px] + border keeps 1–2 line titles at exactly 48px */}
+ <div className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-[3px] relative border-b" style={{ borderColor: 'var(--dv-separator)', minHeight: '48px' }}>
  {/* Drag handle */}
  {!isPreviewMode &&
  <div
