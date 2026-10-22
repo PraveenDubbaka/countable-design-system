@@ -2064,18 +2064,6 @@ export default function EngagementDetail() {
  preBulkAnswerRef.current = null;
  };
 
- const allTopLevelQuestionIds = checklist
- ? checklist.sections.flatMap(s => s.questions.map(q => q.id))
- : [];
-
- const handleSelectAll = (selectAll: boolean) => {
- if (selectAll) {
- setSelectedQuestions(new Set(allTopLevelQuestionIds));
- } else {
- setSelectedQuestions(new Set());
- }
- };
-
  const handleRemovePriorYearFile = () => {
  setPriorYearFile(null);
  setPriorYearState('idle');
@@ -3163,7 +3151,7 @@ export default function EngagementDetail() {
  </div>
 
  {/* Floating Action Bar for Preview Mode - Inside content area */}
- {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && (checklistKey in CUSTOM_WORKSHEET_TITLES || WORKSHEET_KEYS.has(checklistKey))) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} onBulkClear={handleBulkClear} onBulkRestore={handleBulkRestore} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} totalQuestions={allTopLevelQuestionIds.length} onSelectAll={handleSelectAll} />}
+ {checklist && !FS_PAGE_KEYS.has(checklistKey ?? '') && !checklistKey?.startsWith('notes-') && !(checklistKey && checklistKey !== 'aud-ra-pap501a' && (checklistKey in CUSTOM_WORKSHEET_TITLES || WORKSHEET_KEYS.has(checklistKey))) && <FloatingActionBar checklist={checklist ?? undefined} onUpdate={handleChecklistUpdate} onCollapseSections={handleCollapseSections} onExpandSections={handleExpandSections} onCollapseQuestions={handleCollapseQuestions} onExpandQuestions={handleExpandQuestions} allSectionsCollapsed={allSectionsCollapsed} allQuestionsCollapsed={allQuestionsCollapsed} isCompactMode={isCompactMode} onToggleCompactMode={handleToggleCompactMode} selectedQuestions={selectedQuestions} onBulkDelete={handleBulkDelete} onAddCategory={handleAddCategory} onBulkAnswer={handleBulkAnswer} onBulkClear={handleBulkClear} onBulkRestore={handleBulkRestore} isPreviewMode={true} isChecklist={!!checklist && !(checklist.sections?.length && checklist.sections[0]?.questions?.length && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective)} />}
  </div>
 
  {/* Right Panel or Add Checklist Sheet */}
