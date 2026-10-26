@@ -1553,9 +1553,9 @@ function DocumentQuestionBlock({
 
  {/* Content row — group/q scoped here only, so sub-items don't inherit hover */}
  <div data-kebab-zone={canEdit ? `q:${question.id}` : undefined} className={`group/q relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
- {/* Row kebab — in the number cell's left padding, left of the number; fades in on row hover/focus or while its menu is open */}
+ {/* Row kebab — in the number cell's left padding, left of the number; same column as the section kebab (header left-4 minus this row's 1px border); fades in on row hover/focus or while its menu is open */}
  {canEdit && (
- <div className={`absolute -left-px top-1/2 -translate-y-1/2 z-20 transition-opacity duration-100 ${
+ <div className={`absolute left-[15px] top-1/2 -translate-y-1/2 z-20 transition-opacity duration-100 ${
  !showKebab ? 'opacity-0 pointer-events-none' :
  kebabOpen || kebabActive ? 'opacity-100 pointer-events-auto' :
  'opacity-0 pointer-events-none'
@@ -1565,7 +1565,7 @@ function DocumentQuestionBlock({
  <button
  onMouseDown={(e) => e.preventDefault()}
  onClick={(e) => e.stopPropagation()}
- className="flex items-center justify-center w-4 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
  aria-label="Row actions"
  >
  <MoreHorizontal className="h-3.5 w-3.5" />
@@ -1939,9 +1939,9 @@ export function DocumentSectionBlock({
 
  {/* Section header — grows with wrapped titles; py-[3px] + border keeps 1–2 line titles at exactly 48px */}
  <div data-kebab-zone={!isPreviewMode ? `s:${section.id}` : undefined} className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-[3px] relative border-b" style={{ borderColor: 'var(--dv-separator)', minHeight: '48px' }}>
- {/* Section kebab — in the header's first cell, left of the collapse chevron. Edit mode only; fades in on header hover/focus or while its menu is open. */}
+ {/* Section kebab — in the header's first cell, exactly where the view-mode collapse chevron sits (left-4). Edit mode only; fades in on header hover/focus or while its menu is open. */}
  {!isPreviewMode &&
- <div className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 transition-opacity duration-100 ${
+ <div className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 transition-opacity duration-100 ${
  !showSectionKebab ? 'opacity-0 pointer-events-none' :
  sectionMenuOpen || sectionKebabActive ? 'opacity-100 pointer-events-auto' :
  'opacity-0 pointer-events-none'
@@ -1951,7 +1951,7 @@ export function DocumentSectionBlock({
  <button
  onMouseDown={(e) => e.preventDefault()}
  onClick={(e) => e.stopPropagation()}
- className="flex items-center justify-center w-4 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
  aria-label="Section actions"
  >
  <MoreHorizontal className="h-3.5 w-3.5" />
@@ -2029,7 +2029,8 @@ export function DocumentSectionBlock({
  </div>
  }
 
- {/* Collapse toggle — positioned absolutely so it doesn't shift the number column */}
+ {/* Collapse toggle — view mode only (the section kebab takes its place elsewhere); absolutely positioned so it doesn't shift the number column */}
+ {isPreviewMode &&
  <button
  onClick={() => onUpdate({...section, isExpanded: !section.isExpanded })}
  className="dv-collapse-btn absolute left-4 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors z-10">
@@ -2039,6 +2040,7 @@ export function DocumentSectionBlock({
  <ChevronRight className="h-4 w-4 text-muted-foreground" />
  }
  </button>
+ }
 
  {/* Section number + separator + Title — aligned with question text */}
  {showNumbering && !(isEngagementMode && section.formLayout) && <>
