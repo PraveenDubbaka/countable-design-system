@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect, useSyncExternalStore, Fragment, createContext, useContext } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
 import {
- Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy,
+ Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, MoreVertical, Copy,
  GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft,
  Paperclip, ToggleLeft, Menu, DollarSign, FileText, Upload, File, X,
  Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3, Lock,
@@ -1568,7 +1568,7 @@ function DocumentQuestionBlock({
  className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
  aria-label="Row actions"
  >
- <MoreHorizontal className="h-3.5 w-3.5" />
+ <MoreVertical className="h-3.5 w-3.5" />
  </button>
  </DropdownMenuTrigger>
  <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[200px] p-1">
@@ -1954,7 +1954,7 @@ export function DocumentSectionBlock({
  className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
  aria-label="Section actions"
  >
- <MoreHorizontal className="h-3.5 w-3.5" />
+ <MoreVertical className="h-3.5 w-3.5" />
  </button>
  </DropdownMenuTrigger>
  <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[200px] p-1">
