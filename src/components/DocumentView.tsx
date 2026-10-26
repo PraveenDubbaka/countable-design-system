@@ -6,7 +6,7 @@ import {
  Paperclip, ToggleLeft, Menu, DollarSign, FileText, Upload, File, X,
  Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3, Lock,
  Hash, MessageSquare, BookOpen, List, Heading1, CaseSensitive, Undo2,
- Eye, EyeOff, CheckCircle2, PenLine } from
+ Eye, EyeOff, CheckCircle2, PenLine, ChevronsDownUp, ChevronsUpDown, Layers, ArrowUpDown } from
 'lucide-react';
 import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
 import { RefButton } from './RefButton';
@@ -19,6 +19,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Switch } from '@/components/ui/switch';
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { AppendixBFaqDialog } from '@/components/AppendixBFaqDialog';
+import { ReorderModal } from '@/components/ReorderModal';
 import { EditOptionsPopover } from '@/components/EditOptionsPopover';
 import { Checklist, Question, Section, AnswerType, NumberingFormat, formatQuestionNumber, FormLayout, ColumnLayout, BorderStyle, CellBlockType, Assignee } from '@/types/checklist';
 import {
@@ -64,6 +65,9 @@ interface DocumentViewProps {
  isGlobalTemplate?: boolean;
  objectiveExpanded?: boolean;
  onToggleObjective?: () => void;
+ onCollapseSections?: () => void;
+ onExpandSections?: () => void;
+ allSectionsCollapsed?: boolean;
 }
 
 // ─── Answer type config ──────────────────────────────────────────────────────
@@ -1860,12 +1864,14 @@ export function DocumentSectionBlock({
  numberingFormat, applyingQuestionId,
  selectedQuestions, onSelectionChange, showNumbering,
  onNumberingFormatChange, onShowNumberingChange, isCompactMode = false,
- isGlobalTemplate = false
-}: {section: Section;sectionIndex: number;onUpdate: (s: Section) => void;onDelete: () => void;onAddItem: () => void;onAddCategoryAtPosition: (pos: 'above' | 'below') => void;isPreviewMode: boolean;isEngagementMode: boolean;numberingFormat: NumberingFormat;applyingQuestionId?: string | null;selectedQuestions?: Set<string>;onSelectionChange?: (questionId: string, selected: boolean) => void;showNumbering: boolean;onNumberingFormatChange: (f: NumberingFormat) => void;onShowNumberingChange: (v: boolean) => void;isCompactMode?: boolean;isGlobalTemplate?: boolean;}) {
+ isGlobalTemplate = false,
+ onCollapseSections, onExpandSections, allSectionsCollapsed = false, onReorder
+}: {section: Section;sectionIndex: number;onUpdate: (s: Section) => void;onDelete: () => void;onAddItem: () => void;onAddCategoryAtPosition: (pos: 'above' | 'below') => void;isPreviewMode: boolean;isEngagementMode: boolean;numberingFormat: NumberingFormat;applyingQuestionId?: string | null;selectedQuestions?: Set<string>;onSelectionChange?: (questionId: string, selected: boolean) => void;showNumbering: boolean;onNumberingFormatChange: (f: NumberingFormat) => void;onShowNumberingChange: (v: boolean) => void;isCompactMode?: boolean;isGlobalTemplate?: boolean;onCollapseSections?: () => void;onExpandSections?: () => void;allSectionsCollapsed?: boolean;onReorder: () => void;}) {
  const [isEditingTitle, setIsEditingTitle] = useState(false);
  const [draftTitle, setDraftTitle] = useState(section.title);
  const [sectionMenuOpen, setSectionMenuOpen] = useState(false);
 
+ // Section drag-and-drop is kept but has no UI: attributes/listeners were bound to the removed drag handle.
  const {
  attributes, listeners, setNodeRef, transform, transition, isDragging
  } = useSortable({
@@ -1939,67 +1945,86 @@ export function DocumentSectionBlock({
 
  {/* Section header — grows with wrapped titles; py-[3px] + border keeps 1–2 line titles at exactly 48px */}
  <div className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-[3px] relative border-b" style={{ borderColor: 'var(--dv-separator)', minHeight: '48px' }}>
- {/* Drag handle */}
+ {/* Section kebab — left gutter, same column as the row kebabs. Edit mode only, always visible. */}
  {!isPreviewMode &&
- <div
- {...attributes}
- {...listeners}
- className="dv-section-drag absolute -left-1 top-1/2 -translate-y-1/2 -translate-x-full cursor-grab active:cursor-grabbing p-1">
-
- <GripVertical className="h-4 w-4 text-muted-foreground" />
- </div>
- }
-
- {/* Section kebab menu — right side */}
- {!isPreviewMode &&
- <div className={`absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 transition-opacity ${sectionMenuOpen ? 'opacity-100' : 'opacity-0 group-hover/section:opacity-100'}`}>
- <Popover open={sectionMenuOpen} onOpenChange={setSectionMenuOpen}>
- <PopoverTrigger asChild>
+ <div className="absolute -left-1 top-1/2 -translate-y-1/2 -translate-x-full z-20">
+ <DropdownMenu open={sectionMenuOpen} onOpenChange={setSectionMenuOpen}>
+ <DropdownMenuTrigger asChild>
  <button
  onMouseDown={(e) => e.preventDefault()}
- className="flex items-center justify-center w-7 h-7 rounded-[4px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
- title="Section options">
- <MoreHorizontal className="h-4 w-4" />
+ onClick={(e) => e.stopPropagation()}
+ className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ aria-label="Section actions"
+ >
+ <MoreHorizontal className="h-3.5 w-3.5" />
  </button>
- </PopoverTrigger>
- <PopoverContent align="end" side="bottom" sideOffset={4} className="w-56 p-2 bg-popover border-border shadow-xl z-50">
- {/* Numbering toggle */}
- <button
- onClick={() => { onShowNumberingChange(!showNumbering); }}
- className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors hover:bg-muted text-popover-foreground">
- {showNumbering ? <EyeOff className="h-3.5 w-3.5 text-muted-foreground" /> : <Eye className="h-3.5 w-3.5 text-muted-foreground" />}
+ </DropdownMenuTrigger>
+ <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[200px] p-1">
+ {/* This section / all sections */}
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onUpdate({...section, isExpanded: !section.isExpanded }); setSectionMenuOpen(false); }}>
+ {section.isExpanded ? <ChevronsDownUp className="h-4 w-4 mr-2 shrink-0" /> : <ChevronsUpDown className="h-4 w-4 mr-2 shrink-0" />}
+ {section.isExpanded ? 'Collapse this section' : 'Expand this section'}
+ </DropdownMenuItem>
+ {onCollapseSections && onExpandSections && (
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); (allSectionsCollapsed ? onExpandSections : onCollapseSections)(); setSectionMenuOpen(false); }}>
+ <Layers className="h-4 w-4 mr-2 shrink-0" />
+ {allSectionsCollapsed ? 'Expand all sections' : 'Collapse all sections'}
+ </DropdownMenuItem>
+ )}
+ <DropdownMenuSeparator />
+ {/* Add / reorder */}
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddCategoryAtPosition('above'); setSectionMenuOpen(false); }}>
+ <ChevronUp className="h-4 w-4 mr-2 shrink-0" />Add section above
+ </DropdownMenuItem>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddCategoryAtPosition('below'); setSectionMenuOpen(false); }}>
+ <ChevronDown className="h-4 w-4 mr-2 shrink-0" />Add section below
+ </DropdownMenuItem>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReorder(); setSectionMenuOpen(false); }}>
+ <ArrowUpDown className="h-4 w-4 mr-2 shrink-0" />Reorder
+ </DropdownMenuItem>
+ <DropdownMenuSeparator />
+ {/* Numbering format submenu */}
+ <DropdownMenuSub>
+ <DropdownMenuSubTrigger className="px-3 py-2 text-sm">
+ <Hash className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Numbering format
+ </DropdownMenuSubTrigger>
+ <DropdownMenuSubContent className="min-w-[200px] p-1">
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShowNumberingChange(!showNumbering); setSectionMenuOpen(false); }}>
+ {showNumbering ? <EyeOff className="h-4 w-4 mr-2 shrink-0" /> : <Eye className="h-4 w-4 mr-2 shrink-0" />}
  {showNumbering ? 'Hide numbering' : 'Show numbering'}
- </button>
+ </DropdownMenuItem>
  {showNumbering && <>
- <div className="border-t border-border mt-1 pt-1">
- <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1">Numbering Format</p>
+ <DropdownMenuSeparator />
  {([
  { value: 'number' as NumberingFormat, label: 'Numbers Only', example: '1. → 1.1' },
  { value: 'number-alphabet' as NumberingFormat, label: 'Number + Alphabet', example: '1. → 1.A' },
  { value: 'alphabet-number' as NumberingFormat, label: 'Alphabet + Number', example: 'A. → A.1' },
  ]).map(opt => (
- <button
+ <DropdownMenuItem
  key={opt.value}
- onClick={() => { onNumberingFormatChange(opt.value); }}
- className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-xs transition-colors ${
- numberingFormat === opt.value ? 'bg-primary/10 text-primary font-medium' : 'text-popover-foreground hover:bg-muted'
- }`}>
- <span>{opt.label}</span>
+ onClick={(e) => { e.stopPropagation(); onNumberingFormatChange(opt.value); setSectionMenuOpen(false); }}
+ className="flex items-center gap-2 px-3 py-2 text-sm"
+ >
+ <span className="w-4 shrink-0 flex items-center justify-center">
+ {numberingFormat === opt.value && <Check className="h-3 w-3" />}
+ </span>
+ <span className="flex-1">{opt.label}</span>
  <span className="text-[10px] text-muted-foreground">{opt.example}</span>
- </button>
+ </DropdownMenuItem>
  ))}
- </div>
  </>}
- <div className="border-t border-border mt-1 pt-1">
- <button
- onClick={() => {onDelete();setSectionMenuOpen(false);}}
- className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs text-destructive hover:bg-destructive/10 transition-colors">
- <Trash2 className="h-3.5 w-3.5" />
- Delete section
- </button>
- </div>
- </PopoverContent>
- </Popover>
+ </DropdownMenuSubContent>
+ </DropdownMenuSub>
+ <DropdownMenuSeparator />
+ {/* Delete */}
+ <DropdownMenuItem
+ onClick={(e) => { e.stopPropagation(); onDelete(); setSectionMenuOpen(false); }}
+ className="text-destructive focus:text-destructive focus:bg-destructive/10"
+ >
+ <Trash2 className="h-4 w-4 mr-2 shrink-0" />Delete section
+ </DropdownMenuItem>
+ </DropdownMenuContent>
+ </DropdownMenu>
  </div>
  }
 
@@ -2295,7 +2320,8 @@ export function DocumentView({
  selectedQuestions = new Set(), onSelectionChange,
  isEngagementMode = false, applyingQuestionId = null,
  isGlobalTemplate = false,
- objectiveExpanded = false, onToggleObjective
+ objectiveExpanded = false, onToggleObjective,
+ onCollapseSections, onExpandSections, allSectionsCollapsed
 }: DocumentViewProps) {
  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>(() => {
  const saved = localStorage.getItem('dv-numbering-format');
@@ -2310,6 +2336,7 @@ export function DocumentView({
  const [noteExpanded, setNoteExpanded] = useState(true);
  const [appendixBOpen, setAppendixBOpen] = useState(false);
  const [openKebabId, setOpenKebabId] = useState<string | null>(null);
+ const [reorderOpen, setReorderOpen] = useState(false);
 
  const sensors = useSensors(
  useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -2557,7 +2584,11 @@ export function DocumentView({
  onNumberingFormatChange={(f) => { setNumberingFormat(f); localStorage.setItem('dv-numbering-format', f); }}
  onShowNumberingChange={(v) => { setShowNumbering(v); localStorage.setItem('dv-show-numbering', String(v)); }}
  isCompactMode={isCompactMode}
- isGlobalTemplate={isGlobalTemplate} />
+ isGlobalTemplate={isGlobalTemplate}
+ onCollapseSections={onCollapseSections}
+ onExpandSections={onExpandSections}
+ allSectionsCollapsed={allSectionsCollapsed}
+ onReorder={() => setReorderOpen(true)} />
  )}
 
  </Fragment>
@@ -2593,6 +2624,9 @@ export function DocumentView({
 
  {/* Appendix B document viewer (Form 410 CA) */}
  <AppendixBFaqDialog open={appendixBOpen} onOpenChange={setAppendixBOpen} />
+
+ {/* Same reorder modal the floating toolbar opens — launched from the section kebab */}
+ <ReorderModal isOpen={reorderOpen} onClose={() => setReorderOpen(false)} checklist={checklist} onUpdate={onUpdate} />
  </DndContext>
  </KebabOpenCtx.Provider>);
 

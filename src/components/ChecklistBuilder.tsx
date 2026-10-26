@@ -767,6 +767,9 @@ export function ChecklistBuilder({ checklist, onUpdate, onSave, initialPreviewMo
  selectedQuestions={!isInEditMode ? new Set<string>() : selectedQuestions}
  onSelectionChange={!isInEditMode ? undefined : setSelectedQuestions}
  isGlobalTemplate={isGlobalTemplate}
+ onCollapseSections={handleCollapseSections}
+ onExpandSections={handleExpandSections}
+ allSectionsCollapsed={allSectionsCollapsed}
  />
 
  </div>

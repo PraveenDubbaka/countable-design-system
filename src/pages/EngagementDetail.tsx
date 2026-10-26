@@ -3124,6 +3124,9 @@ export default function EngagementDetail() {
  applyingQuestionId={liveApplyingId ?? clientResponses.applyingQuestionId}
  objectiveExpanded={objectiveExpanded}
  onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
+ onCollapseSections={handleCollapseSections}
+ onExpandSections={handleExpandSections}
+ allSectionsCollapsed={allSectionsCollapsed}
  />
  )}
  </div>}
