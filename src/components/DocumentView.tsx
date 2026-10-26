@@ -2029,19 +2029,6 @@ export function DocumentSectionBlock({
  </div>
  }
 
- {/* Collapse toggle — view mode only (the section kebab takes its place elsewhere); absolutely positioned so it doesn't shift the number column */}
- {isPreviewMode &&
- <button
- onClick={() => onUpdate({...section, isExpanded: !section.isExpanded })}
- className="dv-collapse-btn absolute left-4 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors z-10">
-
- {section.isExpanded ?
- <ChevronDown className="h-4 w-4 text-muted-foreground" /> :
- <ChevronRight className="h-4 w-4 text-muted-foreground" />
- }
- </button>
- }
-
  {/* Section number + separator + Title — aligned with question text */}
  {showNumbering && !(isEngagementMode && section.formLayout) && <>
  <span className="text-xs font-medium text-muted-foreground select-none shrink-0 w-8 text-left">
