@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect, Fragment, createContext, useContext } from 'react';
+import { useState, useRef, useCallback, useEffect, useSyncExternalStore, Fragment, createContext, useContext } from 'react';
 import { sanitizeHtml } from '@/lib/sanitize';
 import {
  Plus, Trash2, ChevronDown, ChevronUp, ChevronRight, MoreHorizontal, Copy,
@@ -35,6 +35,19 @@ import { ChecklistSignOff } from '@/components/ChecklistSignOff';
 import { useAttribution, AttributionLine } from '@/components/ui/AttributedComment';
 
 const KebabOpenCtx = createContext<{ id: string | null; set: (id: string | null) => void }>({ id: null, set: () => {} });
+
+// At most one row/section kebab is shown: an open menu (KebabOpenCtx) wins, then the hovered zone, then the zone
+// holding keyboard/text-editing focus. Zones carry data-kebab-zone; kebabs stay mounted and only fade.
+const kebabPointer: { hover: string | null; focus: string | null } = { hover: null, focus: null };
+const kebabListeners = new Set<() => void>();
+const subscribeKebab = (l: () => void) => { kebabListeners.add(l); return () => { kebabListeners.delete(l); }; };
+const setKebabPointer = (key: 'hover' | 'focus', id: string | null) => {
+  if (kebabPointer[key] === id) return;
+  kebabPointer[key] = id;
+  kebabListeners.forEach((l) => l());
+};
+const useKebabActive = (id: string) => useSyncExternalStore(subscribeKebab, () => (kebabPointer.hover ?? kebabPointer.focus) === id);
+const kebabZoneOf = (t: EventTarget | null) => (t as Element | null)?.closest?.('[data-kebab-zone]')?.getAttribute('data-kebab-zone') ?? null;
 
 const CURRENT_USER_ASSIGNEE: Assignee = {
  id: 'current-user',
@@ -1482,6 +1495,7 @@ function DocumentQuestionBlock({
  if (!open) setPendingRemove(null);
  };
  const showKebab = globalOpenId === null || globalOpenId === question.id;
+ const kebabActive = useKebabActive(`q:${question.id}`);
 
  // Border management — same as ColumnBlockRow
  const borders: BorderStyle[] = (question as any).borders || ['none'];
@@ -1538,23 +1552,20 @@ function DocumentQuestionBlock({
  }
 
  {/* Content row — group/q scoped here only, so sub-items don't inherit hover */}
- <div className={`group/q relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
- {/* Kebab menu — outside card left border, in gutter, aligned with section drag handle */}
+ <div data-kebab-zone={canEdit ? `q:${question.id}` : undefined} className={`group/q relative flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
+ {/* Row kebab — in the number cell's left padding, left of the number; fades in on row hover/focus or while its menu is open */}
  {canEdit && (
- <>
- {/* Invisible hover bridge: keeps group-hover/q alive as cursor crosses card border to the button */}
- <div className="absolute inset-y-0 right-full w-8 pointer-events-auto" />
- <div className={`absolute -left-[5px] top-1/2 -translate-y-1/2 -translate-x-full z-20 transition-opacity duration-100 ${
+ <div className={`absolute -left-px top-1/2 -translate-y-1/2 z-20 transition-opacity duration-100 ${
  !showKebab ? 'opacity-0 pointer-events-none' :
- kebabOpen ? 'opacity-100 pointer-events-auto' :
- 'opacity-0 pointer-events-none group-hover/q:opacity-100 group-hover/q:pointer-events-auto'
+ kebabOpen || kebabActive ? 'opacity-100 pointer-events-auto' :
+ 'opacity-0 pointer-events-none'
  }`}>
  <DropdownMenu open={kebabOpen} onOpenChange={handleKebabOpenChange}>
  <DropdownMenuTrigger asChild>
  <button
  onMouseDown={(e) => e.preventDefault()}
  onClick={(e) => e.stopPropagation()}
- className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ className="flex items-center justify-center w-4 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
  aria-label="Row actions"
  >
  <MoreHorizontal className="h-3.5 w-3.5" />
@@ -1720,7 +1731,6 @@ function DocumentQuestionBlock({
  </DropdownMenuContent>
  </DropdownMenu>
  </div>
- </>
  )}
  <QuestionInlineColumns
  question={question}
@@ -1847,6 +1857,13 @@ export function DocumentSectionBlock({
  const [isEditingTitle, setIsEditingTitle] = useState(false);
  const [draftTitle, setDraftTitle] = useState(section.title);
  const [sectionMenuOpen, setSectionMenuOpen] = useState(false);
+ const { id: globalOpenId, set: setGlobalOpenId } = useContext(KebabOpenCtx);
+ const handleSectionMenuOpenChange = (open: boolean) => {
+ setSectionMenuOpen(open);
+ setGlobalOpenId(open ? `s:${section.id}` : null);
+ };
+ const showSectionKebab = globalOpenId === null || globalOpenId === `s:${section.id}`;
+ const sectionKebabActive = useKebabActive(`s:${section.id}`);
 
  // Section drag-and-drop is kept but has no UI: attributes/listeners were bound to the removed drag handle.
  const {
@@ -1921,16 +1938,20 @@ export function DocumentSectionBlock({
  className={`dv-section group/section relative rounded-[8px] border-[0.5px] transition-colors ${isGlobalTemplate ? '' : 'focus-within:border-primary'} ${isDragging ? 'z-10' : ''}`}>
 
  {/* Section header — grows with wrapped titles; py-[3px] + border keeps 1–2 line titles at exactly 48px */}
- <div className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-[3px] relative border-b" style={{ borderColor: 'var(--dv-separator)', minHeight: '48px' }}>
- {/* Section kebab — left gutter, same column as the row kebabs. Edit mode only, always visible. */}
+ <div data-kebab-zone={!isPreviewMode ? `s:${section.id}` : undefined} className="dv-section-header flex items-center gap-2 pl-[38px] pr-4 py-[3px] relative border-b" style={{ borderColor: 'var(--dv-separator)', minHeight: '48px' }}>
+ {/* Section kebab — in the header's first cell, left of the collapse chevron. Edit mode only; fades in on header hover/focus or while its menu is open. */}
  {!isPreviewMode &&
- <div className="absolute -left-1 top-1/2 -translate-y-1/2 -translate-x-full z-20">
- <DropdownMenu open={sectionMenuOpen} onOpenChange={setSectionMenuOpen}>
+ <div className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 transition-opacity duration-100 ${
+ !showSectionKebab ? 'opacity-0 pointer-events-none' :
+ sectionMenuOpen || sectionKebabActive ? 'opacity-100 pointer-events-auto' :
+ 'opacity-0 pointer-events-none'
+ }`}>
+ <DropdownMenu open={sectionMenuOpen} onOpenChange={handleSectionMenuOpenChange}>
  <DropdownMenuTrigger asChild>
  <button
  onMouseDown={(e) => e.preventDefault()}
  onClick={(e) => e.stopPropagation()}
- className="flex items-center justify-center w-5 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ className="flex items-center justify-center w-4 h-5 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
  aria-label="Section actions"
  >
  <MoreHorizontal className="h-3.5 w-3.5" />
@@ -2317,6 +2338,27 @@ export function DocumentView({
  const [appendixBOpen, setAppendixBOpen] = useState(false);
  const [openKebabId, setOpenKebabId] = useState<string | null>(null);
  const [reorderOpen, setReorderOpen] = useState(false);
+
+ // Which kebab zone is hovered / holds keyboard or text-editing focus (from the DOM, so portaled menus can't leave it stale).
+ useEffect(() => {
+ if (isPreviewMode) return;
+ const onOver = (e: MouseEvent) => setKebabPointer('hover', kebabZoneOf(e.target));
+ const onOut = (e: MouseEvent) => { if (!e.relatedTarget) setKebabPointer('hover', null); };
+ const onFocusIn = (e: FocusEvent) => setKebabPointer('focus', (e.target as Element).matches?.(':focus-visible') ? kebabZoneOf(e.target) : null);
+ const onFocusOut = (e: FocusEvent) => { if (!e.relatedTarget) setKebabPointer('focus', null); };
+ document.addEventListener('mouseover', onOver);
+ document.addEventListener('mouseout', onOut);
+ document.addEventListener('focusin', onFocusIn);
+ document.addEventListener('focusout', onFocusOut);
+ return () => {
+ document.removeEventListener('mouseover', onOver);
+ document.removeEventListener('mouseout', onOut);
+ document.removeEventListener('focusin', onFocusIn);
+ document.removeEventListener('focusout', onFocusOut);
+ setKebabPointer('hover', null);
+ setKebabPointer('focus', null);
+ };
+ }, [isPreviewMode]);
 
  const sensors = useSensors(
  useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
