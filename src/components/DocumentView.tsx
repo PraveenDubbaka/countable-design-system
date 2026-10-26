@@ -1460,6 +1460,8 @@ function DocumentQuestionBlock({
  const isApplying = applyingQuestionId === question.id;
  const isSub = subIndex !== undefined;
  const canEdit = !isPreviewMode && (!isEngagementMode || question.isUserAdded);
+ // Add › is offered only when it would list something: Above/Below (needs a same-level insert handler) or Sub-item (item rows only)
+ const hasAddMenu = !!(onAddAtPosition || (!isSub && onAddSubItem));
 
  // Row drag-and-drop is kept but has no UI: attributes/listeners were bound to the removed row drag handle.
  const {
@@ -1572,8 +1574,9 @@ function DocumentQuestionBlock({
  </button>
  </DropdownMenuTrigger>
  <DropdownMenuContent side="bottom" align="start" sideOffset={4} className="min-w-[200px] p-1">
- {/* Required toggle — keeps menu open */}
- {(!isEngagementMode || question.isUserAdded) && (
+ {/* Required toggle — template builder only; keeps menu open */}
+ {!isEngagementMode && (
+ <>
  <DropdownMenuItem
  onSelect={(e) => { e.preventDefault(); onUpdate({...question, required: !question.required}); }}
  className="flex items-center justify-between py-2 cursor-pointer"
@@ -1586,10 +1589,11 @@ function DocumentQuestionBlock({
  className="ml-4 shrink-0 h-5 w-9 pointer-events-none"
  />
  </DropdownMenuItem>
- )}
  <DropdownMenuSeparator />
+ </>
+ )}
  {/* Add submenu — Above/Below insert at this row's level; Sub-item on item rows only (a sub-item can't have its own sub-item) */}
- {(onAddAtPosition || (!isSub && onAddSubItem)) && (
+ {hasAddMenu && (
  <DropdownMenuSub>
  <DropdownMenuSubTrigger className="px-3 py-2 text-sm">
  <Plus className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Add
@@ -1614,13 +1618,16 @@ function DocumentQuestionBlock({
  </DropdownMenuSubContent>
  </DropdownMenuSub>
  )}
- <DropdownMenuSeparator />
+ {(!isEngagementMode || (hasAddMenu && onDuplicate)) && <DropdownMenuSeparator />}
  {/* Duplicate */}
  {onDuplicate && (
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDuplicate(); handleKebabOpenChange(false); }}>
  <Copy className="h-4 w-4 mr-2 shrink-0" />Duplicate
  </DropdownMenuItem>
  )}
+ {/* Borders and Columns — template builder only */}
+ {!isEngagementMode && (
+ <>
  <DropdownMenuSeparator />
  {/* Borders submenu */}
  <DropdownMenuSub>
@@ -1727,7 +1734,9 @@ function DocumentQuestionBlock({
  </DropdownMenuSubContent>
  </DropdownMenuSub>
  )}
- <DropdownMenuSeparator />
+ </>
+ )}
+ {(!isEngagementMode || hasAddMenu || onDuplicate) && <DropdownMenuSeparator />}
  {/* Delete */}
  <DropdownMenuItem
  onClick={(e) => { e.stopPropagation(); onDelete(); handleKebabOpenChange(false); }}
