@@ -904,6 +904,7 @@ function ColumnBlockRow({
  const [menuOpen, setMenuOpen] = useState(false);
  const containerRef = useRef<HTMLDivElement>(null);
  const resizingRef = useRef<{colIdx: number;startX: number;startWidths: number[];} | null>(null);
+ // Row drag-and-drop is kept but has no UI: attributes/listeners were bound to the removed row drag handle.
  const {
  attributes, listeners, setNodeRef, transform, transition, isDragging
  } = useSortable({
@@ -1032,6 +1033,7 @@ function ColumnBlockRow({
  ref={setNodeRef}
  style={style}
  onClick={(e) => {
+ // Selection toggle is keyed on [data-drag-handle]; nothing carries it now that the row handles are removed.
  if (onSelectionChange && !isPreviewMode && (e.target as HTMLElement).closest('[data-drag-handle]')) {
  e.stopPropagation();
  onSelectionChange(!isSelected);
@@ -1084,22 +1086,8 @@ function ColumnBlockRow({
  </div>
  }
 
- {/* Row with drag handle + columns + add button */}
+ {/* Row with columns + add button */}
  <div className={`flex items-stretch rounded-none transition-all ${outerBorderStyle}`}>
- {/* Drag handle on left */}
- {!isPreviewMode &&
- <div
- data-drag-handle
- {...attributes}
- {...listeners}
- onMouseEnter={() => !isPreviewMode && setIsFocused(true)}
- onMouseLeave={() => setIsFocused(false)}
- className={`flex items-center px-1 cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground transition-colors opacity-0 group-hover/block:opacity-100 ${isFocused ? 'opacity-100' : ''}`}>
-
- <GripVertical className="h-3.5 w-3.5" />
- </div>
- }
-
  {/* Column cells with resizable separators */}
  <div ref={containerRef} onClick={(e) => e.stopPropagation()} className="flex-1 flex items-stretch relative">
  {layout.cells.map((cell, ci) =>
@@ -1460,6 +1448,7 @@ function DocumentQuestionBlock({
  const isSub = subIndex !== undefined;
  const canEdit = !isPreviewMode && (!isEngagementMode || question.isUserAdded);
 
+ // Row drag-and-drop is kept but has no UI: attributes/listeners were bound to the removed row drag handle.
  const {
  attributes, listeners, setNodeRef, transform, transition, isDragging
  } = useSortable({
@@ -1733,18 +1722,6 @@ function DocumentQuestionBlock({
  </div>
  </>
  )}
- {/* Drag handle on left — absolutely positioned to not affect number alignment */}
- {!isPreviewMode &&
- <div
- data-drag-handle
- {...attributes}
- {...listeners}
- onMouseEnter={() => !isPreviewMode && setIsFocused(true)}
- onMouseLeave={() => setIsFocused(false)}
- className={`absolute left-1 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground transition-colors opacity-0 group-hover/q:opacity-100 z-10 ${isFocused ? 'opacity-100' : ''}`}>
- <GripVertical className="h-3.5 w-3.5" />
- </div>
- }
  <QuestionInlineColumns
  question={question}
  num={num}
