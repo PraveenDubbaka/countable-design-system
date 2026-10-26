@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { Input } from '@/components/ui/input';
 import { AITextarea } from '@/components/AITextarea';
 import { RichTextQuestionEditor } from '@/components/RichTextQuestionEditor';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { FormLayoutEditor } from '@/components/FormLayoutEditor';
 import { AppendixBFaqDialog } from '@/components/AppendixBFaqDialog';
@@ -1588,17 +1588,15 @@ function DocumentQuestionBlock({
  </DropdownMenuItem>
  )}
  <DropdownMenuSeparator />
- {/* Add sub-item */}
- {!isSub && onAddSubItem && (
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddSubItem(); handleKebabOpenChange(false); }}>
- <Plus className="h-4 w-4 mr-2 shrink-0" />Add sub-item
- </DropdownMenuItem>
- )}
- {/* Add item group */}
+ {/* Add submenu — Above/Below insert at this row's level; Sub-item on item rows only (a sub-item can't have its own sub-item) */}
+ {(onAddAtPosition || (!isSub && onAddSubItem)) && (
+ <DropdownMenuSub>
+ <DropdownMenuSubTrigger className="px-3 py-2 text-sm">
+ <Plus className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Add
+ </DropdownMenuSubTrigger>
+ <DropdownMenuSubContent className="min-w-[180px] p-1">
  {onAddAtPosition && (
  <>
- <DropdownMenuSeparator />
- <DropdownMenuLabel className="px-3 py-1 text-xs font-normal text-muted-foreground">Add item</DropdownMenuLabel>
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddAtPosition('above'); handleKebabOpenChange(false); }}>
  <ChevronUp className="h-4 w-4 mr-2 shrink-0" />Above this item
  </DropdownMenuItem>
@@ -1606,6 +1604,15 @@ function DocumentQuestionBlock({
  <ChevronDown className="h-4 w-4 mr-2 shrink-0" />Below this item
  </DropdownMenuItem>
  </>
+ )}
+ {onAddAtPosition && !isSub && onAddSubItem && <DropdownMenuSeparator />}
+ {!isSub && onAddSubItem && (
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddSubItem(); handleKebabOpenChange(false); }}>
+ <Plus className="h-4 w-4 mr-2 shrink-0" />Sub-item
+ </DropdownMenuItem>
+ )}
+ </DropdownMenuSubContent>
+ </DropdownMenuSub>
  )}
  <DropdownMenuSeparator />
  {/* Duplicate */}
