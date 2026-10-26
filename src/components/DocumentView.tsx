@@ -1948,6 +1948,8 @@ export function DocumentSectionBlock({
  {allSectionsCollapsed ? 'Expand all sections' : 'Collapse all sections'}
  </DropdownMenuItem>
  )}
+ {/* Structural editing is template-only: hidden (not disabled) inside an engagement */}
+ {!isEngagementMode && <>
  <DropdownMenuSeparator />
  {/* Add / reorder */}
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddCategoryAtPosition('above'); setSectionMenuOpen(false); }}>
@@ -2000,6 +2002,7 @@ export function DocumentSectionBlock({
  >
  <Trash2 className="h-4 w-4 mr-2 shrink-0" />Delete section
  </DropdownMenuItem>
+ </>}
  </DropdownMenuContent>
  </DropdownMenu>
  </div>
