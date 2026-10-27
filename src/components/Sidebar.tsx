@@ -3080,7 +3080,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {/* +/- toggle for nodes with both a route and children (e.g. aud-wp-* with mapped procedure children) */}
  {hasChildren && node.route && (
  <button
- className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+ className="absolute flex items-center justify-center rounded text-[14px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
  style={{ left: `${depth * 16 + 8 - 14}px`, width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
  onClick={e => {
  e.stopPropagation();
@@ -3099,7 +3099,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {/* Suppressed for leaf folder nodes with docs — the icon itself handles toggling */}
  {((nodeDocuments[node.id]?.length ?? 0) > 0 || notesPages.has(node.id) || (isLeaf && customSections.some(s => s.parentId === node.id))) && !(isLeaf && node.icon === "folder" && ((nodeDocuments[node.id]?.length ?? 0) > 0 || customSections.some(s => s.parentId === node.id))) && (
  <button
- className="absolute flex items-center justify-center rounded text-[10px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+ className="absolute flex items-center justify-center rounded text-[14px] font-bold leading-none text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
  style={{ left: '10px', width: '14px', height: '14px', top: '50%', transform: 'translateY(-50%)' }}
  onClick={e => {
  e.stopPropagation();
