@@ -1433,6 +1433,7 @@ function QuestionInlineColumns({
  }
  }}
  isCompactMode={isCompactMode}
+ showAllRefs
  disabled={isPreviewMode} />
  </div>
  </>

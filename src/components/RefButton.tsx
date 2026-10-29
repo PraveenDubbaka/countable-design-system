@@ -21,9 +21,11 @@ export interface RefButtonProps {
   onOpen?: (doc: RefDoc) => void;
   isCompactMode?: boolean;
   disabled?: boolean;
+  /** Show every attached mnemonic in one box (one per line; one clamped line when compact) instead of the two-item summary. */
+  showAllRefs?: boolean;
 }
 
-export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode = false, disabled }: RefButtonProps) {
+export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode = false, disabled, showAllRefs = false }: RefButtonProps) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen]     = useState(false);
   const [searchTerm, setSearchTerm]     = useState('');
@@ -44,6 +46,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
   }, [refs.length]);
 
   const getMnemonic = (doc: RefDoc, idx: number) => doc.ref ?? doc.name ?? `D-${idx + 1}`;
+  const mnemonics       = refs.map(getMnemonic);
   const first2          = refs.slice(0, 2);
   const hasMore         = refs.length > 2;
   const mnemonicDisplay = first2.map(getMnemonic).join(', ') + (hasMore ? ' …' : '');
@@ -160,6 +163,30 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
     </button>
   );
 
+  // Mnemonic box trigger (showAllRefs) — one box holding every attached mnemonic.
+  // Expanded: one mnemonic per line, chevron top-right. Compact: first mnemonic (+ "…") on one clamped line.
+  const mnemonicBoxTrigger = (
+    <button
+      onClick={(e) => e.stopPropagation()}
+      aria-label={`Attached references: ${mnemonics.join(', ')}`}
+      className={`flex min-w-0 gap-1 px-2 text-left text-xs text-blue-600 hover:text-blue-700 border border-border transition-colors ${
+        isCompactMode ? 'items-center py-0.5 rounded max-w-full' : 'w-full items-start justify-between py-1 rounded-md'
+      }`}
+    >
+      {isCompactMode ? (
+        <span className="truncate underline underline-offset-2">{mnemonics[0]}{refs.length > 1 ? ' …' : ''}</span>
+      ) : (
+        <span className="flex min-w-0 flex-col">
+          {mnemonics.map((m, i) => (
+            <span key={i} title={m} className="truncate underline underline-offset-2">{m}</span>
+          ))}
+        </span>
+      )}
+      <ChevronDown className={`h-3 w-3 shrink-0 ${isCompactMode ? '' : 'mt-0.5'}`} />
+    </button>
+  );
+  const refTrigger = showAllRefs ? mnemonicBoxTrigger : mnemonicTrigger;
+
   // ── Edit mode ──────────────────────────────────────────────────────────────
 
   if (isCompactMode) {
@@ -202,7 +229,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
 
             {/* Mnemonic + doc-list dropdown (with Add reference at bottom) */}
             <Popover open={isDocsOpen} onOpenChange={setIsDocsOpen}>
-              <PopoverTrigger asChild>{mnemonicTrigger}</PopoverTrigger>
+              <PopoverTrigger asChild>{refTrigger}</PopoverTrigger>
               <PopoverContent
                 align="start"
                 className="w-64 p-0 bg-popover border-border shadow-xl z-50"
@@ -249,7 +276,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
 
   // ── Expanded mode: stacked two-line layout ─────────────────────────────────
   // Line 1: [+ Ref] picker button
-  // Line 2: mnemonic link (only when docs are attached)
+  // Line 2: mnemonic link, or the all-mnemonics box with showAllRefs (only when docs are attached)
   return (
     <div className="flex flex-col items-start gap-0.5 min-w-0">
       <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileUpload} />
@@ -274,7 +301,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
       {/* ── Line 2: Mnemonic + attached-docs dropdown ── */}
       {refs.length > 0 && (
         <Popover open={isDocsOpen} onOpenChange={setIsDocsOpen}>
-          <PopoverTrigger asChild>{mnemonicTrigger}</PopoverTrigger>
+          <PopoverTrigger asChild>{refTrigger}</PopoverTrigger>
           <PopoverContent
             align="start"
             className="w-64 p-0 bg-popover border-border shadow-xl z-50"
