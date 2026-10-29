@@ -5,7 +5,7 @@ import {
  GripVertical, PlusCircle, Circle, Square, Type, Calendar, AlignLeft,
  Paperclip, ToggleLeft, Menu, DollarSign, FileText, Upload, File, X,
  Check, Pencil, Asterisk, Loader2, Search, LayoutGrid, Columns2, Columns3, Lock,
- Hash, MessageSquare, BookOpen, List, Heading1, CaseSensitive, Undo2,
+ Hash, BookOpen, List, Heading1, CaseSensitive, Undo2,
  Eye, EyeOff, CheckCircle2, PenLine, ChevronsDownUp, ChevronsUpDown, Layers, ArrowUpDown } from
 'lucide-react';
 import { AddItemAboveIcon, AddItemBelowIcon } from './icons/AddItemIcons';
@@ -2077,57 +2077,6 @@ export function DocumentSectionBlock({
  {cleanTitle(section.title)}
  </h3>
  }
-
- {/* Section Note — editable only in template editing; view-only in engagements */}
- {!isPreviewMode && !isEngagementMode ? (
- <Popover>
- <PopoverTrigger asChild>
- <button
- className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors shrink-0 ${
- section.note ? 'text-primary hover:bg-primary/10' : 'text-muted-foreground hover:bg-muted'
- }`}
- onClick={(e) => e.stopPropagation()}
- >
- <MessageSquare className="h-3 w-3" />
- {section.note ? 'Edit note' : 'Add note'}
- </button>
- </PopoverTrigger>
- <PopoverContent className="w-72 p-3" align="start" side="bottom" onClick={(e) => e.stopPropagation()}>
- <div className="space-y-2">
- <label className="text-xs font-medium text-foreground">Section Note</label>
- <textarea
- className="w-full min-h-[80px] text-sm rounded-md border border-input bg-background px-3 py-2 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y"
- placeholder="Add a note for this section..."
- defaultValue={section.note || ''}
- onBlur={(e) => onUpdate({...section, note: e.target.value || undefined })}
- />
- {section.note && (
- <button
- className="text-xs text-destructive hover:underline"
- onClick={() => onUpdate({...section, note: undefined })}
- >
- Remove note
- </button>
- )}
- </div>
- </PopoverContent>
- </Popover>
- ) : section.note ? (
- <Popover>
- <PopoverTrigger asChild>
- <button
- className="flex items-center gap-1 text-xs text-primary hover:underline px-2 py-1 shrink-0 cursor-pointer"
- onClick={(e) => e.stopPropagation()}
- >
- <MessageSquare className="h-3 w-3" />
- Read note for more info
- </button>
- </PopoverTrigger>
- <PopoverContent className="w-72 p-3" align="start" side="bottom" onClick={(e) => e.stopPropagation()}>
- <p className="text-sm text-foreground whitespace-pre-wrap">{section.note}</p>
- </PopoverContent>
- </Popover>
- ) : null}
 
  {/* Section info */}
  <div className="dv-section-meta flex items-center gap-2 mr-8">
