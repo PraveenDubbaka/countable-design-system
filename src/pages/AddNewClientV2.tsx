@@ -14,16 +14,17 @@ import { loadClientGroups, saveClientGroups, loadClients, saveClients, SEED_GROU
 // Shared primitives mirrored from AddNewClient.tsx — keep in sync
 
 const InlineField = ({
-  label, required, hint, children, className,
+  label, required, invalid, hint, children, className,
 }: {
-  label: string; required?: boolean; hint?: string; children: React.ReactNode; className?: string;
+  label: string; required?: boolean; invalid?: boolean; hint?: string; children: React.ReactNode; className?: string;
 }) => (
   <div className={`flex items-start gap-4 ${className ?? ""}`}>
     <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-2 leading-snug">
       {label}{required && <span className="text-destructive ml-0.5">*</span>}
     </span>
-    <div className="flex-1">
+    <div className={`flex-1 ${invalid ? "[&_input]:!border-destructive [&_button]:!border-destructive" : ""}`}>
       {children}
+      {invalid && <p className="text-xs text-destructive mt-1">Required</p>}
       {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
     </div>
   </div>
@@ -36,7 +37,7 @@ const PhoneInput = ({ placeholder = "(555) 000-0000" }: { placeholder?: string }
     <div className="flex gap-2">
       <Select value={dialCode} onValueChange={setDialCode}>
         <SelectTrigger className="w-24 shrink-0 [&>span]:shrink-0">
-          <span className="flex items-center gap-1 text-sm">{sel.flag} {sel.code}</span>
+          <span className="flex items-center gap-1 text-sm">{sel.code}</span>
         </SelectTrigger>
         <SelectContent className="max-h-72">
           {DIAL_CODES.map(d => (
@@ -678,12 +679,14 @@ export default function AddNewClientV2() {
   const [showPrefillBanner, setShowPrefillBanner] = useState(false);
 
   // ── Entity Foundation ───────────────────────────────────────────────────────
+  const [clientId, setClientId] = useState("");
   const [country, setCountry] = useState<string>("ca");
   const [entityType, setEntityType] = useState<string>("");
   const [subCorpType, setSubCorpType] = useState<string>("");
   const [showDba, setShowDba] = useState<boolean>(false);
   const [dbaName, setDbaName] = useState<string>("");
   const [dbaDisplay, setDbaDisplay] = useState<string>("legal-only");
+  const [engagementPartner, setEngagementPartner] = useState<string>("");
 
   // ── Primary Contact ─────────────────────────────────────────────────────────
   const [legalEntityName, setLegalEntityName] = useState("");
@@ -703,6 +706,7 @@ export default function AddNewClientV2() {
   const [hasQuebecPersonalInfo, setHasQuebecPersonalInfo] = useState<boolean>(false);
   const [isUsTaxpayer, setIsUsTaxpayer] = useState<boolean>(false);
   const [fiscalYearEnd, setFiscalYearEnd] = useState<string>("");
+  const [incorporationDate, setIncorporationDate] = useState<string>("");
   const [businessNumber, setBusinessNumber] = useState("");
   const [groupName, setGroupName] = useState<string>("");
   const [clientGroups, setClientGroups] = useState<string[]>(() => loadClientGroups());
@@ -759,7 +763,7 @@ export default function AddNewClientV2() {
       saveClientGroups(updated);
       setClientGroups(updated);
     }
-    const newId = `CLI-${Date.now()}`;
+    const newId = clientId.trim() || `CLI-${Date.now()}`;
     const newClient = {
       id: newId,
       entityName: legalEntityName.split(' ').slice(0, 2).join(' '),
@@ -917,19 +921,19 @@ export default function AddNewClientV2() {
               subtitle="Start with the legal identity — this drives which other fields appear"
             >
               <div className="space-y-4 max-w-[50%]">
+                <InlineField label="Client ID" hint="Leave blank to auto-generate.">
+                  <Input placeholder="e.g., CLI-0042" value={clientId} onChange={e => setClientId(e.target.value)} />
+                </InlineField>
                 <InlineField label="Country">
                   <Select value={country} onValueChange={v => { setCountry(v); setGstRegistered(""); setSubCorpType(""); }}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ca">🇨🇦 Canada</SelectItem>
-                      <SelectItem value="us">🇺🇸 United States</SelectItem>
+                      <SelectItem value="ca">Canada</SelectItem>
+                      <SelectItem value="us">United States</SelectItem>
                     </SelectContent>
                   </Select>
                 </InlineField>
-                <InlineField label="Client ID" hint="Leave blank to auto-generate.">
-                  <Input placeholder="e.g., CLI-0042" />
-                </InlineField>
-                <InlineField label="Legal Entity Name" required>
+                <InlineField label="Legal Entity Name" required invalid={!legalEntityName}>
                   <Input
                     placeholder="e.g., Acme Holdings Inc."
                     value={legalEntityName}
@@ -996,7 +1000,7 @@ export default function AddNewClientV2() {
                     )}
                   </div>
                 </InlineField>
-                <InlineField label="Entity Type" required>
+                <InlineField label="Entity Type" required invalid={!entityType}>
                   <Select
                     value={entityType}
                     onValueChange={v => {
@@ -1018,7 +1022,7 @@ export default function AddNewClientV2() {
                   </Select>
                 </InlineField>
                 {subTypeCfg && (
-                  <InlineField label={subTypeCfg.label} required hint={subTypeCfg.hint}>
+                  <InlineField label={subTypeCfg.label} required invalid={!subCorpType} hint={subTypeCfg.hint}>
                     <Select value={subCorpType} onValueChange={setSubCorpType}>
                       <SelectTrigger><SelectValue placeholder={`Select ${subTypeCfg.label.toLowerCase()}`} /></SelectTrigger>
                       <SelectContent>
@@ -1042,8 +1046,8 @@ export default function AddNewClientV2() {
                   </InlineField>
                 )}
                 {entityType && (
-                  <InlineField label="Engagement Partner" required>
-                    <Select>
+                  <InlineField label="Engagement Partner" required invalid={!engagementPartner}>
+                    <Select value={engagementPartner} onValueChange={setEngagementPartner}>
                       <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="cpt">Cpt Group</SelectItem>
@@ -1095,10 +1099,10 @@ export default function AddNewClientV2() {
                   subtitle="The person responsible for this client relationship"
                 >
                   <div className="space-y-4 max-w-[50%]">
-                    <InlineField label="First Name" required>
+                    <InlineField label="First Name" required invalid={!firstName}>
                       <Input placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} />
                     </InlineField>
-                    <InlineField label="Last Name" required>
+                    <InlineField label="Last Name" required invalid={!lastName}>
                       <Input placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} />
                     </InlineField>
                     <InlineField label="Email">
@@ -1152,8 +1156,8 @@ export default function AddNewClientV2() {
                       <MonthDayPicker value={fiscalYearEnd} onChange={setFiscalYearEnd} />
                     </InlineField>
                     {cfg?.hasIncorporation && (
-                      <InlineField label={incLabel[entityType] ?? "Date of Incorporation"} required>
-                        <Input type="date" className="w-44" />
+                      <InlineField label={incLabel[entityType] ?? "Date of Incorporation"} required invalid={!incorporationDate}>
+                        <Input type="date" className="w-44" value={incorporationDate} onChange={e => setIncorporationDate(e.target.value)} />
                       </InlineField>
                     )}
                     <InlineField label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
