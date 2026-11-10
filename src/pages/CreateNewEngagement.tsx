@@ -374,6 +374,7 @@ export default function CreateNewEngagement() {
   const [additionalDisclosures, setAdditionalDisclosures] = useState("");
 
   // Section 3: Audit Configuration
+  const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstTimeAdoption, setFirstTimeAdoption] = useState(false);
   const [sevenSixteenConsented, setSevenSixteenConsented] = useState<boolean>(false);
@@ -707,6 +708,13 @@ export default function CreateNewEngagement() {
                   <div>
                     <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
                       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
+                      <div className="flex items-start justify-between gap-3 max-w-sm">
+                        <div>
+                          <p className="text-sm text-foreground leading-snug">Condensed audit forms?</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Shortened checklists for simpler engagements.</p>
+                        </div>
+                        <BoolToggle value={condensedForms} onChange={setCondensedForms} />
+                      </div>
                       <div className="flex items-start justify-between gap-3 max-w-sm">
                         <div>
                           <p className="text-sm text-foreground leading-snug">First-time adoption of standard?</p>
