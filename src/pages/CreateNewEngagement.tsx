@@ -432,7 +432,15 @@ export default function CreateNewEngagement() {
   useEffect(() => {
     setYearSources([0, 1, 2].map(() => (activeProvider ? `source:${activeProvider}` : "csv")));
   }, [clientName, activeProvider]);
-  const setYearSource = (i: number, v: string) => setYearSources(s => s.map((x, j) => (j === i ? v : x)));
+  // Full Year: source years run in order from the Current Year (same cascade as TB)
+  const setYearSource = (i: number, v: string) =>
+    setYearSources(s => s.map((x, j) => {
+      if (j === i) return v;
+      if (!isFullYear) return x;
+      if (v.startsWith("source:") && j < i) return v;
+      if (v === "csv" && j > i) return "csv";
+      return x;
+    }));
 
   // Section 5: Team
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
