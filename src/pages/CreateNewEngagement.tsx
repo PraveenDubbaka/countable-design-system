@@ -1,12 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
 import { toast } from "sonner";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+import xeroLogoFull from "@/assets/xero-logo-full.svg";
 import {
   ArrowLeft, Briefcase, Calendar, Users, Plus, Pencil, Trash2,
-  Search, ExternalLink, X, Settings2, Check, UserPlus, User,
+  Search, ExternalLink, X, Settings2, Check, UserPlus, User, AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -69,6 +70,13 @@ const CLIENT_DATA: Record<string, {
     hasQuebecPersonalInfo: false,
     isUsTaxpayer: true,
   },
+};
+
+// Source Data (visual only, temporary until the TB import flow is final)
+type SourceProvider = "quickbooks" | "xero";
+const SOURCE_PROVIDERS: Record<SourceProvider, { label: string; badgeLogo: string }> = {
+  quickbooks: { label: "QuickBooks Online", badgeLogo: intuitQuickbooksLogo },
+  xero: { label: "Xero", badgeLogo: xeroLogoFull },
 };
 
 const ENGAGEMENT_TYPES = [
@@ -416,6 +424,15 @@ export default function CreateNewEngagement() {
   const [priorYear2End, setPriorYear2End] = useState("11/30/2021");
   const [priorYear1NoData, setPriorYear1NoData] = useState(false);
   const [priorYear2NoData, setPriorYear2NoData] = useState(false);
+  // Source Data (visual only): the client's connected provider and each year's data source ("csv" | "source:<provider>").
+  // Local state only; defaults to the provider for a connected client, CSV otherwise, and resets when the client changes.
+  const activeProvider: SourceProvider | null =
+    clientInfo?.integrations.includes("xero") ? "xero" : clientInfo?.integrations.includes("quickbooks") ? "quickbooks" : null;
+  const [yearSources, setYearSources] = useState<string[]>(["csv", "csv", "csv"]);
+  useEffect(() => {
+    setYearSources([0, 1, 2].map(() => (activeProvider ? `source:${activeProvider}` : "csv")));
+  }, [clientName, activeProvider]);
+  const setYearSource = (i: number, v: string) => setYearSources(s => s.map((x, j) => (j === i ? v : x)));
 
   // Section 5: Team
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -456,6 +473,8 @@ export default function CreateNewEngagement() {
   };
 
   const isFullYear = periodType === "Full Year";
+  const isPartialYear = periodType === "Stub Period"; // shown as "Partial Year"; every year is locked to CSV
+  const isFirstYearOps = periodType === "First Year of Operations"; // only the Current Year row is shown
 
   const applyFullYear = (cyStart: string, cyEnd: string) => {
     setPriorYear1Start(shiftYear(cyStart, -1));
@@ -513,9 +532,22 @@ export default function CreateNewEngagement() {
     { value: "Notes to financial statements", label: "Notes to financial statements" },
   ];
 
+  // "Partial Year" keeps the stored value "Stub Period", so what handleCreate saves for it is unchanged
   const periodTypeOptions = isAudit
-    ? [{ value: "Full Year", label: "Full Year" }, { value: "Stub Period", label: "Stub Period" }, { value: "Other", label: "Other" }]
+    ? [
+        { value: "Full Year", label: "Full Year" },
+        { value: "Stub Period", label: "Partial Year" },
+        { value: "First Year of Operations", label: "Partial Year – First Year of Operations" },
+        { value: "Other", label: "Other" },
+      ]
     : [{ value: "Full year", label: "Full year" }];
+
+  // Engagement Period rows: label | Start Date | End Date | Data Source
+  const periodRows = [
+    { label: "Current Year", required: true, start: currentYearStart, setStart: handleCurrentYearStartChange, end: currentYearEnd, setEnd: handleCurrentYearEndChange, disabled: false, note: "" },
+    { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, disabled: isFullYear, note: isFullYear ? "Auto-derived from Current Year dates" : "" },
+    { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, disabled: isFullYear, note: isFullYear ? "Auto-derived from Current Year dates" : "" },
+  ].filter((_, i) => !(isFirstYearOps && i > 0));
 
   // Section 2 gate
   const showDetails = clientName.trim() !== "";
@@ -842,10 +874,25 @@ export default function CreateNewEngagement() {
             {/* SECTION 4: ENGAGEMENT PERIOD — gated on showDetails + type selected */}
             {showDetails && engagementType !== "" && (
               <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
+                {/* Source Data status (TB also shows a "Previous · Disconnected" badge here; intentionally skipped) */}
+                <div className="mt-3 pb-4 mb-2 border-b border-border/50 flex items-center gap-4">
+                  <span className="text-sm text-foreground w-[160px] shrink-0">Source Data</span>
+                  <div className="flex flex-nowrap items-center gap-[200px]">
+                    <span className="inline-flex flex-nowrap items-center gap-3">
+                      {!activeProvider ? (
+                        <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-[11px] font-medium text-foreground">Not Connected</span>
+                      ) : (<>
+                        <span className="inline-flex items-center rounded-[10px] border border-border px-2 py-1"><img src={SOURCE_PROVIDERS[activeProvider].badgeLogo} alt={SOURCE_PROVIDERS[activeProvider].label} className="h-4 object-contain" /></span>
+                        {/* Green = TB's connection-success / connection-success-surface tokens, which this repo doesn't define */}
+                        <span className="inline-flex items-center rounded-full border border-[hsl(141_46%_34%/0.3)] bg-[hsl(140_31%_94%)] px-2.5 py-0.5 text-[11px] font-medium text-[hsl(141_46%_34%)]">Connected</span>
+                      </>)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Period Type */}
                 <div className="flex items-center gap-4 py-2.5">
-                  <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap">
-                    Period Type<span className="text-destructive ml-0.5">*</span>
-                  </span>
+                  <span className="text-sm text-foreground w-44 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
                   <div className="flex-1 min-w-0 max-w-sm">
                     <Select value={periodType} onValueChange={handlePeriodTypeChange}>
                       <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
@@ -856,50 +903,55 @@ export default function CreateNewEngagement() {
                   </div>
                 </div>
 
-                {/* Current Year */}
-                <div className="flex items-start gap-4 py-2.5">
-                  <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap pt-5">
-                    Current Year<span className="text-destructive ml-0.5">*</span>
-                  </span>
-                  <div className="flex gap-3 flex-1 min-w-0">
-                    <div className="flex-1 min-w-0 max-w-44">
-                      <LabeledInput label="Start Date" value={currentYearStart} onChange={handleCurrentYearStartChange} required type="date" />
+                {/* Year rows */}
+                {periodRows.map((row, i) => {
+                  const val = isPartialYear ? "csv" : (yearSources[i] ?? "csv");
+                  return (
+                    <div key={row.label} className="py-2">
+                      <div className={`grid grid-cols-[176px_minmax(0,176px)_minmax(0,176px)_minmax(200px,320px)] gap-4 items-start ${i === 0 ? "mt-4" : ""}`}>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs font-medium text-foreground opacity-0" aria-hidden="true">Period</span>
+                          <span className="flex h-9 items-center text-sm text-foreground whitespace-nowrap">{row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}</span>
+                        </div>
+                        <div className={row.disabled ? "opacity-60" : ""}>
+                          <LabeledInput label="Start Date" value={row.start} onChange={row.setStart} type="date" disabled={row.disabled} />
+                        </div>
+                        <div className={row.disabled ? "opacity-60" : ""}>
+                          <LabeledInput label="End Date" value={row.end} onChange={row.setEnd} type="date" disabled={row.disabled} />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs font-medium text-foreground">Data Source</span>
+                          <Select value={val} disabled={isPartialYear} onValueChange={v => setYearSource(i, v)}>
+                            <SelectTrigger className="h-9 text-sm" title={val.startsWith("source:") && activeProvider ? SOURCE_PROVIDERS[activeProvider].label : "CSV / Excel / PDF"}><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {activeProvider && <SelectItem value={`source:${activeProvider}`}>{SOURCE_PROVIDERS[activeProvider].label}</SelectItem>}
+                              <SelectItem value="csv">CSV / Excel / PDF</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {row.note && (
+                        <div className="grid grid-cols-[176px_minmax(0,176px)_minmax(0,176px)_minmax(200px,320px)] gap-4 mt-1">
+                          <span />
+                          <span className="col-span-2 text-xs text-muted-foreground">{row.note}</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex-1 min-w-0 max-w-44">
-                      <LabeledInput label="End Date" value={currentYearEnd} onChange={handleCurrentYearEndChange} required type="date" />
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
 
-                {/* Prior Year 1 */}
-                <div className="flex items-start gap-4 py-2.5">
-                  <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap pt-5">Prior Year 1</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex gap-3">
-                      <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="Start Date" value={priorYear1Start} onChange={setPriorYear1Start} type="date" disabled={isFullYear} />
-                      </div>
-                      <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="End Date" value={priorYear1End} onChange={setPriorYear1End} type="date" disabled={isFullYear} />
-                      </div>
-                    </div>
+                {/* Contextual messages below year rows */}
+                {isPartialYear ? (
+                  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <span className="text-sm text-amber-800 dark:text-amber-200">Data will not be pulled from source for stub periods.</span>
                   </div>
-                </div>
-
-                {/* Prior Year 2 */}
-                <div className="flex items-start gap-4 py-2.5">
-                  <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap pt-5">Prior Year 2</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex gap-3">
-                      <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="Start Date" value={priorYear2Start} onChange={setPriorYear2Start} type="date" disabled={isFullYear} />
-                      </div>
-                      <div className="flex-1 min-w-0 max-w-44">
-                        <LabeledInput label="End Date" value={priorYear2End} onChange={setPriorYear2End} type="date" disabled={isFullYear} />
-                      </div>
-                    </div>
+                ) : activeProvider && !isFirstYearOps && yearSources.includes("csv") && (
+                  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <span className="text-sm text-amber-800 dark:text-amber-200">Data for each year will come from the data source selected.</span>
                   </div>
-                </div>
+                )}
               </SectionCard>
             )}
 
