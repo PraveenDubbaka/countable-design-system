@@ -374,7 +374,6 @@ export default function CreateNewEngagement() {
   const [additionalDisclosures, setAdditionalDisclosures] = useState("");
 
   // Section 3: Audit Configuration
-  const [condensedForms, setCondensedForms] = useState(false);
   const [firstYearAudit, setFirstYearAudit] = useState(false);
   const [firstTimeAdoption, setFirstTimeAdoption] = useState(false);
   const [sevenSixteenConsented, setSevenSixteenConsented] = useState<boolean>(false);
@@ -514,7 +513,7 @@ export default function CreateNewEngagement() {
   // Team handlers
   const startAddMember = () => {
     if (pendingRow) return;
-    setPendingRow({ mode: "add", draft: { id: uid(), role: roleOptions[0] ?? "", name: "", email: "", title: "", hourlyRate: "0.00", timeAllocation: "" } });
+    setPendingRow({ mode: "add", draft: { id: uid(), role: roleOptions[0] ?? "", name: "", email: "", title: "", hourlyRate: "", timeAllocation: "" } });
   };
   const startEditMember = (member: TeamMember) => {
     if (pendingRow) return;
@@ -710,13 +709,6 @@ export default function CreateNewEngagement() {
                       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
                       <div className="flex items-start justify-between gap-3 max-w-sm">
                         <div>
-                          <p className="text-sm text-foreground leading-snug">Condensed audit forms?</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">Shortened checklists for simpler engagements.</p>
-                        </div>
-                        <BoolToggle value={condensedForms} onChange={setCondensedForms} />
-                      </div>
-                      <div className="flex items-start justify-between gap-3 max-w-sm">
-                        <div>
                           <p className="text-sm text-foreground leading-snug">First-time adoption of standard?</p>
                           <p className="text-xs text-muted-foreground mt-0.5">Adds opening balance testing procedures.</p>
                         </div>
@@ -871,7 +863,7 @@ export default function CreateNewEngagement() {
                 <div className="overflow-x-auto rounded-lg border border-border">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-muted/60 border-b border-border">
+                      <tr className="bg-muted/60 border-b border-border align-top">
                         <th className="text-left px-4 py-3 w-10">
                           <Checkbox
                             checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
@@ -882,7 +874,10 @@ export default function CreateNewEngagement() {
                         <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
                         <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
                         <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
-                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Hourly Rate ($)<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">
+                          Hourly Rate ($)
+                          <p className="w-0 min-w-full whitespace-normal text-xs font-normal leading-snug text-muted-foreground mt-0.5">Rate from team member profile. Changes apply to this engagement only.</p>
+                        </th>
                         <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Time Allocation (%)<span className="text-destructive ml-0.5">*</span></th>
                         <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
                         <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
