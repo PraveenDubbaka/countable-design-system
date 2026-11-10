@@ -92,6 +92,33 @@ const AUDIT_ROLES = [
   "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer",
 ];
 
+type RecommendedRole = { role: string; hourlyRate: string; timeAllocation: string };
+const RECOMMENDED_TEAM: Record<string, RecommendedRole[]> = {
+  audit: [
+    { role: "Engagement Partner", hourlyRate: "400.00", timeAllocation: "15" },
+    { role: "Manager", hourlyRate: "275.00", timeAllocation: "25" },
+    { role: "Senior Auditor", hourlyRate: "200.00", timeAllocation: "35" },
+    { role: "Staff Auditor / Assistant", hourlyRate: "150.00", timeAllocation: "25" },
+  ],
+  review: [
+    { role: "Partner", hourlyRate: "400.00", timeAllocation: "20" },
+    { role: "Manager", hourlyRate: "275.00", timeAllocation: "30" },
+    { role: "Senior", hourlyRate: "200.00", timeAllocation: "35" },
+    { role: "Staff / Assistant", hourlyRate: "150.00", timeAllocation: "15" },
+  ],
+  compilation: [
+    { role: "Partner", hourlyRate: "400.00", timeAllocation: "15" },
+    { role: "Senior", hourlyRate: "200.00", timeAllocation: "45" },
+    { role: "Preparer", hourlyRate: "125.00", timeAllocation: "40" },
+  ],
+  tax: [
+    { role: "Partner", hourlyRate: "400.00", timeAllocation: "20" },
+    { role: "Manager", hourlyRate: "275.00", timeAllocation: "30" },
+    { role: "Tax Reviewer", hourlyRate: "300.00", timeAllocation: "35" },
+    { role: "Preparer", hourlyRate: "125.00", timeAllocation: "15" },
+  ],
+};
+
 const MOCK_TEAM_MEMBERS = [
   { name: "Kaushal Bhagat", email: "kaushalb@countable.co", title: "Manager", hourlyRate: "100.00" },
   { name: "Atin Gupta", email: "atin@countable.co", title: "Partner", hourlyRate: "200.00" },
@@ -392,6 +419,7 @@ export default function CreateNewEngagement() {
 
   // Section 5: Team
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [recommendedPending, setRecommendedPending] = useState<TeamMember[]>([]);
   const [pendingRow, setPendingRow] = useState<PendingRow | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [teamSearch, setTeamSearch] = useState("");
@@ -512,6 +540,32 @@ export default function CreateNewEngagement() {
     teamMembers.length > 0;
 
   // Team handlers
+  const getRecommendedCategory = () => {
+    if (isAudit) return "audit";
+    if (accountingStandards.toLowerCase().includes("tax")) return "tax";
+    if (engagementType.includes("COM") || engagementType.toLowerCase().includes("compilation")) return "compilation";
+    return "review";
+  };
+
+  const addRecommendedTeam = () => {
+    const recs = RECOMMENDED_TEAM[getRecommendedCategory()] ?? RECOMMENDED_TEAM.review;
+    setRecommendedPending(prev => [
+      ...prev,
+      ...recs.map(r => ({ id: uid(), role: r.role, name: "", email: "", title: "", hourlyRate: r.hourlyRate, timeAllocation: r.timeAllocation })),
+    ]);
+  };
+
+  const confirmRecommendedRow = (id: string) => {
+    const row = recommendedPending.find(r => r.id === id);
+    if (!row) return;
+    setTeamMembers(prev => [...prev, row]);
+    setRecommendedPending(prev => prev.filter(r => r.id !== id));
+  };
+
+  const cancelRecommendedRow = (id: string) => {
+    setRecommendedPending(prev => prev.filter(r => r.id !== id));
+  };
+
   const startAddMember = () => {
     if (pendingRow) return;
     setPendingRow({ mode: "add", draft: { id: uid(), role: roleOptions[0] ?? "", name: "", email: "", title: "", hourlyRate: "", timeAllocation: "" } });
@@ -854,9 +908,12 @@ export default function CreateNewEngagement() {
               <SectionCard
                 icon={<Users className="h-5 w-5" />}
                 title="Assigned team"
-                badge={`${teamMembers.length} User`}
+                badge={`${teamMembers.length + recommendedPending.length} User`}
                 headerRight={
                   <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={addRecommendedTeam} className="h-9 px-3 gap-1.5 text-sm">
+                      Add Recommended
+                    </Button>
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <input type="text" placeholder="Search" value={teamSearch} onChange={e => setTeamSearch(e.target.value)}
@@ -905,6 +962,17 @@ export default function CreateNewEngagement() {
                             onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
                         )
                       )}
+                      {recommendedPending.map(rec => (
+                        <TeamMemberEditRow
+                          key={rec.id}
+                          draft={rec}
+                          onChangeDraft={d => setRecommendedPending(prev => prev.map(r => r.id === d.id ? d : r))}
+                          onConfirm={() => confirmRecommendedRow(rec.id)}
+                          onCancel={() => cancelRecommendedRow(rec.id)}
+                          roleOptions={roleOptions}
+                          onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }}
+                        />
+                      ))}
                       {pendingRow?.mode === "add" && (
                         <TeamMemberEditRow draft={pendingRow.draft}
                           onChangeDraft={d => setPendingRow({ mode: "add", draft: d })}
