@@ -19,7 +19,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, ChevronRight, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Columns3, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -127,6 +127,15 @@ function ColFilterHeader({ label, active, children }: { label: string; active: b
  );
 }
 
+// One entry per movable table column: header (optionally a filter header), and the cell for a client.
+// Checkbox (first) and Actions (last) are fixed and are not part of this list.
+type ClientColumn = {
+ id: string;
+ label: string;
+ header?: React.ReactNode;
+ cell: (client: Client) => React.ReactNode;
+};
+
 export default function Clients() {
  const navigate = useNavigate();
  const [searchQuery, setSearchQuery] = useState("");
@@ -134,9 +143,9 @@ export default function Clients() {
  const [activeTab, setActiveTab] = useState("my-clients");
  const [selectedClient, setSelectedClient] = useState<string | null>(null);
  const [clientList, setClientList] = useState<Client[]>(() => loadClients());
- const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
  const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
  const [industryFilter, setIndustryFilter] = useState<string>("all");
+ const [groupFilter, setGroupFilter] = useState<string>("__all__");
  const [activeFirm, setActiveFirm] = useState(getActiveFirm);
  useEffect(() => {
   const handler = () => setActiveFirm(getActiveFirm());
@@ -147,9 +156,12 @@ export default function Clients() {
   setCountryFilter(activeFirm.region);
  }, [activeFirm.region]);
 
+ const allGroups = Array.from(new Set(clientList.map(c => c.groupName).filter((g): g is string => !!g))).sort();
+
  const filteredClients = clientList
   .filter(c => countryFilter === "all" || c.clientCountry === countryFilter)
   .filter(c => industryFilter === "all" || c.industryType === industryFilter)
+  .filter(c => groupFilter === "__all__" || (groupFilter === "__none__" ? !c.groupName : c.groupName === groupFilter))
   .filter(c =>
    c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
    c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -194,6 +206,153 @@ export default function Clients() {
   {current === value ? <Check className="h-3 w-3 flex-shrink-0" /> : <span className="h-3 w-3 flex-shrink-0" />}
   {label}
  </button>
+ );
+
+ // Column config drives both the header and the row cells; order and visibility live in state (not persisted).
+ const columns: ClientColumn[] = [
+  { id: "clientId", label: "Client ID", cell: client => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={client.id} query={searchQuery} /></td>
+  ) },
+  { id: "entityName", label: "Entity Name", cell: client => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    <Link to={`/clients/${client.id}`} className="text-sm text-link font-medium hover:underline" onClick={e => e.stopPropagation()}>
+     <Highlight text={client.entityName} query={searchQuery} />
+    </Link>
+   </td>
+  ) },
+  { id: "group", label: "Group",
+   header: (
+    <ColFilterHeader label="Group" active={groupFilter !== "__all__"}>
+     {filterOption("__all__", "All Groups", groupFilter, () => setGroupFilter("__all__"))}
+     {filterOption("__none__", "No group", groupFilter, () => setGroupFilter("__none__"))}
+     {allGroups.map(g => filterOption(g, g, groupFilter, () => setGroupFilter(g)))}
+    </ColFilterHeader>
+   ),
+   cell: client => <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.groupName || '—'}</td> },
+  { id: "entityType", label: "Entity Type", cell: client => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
+  ) },
+  { id: "country", label: "Country",
+   header: (
+    <ColFilterHeader label="Country" active={countryFilter !== "all"}>
+     {filterOption("all", "All", countryFilter, () => setCountryFilter("all"))}
+     {filterOption("ca", "🇨🇦 Canada", countryFilter, () => setCountryFilter("ca"))}
+     {filterOption("us", "🇺🇸 United States", countryFilter, () => setCountryFilter("us"))}
+    </ColFilterHeader>
+   ),
+   cell: client => (
+    <td className="px-4 py-2 text-sm whitespace-nowrap">
+     <span className={cn(
+      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+      client.clientCountry === "us"
+       ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
+       : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
+     )}>
+      {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+     </span>
+    </td>
+   ) },
+  { id: "industry", label: "Industry",
+   header: (
+    <ColFilterHeader label="Industry" active={industryFilter !== "all"}>
+     {filterOption("all", "All Industries", industryFilter, () => setIndustryFilter("all"))}
+     {allIndustries.map(ind => filterOption(ind, ind, industryFilter, () => setIndustryFilter(ind)))}
+    </ColFilterHeader>
+   ),
+   cell: client => <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.industryType || '—'}</td> },
+  { id: "status", label: "Status", cell: client => (
+   <td className="px-6 py-2 whitespace-nowrap"><StatusBadge status={client.status} /></td>
+  ) },
+  { id: "integrations", label: "Integrations", cell: client => (
+   <td className="px-6 py-2 whitespace-nowrap"><IntegrationCell type={client.integration} /></td>
+  ) },
+  { id: "contactName", label: "Contact Name", cell: client => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
+  ) },
+  { id: "email", label: "Email", cell: client => (
+   <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap"><Highlight text={client.email} query={searchQuery} /></td>
+  ) },
+  { id: "repository", label: "Repository", cell: client => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    <span className="text-sm text-link cursor-pointer hover:underline">{client.repository}</span>
+   </td>
+  ) },
+  { id: "assignedPartner", label: "Assigned Partner", cell: client => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    <div className="flex items-center gap-1">
+     <span className="text-sm text-primary">{client.assignedPartner}</span>
+     <Users className="h-3.5 w-3.5 text-primary" />
+    </div>
+   </td>
+  ) },
+  { id: "assignedTeam", label: "Assigned Team", cell: client => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    {client.assignedTeam ? (
+     <div className="flex items-center gap-1">
+      <span className="text-sm text-foreground">{client.assignedTeam}</span>
+      <Users className="h-3.5 w-3.5 text-muted-foreground" />
+     </div>
+    ) : (
+     <Users className="h-3.5 w-3.5 text-primary" />
+    )}
+   </td>
+  ) },
+  { id: "cellPhone", label: "Cell Phone", cell: client => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.cellPhone || '-'}</td>
+  ) },
+  { id: "engagements", label: "Engagements", cell: client => (
+   <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements.length}</td>
+  ) },
+ ];
+
+ const [columnOrder, setColumnOrder] = useState<string[]>(() => columns.map(c => c.id));
+ const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
+
+ const toggleColumn = (id: string) => setHiddenColumns(prev => {
+  const next = new Set(prev);
+  if (next.has(id)) next.delete(id); else next.add(id);
+  return next;
+ });
+
+ const moveColumn = (id: string, direction: -1 | 1) => setColumnOrder(prev => {
+  const from = prev.indexOf(id);
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= prev.length) return prev;
+  const next = [...prev];
+  [next[from], next[to]] = [next[to], next[from]];
+  return next;
+ });
+
+ const visibleColumns = columnOrder
+  .filter(id => !hiddenColumns.has(id))
+  .map(id => columns.find(c => c.id === id))
+  .filter((c): c is ClientColumn => !!c);
+
+ const renderClientRow = (client: Client) => (
+  <tr
+   key={client.id}
+   className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${selectedClient === client.id ? 'bg-primary/5' : ''}`}
+   style={{ maxHeight: '50px' }}
+   onClick={() => setSelectedClient(client.id)}
+  >
+   <td className="px-6 py-2 whitespace-nowrap">
+    <Checkbox checked={selectedClient === client.id} />
+   </td>
+   {visibleColumns.map(col => <React.Fragment key={col.id}>{col.cell(client)}</React.Fragment>)}
+   <td className="px-6 py-2 whitespace-nowrap">
+    <div className="flex items-center gap-2">
+     <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement" onClick={(e) => handleCreateEngagement(client.id, e)}>
+      <ClipboardPlus className="h-4 w-4 text-link" />
+     </button>
+     <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client" onClick={(e) => handleEditClient(client.id, e)}>
+      <Pencil className="h-4 w-4 text-link" />
+     </button>
+     <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client" onClick={(e) => handleDeleteClient(client.id, e)}>
+      <Trash2 className="h-4 w-4 text-destructive" />
+     </button>
+    </div>
+   </td>
+  </tr>
  );
 
  return (
@@ -293,6 +452,43 @@ export default function Clients() {
  </Popover>
  <ExpandableIconButton variant="secondary" icon={<Mail className="h-4 w-4" />} label="Invite All" />
  <ExpandableIconButton variant="secondary" icon={<Download className="h-4 w-4" />} label="Export" />
+ <Popover>
+ <PopoverTrigger asChild>
+ <ExpandableIconButton variant="secondary" icon={<Columns3 className="h-4 w-4" />} label="Columns" />
+ </PopoverTrigger>
+ <PopoverContent className="p-1 bg-card min-w-max max-h-[70vh] overflow-y-auto" align="end">
+  {columnOrder.map((id, index) => {
+   const col = columns.find(c => c.id === id);
+   if (!col) return null;
+   return (
+    <div key={id} className="flex items-center gap-2 px-2.5 py-1.5 text-xs rounded hover:bg-muted transition-colors">
+     <label className="flex flex-1 items-center gap-2 cursor-pointer whitespace-nowrap text-foreground">
+      <Checkbox checked={!hiddenColumns.has(id)} onCheckedChange={() => toggleColumn(id)} />
+      {col.label}
+     </label>
+     <button
+      type="button"
+      aria-label={`Move ${col.label} up`}
+      disabled={index === 0}
+      onClick={() => moveColumn(id, -1)}
+      className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
+     >
+      <ChevronUp className="h-3.5 w-3.5" />
+     </button>
+     <button
+      type="button"
+      aria-label={`Move ${col.label} down`}
+      disabled={index === columnOrder.length - 1}
+      onClick={() => moveColumn(id, 1)}
+      className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
+     >
+      <ChevronDown className="h-3.5 w-3.5" />
+     </button>
+    </div>
+   );
+  })}
+ </PopoverContent>
+ </Popover>
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
  <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 w-44 h-9 text-sm" />
@@ -323,170 +519,25 @@ export default function Clients() {
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-10">
  <Checkbox />
  </th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client ID</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Name</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Entity Type</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
-  <ColFilterHeader label="Country" active={countryFilter !== "all"}>
-   {filterOption("all", "All", countryFilter, () => setCountryFilter("all"))}
-   {filterOption("ca", "🇨🇦 Canada", countryFilter, () => setCountryFilter("ca"))}
-   {filterOption("us", "🇺🇸 United States", countryFilter, () => setCountryFilter("us"))}
-  </ColFilterHeader>
+ {visibleColumns.map(col => (
+ <th key={col.id} className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
+ {col.header ?? col.label}
  </th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
-  <ColFilterHeader label="Industry" active={industryFilter !== "all"}>
-   {filterOption("all", "All Industries", industryFilter, () => setIndustryFilter("all"))}
-   {allIndustries.map(ind => filterOption(ind, ind, industryFilter, () => setIndustryFilter(ind)))}
-  </ColFilterHeader>
- </th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Integrations</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Contact Name</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Email</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Repository</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Partner</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Cell Phone</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Engagements</th>
+ ))}
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actions</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  {filteredClients.length === 0 && (
  <tr>
- <td colSpan={16} className="px-6 py-16 text-center">
+ <td colSpan={visibleColumns.length + 2} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
  <p className="text-sm font-medium text-foreground">No clients match the current filters</p>
  <p className="text-xs text-muted-foreground mt-1">Try adjusting your search or filter criteria</p>
  </td>
  </tr>
  )}
- {(() => {
-   const grouped: Record<string, Client[]> = {};
-   const ungrouped: Client[] = [];
-   filteredClients.forEach(c => {
-     if (c.groupName) {
-       (grouped[c.groupName] = grouped[c.groupName] || []).push(c);
-     } else {
-       ungrouped.push(c);
-     }
-   });
-   const renderClientRow = (client: Client) => (
-     <tr
-       key={client.id}
-       className={`hover:bg-muted/50 transition-colors group cursor-pointer max-h-[50px] ${selectedClient === client.id ? 'bg-primary/5' : ''}`}
-       style={{ maxHeight: '50px' }}
-       onClick={() => setSelectedClient(client.id)}
-     >
-       <td className="px-6 py-2 whitespace-nowrap">
-         <Checkbox checked={selectedClient === client.id} />
-       </td>
-       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap"><Highlight text={client.id} query={searchQuery} /></td>
-       <td className="px-6 py-2 whitespace-nowrap">
-         <Link to={`/clients/${client.id}`} className="text-sm text-link font-medium hover:underline" onClick={e => e.stopPropagation()}>
-           <Highlight text={client.entityName} query={searchQuery} />
-         </Link>
-       </td>
-       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
-       <td className="px-4 py-2 text-sm whitespace-nowrap">
-         <span className={cn(
-           "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
-           client.clientCountry === "us"
-             ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
-             : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
-         )}>
-           {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
-         </span>
-       </td>
-       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.industryType || '—'}</td>
-       <td className="px-6 py-2 whitespace-nowrap"><StatusBadge status={client.status} /></td>
-       <td className="px-6 py-2 whitespace-nowrap"><IntegrationCell type={client.integration} /></td>
-       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
-       <td className="px-6 py-2 text-sm text-link cursor-pointer hover:underline whitespace-nowrap"><Highlight text={client.email} query={searchQuery} /></td>
-       <td className="px-6 py-2 whitespace-nowrap">
-         <span className="text-sm text-link cursor-pointer hover:underline">{client.repository}</span>
-       </td>
-       <td className="px-6 py-2 whitespace-nowrap">
-         <div className="flex items-center gap-1">
-           <span className="text-sm text-primary">{client.assignedPartner}</span>
-           <Users className="h-3.5 w-3.5 text-primary" />
-         </div>
-       </td>
-       <td className="px-6 py-2 whitespace-nowrap">
-         {client.assignedTeam ? (
-           <div className="flex items-center gap-1">
-             <span className="text-sm text-foreground">{client.assignedTeam}</span>
-             <Users className="h-3.5 w-3.5 text-muted-foreground" />
-           </div>
-         ) : (
-           <Users className="h-3.5 w-3.5 text-primary" />
-         )}
-       </td>
-       <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.cellPhone || '-'}</td>
-       <td className="px-6 py-2 text-sm text-primary font-medium text-center whitespace-nowrap">{client.engagements.length}</td>
-       <td className="px-6 py-2 whitespace-nowrap">
-         <div className="flex items-center gap-2">
-           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Create Engagement" onClick={(e) => handleCreateEngagement(client.id, e)}>
-             <ClipboardPlus className="h-4 w-4 text-link" />
-           </button>
-           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Edit Client" onClick={(e) => handleEditClient(client.id, e)}>
-             <Pencil className="h-4 w-4 text-link" />
-           </button>
-           <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" title="Delete Client" onClick={(e) => handleDeleteClient(client.id, e)}>
-             <Trash2 className="h-4 w-4 text-destructive" />
-           </button>
-         </div>
-       </td>
-     </tr>
-   );
-   return (
-     <>
-       {Object.entries(grouped).map(([groupName, clients]) => {
-         const isCollapsed = collapsedGroups.has(groupName);
-         const toggleCollapse = () => setCollapsedGroups(prev => {
-           const next = new Set(prev);
-           next.has(groupName) ? next.delete(groupName) : next.add(groupName);
-           return next;
-         });
-         return (
-           <React.Fragment key={groupName}>
-             <tr className="bg-muted/40 border-y border-border/60 cursor-pointer select-none hover:bg-muted/60 transition-colors" onClick={toggleCollapse}>
-               <td colSpan={16} className="px-6 py-2">
-                 <div className="flex items-center gap-3">
-                   {isCollapsed
-                     ? <ChevronRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                     : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                   }
-                   <span className="text-xs font-semibold text-foreground uppercase tracking-wider">{groupName}</span>
-                   <span className="text-[11px] text-muted-foreground">
-                     {clients.length} {clients.length === 1 ? 'client' : 'clients'}
-                   </span>
-                   <div className="flex items-center gap-1">
-                     {Array.from(new Set(clients.map(c => c.clientCountry))).map(country => (
-                       <span
-                         key={country}
-                         className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${
-                           country === 'us'
-                             ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40'
-                             : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40'
-                         }`}
-                       >
-                         {country === 'us' ? '🇺🇸 US' : '🇨🇦 CA'}
-                       </span>
-                     ))}
-                   </div>
-                 </div>
-               </td>
-             </tr>
-             {!isCollapsed && clients.map(renderClientRow)}
-             <tr aria-hidden="true"><td colSpan={16} className="p-0 border-b-[3px] border-border" /></tr>
-           </React.Fragment>
-         );
-       })}
-       {ungrouped.map(renderClientRow)}
-     </>
-   );
- })()}
+ {filteredClients.map(renderClientRow)}
  </tbody>
  </table>
  </div>

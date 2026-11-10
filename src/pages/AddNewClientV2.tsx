@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText, ChevronLeft, CalendarDays, Plus, CheckCircle2, X } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText, ChevronLeft, ChevronDown, CalendarDays, Plus, CheckCircle2, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { StyledCard } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { loadClientGroups, saveClientGroups, loadClients, saveClients, SEED_GROUPS } from "@/data/clientsData";
 
@@ -756,7 +757,7 @@ export default function AddNewClientV2() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [entryMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleAdd = () => {
+  const handleAdd = (mode: "add" | "invite") => {
     const resolvedGroup = groupName === "__new__" ? newGroupInput.trim() : groupName;
     if (resolvedGroup && !clientGroups.includes(resolvedGroup)) {
       const updated = [...clientGroups, resolvedGroup];
@@ -769,11 +770,11 @@ export default function AddNewClientV2() {
       entityName: legalEntityName.split(' ').slice(0, 2).join(' '),
       legalEntityName,
       entityType: entityType || 'Corporation',
-      status: 'Accepted' as const,
+      status: mode === "invite" ? 'Pending' as const : 'Invite Now' as const,
       integration: selectedSource ? (selectedSource as 'xero' | 'quickbooks' | 'connect') : 'none' as const,
       contactName: `${firstName} ${lastName}`.trim(),
       contactPerson: `${firstName} ${lastName}`.trim(),
-      engagementPartner: '',
+      engagementPartner,
       email,
       repository: 'Repository',
       assignedPartner: '',
@@ -783,11 +784,12 @@ export default function AddNewClientV2() {
       clientCountry: country as 'ca' | 'us',
       industryType: industryType || undefined,
       groupName: resolvedGroup || undefined,
+      incorporationDate: cfg?.hasIncorporation && incorporationDate ? incorporationDate : undefined,
       engagements: [],
     };
     const existing = loadClients();
     saveClients([...existing, newClient]);
-    toast.success("Client added successfully");
+    toast.success(mode === "invite" ? "Client added and invite sent" : "Client added");
     navigate("/clients");
   };
 
@@ -799,6 +801,8 @@ export default function AddNewClientV2() {
       if (legalEntityName) { setEntryMode("choose"); } else { navigate("/clients"); }
     }
   };
+
+  const addDisabled = entryMode === "choose" || entryMode === "source-connecting";
 
   return (
     <Layout title="Add New Client">
@@ -817,13 +821,31 @@ export default function AddNewClientV2() {
             <Button variant="outline" className="h-9 px-4 text-sm" onClick={() => navigate("/clients")}>
               Cancel
             </Button>
-            <Button
-              className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
-              disabled={entryMode === "choose" || entryMode === "source-connecting"}
-              onClick={handleAdd}
-            >
-              Add Client
-            </Button>
+            <div className="inline-flex">
+              <Button
+                className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-r-none"
+                disabled={addDisabled}
+                onClick={() => handleAdd("add")}
+              >
+                Add Client
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    aria-label="More add options"
+                    className="h-9 w-9 px-0 bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-l-none border-l-white/30"
+                    disabled={addDisabled}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-max">
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => handleAdd("invite")}>
+                    Add and Invite
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
 
@@ -1050,10 +1072,10 @@ export default function AddNewClientV2() {
                     <Select value={engagementPartner} onValueChange={setEngagementPartner}>
                       <SelectTrigger><SelectValue placeholder="Select partner" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cpt">Cpt Group</SelectItem>
-                        <SelectItem value="monte">Monte Heilig</SelectItem>
-                        <SelectItem value="jangaiah">Jangaiah Arige</SelectItem>
-                        <SelectItem value="jude">Jude Law</SelectItem>
+                        <SelectItem value="Cpt Group">Cpt Group</SelectItem>
+                        <SelectItem value="Monte Heilig">Monte Heilig</SelectItem>
+                        <SelectItem value="Jangaiah Arige">Jangaiah Arige</SelectItem>
+                        <SelectItem value="Jude Law">Jude Law</SelectItem>
                       </SelectContent>
                     </Select>
                   </InlineField>

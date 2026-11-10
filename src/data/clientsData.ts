@@ -29,6 +29,7 @@ export interface Client {
  hasQuebecPersonalInfo?: boolean;
  isUsTaxpayer?: boolean;
  groupName?: string;
+ incorporationDate?: string;
 }
 
 export const clientsData: Client[] = [
