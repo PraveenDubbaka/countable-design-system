@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { toast } from "sonner";
+import { BulkAddToMyTemplatesDialog } from "@/components/BulkAddToMyTemplatesDialog";
+import { getGlobalTemplateChecklist } from "@/lib/globalTemplates";
 
 const categoryIcons: Record<CategoryType, React.ReactNode> = {
  checklist: <ChecklistIcon className="w-3.5 h-3.5 [&_path]:stroke-current" />,
@@ -629,6 +631,7 @@ export default function EngagementTemplates() {
 
  // Load my template from localStorage
  const [myTemplate, setMyTemplate] = useState<MyEngagementTemplate | null>(null);
+ const [addToMyOpen, setAddToMyOpen] = useState(false);
 
  useEffect(() => {
  if (myTemplateId) {
@@ -673,10 +676,19 @@ export default function EngagementTemplates() {
  <div>
  <h1 className="text-xl font-bold text-foreground">{activeView.title}</h1>
  </div>
- <Button size="sm" className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-primary-foreground text-[13px] font-semibold">
+ <Button size="sm" onClick={() => setAddToMyOpen(true)} className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-primary-foreground text-[13px] font-semibold">
  <Plus className="h-4 w-4 mr-1" /> My Templates
  </Button>
  </div>
+ {/* Copy this global template to My Templates: same dialog and save logic as the sidebar's bulk add */}
+ <BulkAddToMyTemplatesDialog
+ open={addToMyOpen}
+ onOpenChange={setAddToMyOpen}
+ selectedTemplates={[{ id: selectedId, name: activeView.title }]}
+ getChecklistData={(templateId) => getGlobalTemplateChecklist(templateId)}
+ variant="engagement"
+ getTemplateViewData={(id) => allTemplateViews[id] || null}
+ />
 
 
 
