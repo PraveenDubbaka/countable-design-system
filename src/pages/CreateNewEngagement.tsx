@@ -928,7 +928,7 @@ export default function CreateNewEngagement() {
                 <div className="overflow-x-auto rounded-lg border border-border">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-muted/60 border-b border-border align-top">
+                      <tr className="bg-muted/60 border-b border-border">
                         <th className="text-left px-4 py-3 w-10">
                           <Checkbox
                             checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
@@ -939,10 +939,7 @@ export default function CreateNewEngagement() {
                         <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
                         <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
                         <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
-                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">
-                          Hourly Rate ($)
-                          <p className="w-0 min-w-full whitespace-normal text-xs font-normal leading-snug text-muted-foreground mt-0.5">Rate from team member profile. Changes apply to this engagement only.</p>
-                        </th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Hourly Rate ($)</th>
                         <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Time Allocation (%)<span className="text-destructive ml-0.5">*</span></th>
                         <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
                         <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
