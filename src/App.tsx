@@ -20,7 +20,7 @@ import TrialBalance from "./pages/TrialBalance";
 import Workbook from "./pages/Workbook";
 import ProcedureDetail from "./pages/ProcedureDetail";
 import { GcaProcPage } from "./pages/GcaProcPage";
-import Teams from "./pages/Teams";
+import Teams, { EditTeamMember } from "./pages/Teams";
 import AddTeamMember from "./pages/AddTeamMember";
 import UploadTeamMembers from "./pages/UploadTeamMembers";
 import DesignSystem from "./pages/DesignSystem";
@@ -50,6 +50,7 @@ const App = () => (
  <Route path="/teams" element={<Teams />} />
  <Route path="/teams/add-new" element={<AddTeamMember />} />
  <Route path="/teams/upload" element={<UploadTeamMembers />} />
+ <Route path="/teams/:id/edit" element={<EditTeamMember />} />
  <Route path="/engagements" element={<Engagements />} />
  <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
  <Route path="/engagements/:engagementId/checklist/:checklistKey" element={<EngagementDetail />} />

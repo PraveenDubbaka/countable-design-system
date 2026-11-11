@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import type { TeamMember } from "./Teams";
+import type { TeamMemberRow } from "./Teams";
 
 // Mirrors InlineField in AddNewClientV2.tsx (same props, same invalid highlight). The label sits above the control
 // because this form lays its fields out in a 4-column grid.
@@ -39,6 +39,28 @@ const CATEGORIES = ["Partner", "Staff", "CMS (Countable Managed Staff)"];
 const formatRate = (value: string) => {
   const rate = parseFloat(value);
   return Number.isFinite(rate) && rate >= 0 ? rate.toFixed(2) : "";
+};
+
+type FormValues = {
+  category: string; memberId: string; firstName: string; lastName: string; businessPhone: string; cellPhone: string;
+  hourlyRate: string; email: string; licenseNo: string; title: string;
+};
+const EMPTY_FORM: FormValues = {
+  category: "", memberId: "", firstName: "", lastName: "", businessPhone: "", cellPhone: "",
+  hourlyRate: "", email: "", licenseNo: "", title: "",
+};
+
+// A member as the grid shows it, back into form values: "-" is a blank and the name splits at its first space.
+const blankDash = (value: string) => (value === "-" ? "" : value);
+const toFormValues = (member: TeamMemberRow): FormValues => {
+  const [firstName = "", ...rest] = member.name.trim().split(/\s+/);
+  return {
+    category: CATEGORIES.includes(member.category) ? member.category : "",
+    memberId: blankDash(member.id), firstName, lastName: rest.join(" "),
+    businessPhone: blankDash(member.businessPhone), cellPhone: blankDash(member.cellPhone),
+    hourlyRate: blankDash(member.hourlyRate), email: blankDash(member.email),
+    licenseNo: blankDash(member.licenseNo), title: blankDash(member.title),
+  };
 };
 
 // ── Access permissions ───────────────────────────────────────────────────────
@@ -100,19 +122,21 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
   },
 ];
 
-export default function AddTeamMember() {
+// Without `edit` this is the "Add New Member" page; with it (route /teams/:id/edit) the same form edits that member.
+export default function AddTeamMember({ edit }: { edit?: { member: TeamMemberRow; onSave: (member: TeamMemberRow) => void } }) {
   const navigate = useNavigate();
+  const initial = edit ? toFormValues(edit.member) : EMPTY_FORM;
 
-  const [category, setCategory] = useState("");
-  const [memberId, setMemberId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [businessPhone, setBusinessPhone] = useState("");
-  const [cellPhone, setCellPhone] = useState("");
-  const [hourlyRate, setHourlyRate] = useState("");
-  const [email, setEmail] = useState("");
-  const [licenseNo, setLicenseNo] = useState("");
-  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState(initial.category);
+  const [memberId, setMemberId] = useState(initial.memberId);
+  const [firstName, setFirstName] = useState(initial.firstName);
+  const [lastName, setLastName] = useState(initial.lastName);
+  const [businessPhone, setBusinessPhone] = useState(initial.businessPhone);
+  const [cellPhone, setCellPhone] = useState(initial.cellPhone);
+  const [hourlyRate, setHourlyRate] = useState(initial.hourlyRate);
+  const [email, setEmail] = useState(initial.email);
+  const [licenseNo, setLicenseNo] = useState(initial.licenseNo);
+  const [title, setTitle] = useState(initial.title);
   const [accessType, setAccessType] = useState("General");
   const [permissions, setPermissions] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(PERMISSION_GROUPS.flatMap(g => g.rows).map(r => [r.id, !!r.checked])),
@@ -127,23 +151,29 @@ export default function AddTeamMember() {
 
   // Email stays disabled until a category is chosen, so it is only flagged once it can be filled in.
   const missingEmail = !!category && !email.trim();
-  const canAdd = !!category && !!firstName.trim() && !!lastName.trim() && !!email.trim() && !!title.trim() && !!accessType;
+  const canSubmit = !!category && !!firstName.trim() && !!lastName.trim() && !!email.trim() && !!title.trim() && !!accessType;
+
+  // The form fields as the grid shows them: blank optional values become "-".
+  const gridValues = () => ({
+    id: memberId.trim() || "-",
+    name: `${firstName.trim()} ${lastName.trim()}`,
+    title: title.trim(),
+    email: email.trim(),
+    category,
+    businessPhone: businessPhone.trim() || "-",
+    cellPhone: cellPhone.trim() || "-",
+    hourlyRate: formatRate(hourlyRate) || "-",
+    licenseNo: licenseNo.trim() || "-",
+  });
 
   const handleAdd = (mode: "add" | "invite") => {
-    const member: TeamMember = {
-      id: memberId.trim() || "-",
-      name: `${firstName.trim()} ${lastName.trim()}`,
-      title: title.trim(),
+    const member: TeamMemberRow = {
+      key: `team-${Date.now()}`,
+      ...gridValues(),
       status: mode === "invite" ? "Invite Sent" : "Invite Now",
-      email: email.trim(),
-      category,
       clients: "-",
-      businessPhone: businessPhone.trim() || "-",
-      cellPhone: cellPhone.trim() || "-",
       assignedPartner: "-",
-      hourlyRate: formatRate(hourlyRate) || "-",
       twoFAStatus: "-",
-      licenseNo: licenseNo.trim() || "-",
     };
     let existing: unknown[] = [];
     try {
@@ -155,6 +185,14 @@ export default function AddTeamMember() {
       localStorage.setItem(TEAM_MEMBERS_KEY, JSON.stringify([member, ...existing]));
     } catch { /* storage unavailable: the member is not kept */ }
     toast.success(mode === "invite" ? "Team member added and invite sent" : "Team member added");
+    navigate("/teams");
+  };
+
+  // Edit mode: everything the form does not show (status, clients, assigned partner, 2FA) stays as it was.
+  const handleSave = () => {
+    if (!edit) return;
+    edit.onSave({ ...edit.member, ...gridValues() });
+    toast.success("Team member updated");
     navigate("/teams");
   };
 
@@ -212,37 +250,47 @@ export default function AddTeamMember() {
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h2 className="text-lg font-semibold text-foreground">Add New Member</h2>
+            <h2 className="text-lg font-semibold text-foreground">{edit ? "Edit Member" : "Add New Member"}</h2>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" className="h-9 px-4 text-sm" onClick={() => navigate("/teams")}>
               Cancel
             </Button>
-            <div className="inline-flex">
+            {edit ? (
               <Button
-                className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-r-none"
-                disabled={!canAdd}
-                onClick={() => handleAdd("add")}
+                className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white"
+                disabled={!canSubmit}
+                onClick={handleSave}
               >
-                Add
+                Save
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    aria-label="More add options"
-                    className="h-9 w-9 px-0 bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-l-none border-l-white/30"
-                    disabled={!canAdd}
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-max">
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => handleAdd("invite")}>
-                    Add and Invite
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            ) : (
+              <div className="inline-flex">
+                <Button
+                  className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-r-none"
+                  disabled={!canSubmit}
+                  onClick={() => handleAdd("add")}
+                >
+                  Add
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      aria-label="More add options"
+                      className="h-9 w-9 px-0 bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-l-none border-l-white/30"
+                      disabled={!canSubmit}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="min-w-max">
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => handleAdd("invite")}>
+                      Add and Invite
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
         </div>
 
