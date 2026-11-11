@@ -314,10 +314,19 @@ export default function Clients() {
   return next;
  });
 
+ // Index in `order` of the nearest visible column from `from` in `direction`, skipping hidden ones (-1 if there is none).
+ const visibleNeighbour = (order: string[], from: number, direction: -1 | 1) => {
+  for (let i = from + direction; i >= 0 && i < order.length; i += direction) {
+   if (!hiddenColumns.has(order[i])) return i;
+  }
+  return -1;
+ };
+
+ // Swaps with the nearest visible neighbour in that direction; hidden columns stay where they are.
  const moveColumn = (id: string, direction: -1 | 1) => setColumnOrder(prev => {
   const from = prev.indexOf(id);
-  const to = from + direction;
-  if (from < 0 || to < 0 || to >= prev.length) return prev;
+  const to = from < 0 ? -1 : visibleNeighbour(prev, from, direction);
+  if (to < 0) return prev;
   const next = [...prev];
   [next[from], next[to]] = [next[to], next[from]];
   return next;
@@ -469,7 +478,7 @@ export default function Clients() {
      <button
       type="button"
       aria-label={`Move ${col.label} up`}
-      disabled={index === 0}
+      disabled={visibleNeighbour(columnOrder, index, -1) < 0}
       onClick={() => moveColumn(id, -1)}
       className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
      >
@@ -478,7 +487,7 @@ export default function Clients() {
      <button
       type="button"
       aria-label={`Move ${col.label} down`}
-      disabled={index === columnOrder.length - 1}
+      disabled={visibleNeighbour(columnOrder, index, 1) < 0}
       onClick={() => moveColumn(id, 1)}
       className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
      >
