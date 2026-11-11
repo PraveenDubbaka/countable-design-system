@@ -1881,7 +1881,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  
  // Determine if a secondary panel is visible and expanded (for dark mode gradient)
  const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
- const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/");
+ const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && !location.pathname.startsWith("/teams/");
  const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
  
  return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'transparent' }}>
@@ -1929,7 +1929,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const isTemplatesItem = item.label === "Templates";
  const isActive = isTemplatesItem
  ? (location.pathname === "/engagement-templates" || location.pathname === "/create" || location.pathname.startsWith("/financial-statement-templates"))
- : (item.route ? location.pathname === item.route : false);
+ : (item.route ? (location.pathname === item.route || location.pathname.startsWith(item.route + "/")) : false);
  return <div key={index} className={`sidebar-item ${isActive ? "active" : ""} ${isNavExpanded ? "w-full justify-start gap-3 px-3" : ""} ${item.route ? "cursor-pointer" : ""}`} title={!isNavExpanded ? item.label : undefined} onClick={() => {
  if (isTemplatesItem) {
  handleDropdownSelect("engagements");
