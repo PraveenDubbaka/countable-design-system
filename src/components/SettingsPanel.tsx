@@ -641,6 +641,7 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
  type ClientUser = { id: string; name: string; email: string; lastLoggedIn: string };
 
  const MEMBERS: Member[] = [
+  { id: '9', title: 'Partner',        name: 'R. Chandra',        email: 'rchandra@countable.co',         accessType: 'Admin',   lastLoggedIn: '-' },
   { id: '1', title: 'Partner',        name: 'Michael Thornton',  email: 'm.thornton@harrisoncpa.com',   accessType: 'Admin',   lastLoggedIn: 'Jul 28, 2026' },
   { id: '2', title: 'Senior Manager', name: 'Priya Patel',       email: 'p.patel@harrisoncpa.com',      accessType: 'Admin',   lastLoggedIn: 'Aug 01, 2026' },
   { id: '3', title: 'Manager',        name: 'James Kowalski',    email: 'j.kowalski@harrisoncpa.com',   accessType: 'General', lastLoggedIn: 'Aug 03, 2026' },
