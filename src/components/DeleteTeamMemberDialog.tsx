@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
-import { Info, Trash2 } from "lucide-react";
+import { Info, Trash2, type LucideIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UNASSIGN, type ReassignGroup, type ReassignOption } from "@/lib/teamAssignments";
 
-// Choice that leaves an item with nobody; every other choice is the key of a team member.
-export const UNASSIGN = "__unassign__";
-
-export type ReassignItem = { id: string; label: string; detail?: string };
-export type ReassignGroup = { id: string; title: string; items: ReassignItem[] };
-export type ReassignOption = { value: string; label: string };
-
-const WARNINGS = [
+const DEFAULT_WARNINGS = [
   "This user will lose all Luka history and interactions.",
   "Remaining credits will be dissolved and not reallocated.",
   "The change will be reflected in the next billing cycle.",
@@ -44,9 +38,26 @@ interface DeleteTeamMemberDialogProps {
   options: ReassignOption[];
   /** Called with a choice per item, keyed `${group.id}:${item.id}`. */
   onConfirm: (choices: Record<string, string>) => void;
+  /** Wording and icon; each defaults to the Delete User text, so the dialog can be reused for other actions. */
+  title?: string;
+  question?: string;
+  /** Warning lines. An empty list also leaves out "This action cannot be undone" and the closing question. */
+  warnings?: string[];
+  confirmLabel?: string;
+  /** Heading of the reassign section, shown when there is work to hand over. */
+  reassignTitle?: string;
+  icon?: LucideIcon;
 }
 
-export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, onConfirm }: DeleteTeamMemberDialogProps) {
+export function DeleteTeamMemberDialog({
+  open, onOpenChange, groups, options, onConfirm,
+  title = "Delete User",
+  question = "Are you sure you want to delete this User?",
+  warnings = DEFAULT_WARNINGS,
+  confirmLabel = "Delete",
+  reassignTitle = "Reassign work before deleting",
+  icon: Icon = Trash2,
+}: DeleteTeamMemberDialogProps) {
   const [choices, setChoices] = useState<Record<string, string>>({});
   useEffect(() => { if (open) setChoices({}); }, [open]);
 
@@ -65,24 +76,24 @@ export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, on
         {/* Fixed top: icon, title, question */}
         <div className="flex flex-col items-center text-center gap-4 shrink-0">
           <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
-            <Trash2 className="h-7 w-7 text-destructive" />
+            <Icon className="h-7 w-7 text-destructive" />
           </div>
 
           <DialogHeader className="space-y-2 sm:text-center">
-            <DialogTitle className="text-lg font-semibold text-foreground">Delete User</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-foreground">{title}</DialogTitle>
             <DialogDescription className="text-sm text-foreground">
-              Are you sure you want to delete this User?
+              {question}
             </DialogDescription>
           </DialogHeader>
 
-          <p className="text-sm text-foreground">This action cannot be undone</p>
+          {warnings.length > 0 && <p className="text-sm text-foreground">This action cannot be undone</p>}
         </div>
 
         {/* Body: the only part that scrolls, when the dialog is taller than the window */}
         <div className="flex flex-col items-center text-center gap-4 flex-1 min-h-0 overflow-y-auto -mx-6 px-6">
           {hasWork && (
             <div className="w-full rounded-xl border border-border p-4 text-left space-y-3">
-              <p className="text-sm font-semibold text-foreground">Reassign work before deleting</p>
+              <p className="text-sm font-semibold text-foreground">{reassignTitle}</p>
               <div className="flex items-center justify-between gap-4">
                 <span className="text-sm text-foreground">Transfer all to</span>
                 <ReassignSelect
@@ -118,25 +129,29 @@ export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, on
             </div>
           )}
 
-          <div className="w-full rounded-xl border border-border p-4 text-left space-y-3">
-            {WARNINGS.map(text => (
-              <div key={text} className="flex items-start gap-2">
-                <Info className="h-4 w-4 mt-0.5 shrink-0 text-destructive" />
-                <p className="text-sm text-foreground">{text}</p>
+          {warnings.length > 0 && (
+            <>
+              <div className="w-full rounded-xl border border-border p-4 text-left space-y-3">
+                {warnings.map(text => (
+                  <div key={text} className="flex items-start gap-2">
+                    <Info className="h-4 w-4 mt-0.5 shrink-0 text-destructive" />
+                    <p className="text-sm text-foreground">{text}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <p className="text-sm text-muted-foreground">Are you sure you want to delete this user?</p>
+              <p className="text-sm text-muted-foreground">Are you sure you want to delete this user?</p>
+            </>
+          )}
         </div>
 
-        {/* Fixed bottom: Cancel / Delete */}
+        {/* Fixed bottom: Cancel / confirm */}
         <DialogFooter className="flex flex-row gap-3 w-full sm:justify-center sm:space-x-0 pt-2 shrink-0">
           <Button variant="secondary" onClick={() => onOpenChange(false)} className="flex-1 h-10">
             Cancel
           </Button>
           <Button variant="destructive" disabled={!canDelete} onClick={() => onConfirm(choices)} className="flex-1 h-10">
-            Delete
+            {confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

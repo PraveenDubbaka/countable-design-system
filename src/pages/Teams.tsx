@@ -10,11 +10,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
-import { DeleteTeamMemberDialog, UNASSIGN, type ReassignGroup } from "@/components/DeleteTeamMemberDialog";
+import { DeleteTeamMemberDialog } from "@/components/DeleteTeamMemberDialog";
 import { toast } from "sonner";
-import { loadClients, saveClients } from "@/data/clientsData";
+import { loadMembers, saveMemberRecord, removeMemberRecord, type TeamMember, type TeamMemberRow } from "@/data/teamMembersData";
+import { applyReassignments, findAssignedWork, type ReassignGroup } from "@/lib/teamAssignments";
 import { useEngagements } from "@/store/EngagementsContext";
-import type { EngagementRecord } from "@/store/engagementsStore";
 import AddTeamMember from "./AddTeamMember";
 
 // Sample stats
@@ -23,23 +23,6 @@ const stats = [
  { label: "Staff", value: "49" },
  { label: "CMS", value: "2" },
  { label: "Total Team", value: "131" },
-];
-
-// Sample team members
-const teamMembers = [
- { id: "-", name: "Cpt Group", title: "cpt-10176", status: "Accepted", email: "cpt10176canada@yopmail.c...", category: "Partner", clients: "132", businessPhone: "-", cellPhone: "(424) 234-2424", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Pen Test", title: "-", status: "Accepted", email: "pentest+role4@sspentest.c...", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Shai Firm", title: "ms", status: "Accepted", email: "shfirmuat@yopmail.com", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "60.00", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Norbert B", title: "Pen Test", status: "Accepted", email: "norbert@strivesec.com", category: "Staff", clients: "2", businessPhone: "-", cellPhone: "-", assignedPartner: "R. Chandra", hourlyRate: "124.00", twoFAStatus: "-", licenseNo: "-", unassigned: false },
- { id: "-", name: "Haroon S", title: "API", status: "Accepted", email: "haroons@countable.co", category: "Staff", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "R. Chandra", hourlyRate: "256.00", twoFAStatus: "-", licenseNo: "-", unassigned: false },
- { id: "-", name: "Amol Patil", title: "-", status: "Accepted", email: "amolp@countable.co", category: "CMS (Countable Managed Staff)", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Staff Test", title: "HV", status: "Accepted", email: "stafftest@yopmail.com", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Ishaan S", title: "CA", status: "Invite Now", email: "ishaan@yopmail.com", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Henry Davis", title: "Mr", status: "Accepted", email: "general_2511281624292@y...", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "R. Chandra", title: "Partner", status: "Accepted", email: "rchandra@countable.co", category: "Partner", clients: "1", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Praveen D.", title: "Partner", status: "Accepted", email: "praveend@countable.co", category: "Partner", clients: "7", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "Ayesha Naaz", title: "Manager", status: "Accepted", email: "ayeshan@countable.co", category: "Partner", clients: "6", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
- { id: "-", name: "James Park", title: "Partner", status: "Accepted", email: "jamesp@countable.co", category: "Partner", clients: "6", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
 ];
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -77,94 +60,14 @@ function Highlight({ text, query }: { text: string; query: string }) {
 
 // One entry per movable table column: its header label and the cell for a team member.
 // Checkbox (first) and Actions (last) are fixed and are not part of this list.
-export type TeamMember = (typeof teamMembers)[number];
-// A row of the grid: the member plus the key that identifies it (the built-in members are "seed-<position>").
-export type TeamMemberRow = TeamMember & { key: string };
 type TeamColumn = {
  id: string;
  label: string;
  cell: (member: TeamMember) => React.ReactNode;
 };
 
-// Members come from the built-in list above and from localStorage "cds_team_members_v2" (AddTeamMember.tsx writes new
-// members there; keep the key in sync). Every stored record has a `key`: one keyed "seed-<position>" is an edit that
-// replaces that built-in member, any other is a member added later and is listed first. Deleted built-in members are
-// kept in a removed-keys list so they stay hidden.
-const TEAM_MEMBERS_KEY = "cds_team_members_v2";
-const REMOVED_KEYS_KEY = "cds_team_members_removed_v1";
-const SEED_PREFIX = "seed-";
-
-const readList = (storageKey: string): unknown[] => {
- try {
-  const raw = localStorage.getItem(storageKey);
-  const list: unknown = raw ? JSON.parse(raw) : [];
-  return Array.isArray(list) ? list : [];
- } catch {
-  return [];
- }
-};
-const writeList = (storageKey: string, list: unknown[]) => {
- try { localStorage.setItem(storageKey, JSON.stringify(list)); } catch { /* storage unavailable: the change is not kept */ }
-};
-
-// Stored records, tidied: entries without a name are skipped, other missing fields show "-", and records saved before
-// keys existed are given one.
-const readStored = (): TeamMemberRow[] => {
- const text = (value: unknown) => (typeof value === "string" && value ? value : "-");
- let addedKeys = false;
- const rows = readList(TEAM_MEMBERS_KEY)
-  .filter((m): m is Record<string, unknown> => typeof m === "object" && m !== null)
-  .map((m, index) => {
-   const hasKey = typeof m.key === "string" && m.key !== "";
-   if (!hasKey) addedKeys = true;
-   return {
-    key: hasKey ? String(m.key) : `team-${Date.now()}-${index}`,
-    id: text(m.id), name: text(m.name), title: text(m.title), status: text(m.status), email: text(m.email),
-    category: text(m.category), clients: text(m.clients), businessPhone: text(m.businessPhone), cellPhone: text(m.cellPhone),
-    assignedPartner: text(m.assignedPartner), hourlyRate: text(m.hourlyRate), twoFAStatus: text(m.twoFAStatus), licenseNo: text(m.licenseNo),
-    unassigned: m.unassigned === true ? true : undefined,
-   };
-  })
-  .filter(m => m.name !== "-");
- if (addedKeys) writeList(TEAM_MEMBERS_KEY, rows);
- return rows;
-};
-
-// The grid: added members first, then the built-in members with their edits, minus the deleted ones.
-const loadMembers = (): TeamMemberRow[] => {
- const stored = readStored();
- const removed = new Set(readList(REMOVED_KEYS_KEY));
- const edits = new Map(stored.filter(r => r.key.startsWith(SEED_PREFIX)).map(r => [r.key, r] as const));
- const builtIn = teamMembers.map((m, i): TeamMemberRow => edits.get(`${SEED_PREFIX}${i}`) ?? { ...m, key: `${SEED_PREFIX}${i}` });
- return [...stored.filter(r => !r.key.startsWith(SEED_PREFIX)), ...builtIn].filter(r => !removed.has(r.key));
-};
-
-// Replaces the stored record with the same key, or adds it (for a built-in member that is its first edit).
-const saveMemberRecord = (row: TeamMemberRow) => {
- const stored = readStored();
- writeList(TEAM_MEMBERS_KEY, stored.some(r => r.key === row.key) ? stored.map(r => (r.key === row.key ? row : r)) : [...stored, row]);
-};
-
-const removeMemberRecord = (row: TeamMemberRow) => {
- writeList(TEAM_MEMBERS_KEY, readStored().filter(r => r.key !== row.key));
- if (row.key.startsWith(SEED_PREFIX)) writeList(REMOVED_KEYS_KEY, Array.from(new Set([...readList(REMOVED_KEYS_KEY), row.key])));
-};
-
-// Engagement teams read "A · B · C"; "View Assignees" is the placeholder when nobody is listed.
-const teamNames = (team: string) => (team === "View Assignees" ? [] : team.split(/\s*[·,]\s*/).filter(Boolean));
-
-// What still belongs to `target`, matched on the exact name: clients it is engagement partner of, team members it is
-// assigned partner of (partners only) and engagements it is on the team of.
-const findAssignedWork = (target: TeamMemberRow, rows: TeamMemberRow[], engagements: EngagementRecord[]): ReassignGroup[] => {
- const clients = loadClients().filter(c => c.engagementPartner === target.name);
- const staff = target.category === "Partner" ? rows.filter(m => m.key !== target.key && m.assignedPartner === target.name) : [];
- const onTeam = engagements.filter(e => teamNames(e.team).includes(target.name));
- return [
-  { id: "clients", title: "Clients", items: clients.map(c => ({ id: c.id, label: c.entityName, detail: c.id })) },
-  { id: "team", title: "Team members", items: staff.map(m => ({ id: m.key, label: m.name, detail: m.category })) },
-  { id: "engagements", title: "Engagements", items: onTeam.map(e => ({ id: e.id, label: e.client, detail: e.id })) },
- ].filter(group => group.items.length > 0);
-};
+// The member types live with the data (src/data/teamMembersData.ts); AddTeamMember.tsx still imports them from here.
+export type { TeamMember, TeamMemberRow } from "@/data/teamMembersData";
 
 // Route /teams/:id/edit: the "Add New Member" form in edit mode, filled in with that member.
 export function EditTeamMember() {
@@ -190,33 +93,10 @@ export default function Teams() {
   setDeleteOpen(true);
  };
 
- // Hands every assigned item to the member picked for it (null = left unassigned), then removes the member.
+ // Hands every assigned item to the member picked for it, then removes the member.
  const confirmDelete = (choices: Record<string, string>) => {
   if (!deleteTarget) return;
-  const chosen = (groupId: string, itemId: string) => {
-   const value = choices[`${groupId}:${itemId}`];
-   return value === UNASSIGN ? null : members.find(m => m.key === value)?.name ?? null;
-  };
-  deleteGroups.forEach(group => {
-   if (group.id === "clients") {
-    const partners = new Map(group.items.map(item => [item.id, chosen(group.id, item.id)]));
-    saveClients(loadClients().map(c => (partners.has(c.id) ? { ...c, engagementPartner: partners.get(c.id) ?? "" } : c)));
-   } else if (group.id === "team") {
-    group.items.forEach(item => {
-     const row = members.find(m => m.key === item.id);
-     const partner = chosen(group.id, item.id);
-     if (row) saveMemberRecord({ ...row, assignedPartner: partner ?? "Unassigned", unassigned: partner === null ? true : undefined });
-    });
-   } else {
-    group.items.forEach(item => {
-     const engagement = engagements.find(e => e.id === item.id);
-     if (!engagement) return;
-     const partner = chosen(group.id, item.id);
-     const names = teamNames(engagement.team).flatMap(n => (n !== deleteTarget.name ? [n] : partner ? [partner] : []));
-     updateEngagement(engagement.id, { team: Array.from(new Set(names)).join(" · ") || "View Assignees" });
-    });
-   }
-  });
+  applyReassignments({ ownerName: deleteTarget.name, groups: deleteGroups, choices, rows: members, engagements, updateEngagement });
   removeMemberRecord(deleteTarget);
   setMembers(loadMembers());
   setDeleteOpen(false);

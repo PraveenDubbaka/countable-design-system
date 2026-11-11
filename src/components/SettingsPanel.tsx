@@ -1,8 +1,9 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { ArrowLeft, X, User, FileText, Zap, Bell, Users, Shield, Download, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2, Search, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
+import { ArrowLeft, X, Zap, Bell, Shield, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2, Search, AlignLeft, AlignCenter, AlignRight, CircleUser, Signature, ShieldCheck, PanelLeft, Layers, UserMinus, UserPlus } from "lucide-react";
 import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { Sheet, SheetOverlay, SheetPortal, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,12 @@ import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DeleteTeamMemberDialog } from "@/components/DeleteTeamMemberDialog";
+import { loadMembers, type TeamMemberRow } from "@/data/teamMembersData";
+import { applyReassignments, findAssignedWork, type ReassignGroup } from "@/lib/teamAssignments";
+import { useEngagements } from "@/store/EngagementsContext";
 import { cn } from "@/lib/utils";
 
 // ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
@@ -89,15 +96,32 @@ interface SettingsPanelProps {
 }
 
 const settingsNavItems = [
- { id: "my-account", label: "My Account", icon: User },
- { id: "letterhead", label: "Letterhead & Signature", icon: FileText },
+ { id: "my-account", label: "My Account", icon: CircleUser },
+ { id: "letterhead", label: "Letterhead & Signature", icon: Signature },
  { id: "luka", label: "Luka", icon: Zap },
  { id: "notifications", label: "Notifications", icon: Bell },
- { id: "user-access", label: "User & Access", icon: Users },
- { id: "privacy", label: "Privacy & Security", icon: Shield },
- { id: "export", label: "Export Data", icon: Download },
+ { id: "user-access", label: "User & Access", icon: Shield },
+ { id: "privacy", label: "Privacy & Security", icon: ShieldCheck },
+ { id: "export", label: "Export Data", icon: FileOutput },
  { id: "time-tracking", label: "Time Tracking", icon: Clock },
 ];
+
+// Title bar above a section's content (User & Access draws its own).
+function PanelHeader({ title, onClose }: { title: string; onClose: () => void }) {
+ return (
+ <div className="p-6 border-b border-border flex items-center justify-between">
+ <h2 className="text-xl font-semibold text-primary">{title}</h2>
+ <Button
+ variant="ghost"
+ size="icon"
+ className="h-9 w-9"
+ onClick={onClose}
+ >
+ <X className="h-4 w-4" />
+ </Button>
+ </div>
+ );
+}
 
 export function SettingsPanel({ open, onOpenChange, firmNav }: SettingsPanelProps) {
  const [activeSection, setActiveSection] = useState("my-account");
@@ -106,39 +130,45 @@ export function SettingsPanel({ open, onOpenChange, firmNav }: SettingsPanelProp
   if (open && firmNav?.tab) setActiveSection("my-account");
  }, [open, firmNav]);
 
+ const isUserAccess = activeSection === "user-access";
+
  return (
  <Sheet open={open} onOpenChange={onOpenChange}>
- <SheetContent 
- side="right" 
- className="!w-[80%] !max-w-[80%] p-0 flex gap-0 [&>button]:hidden sm:rounded-l-2xl"
+ <SheetPortal>
+ {/* Dims the page under the header and beside the app sidebar; both stay visible */}
+ <SheetOverlay className="top-[3.4rem] left-14 bg-black/40" />
+ <SheetPrimitive.Content
+ aria-describedby={undefined}
+ className="fixed right-0 top-[3.4rem] bottom-0 z-50 flex w-[86%] max-w-[86%] overflow-hidden rounded-l-2xl bg-background shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
  >
+ <SheetTitle className="sr-only">Settings</SheetTitle>
  {/* Left Navigation */}
- <div className="w-64 border-r border-border bg-muted/30 flex flex-col">
- <div className="p-4 flex items-center gap-3 border-b border-border">
- <Button 
- variant="ghost" 
- size="icon" 
- className="h-9 w-9"
+ <div className="w-[300px] shrink-0 border-r border-border flex flex-col">
+ <div className="flex items-center gap-3 px-6 pt-6 pb-4">
+ <button
+ type="button"
+ aria-label="Close settings"
+ className="text-link hover:opacity-80 transition-opacity"
  onClick={() => onOpenChange(false)}
  >
- <ArrowLeft className="h-4 w-4" />
- </Button>
- <span className="font-semibold text-lg">Settings</span>
+ <ArrowLeft className="h-5 w-5" />
+ </button>
+ <span className="text-2xl font-semibold text-foreground">Settings</span>
  </div>
  
- <nav className="flex-1 p-2">
+ <nav className="flex-1 overflow-y-auto px-2.5 pb-4 space-y-0.5">
  {settingsNavItems.map((item) => (
  <button
  key={item.id}
  onClick={() => setActiveSection(item.id)}
  className={cn(
- "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left",
+ "w-full flex items-center gap-2.5 h-9 px-4 rounded-lg border text-[15px] font-medium transition-colors text-left",
  activeSection === item.id
- ? "bg-primary/10 text-primary font-medium ring-1 ring-primary/25"
- : "text-muted-foreground hover:bg-primary/10 hover:text-foreground"
+ ? "bg-muted border-border text-foreground"
+ : "border-transparent text-foreground hover:bg-muted/60"
  )}
  >
- <item.icon className="h-4 w-4" />
+ <item.icon className="h-[18px] w-[18px] shrink-0" />
  <span>{item.label}</span>
  </button>
  ))}
@@ -146,33 +176,27 @@ export function SettingsPanel({ open, onOpenChange, firmNav }: SettingsPanelProp
  </div>
 
  {/* Main Content */}
- <div className="flex-1 flex flex-col overflow-hidden">
- <div className="p-6 border-b border-border flex items-center justify-between">
- <h2 className="text-xl font-semibold text-primary">
- {settingsNavItems.find(item => item.id === activeSection)?.label}
- </h2>
- <Button 
- variant="ghost" 
- size="icon" 
- className="h-9 w-9"
- onClick={() => onOpenChange(false)}
- >
- <X className="h-4 w-4" />
- </Button>
- </div>
+ <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+ {!isUserAccess && (
+ <PanelHeader
+ title={settingsNavItems.find(item => item.id === activeSection)?.label ?? ""}
+ onClose={() => onOpenChange(false)}
+ />
+ )}
 
- <div className="flex-1 overflow-auto p-6">
+ <div className={cn("flex-1 min-h-0", isUserAccess ? "flex flex-col overflow-hidden" : "overflow-auto p-6")}>
  {activeSection === "my-account" && <MyAccountContent defaultTab={firmNav?.tab} openAddOffice={firmNav?.addOffice} />}
  {activeSection === "letterhead" && <LetterheadContent />}
  {activeSection === "luka" && <LukaContent />}
  {activeSection === "notifications" && <NotificationsContent />}
- {activeSection === "user-access" && <UserAccessContent />}
+ {activeSection === "user-access" && <UserAccessContent onClose={() => onOpenChange(false)} />}
  {activeSection === "privacy" && <PlaceholderContent title="Privacy & Security" />}
  {activeSection === "export" && <PlaceholderContent title="Export Data" />}
  {activeSection === "time-tracking" && <TimeTrackingContent />}
  </div>
  </div>
- </SheetContent>
+ </SheetPrimitive.Content>
+ </SheetPortal>
  </Sheet>
  );
 }
@@ -586,7 +610,22 @@ function NotificationsContent() {
  );
 }
 
-function UserAccessContent() {
+// Members whose access has been removed (their ids), kept in localStorage.
+const INACTIVE_USERS_KEY = "cds_user_access_inactive_v1";
+function readInactiveIds(): string[] {
+ try {
+  const raw = localStorage.getItem(INACTIVE_USERS_KEY);
+  const ids: unknown = raw ? JSON.parse(raw) : [];
+  return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === "string") : [];
+ } catch {
+  return [];
+ }
+}
+function writeInactiveIds(ids: string[]) {
+ try { localStorage.setItem(INACTIVE_USERS_KEY, JSON.stringify(ids)); } catch { /* storage unavailable: the change is not kept */ }
+}
+
+function UserAccessContent({ onClose }: { onClose: () => void }) {
  const [ttEnabled, setTtEnabled] = useState(() => getEnabled());
  useEffect(() => subscribeEnabled(setTtEnabled), []);
 
@@ -599,6 +638,7 @@ function UserAccessContent() {
   editTimeSummary: boolean; exportTimeSummary: boolean; toggleTracking: boolean;
  };
  type Member = { id: string; title: string; name: string; email: string; accessType: string; lastLoggedIn: string; };
+ type ClientUser = { id: string; name: string; email: string; lastLoggedIn: string };
 
  const MEMBERS: Member[] = [
   { id: '1', title: 'Partner',        name: 'Michael Thornton',  email: 'm.thornton@harrisoncpa.com',   accessType: 'Admin',   lastLoggedIn: 'Jul 28, 2026' },
@@ -609,6 +649,15 @@ function UserAccessContent() {
   { id: '6', title: 'Senior',         name: 'Emily Marchetti',   email: 'e.marchetti@harrisoncpa.com',  accessType: 'General', lastLoggedIn: 'Aug 01, 2026' },
   { id: '7', title: 'Staff',          name: 'Ryan Beaumont',     email: 'r.beaumont@harrisoncpa.com',   accessType: 'General', lastLoggedIn: 'Jul 29, 2026' },
   { id: '8', title: 'Staff',          name: 'Anika Sharma',      email: 'a.sharma@harrisoncpa.com',     accessType: 'General', lastLoggedIn: 'Aug 04, 2026' },
+ ];
+
+ const CLIENT_USERS: ClientUser[] = [
+  { id: 'c1', name: 'Olivia Bennett',  email: 'olivia.bennett@northlinemfg.com', lastLoggedIn: 'Aug 02, 2026' },
+  { id: 'c2', name: 'Marcus Webb',     email: 'm.webb@harborfreight.com',        lastLoggedIn: 'Jul 31, 2026' },
+  { id: 'c3', name: 'Chloe Tremblay',  email: 'chloe@shippingline.ca',           lastLoggedIn: '-' },
+  { id: 'c4', name: 'Rahul Mehta',     email: 'rahul.mehta@pinnacletech.com',    lastLoggedIn: 'Aug 04, 2026' },
+  { id: 'c5', name: 'Grace Oyelaran',  email: 'grace.o@evergreenlabs.ca',        lastLoggedIn: '-' },
+  { id: 'c6', name: 'Tomás Rivera',    email: 'tomas@borealiskitchen.com',       lastLoggedIn: 'Jul 29, 2026' },
  ];
 
  const ENGAGEMENTS = [
@@ -639,6 +688,58 @@ function UserAccessContent() {
  const [allPerms, setAllPerms] = useState<Record<string, Perms>>({});
  const [engAccess, setEngAccess] = useState<Record<string, { access: boolean; tt: boolean }>>(
   Object.fromEntries(ENGAGEMENTS.map((e, i) => [e.id, { access: [0, 2, 4, 5, 8].includes(i), tt: false }]))
+ );
+
+ const [tab, setTab] = useState<'firm' | 'client'>('firm');
+ const [search, setSearch] = useState('');
+ const [inactiveIds, setInactiveIds] = useState<string[]>(readInactiveIds);
+ const { engagements, updateEngagement } = useEngagements();
+ // Removing access from someone who still owns work asks where it goes first (the dialog Teams uses for Delete User).
+ const [removeTarget, setRemoveTarget] = useState<Member | null>(null);
+ const [removeGroups, setRemoveGroups] = useState<ReassignGroup[]>([]);
+ const [removeRows, setRemoveRows] = useState<TeamMemberRow[]>([]);
+ const [removeOpen, setRemoveOpen] = useState(false);
+
+ const setActive = (id: string, active: boolean) => setInactiveIds(prev => {
+  const next = active ? prev.filter(x => x !== id) : prev.includes(id) ? prev : [...prev, id];
+  writeInactiveIds(next);
+  return next;
+ });
+
+ // No work: access goes straight away. Work: the reassign dialog opens and access goes once it is confirmed.
+ const requestRemoveAccess = (m: Member) => {
+  const rows = loadMembers();
+  const groups = findAssignedWork({ key: `settings-${m.id}`, name: m.name, category: m.title }, rows, engagements);
+  if (groups.length === 0) {
+   setActive(m.id, false);
+   toast.success("Access removed");
+   return;
+  }
+  setRemoveTarget(m);
+  setRemoveGroups(groups);
+  setRemoveRows(rows);
+  setRemoveOpen(true);
+ };
+
+ const confirmRemoveAccess = (choices: Record<string, string>) => {
+  if (!removeTarget) return;
+  applyReassignments({ ownerName: removeTarget.name, groups: removeGroups, choices, rows: removeRows, engagements, updateEngagement });
+  setActive(removeTarget.id, false);
+  setRemoveOpen(false);
+  toast.success("Access removed");
+ };
+
+ const restoreAccess = (m: Member) => {
+  setActive(m.id, true);
+  toast.success("Access restored");
+ };
+
+ // The permission views keep the section's usual title bar and padded body.
+ const withHeader = (body: ReactNode) => (
+  <>
+   <PanelHeader title="User & Access" onClose={onClose} />
+   <div className="flex-1 overflow-auto p-6">{body}</div>
+  </>
  );
 
  const getPerms = (id: string): Perms => allPerms[id] ?? DEFAULT_PERMS;
@@ -673,7 +774,7 @@ function UserAccessContent() {
 
  // ── Modify Engagement Access view ─────────────────────────────────────────
  if (view === 'engagement-access') {
-  return (
+  return withHeader(
    <div className="space-y-4">
     <button onClick={() => setView('permissions')} className="flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
      <ArrowLeft className="h-4 w-4" />
@@ -752,7 +853,7 @@ function UserAccessContent() {
  if (view === 'permissions' && selected) {
   const p = getPerms(selected.id);
   const initials = selected.name.split(' ').map((n: string) => n[0]).filter(Boolean).join('').slice(0, 2).toUpperCase();
-  return (
+  return withHeader(
    <div className="space-y-4">
     <button onClick={() => setView('list')} className="flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
      <ArrowLeft className="h-4 w-4" />
@@ -819,79 +920,182 @@ function UserAccessContent() {
  }
 
  // ── Main member list ───────────────────────────────────────────────────────
+ const firmActive = MEMBERS.filter(m => !inactiveIds.includes(m.id)).length;
+ const stats = [
+  { v: firmActive, l: 'Active Firm Member(s)' },
+  { v: CLIENT_USERS.length, l: 'Client(s)' },
+  { v: CLIENT_USERS.length, l: 'Client(s)' },
+  { v: firmActive + CLIENT_USERS.length, l: 'Total' },
+ ];
+ const q = search.trim().toLowerCase();
+ const firmRows = MEMBERS.filter(m => !q || [m.name, m.email, m.title, m.accessType].some(v => v.toLowerCase().includes(q)));
+ const clientRows = CLIENT_USERS.filter(c => !q || [c.name, c.email].some(v => v.toLowerCase().includes(q)));
+
+ const thCls = "text-left px-2.5 py-3.5 font-medium text-foreground whitespace-nowrap";
+ const actionsTh = "sticky right-0 z-20 bg-muted border-l border-border px-2.5 py-3.5 font-medium text-foreground whitespace-nowrap text-center";
+ const actionsTd = "sticky right-0 z-[1] bg-card border-l border-border px-2.5 py-2.5";
+ const iconBtn = "text-link hover:opacity-80 transition-opacity";
+
  return (
-  <div className="space-y-4">
-   <div className="flex items-start justify-between gap-3">
-    <div className="flex items-start gap-3">
-     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-      <Users className="h-5 w-5 text-primary" />
-     </div>
-     <div>
-      <h3 className="font-semibold text-lg">User & Access</h3>
-      <p className="text-sm text-muted-foreground">Manage team member access and permissions.</p>
-     </div>
+  <>
+   {/* Title bar: icon + title, search and Add User */}
+   <div className="h-[52px] shrink-0 border-b border-border px-6 flex items-center justify-between gap-4">
+    <div className="flex items-center gap-3 min-w-0">
+     <PanelLeft className="h-4 w-4 text-link shrink-0" />
+     <h2 className="text-lg font-semibold text-foreground truncate">User & Access</h2>
     </div>
-    <Button size="sm" className="shrink-0 flex items-center gap-1">
-     Add User <ChevronDown className="h-3.5 w-3.5" />
-    </Button>
-   </div>
-
-   <div className="grid grid-cols-4 gap-3">
-    {[{ v: 16, l: 'Active Firm Member(s)' }, { v: 31, l: 'Client(s)' }, { v: 31, l: 'Client(s)' }, { v: 47, l: 'Total' }].map((s, i) => (
-     <div key={i} className="border border-border rounded-xl p-3 flex items-center gap-2.5">
-      <Database className="h-4 w-4 text-muted-foreground shrink-0" />
-      <div>
-       <p className="text-base font-bold leading-tight">{s.v}</p>
-       <p className="text-[11px] text-muted-foreground leading-tight">{s.l}</p>
-      </div>
+    <div className="flex items-center gap-2 shrink-0">
+     <div className="relative">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <Input placeholder="Search" value={search} onChange={e => setSearch(e.target.value)} className="pl-9 w-44 h-9 text-sm" />
      </div>
-    ))}
+     <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
+      Add User
+      <ChevronDown className="h-4 w-4 ml-1.5" />
+     </Button>
+    </div>
    </div>
 
-   <div className="flex gap-2">
-    <Button variant="default" size="sm" className="rounded-full px-5">Firm</Button>
-    <Button variant="outline" size="sm" className="rounded-full px-5">Client</Button>
+   <div className="flex-1 min-h-0 flex flex-col gap-4 px-6 pt-6 pb-6">
+    <div className="grid grid-cols-4 gap-3 shrink-0">
+     {stats.map((st, i) => (
+      <div key={i} className="flex items-center gap-3 px-5 py-3 bg-card border border-border shadow-sm" style={{ borderRadius: '12px' }}>
+       <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+        <Layers className="h-4 w-4 text-foreground" />
+       </div>
+       <div className="flex flex-col">
+        <span className="text-xl font-bold leading-none text-foreground">{st.v}</span>
+        <span className="text-[11px] font-medium text-foreground leading-tight mt-1 whitespace-nowrap">{st.l}</span>
+       </div>
+      </div>
+     ))}
+    </div>
+
+    <div className="flex items-center gap-1 bg-card rounded-lg border border-border p-1 w-fit shrink-0">
+     {([['firm', 'Firm'], ['client', 'Client']] as const).map(([id, label]) => (
+      <button
+       key={id}
+       onClick={() => setTab(id)}
+       className={cn(
+        "min-w-[100px] px-4 py-1.5 text-sm font-medium transition-colors rounded-sm",
+        tab === id ? "bg-[#1C63A6] text-white" : "text-muted-foreground hover:bg-muted"
+       )}
+       style={{ fontWeight: 600 }}
+      >
+       {label}
+      </button>
+     ))}
+    </div>
+
+    <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-border">
+     {tab === 'firm' ? (
+      <table className="w-full text-sm min-w-[880px]">
+       <thead className="sticky top-0 z-10">
+        <tr className="bg-muted">
+         {['Title', 'Name', 'Email', 'Access Type', 'Last Logged In', 'Status'].map(h => (
+          <th key={h} className={thCls}>{h}</th>
+         ))}
+         <th className={actionsTh}>Actions</th>
+        </tr>
+       </thead>
+       <tbody>
+        {firmRows.length === 0 && (
+         <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-muted-foreground">No users found</td></tr>
+        )}
+        {firmRows.map(m => {
+         const off = inactiveIds.includes(m.id);
+         const fade = off ? "opacity-50" : "";
+         return (
+          <tr key={m.id} className="border-t border-border hover:bg-muted/10 transition-colors">
+           <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", fade)}>{m.title}</td>
+           <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", fade)}>{m.name}</td>
+           <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-link font-semibold", fade)}>{m.email}</td>
+           <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", fade)}>{m.accessType}</td>
+           <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", fade)}>{m.lastLoggedIn}</td>
+           <td className="px-2.5 py-2.5 whitespace-nowrap">
+            <Badge variant={off ? "secondary" : "accepted"}>{off ? "Inactive" : "Active"}</Badge>
+           </td>
+           <td className={actionsTd}>
+            <div className="flex items-center justify-center gap-3">
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+               <button className={iconBtn} title={off ? "Restore access" : "Remove access"} aria-label={`Access menu for ${m.name}`}>
+                <UserMinus className="h-4 w-4" />
+               </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="left" align="center" className="min-w-max rounded-xl">
+               <DropdownMenuItem className="cursor-pointer px-4 py-3 text-sm" onClick={() => (off ? restoreAccess(m) : requestRemoveAccess(m))}>
+                {off ? "Restore Access" : "Remove Access"}
+               </DropdownMenuItem>
+              </DropdownMenuContent>
+             </DropdownMenu>
+             <button
+              onClick={() => { setSelected(m); setView('permissions'); }}
+              className={iconBtn}
+              title="Edit permissions"
+              aria-label={`Edit permissions for ${m.name}`}
+             ><Pencil className="h-4 w-4" /></button>
+             <button className="text-destructive hover:opacity-80 transition-opacity" title="Remove" aria-label={`Delete ${m.name}`}><Trash2 className="h-4 w-4" /></button>
+            </div>
+           </td>
+          </tr>
+         );
+        })}
+       </tbody>
+      </table>
+     ) : (
+      <table className="w-full text-sm min-w-[760px]">
+       <thead className="sticky top-0 z-10">
+        <tr className="bg-muted">
+         {['Name', 'Email', 'Last Logged In', 'Status'].map(h => (
+          <th key={h} className={thCls}>{h}</th>
+         ))}
+         <th className={actionsTh}>Actions</th>
+        </tr>
+       </thead>
+       <tbody>
+        {clientRows.length === 0 && (
+         <tr><td colSpan={5} className="px-4 py-12 text-center text-sm text-muted-foreground">No users found</td></tr>
+        )}
+        {clientRows.map(c => (
+         <tr key={c.id} className="border-t border-border hover:bg-muted/10 transition-colors">
+          <td className="px-2.5 py-2.5 whitespace-nowrap text-foreground">{c.name}</td>
+          <td className="px-2.5 py-2.5 whitespace-nowrap text-link font-semibold">{c.email}</td>
+          <td className="px-2.5 py-2.5 whitespace-nowrap text-foreground">{c.lastLoggedIn}</td>
+          <td className="px-2.5 py-2.5 whitespace-nowrap">
+           <Badge variant="accepted">Active</Badge>
+          </td>
+          <td className={actionsTd}>
+           <div className="flex items-center justify-center gap-3">
+            <button className={iconBtn} title="Invite user" aria-label={`Invite ${c.name}`}><UserPlus className="h-4 w-4" /></button>
+            <button className={iconBtn} title="Edit" aria-label={`Edit ${c.name}`}><Pencil className="h-4 w-4" /></button>
+            <button className="text-destructive hover:opacity-80 transition-opacity" title="Remove" aria-label={`Delete ${c.name}`}><Trash2 className="h-4 w-4" /></button>
+           </div>
+          </td>
+         </tr>
+        ))}
+       </tbody>
+      </table>
+     )}
+    </div>
    </div>
 
-   <div className="border border-border rounded-xl overflow-hidden">
-    <table className="w-full text-sm">
-     <thead className="bg-muted/30">
-      <tr>
-       {['Title', 'Name', 'Email', 'Access Type', 'Last Logged In', 'Status', 'Actions'].map(h => (
-        <th key={h} className="text-left px-3 py-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">{h}</th>
-       ))}
-      </tr>
-     </thead>
-     <tbody>
-      {MEMBERS.map(m => (
-       <tr key={m.id} className="border-t border-border hover:bg-muted/10 transition-colors">
-        <td className="px-3 py-2.5 text-xs text-muted-foreground">{m.title}</td>
-        <td className="px-3 py-2.5 font-medium">{m.name}</td>
-        <td className="px-3 py-2.5 text-xs text-primary">{m.email}</td>
-        <td className="px-3 py-2.5 text-xs text-muted-foreground">{m.accessType}</td>
-        <td className="px-3 py-2.5 text-xs text-muted-foreground">{m.lastLoggedIn}</td>
-        <td className="px-3 py-2.5">
-         <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800">
-          Active
-         </span>
-        </td>
-        <td className="px-3 py-2.5">
-         <div className="flex items-center gap-2.5">
-          <button className="text-muted-foreground hover:text-foreground transition-colors" title="Invite user"><User className="h-3.5 w-3.5" /></button>
-          <button
-           onClick={() => { setSelected(m); setView('permissions'); }}
-           className="text-muted-foreground hover:text-foreground transition-colors"
-           title="Edit permissions"
-          ><Pencil className="h-3.5 w-3.5" /></button>
-          <button className="text-destructive/60 hover:text-destructive transition-colors" title="Remove"><Trash2 className="h-3.5 w-3.5" /></button>
-         </div>
-        </td>
-       </tr>
-      ))}
-     </tbody>
-    </table>
-   </div>
-  </div>
+   {removeTarget && (
+    <DeleteTeamMemberDialog
+     open={removeOpen}
+     onOpenChange={setRemoveOpen}
+     groups={removeGroups}
+     options={removeRows.filter(r => r.name !== removeTarget.name).map(r => ({ value: r.key, label: r.name }))}
+     onConfirm={confirmRemoveAccess}
+     title="Remove Access"
+     question={`Remove access for ${removeTarget.name}?`}
+     warnings={[]}
+     confirmLabel="Remove Access"
+     reassignTitle="Reassign work before removing access"
+     icon={UserMinus}
+    />
+   )}
+  </>
  );
 }
 
