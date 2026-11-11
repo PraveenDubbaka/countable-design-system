@@ -60,9 +60,10 @@ export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, on
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`${hasWork ? "sm:max-w-[520px]" : "sm:max-w-[400px]"} border shadow-xl rounded-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto`}
+        className={`${hasWork ? "sm:max-w-[520px]" : "sm:max-w-[400px]"} flex flex-col border shadow-xl rounded-2xl sm:rounded-2xl p-6 max-h-[90vh]`}
       >
-        <div className="flex flex-col items-center text-center gap-4 min-w-0">
+        {/* Fixed top: icon, title, question */}
+        <div className="flex flex-col items-center text-center gap-4 shrink-0">
           <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
             <Trash2 className="h-7 w-7 text-destructive" />
           </div>
@@ -75,7 +76,10 @@ export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, on
           </DialogHeader>
 
           <p className="text-sm text-foreground">This action cannot be undone</p>
+        </div>
 
+        {/* Body: the only part that scrolls, when the dialog is taller than the window */}
+        <div className="flex flex-col items-center text-center gap-4 flex-1 min-h-0 overflow-y-auto -mx-6 px-6">
           {hasWork && (
             <div className="w-full rounded-xl border border-border p-4 text-left space-y-3">
               <p className="text-sm font-semibold text-foreground">Reassign work before deleting</p>
@@ -88,7 +92,7 @@ export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, on
                   label="Transfer all to"
                 />
               </div>
-              <div className="max-h-56 overflow-y-auto space-y-3 pr-1">
+              <div className="space-y-3">
                 {groups.map(group => (
                   <div key={group.id}>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
@@ -124,16 +128,17 @@ export function DeleteTeamMemberDialog({ open, onOpenChange, groups, options, on
           </div>
 
           <p className="text-sm text-muted-foreground">Are you sure you want to delete this user?</p>
-
-          <DialogFooter className="flex flex-row gap-3 w-full sm:justify-center sm:space-x-0 pt-2">
-            <Button variant="secondary" onClick={() => onOpenChange(false)} className="flex-1 h-10">
-              Cancel
-            </Button>
-            <Button variant="destructive" disabled={!canDelete} onClick={() => onConfirm(choices)} className="flex-1 h-10">
-              Delete
-            </Button>
-          </DialogFooter>
         </div>
+
+        {/* Fixed bottom: Cancel / Delete */}
+        <DialogFooter className="flex flex-row gap-3 w-full sm:justify-center sm:space-x-0 pt-2 shrink-0">
+          <Button variant="secondary" onClick={() => onOpenChange(false)} className="flex-1 h-10">
+            Cancel
+          </Button>
+          <Button variant="destructive" disabled={!canDelete} onClick={() => onConfirm(choices)} className="flex-1 h-10">
+            Delete
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
