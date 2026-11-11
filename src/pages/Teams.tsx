@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, ChevronUp, Columns3, Pencil, Trash2, Mail, UserPlus, Users, UserCheck, ShieldCheck, UsersRound, KeyRound } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 
@@ -37,6 +39,8 @@ const StatusBadge = ({ status }: { status: string }) => {
  return "accepted" as const;
  case "Invite Now":
  return "inviteNow" as const;
+ case "Invite Sent":
+ return "inviteSent" as const;
  default:
  return "secondary" as const;
  }
@@ -63,19 +67,45 @@ function Highlight({ text, query }: { text: string; query: string }) {
 
 // One entry per movable table column: its header label and the cell for a team member.
 // Checkbox (first) and Actions (last) are fixed and are not part of this list.
-type TeamMember = (typeof teamMembers)[number];
+export type TeamMember = (typeof teamMembers)[number];
 type TeamColumn = {
  id: string;
  label: string;
  cell: (member: TeamMember) => React.ReactNode;
 };
 
+// Members added from "Add New Member" (AddTeamMember.tsx writes this key; keep the two in sync).
+const TEAM_MEMBERS_KEY = "cds_team_members_v2";
+
+// Saved members are shown above the sample members. Unreadable storage gives none, entries without a name are skipped
+// and any other missing field shows "-".
+const loadSavedMembers = (): TeamMember[] => {
+ try {
+  const raw = localStorage.getItem(TEAM_MEMBERS_KEY);
+  const saved: unknown = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(saved)) return [];
+  const text = (value: unknown) => (typeof value === "string" && value ? value : "-");
+  return saved
+   .filter((m): m is Record<string, unknown> => typeof m === "object" && m !== null)
+   .map(m => ({
+    id: text(m.id), name: text(m.name), title: text(m.title), status: text(m.status), email: text(m.email),
+    category: text(m.category), clients: text(m.clients), businessPhone: text(m.businessPhone), cellPhone: text(m.cellPhone),
+    assignedPartner: text(m.assignedPartner), hourlyRate: text(m.hourlyRate), twoFAStatus: text(m.twoFAStatus), licenseNo: text(m.licenseNo),
+   }))
+   .filter(m => m.name !== "-");
+ } catch {
+  return [];
+ }
+};
+
 export default function Teams() {
+ const navigate = useNavigate();
  const [searchQuery, setSearchQuery] = useState("");
  const [activeTab, setActiveTab] = useState("all-teams");
+ const [savedMembers] = useState<TeamMember[]>(loadSavedMembers);
 
  const q = searchQuery.toLowerCase();
- const filteredMembers = teamMembers.filter(m => {
+ const filteredMembers = [...savedMembers, ...teamMembers].filter(m => {
   const tabMatch =
    activeTab === 'all-teams' ||
    (activeTab === 'partner' && m.category === 'Partner') ||
@@ -305,10 +335,22 @@ export default function Teams() {
  className="pl-9 w-44 h-9 text-sm"
  />
  </div>
+ <DropdownMenu>
+ <DropdownMenuTrigger asChild>
  <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
  Add Team
  <ChevronDown className="h-4 w-4 ml-1.5" />
  </Button>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent align="end" className="min-w-max">
+ <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/teams/add-new")}>
+ Add New Member
+ </DropdownMenuItem>
+ <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/teams/upload")}>
+ Upload Existing Member
+ </DropdownMenuItem>
+ </DropdownMenuContent>
+ </DropdownMenu>
  </div>
  </div>
 

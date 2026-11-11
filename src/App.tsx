@@ -21,6 +21,8 @@ import Workbook from "./pages/Workbook";
 import ProcedureDetail from "./pages/ProcedureDetail";
 import { GcaProcPage } from "./pages/GcaProcPage";
 import Teams from "./pages/Teams";
+import AddTeamMember from "./pages/AddTeamMember";
+import UploadTeamMembers from "./pages/UploadTeamMembers";
 import DesignSystem from "./pages/DesignSystem";
 import EngagementTemplates from "./pages/EngagementTemplates";
 import FinancialStatementTemplates from "./pages/FinancialStatementTemplates";
@@ -46,6 +48,8 @@ const App = () => (
  <Route path="/clients/new" element={<AddNewClient />} />
  <Route path="/clients/:clientId" element={<ClientDetail />} />
  <Route path="/teams" element={<Teams />} />
+ <Route path="/teams/add-new" element={<AddTeamMember />} />
+ <Route path="/teams/upload" element={<UploadTeamMembers />} />
  <Route path="/engagements" element={<Engagements />} />
  <Route path="/engagements/:engagementId" element={<EngagementDetail />} />
  <Route path="/engagements/:engagementId/checklist/:checklistKey" element={<EngagementDetail />} />
