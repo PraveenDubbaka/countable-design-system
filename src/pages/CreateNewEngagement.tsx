@@ -504,7 +504,7 @@ export default function CreateNewEngagement() {
   const [sevenSixteenConsented, setSevenSixteenConsented] = useState<boolean>(false);
 
   // Section 4: Engagement Period
-  const [periodType, setPeriodType] = useState("Full Year");
+  const [periodType, setPeriodType] = useState("Full year");
   const [currentYearStart, setCurrentYearStart] = useState("12/01/2022");
   const [currentYearEnd, setCurrentYearEnd] = useState("11/30/2023");
   const [priorYear1Start, setPriorYear1Start] = useState("12/01/2021");
@@ -523,7 +523,7 @@ export default function CreateNewEngagement() {
   useEffect(() => {
     setYearSources([0, 1, 2].map(() => (activeProvider ? `source:${activeProvider}` : "csv")));
   }, [clientName, activeProvider]);
-  // Full Year: source years run in order from the Current Year (same cascade as TB)
+  // Full year: source years run in order from the Current Year (same cascade as TB)
   const setYearSource = (i: number, v: string) =>
     setYearSources(s => s.map((x, j) => {
       if (j === i) return v;
@@ -560,7 +560,7 @@ export default function CreateNewEngagement() {
       setEngagementTemplate("CAS Audit");
       setTemplateId("");
       setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
-      setPeriodType("Full Year");
+      setPeriodType("Full year");
       setAdditionalDisclosures("Full financial statements");
     } else {
       setEngagementTemplate("Review Section 2400");
@@ -571,8 +571,8 @@ export default function CreateNewEngagement() {
     }
   };
 
-  const isFullYear = periodType === "Full Year";
-  const isPartialYear = periodType === "Stub Period"; // shown as "Partial Year"; every year is locked to CSV
+  const isFullYear = periodType === "Full year";
+  const isPartialYear = periodType === "Partial year"; // every row is locked to CSV, with the stub message below
   const isFirstYearOps = periodType === "First Year of Operations"; // only the Current Year row is shown
 
   const applyFullYear = (cyStart: string, cyEnd: string) => {
@@ -606,7 +606,7 @@ export default function CreateNewEngagement() {
 
   const handlePeriodTypeChange = (val: string) => {
     setPeriodType(val);
-    if (val === "Full Year") {
+    if (val === "Full year") {
       // CY End = CY Start + 1 year - 1 day, then the prior years follow from it (same as TB). The Engagement ID is
       // derived from CY End, so it follows too, as in the two date handlers above (TB does this in an effect).
       const autoEnd = addDays(shiftYear(currentYearStart, 1), -1);
@@ -636,15 +636,18 @@ export default function CreateNewEngagement() {
     { value: "Notes to financial statements", label: "Notes to financial statements" },
   ];
 
-  // "Partial Year" keeps the stored value "Stub Period", so what handleCreate saves for it is unchanged
-  const periodTypeOptions = isAudit
-    ? [
-        { value: "Full Year", label: "Full Year" },
-        { value: "Stub Period", label: "Partial Year" },
-        { value: "First Year of Operations", label: "Partial Year – First Year of Operations" },
-        { value: "Other", label: "Other" },
-      ]
-    : [{ value: "Full year", label: "Full year" }];
+  // One Period Type list for every engagement type. What handleCreate saves for an audit is unchanged:
+  // Full year -> "Full Year", Partial year -> "Stub Period", First Year of Operations -> "First Year of Operations"
+  const periodTypeOptions = [
+    { value: "Full year", label: "Full year" },
+    { value: "Partial year", label: "Partial year" },
+    { value: "First Year of Operations", label: "Partial Year – First Year of Operations" },
+  ];
+  const storedPeriodType: Record<string, string> = {
+    "Full year": "Full Year",
+    "Partial year": "Stub Period",
+    "First Year of Operations": "First Year of Operations",
+  };
 
   // Engagement Period rows: label | Start Date | End Date | Data Source
   const periodRows = [
@@ -654,7 +657,7 @@ export default function CreateNewEngagement() {
   ].filter((_, i) => !(isFirstYearOps && i > 0));
 
   // Future year-end (CY End after today): info only, never blocks saving. "Source" is the Current Year row as it shows:
-  // Partial Year is locked to CSV even though yearSources[0] keeps its value.
+  // Partial year is locked to CSV even though yearSources[0] keeps its value.
   const cyIsFutureYearEnd = isFutureYearEnd(currentYearEnd);
   const cyRowIsSource = !isPartialYear && !!activeProvider && !!yearSources[0]?.startsWith("source:");
 
@@ -769,7 +772,7 @@ export default function CreateNewEngagement() {
       budget,
       periodStart: currentYearStart,
       periodEnd: currentYearEnd,
-      auditPeriodType: isAudit ? periodType : undefined,
+      auditPeriodType: isAudit ? storedPeriodType[periodType] : undefined,
       firstTimeAdoption: isAudit ? firstTimeAdoption : undefined,
     });
     if (isAudit && firstYearAudit) {
