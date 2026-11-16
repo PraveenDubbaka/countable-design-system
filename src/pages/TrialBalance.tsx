@@ -24,6 +24,11 @@ import {
  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { StyledCard } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { getEngagementMeta, setEngagementMeta, SEED_ENGAGEMENTS } from "@/store/engagementsStore";
+import { isYearOnProvider, isFutureYearEnd as isFutureDate, parseDateOnly, todayMdY, readUploadedYears, tbYearHasData, TB_UPLOADED_KEY, type TbYear } from "@/lib/tbYearData";
+import { sourceLabel, getClientSourceIntegration as getClientSourceIntegrationSafe, type ClientSourceIntegration } from "@/lib/clientSource";
+import { accountingProviders } from "@/lib/accountingProviders";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NewAdjEntryModal, type AdjLine, type AdjEntryMeta } from "@/components/NewAdjEntryModal";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
@@ -51,6 +56,7 @@ import {
  Settings2,
  Building2,
  Calendar,
+ Clock,
  Check,
  Plus,
  Trash2,
@@ -65,7 +71,9 @@ import {
  Info,
  CloudUpload,
  Plug,
+ Lock,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 // Filter categories with badge colors and short labels (matching screenshot)
 const FILTER_CATEGORIES = [
@@ -162,7 +170,6 @@ const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
 const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
 
 
-const TB_LOADED_KEY = (id: string) => `tb-loaded-${id}`;
 
 function computeAdjFromStorage(engId: string): Record<string, number> {
   const prefix = `adj-entry-${engId}-`;
@@ -182,7 +189,6 @@ function computeAdjFromStorage(engId: string): Record<string, number> {
 export default function TrialBalance() {
  const navigate = useNavigate();
  const { engagementId } = useParams();
- const [dateFilter] = useState("Dec 31 2024");
  const [hideZeroAcc, setHideZeroAcc] = useState(false);
  const zeroAccCount = 0;
  const [isToolbarExpanded, setIsToolbarExpanded] = useState(true);
@@ -206,15 +212,19 @@ export default function TrialBalance() {
    );
  }, [engagementId]);
 
- // TB load state — persisted per engagement
- const [tbLoaded, setTbLoaded] = useState(() =>
- engagementId ? !!localStorage.getItem(TB_LOADED_KEY(engagementId)) : false
- );
+ // TB upload state — persisted per engagement, per year
+ const [uploadedYears, setUploadedYears] = useState<Record<TbYear, boolean>>(() => readUploadedYears(engagementId));
+ useEffect(() => { setUploadedYears(readUploadedYears(engagementId)); }, [engagementId]);
  const [showImport, setShowImport] = useState(false);
  const [cyFile, setCyFile] = useState<File | null>(null);
  const [py1File, setPy1File] = useState<File | null>(null);
  const [py2File, setPy2File] = useState<File | null>(null);
  const [isUploading, setIsUploading] = useState(false);
+ // Source ↔ CSV state for source-linked engagements
+ const [metaVersion, setMetaVersion] = useState(0);
+ const [refreshOpen, setRefreshOpen] = useState(false);
+ const [refreshChecked, setRefreshChecked] = useState<Record<"cy" | "py1" | "py2", boolean>>({ cy: false, py1: false, py2: false });
+ const [activeYearTab, setActiveYearTab] = useState<"cy" | "py1" | "py2">("cy");
  const cyInputRef = useRef<HTMLInputElement>(null);
  const py1InputRef = useRef<HTMLInputElement>(null);
  const py2InputRef = useRef<HTMLInputElement>(null);
@@ -232,13 +242,39 @@ export default function TrialBalance() {
  };
  const clearFilters = () => setActiveFilters(new Set());
 
+ // CSV → CSV re-import: confirm before replacing data in CSV years that already have data
+ const [reimportOpen, setReimportOpen] = useState(false);
  const handleUpload = () => {
- if (!cyFile || !engagementId) return;
+ if (!engagementId || uploadDisabled) return;
+ if (reimportYearLabels.length > 0) { setReimportOpen(true); return; }
+ runUpload();
+ };
+ const runUpload = () => {
+ if (!engagementId || uploadDisabled) return;
+ setReimportOpen(false);
  setIsUploading(true);
+ const upCy = effCy, upPy1 = effPy1, upPy2 = effPy2;
  setTimeout(() => {
- localStorage.setItem(TB_LOADED_KEY(engagementId), '1');
- setTbLoaded(true);
+ {
+ const nextUploaded = { cy: uploadedYears.cy || !!upCy, py1: uploadedYears.py1 || !!upPy1, py2: uploadedYears.py2 || !!upPy2 };
+ localStorage.setItem(TB_UPLOADED_KEY(engagementId), JSON.stringify(nextUploaded));
+ setUploadedYears(nextUploaded);
+ }
+ // Uploaded years get their data back: clear their "removed" flags
+ {
+ const m = getEngagementMeta(engagementId);
+ if (m.yearRemoveData) {
+ const next = { ...m.yearRemoveData };
+ if (upCy) delete next.cy;
+ if (upPy1) delete next.py1;
+ if (upPy2) delete next.py2;
+ const hasAny = Object.values(next).some(Boolean);
+ setEngagementMeta(engagementId, { ...m, yearRemoveData: hasAny ? next : undefined });
+ setMetaVersion(v => v + 1);
+ }
+ }
  setShowImport(false);
+ setImportDismissed(true);
  setIsUploading(false);
  setCyFile(null); setPy1File(null); setPy2File(null);
  updateEngagement(engagementId, { status: 'In Progress', statusVariant: 'inProgress' });
@@ -260,6 +296,169 @@ export default function TrialBalance() {
  const clientEngagements = getEngagementsForClient(clientName);
  const duplicateCount = getUnresolvedDuplicateCount(engagementId);
  const duplicatesPending = duplicateCount > 0;
+ // ── Source connection state (re-read when metaVersion changes) ──
+ void metaVersion;
+ const srcMeta = engagementId ? getEngagementMeta(engagementId) : ({ firstYearAudit: false } as ReturnType<typeof getEngagementMeta>);
+ const isRollForwardFile = !!srcMeta.sourceRollForward;
+ const pyLockedRf = (i: number) => isRollForwardFile && i > 0;
+  const clientActiveProvider = getClientSourceIntegrationSafe(clientName);
+   const configuredProvider: ClientSourceIntegration = srcMeta.dataSource === 'source'
+  ? (srcMeta.sourceProvider ?? clientActiveProvider)
+  : null;
+  // Source disconnected outside the app: engagement still linked, but the client's active connection differs / is gone
+  const isExternallyDisconnected = !!configuredProvider && clientActiveProvider !== configuredProvider;
+  const linkedProvider = isExternallyDisconnected ? null : configuredProvider;
+  // First Year of Operations: PY1 / PY2 don't exist — every year-based rule uses CY only
+  const isFyo = srcMeta.auditPeriodType === "First Year of Operations"
+   || (!!srcMeta.firstYearOfOperations && /^partial year$/i.test(srcMeta.auditPeriodType ?? ""));
+  // Roll forward of a First Year of Operations file: PY2 is a "No data" year (can't be imported or refreshed)
+  const py2NoData = !!srcMeta.sourceRollForward && srcMeta.priorYearSources?.py2 === "nodata";
+  // Years that exist for this engagement: FOO chain 1 → CY, chain 2 → CY + PY1, chain 3 → all; a "No data" PY2 is hidden
+  const fyoChain = isFyo ? (srcMeta.fyoChainYear ?? 1) : 0;
+  const visibleYearCount = isFyo ? fyoChain : py2NoData ? 2 : 3;
+  const isSourceLinked = !!linkedProvider;
+   const disconnectedFrom: ClientSourceIntegration = isExternallyDisconnected
+  ? configuredProvider
+  : (srcMeta.dataSource !== 'source' ? srcMeta.sourceDisconnectedFrom ?? null : null);
+   const badgeProvider = configuredProvider ?? disconnectedFrom;
+ // Years whose existing data the user removed in Edit Engagement (only while that year is CSV)
+ const removed = srcMeta.yearRemoveData ?? {};
+ const isRemoved = (y: "cy" | "py1" | "py2") => !!removed[y] && srcMeta.yearDataSources?.[y] !== "source";
+ const cyRemoved = isRemoved("cy"), py1Removed = isRemoved("py1"), py2Removed = isRemoved("py2");
+ const dash = <span className="text-muted-foreground">—</span>;
+   const sourceStatusDisconnected = isExternallyDisconnected || !!disconnectedFrom;
+// Refreshing the Current Year moves the "pulled as of" date to today
+ const stampPulledAsOf = () => {
+ if (!engagementId) return;
+ setEngagementMeta(engagementId, { ...getEngagementMeta(engagementId), dataPulledAsOf: todayMdY() });
+ setMetaVersion(v => v + 1);
+ };
+ // Roll-forward prior years also count when their inherited source (priorYearSources) is the linked provider
+ const isYearSource = (y: "cy" | "py1" | "py2", idx: number) => {
+ if (!isSourceLinked) return false;
+ return isYearOnProvider(srcMeta, y, idx, linkedProvider, sourceYearCount);
+ };
+ const confirmRefreshYears = (years: ("cy" | "py1" | "py2")[]) => {
+ if (!years.length) return;
+ if (years.includes("cy")) stampPulledAsOf();
+ const labels = { cy: "Current Year", py1: "Prior Year 1", py2: "Prior Year 2" } as const;
+ setRefreshOpen(false);
+ setRefreshChecked({ cy: false, py1: false, py2: false });
+ toast.success(`Refreshed ${years.map(y => labels[y]).join(", ")} from ${sourceLabel(linkedProvider)}`);
+ };
+ // Year tabs: the first `sourceYearCount` years come from source (locked), the rest are CSV
+ const sourceYearCount = configuredProvider ? Math.min(srcMeta.sourceYears ?? 1, srcMeta.sourceYearsAvailable ?? 3) : 0;
+ const yearTabs = ([
+ { id: "cy", label: `CY ${cyYear}` },
+ { id: "py1", label: `PY1 ${cyYear - 1}` },
+ { id: "py2", label: `PY2 ${cyYear - 2}` },
+ ] as const).map((t, i) => {
+  const yearEnd = contextEng?.yearEnd || staticEng?.yearEnd || `Dec 31, ${cyYear}`;
+  const date = yearEnd.replace(/\d{4}/, String(cyYear - i)).replace(',', '');
+  const isSource = isYearOnProvider(srcMeta, t.id, i, configuredProvider, sourceYearCount);
+  return { ...t, date, isSource };
+ });
+ const activeYear = yearTabs.find(t => t.id === activeYearTab) ?? yearTabs[0];
+ // Roll-forward prior years can't be refreshed; other files keep per-year availability.
+ const anyYearRefreshable = (["cy", "py1", "py2"] as const).slice(0, visibleYearCount).some((y, i) => !pyLockedRf(i) && isYearSource(y, i));
+ // Edit / Merge are allowed only when no year is a Source year (FYO: CY only)
+ const allYearsCsv = !yearTabs.slice(0, visibleYearCount).some(t => t.isSource || srcMeta.yearDataSources?.[t.id] === "source");
+ // A year has TB data when: the engagement is a seeded demo, the year is set to Source,
+ // or a TB was uploaded for that year. CSV years with no upload stay blank.
+ // A seed still marked New has no Trial Balance until one is loaded (as before), so only non-New seeds count as seeded.
+ const isSeededEngagement = !!engagementId && SEED_ENGAGEMENTS.some(s => s.id === engagementId) && status !== 'New';
+ const yearHasData = (y: TbYear, i: number) => tbYearHasData({
+  isSeeded: isSeededEngagement,
+  isSource: yearTabs[i].isSource || srcMeta.yearDataSources?.[y] === "source",
+  uploaded: uploadedYears[y],
+ });
+ const cyBlank = cyRemoved || !yearHasData("cy", 0);
+ const py1Blank = py1Removed || !yearHasData("py1", 1);
+ const py2Blank = py2Removed || !yearHasData("py2", 2);
+ // FYO: PY1 / PY2 don't exist, so they never count as years needing an upload
+ const allYearsBlank = [cyBlank, py1Blank, py2Blank].slice(0, visibleYearCount).every(Boolean);
+ // Per-year upload availability on the Import screen: Source years are locked to their provider
+ const yearIsSource = (y: TbYear, i: number) => yearTabs[i].isSource || srcMeta.yearDataSources?.[y] === "source";
+ // Editing follows the selected year: CSV years are editable, Source years stay locked.
+ // Delete stays blocked whenever the Current Year is a Source year.
+ const activeYearIdx = (["cy", "py1", "py2"] as TbYear[]).indexOf(activeYearTab);
+ const activeYearEditable = !yearIsSource(activeYearTab, activeYearIdx);
+ const cyIsSource = yearIsSource("cy", 0);
+ const canDelete = !cyIsSource && activeYearEditable;
+ const yearProviderName = (y: TbYear) => sourceLabel(srcMeta.yearSourceProviders?.[y] ?? srcMeta.sourceProvider ?? configuredProvider);
+ const uploadLocked = (y: TbYear, i: number) => pyLockedRf(i) || yearIsSource(y, i);
+ const cyUploadLocked = uploadLocked("cy", 0), py1UploadLocked = uploadLocked("py1", 1), py2UploadLocked = uploadLocked("py2", 2);
+ const effCy = cyUploadLocked ? null : cyFile;
+ const effPy1 = visibleYearCount < 2 || py1UploadLocked ? null : py1File, effPy2 = visibleYearCount < 3 || py2UploadLocked ? null : py2File;
+ const uploadDisabled = status === 'New' && allYearsBlank ? !effCy : !(effCy || effPy1 || effPy2);
+ // Years being re-imported: a file is selected for a CSV year that already has data
+ const reimportYearLabels = ([
+  [effCy, "cy", 0, cyBlank, "Current Year"],
+  [effPy1, "py1", 1, py1Blank, "Prior Year 1"],
+  [effPy2, "py2", 2, py2Blank, "Prior Year 2"],
+ ] as const).filter(([file, y, i, blank]) => !!file && !blank && !pyLockedRf(i) && !yearIsSource(y, i)).map(([, , , , label]) => label);
+  // Engagements with no data in any year (all CSV, nothing uploaded) land directly on the Import screen — any status
+ const [importDismissed, setImportDismissed] = useState(false);
+ useEffect(() => { setImportDismissed(false); }, [engagementId]);
+ const landOnImport = allYearsBlank && !importDismissed;
+ const showImportView = showImport || landOnImport;
+ const canLeaveImport = !allYearsBlank;
+ const leaveImport = () => { if (!canLeaveImport) return; setShowImport(false); setImportDismissed(true); };
+ // New → In Progress the first time TB data is loaded from an active source connection (seeded demos excluded)
+ const pullsFromSource = isSourceLinked && !isExternallyDisconnected && yearTabs.some((t, i) => isYearSource(t.id, i));
+ useEffect(() => {
+  if (!engagementId || isSeededEngagement || !contextEng || status !== 'New' || !pullsFromSource) return;
+  updateEngagement(engagementId, { status: 'In Progress', statusVariant: 'inProgress' });
+ }, [engagementId, isSeededEngagement, contextEng, status, pullsFromSource, updateEngagement]);
+ // Future year end: the Current Year hasn't finished — data is shown as of the date it was pulled (nothing is blocked)
+ const cyYearEndStr = srcMeta.periodEnd || contextEng?.yearEnd || staticEng?.yearEnd;
+ const isFutureYearEnd = isFutureDate(cyYearEndStr);
+ const cyIsSourcePull = isYearSource("cy", 0);
+ useEffect(() => {
+  if (!engagementId || !isFutureYearEnd || !cyIsSourcePull || srcMeta.dataPulledAsOf) return;
+  setEngagementMeta(engagementId, { ...getEngagementMeta(engagementId), dataPulledAsOf: todayMdY() });
+  setMetaVersion(v => v + 1);
+ }, [engagementId, isFutureYearEnd, cyIsSourcePull, srcMeta.dataPulledAsOf]);
+ const fmtLong = (d: Date | null) => d ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+ const cyYearEndLabel = fmtLong(parseDateOnly(cyYearEndStr));
+ const pulledAsOfDate = parseDateOnly(srcMeta.dataPulledAsOf) ?? new Date();
+ const pulledAsOfLabel = fmtLong(pulledAsOfDate);
+ const futureYearEndIcon = (
+  <Tooltip delayDuration={100}>
+   <TooltipTrigger asChild>
+    <span className="inline-flex shrink-0 items-center" aria-label="Future year-end">
+     <Clock className="h-3.5 w-3.5 text-blue-600 pointer-events-none" />
+    </span>
+   </TooltipTrigger>
+   <TooltipContent side="bottom" className="max-w-[260px] z-[200]">
+    Future year-end. This year ends on {cyYearEndLabel} and hasn't finished yet.
+   </TooltipContent>
+  </Tooltip>
+ );
+ // Import is available whenever at least one year is CSV, regardless of the selected year tab
+ const allYearsSource = ((["cy", "py1", "py2"] as TbYear[]).slice(0, visibleYearCount)).every((y, i) => yearIsSource(y, i));
+ const importSourceLocked = isRollForwardFile ? cyIsSource : allYearsSource;
+ // Roll forward: locked prior years on a software that isn't the client's active connection (stale, can't refresh).
+ // Prior years whose provider is the engagement's own disconnected source are skipped here.
+ const stalePriorYears = (() => {
+  if (!srcMeta.sourceRollForward) return [] as { provider: NonNullable<ClientSourceIntegration>; labels: string[] }[];
+  const groups = new Map<NonNullable<ClientSourceIntegration>, string[]>();
+  ([["py1", "Prior Year 1"], ["py2", "Prior Year 2"]] as const).forEach(([y, label]) => {
+   if (y === "py2" ? visibleYearCount < 3 : visibleYearCount < 2) return;
+   const pys = srcMeta.priorYearSources?.[y];
+   const p = (pys && pys !== "csv" && pys !== "nodata")
+    ? pys
+    : srcMeta.yearDataSources?.[y] === "source" ? (srcMeta.yearSourceProviders?.[y] ?? srcMeta.sourceProvider ?? null) : null;
+   if (!p || p === clientActiveProvider) return;
+   if (disconnectedFrom && p === configuredProvider) return;
+   groups.set(p, [...(groups.get(p) ?? []), label]);
+  });
+  return [...groups.entries()].map(([provider, labels]) => ({ provider, labels }));
+ })();
+ const handleImportClick = () => {
+ if (importSourceLocked) return;
+ setShowImport(true);
+ };
 
  const trialBalanceBreadcrumb = (
  <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
@@ -311,16 +510,22 @@ export default function TrialBalance() {
  {status}
  </Badge>
 
- {/* Xero Integration Badge */}
- <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
- <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
- <span className="text-xs font-medium text-foreground">Xero</span>
- </div>
+  {/* Linked source badge — logo + connection status (single source of truth) */}
+  {badgeProvider && (
+  <div className={`ml-1 inline-flex items-center gap-1.5 h-7 px-1.5 bg-card border rounded-sm ${sourceStatusDisconnected ? "border-amber-300" : "border-border"}`}>
+  <img src={accountingProviders[badgeProvider].badgeLogo} alt={sourceLabel(badgeProvider)} className="h-4" />
+  {sourceStatusDisconnected ? (
+  <span className="inline-flex items-center rounded-full border border-[#B4720A]/30 bg-[#FEF6E7] px-1.5 py-0.5 text-[10px] font-medium text-[#B4720A] whitespace-nowrap">Disconnected</span>
+  ) : (
+  <span className="inline-flex items-center rounded-full border border-[#2E7D52]/30 bg-[#EAF4EE] px-1.5 py-0.5 text-[10px] font-medium text-[#2E7D52] whitespace-nowrap">Connected</span>
+  )}
+  </div>
+  )}
  </div>
  );
 
  // ── Empty state — only for New engagements without a loaded TB ──────────
- if (!tbLoaded && !showImport && status === 'New') {
+ if (!showImportView && allYearsBlank) {
  return (
  <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
  <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -352,7 +557,7 @@ export default function TrialBalance() {
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-2">
  <Button variant="secondary" size="sm" className="h-9 text-xs gap-1.5 opacity-40 pointer-events-none" disabled>
- {dateFilter} <ChevronDown className="h-3.5 w-3.5" />
+ {contextEng?.yearEnd?.replace(',', '') || staticEng?.yearEnd?.replace(',', '') || `Dec 31 ${cyYear}`} <ChevronDown className="h-3.5 w-3.5" />
  </Button>
  </div>
  <div className="flex items-center gap-2">
@@ -361,7 +566,7 @@ export default function TrialBalance() {
  <ExpandableIconButton variant="secondary" icon={<Wrench className="h-4 w-4" />} label={<span className="inline-flex items-center gap-1">Actions<ChevronDown className="h-3 w-3" /></span>} />
  </DropdownMenuTrigger>
  <DropdownMenuContent align="end" className="w-44">
- <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => setShowImport(true)}>
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" disabled={importSourceLocked} onClick={handleImportClick}>
  <Upload className="h-4 w-4 text-muted-foreground" /><span>Import</span>
  </DropdownMenuItem>
  <DropdownMenuSeparator />
@@ -414,9 +619,9 @@ export default function TrialBalance() {
  <Plug className="h-7 w-7 text-primary" />
  </div>
  <p className="text-sm font-semibold text-foreground">Integrate with Accounting Software</p>
- <p className="text-xs text-muted-foreground text-center">Instantly import data by login and linking to the accounting source</p>
- <Button size="sm" variant="outline" className="mt-auto gap-1.5" onClick={() => toast.info('Accounting source integration coming soon')}>
- <Plug className="h-4 w-4" /> Select Account Source
+ <p className="text-xs text-muted-foreground text-center">Set a year's data source to your accounting software in Edit Engagement.</p>
+ <Button size="sm" variant="outline" className="mt-auto gap-1.5" onClick={() => navigate(`/engagements/${engagementId}/edit`)}>
+ <Plug className="h-4 w-4" /> Change Data Source
  </Button>
  </div>
  </div>
@@ -428,13 +633,18 @@ export default function TrialBalance() {
  }
 
  // ── Import view ───────────────────────────────────────────────────────────
- if (showImport) {
- const years = [cyYear, cyYear - 1, cyYear - 2];
- const DropZone = ({ label, file, onFile, inputRef }: { label: string; file: File | null; onFile: (f: File | null) => void; inputRef: React.RefObject<HTMLInputElement> }) => (
+ if (showImportView) {
+ const years = [cyYear, cyYear - 1, cyYear - 2].slice(0, visibleYearCount);
+ const DropZone = ({ label, file, onFile, inputRef, lockedNote }: { label: string; file: File | null; onFile: (f: File | null) => void; inputRef: React.RefObject<HTMLInputElement>; lockedNote?: string }) => (
  <div className="flex items-start gap-6 py-4 border-b border-border last:border-b-0">
- <span className="w-44 shrink-0 text-sm font-medium text-foreground pt-4">{label}</span>
+ <span className={`w-44 shrink-0 text-sm font-medium pt-4 ${lockedNote ? 'text-muted-foreground' : 'text-foreground'}`}>{label}</span>
  <div className="flex-1">
- {file ? (
+ {lockedNote ? (
+ <div aria-disabled="true" data-upload-locked="true" className="border-2 border-dashed border-border rounded-lg p-8 flex flex-col items-center gap-2 bg-muted/60 opacity-60 cursor-not-allowed select-none">
+ <CloudUpload className="h-8 w-8 text-muted-foreground" />
+ <p className="text-sm text-muted-foreground text-center">{lockedNote}</p>
+ </div>
+ ) : file ? (
  <div className="flex items-center gap-3 border border-border rounded-lg px-4 py-3 bg-card">
  <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
  <span className="text-sm text-foreground flex-1 truncate">{file.name}</span>
@@ -454,11 +664,16 @@ export default function TrialBalance() {
  <p className="text-xs text-muted-foreground">(CSV/Excel/PDF)</p>
  </div>
  )}
+ {!lockedNote && (
  <input ref={inputRef} type="file" accept=".csv,.xlsx,.xls,.pdf" className="hidden"
  onChange={e => { const f = e.target.files?.[0] ?? null; onFile(f); e.target.value = ''; }} />
+ )}
  </div>
  </div>
  );
+ const lockedNoteFor = (y: TbYear, locked: boolean) => isRollForwardFile && y !== "cy"
+  ? "Prior years in a roll-forward file can't be reimported."
+  : locked ? `Connected to ${yearProviderName(y)}. Data is pulled from the source.` : undefined;
 
  return (
  <Layout title="Engagements" headerContent={trialBalanceBreadcrumb}>
@@ -466,15 +681,18 @@ export default function TrialBalance() {
  {/* Level-1 sticky header — matches main TB page */}
  <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-1.5 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
  <div className="flex items-center gap-2">
+ {canLeaveImport && (
  <button
- onClick={() => setShowImport(false)}
+ onClick={leaveImport}
+ aria-label="Back to Trial Balance"
  className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
  >
  <ArrowLeft className="h-4 w-4" />
  </button>
+ )}
  <h1 className="text-lg font-semibold text-foreground">Import Trial Balance</h1>
  </div>
- <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setShowImport(false)}>
+ <Button size="sm" variant="outline" className="gap-1.5" disabled={!canLeaveImport} onClick={leaveImport}>
  <FileSpreadsheet className="h-4 w-4" /> Import TB
  </Button>
  </div>
@@ -497,7 +715,7 @@ export default function TrialBalance() {
  </div>
  <div className="flex items-center gap-2">
  <Button size="sm" variant="outline" disabled={!cyFile && !py1File && !py2File}>Delete Draft</Button>
- <Button size="sm" disabled={!cyFile} onClick={handleUpload} className="gap-1.5">
+ <Button size="sm" disabled={uploadDisabled} onClick={handleUpload} className="gap-1.5">
  {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
  Upload
  </Button>
@@ -517,11 +735,15 @@ export default function TrialBalance() {
 
  {/* Upload zones */}
  <div className="bg-card border border-border rounded-xl p-6">
- <DropZone label="Current Year (CY) Trial Balance" file={cyFile} onFile={setCyFile} inputRef={cyInputRef} />
- <DropZone label="Prior Year 1 (PY1) Trial Balance" file={py1File} onFile={setPy1File} inputRef={py1InputRef} />
- <DropZone label="Prior Year 2 (PY2) Trial Balance" file={py2File} onFile={setPy2File} inputRef={py2InputRef} />
+ <DropZone label="Current Year (CY) Trial Balance" file={effCy} onFile={setCyFile} inputRef={cyInputRef} lockedNote={lockedNoteFor("cy", cyUploadLocked)} />
+ {visibleYearCount >= 2 && (
+  <>
+   <DropZone label="Prior Year 1 (PY1) Trial Balance" file={effPy1} onFile={setPy1File} inputRef={py1InputRef} lockedNote={lockedNoteFor("py1", py1UploadLocked)} />
+   {visibleYearCount >= 3 && <DropZone label="Prior Year 2 (PY2) Trial Balance" file={effPy2} onFile={setPy2File} inputRef={py2InputRef} lockedNote={lockedNoteFor("py2", py2UploadLocked)} />}
+  </>
+ )}
  <div className="mt-4">
- <Button className="w-full gap-1.5" disabled={!cyFile} onClick={handleUpload}>
+ <Button className="w-full gap-1.5" disabled={uploadDisabled} onClick={handleUpload}>
  {isUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
  Upload
  </Button>
@@ -529,6 +751,7 @@ export default function TrialBalance() {
  </div>
  </div>
  </div>
+ <ReimportWarningModal open={reimportOpen} onOpenChange={setReimportOpen} yearLabels={reimportYearLabels} onProceed={runUpload} />
  </Layout>
  );
  }
@@ -594,14 +817,31 @@ export default function TrialBalance() {
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
  <Button variant="secondary" size="sm" className="h-9 text-xs gap-1.5">
- {dateFilter}
+   <span className="whitespace-nowrap">{activeYear.date}</span>
+   {isFutureYearEnd && activeYear.id === "cy" && futureYearEndIcon}
  <ChevronDown className="h-3.5 w-3.5" />
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent>
- <DropdownMenuItem>Dec 31 2025</DropdownMenuItem>
+  <DropdownMenuContent align="start" className="w-auto min-w-72">
+ {yearTabs.slice(0, visibleYearCount).map((year) => (
+  <DropdownMenuItem
+   key={year.id}
+   onClick={() => setActiveYearTab(year.id)}
+   className="flex items-center justify-between gap-4 py-2 cursor-pointer"
+  >
+   <span className="flex shrink-0 items-center gap-2">
+     <span className="w-7 shrink-0 text-xs font-semibold text-muted-foreground whitespace-nowrap">{year.label.split(' ')[0]}</span>
+     <span className="text-sm text-foreground whitespace-nowrap">{year.date}</span>
+     {isFutureYearEnd && year.id === "cy" && futureYearEndIcon}
+   </span>
+   <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium whitespace-nowrap">
+    <span className={`h-1.5 w-1.5 rounded-full ${year.isSource ? "bg-emerald-500" : "bg-gray-400"}`} />
+    {year.isSource ? sourceLabel(configuredProvider) : "CSV"}
+   </span>
+  </DropdownMenuItem>
+ ))}
  </DropdownMenuContent>
- </DropdownMenu>
+  </DropdownMenu>
 
  </div>
 
@@ -624,6 +864,7 @@ export default function TrialBalance() {
  <Plus className="h-4 w-4 text-muted-foreground" />
  <span>Add</span>
  </DropdownMenuItem>
+ {allYearsCsv ? (
  <DropdownMenuItem
  className="flex items-center gap-2 cursor-pointer"
  onClick={() => setMergeModalOpen(true)}
@@ -632,10 +873,37 @@ export default function TrialBalance() {
  <span className="flex-1">Merge</span>
  {duplicatesPending && <AlertTriangle className="h-4 w-4 text-amber-600" />}
  </DropdownMenuItem>
- <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
+ ) : (
+ <Tooltip delayDuration={100}>
+ <TooltipTrigger asChild>
+ <div>
+ <DropdownMenuItem className="flex items-center gap-2" disabled>
+ <GitMerge className="h-4 w-4 text-muted-foreground" />
+ <span>Merge</span>
+ </DropdownMenuItem>
+ </div>
+ </TooltipTrigger>
+ <TooltipContent side="left" className="max-w-[240px] z-[200]">Merge is available only when all years are set to CSV. Change data sources in Edit Engagement.</TooltipContent>
+ </Tooltip>
+ )}
+ {cyIsSource ? (
+ <Tooltip delayDuration={100}>
+ <TooltipTrigger asChild>
+ <div>
+ <DropdownMenuItem className="flex items-center gap-2 text-destructive" disabled>
  <Trash2 className="h-4 w-4 text-destructive" />
  <span>Delete</span>
  </DropdownMenuItem>
+ </div>
+ </TooltipTrigger>
+ <TooltipContent side="left" className="max-w-[240px] z-[200]">Delete isn't available while the Current Year is connected to a source.</TooltipContent>
+ </Tooltip>
+ ) : (
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive" disabled={!canDelete}>
+ <Trash2 className="h-4 w-4 text-destructive" />
+ <span>Delete</span>
+ </DropdownMenuItem>
+ )}
  <DropdownMenuSeparator />
  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
  <FileX2 className="h-4 w-4 text-muted-foreground" />
@@ -646,10 +914,39 @@ export default function TrialBalance() {
  <span>Auto Map</span>
  </DropdownMenuItem>
  <DropdownMenuSeparator />
- <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
- <Upload className="h-4 w-4 text-muted-foreground" />
- <span>Import</span>
- </DropdownMenuItem>
+  {importSourceLocked ? (
+  <Tooltip delayDuration={100}>
+  <TooltipTrigger asChild>
+  <div>
+  <DropdownMenuItem className="flex items-center gap-2" disabled>
+  <Upload className="h-4 w-4 text-muted-foreground" />
+  <span>Import</span>
+  </DropdownMenuItem>
+  </div>
+  </TooltipTrigger>
+  <TooltipContent side="left" className="max-w-[240px] z-[200]">{isRollForwardFile ? "Prior years in a roll-forward file can't be reimported." : "All years are connected to an accounting source. To import, set a year to CSV in Edit Engagement."}</TooltipContent>
+  </Tooltip>
+  ) : !isRollForwardFile && isExternallyDisconnected ? (
+  <Tooltip delayDuration={100}>
+  <TooltipTrigger asChild>
+  <div>
+   <DropdownMenuItem className="flex items-center gap-2" disabled>
+  <Upload className="h-4 w-4 text-muted-foreground" />
+  <span>Import</span>
+  </DropdownMenuItem>
+  </div>
+  </TooltipTrigger>
+  <TooltipContent side="left" className="max-w-[240px] z-[200]">Reconnect the source or switch to CSV to import.</TooltipContent>
+  </Tooltip>
+  ) : (
+  <DropdownMenuItem
+   className="flex items-center gap-2 cursor-pointer"
+  onClick={handleImportClick}
+  >
+  <Upload className="h-4 w-4 text-muted-foreground" />
+  <span>Import</span>
+  </DropdownMenuItem>
+  )}
  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
  <Download className="h-4 w-4 text-muted-foreground" />
  <span>Export</span>
@@ -664,28 +961,72 @@ export default function TrialBalance() {
  </Tooltip>
 
  {/* Refresh button beside Actions */}
- <Tooltip>
- <DropdownMenu>
+ {isSourceLinked || disconnectedFrom ? (
+ <Popover open={refreshOpen} onOpenChange={(o) => { if (o) setRefreshChecked({ cy: isYearSource("cy", 0), py1: !isRollForwardFile && visibleYearCount >= 2 && isYearSource("py1", 1), py2: !isRollForwardFile && visibleYearCount >= 3 && isYearSource("py2", 2) }); setRefreshOpen(o); }}>
+ <Tooltip delayDuration={100}>
  <TooltipTrigger asChild>
- <DropdownMenuTrigger asChild>
+ <PopoverTrigger asChild>
  <ExpandableIconButton
  variant="secondary"
  icon={<RefreshCw className="h-4 w-4" />}
  label={<span className="inline-flex items-center gap-1">Refresh<ChevronDown className="h-3 w-3" /></span>}
+ disabled={!isSourceLinked || !anyYearRefreshable}
  />
- </DropdownMenuTrigger>
+ </PopoverTrigger>
  </TooltipTrigger>
- <DropdownMenuContent align="end" className="z-[100]">
- <DropdownMenuItem>All Years</DropdownMenuItem>
- <DropdownMenuItem>Current Year</DropdownMenuItem>
- <DropdownMenuItem>PY 1</DropdownMenuItem>
- <DropdownMenuItem>PY 2</DropdownMenuItem>
- </DropdownMenuContent>
- </DropdownMenu>
+ {srcMeta.dataPulledAsOf && (
+ <TooltipContent side="bottom" className="max-w-[260px] z-[200]">
+  Last refreshed {pulledAsOfLabel}
+ </TooltipContent>
+ )}
+ </Tooltip>
+ <PopoverContent align="end" className="w-56 p-3 z-[100]">
+ <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Refresh</p>
+ <div className="space-y-2">
+ {([
+ { id: "cy", label: "Current Year", idx: 0 },
+ { id: "py1", label: "Prior Year 1", idx: 1 },
+ { id: "py2", label: "Prior Year 2", idx: 2 },
+ ] as const).filter(opt => opt.idx < visibleYearCount).map(opt => {
+ const enabled = !pyLockedRf(opt.idx) && isYearSource(opt.id, opt.idx);
+ return (
+ <label key={opt.id} title={pyLockedRf(opt.idx) ? "Prior years in a roll-forward file can't be refreshed." : undefined} className={`flex items-center gap-2 px-2 py-1 text-sm ${enabled ? "cursor-pointer" : "opacity-40 cursor-not-allowed"}`}>
+ <Checkbox
+ disabled={!enabled}
+ checked={enabled && refreshChecked[opt.id]}
+ onCheckedChange={(v) => setRefreshChecked(prev => ({ ...prev, [opt.id]: !!v }))}
+ />
+ <span className="text-foreground">{opt.label}</span>
+ </label>
+ );
+ })}
+ </div>
+ <Button
+ variant="secondary"
+ size="sm"
+ className="mt-3"
+ disabled={!(["cy", "py1", "py2"] as const).some((y, i) => i < visibleYearCount && !pyLockedRf(i) && isYearSource(y, i) && refreshChecked[y])}
+ onClick={() => confirmRefreshYears((["cy", "py1", "py2"] as const).filter((y, i) => i < visibleYearCount && !pyLockedRf(i) && isYearSource(y, i) && refreshChecked[y]))}
+ >
+ Refresh
+ </Button>
+ </PopoverContent>
+ </Popover>
+ ) : (
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <ExpandableIconButton
+ variant="secondary"
+ icon={<RefreshCw className="h-4 w-4" />}
+ label="Refresh"
+ disabled
+ />
+ </TooltipTrigger>
  <TooltipContent side="bottom" sideOffset={8} className="z-[110]">
- Last updated: <span className="font-medium">54 min ago</span>
+ Refresh is available on years linked to an accounting source.
  </TooltipContent>
  </Tooltip>
+ )}
 
 
 
@@ -702,6 +1043,11 @@ export default function TrialBalance() {
  </div>
  </div>
 
+ {stalePriorYears.map(({ provider, labels }) => (
+ <div key={provider} className="mx-6 mt-4 flex items-center justify-between gap-3 rounded-[10px] border border-amber-300 bg-amber-50 px-3 py-2">
+  <span className="text-sm text-amber-800">{`${sourceLabel(provider)} is disconnected for ${labels.join(" and ")}. Data shown is from the last pull and can't be refreshed.`}</span>
+ </div>
+ ))}
  {/* Table */}
  <StyledCard className="mx-6 mt-6 mb-6 overflow-hidden flex flex-col flex-1 min-h-0">
  <div className="flex-1 overflow-auto">
@@ -759,11 +1105,13 @@ export default function TrialBalance() {
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Original</th>
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Adj</th>
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Final</th>
+ {visibleYearCount >= 2 && <>
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY1</th>
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">
  Change (%) <ChevronDown className="inline h-3 w-3" />
  </th>
- <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY2</th>
+ {visibleYearCount >= 3 && <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">PY2</th>}
+ </>}
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Map No.</th>
  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">LS</th>
  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Grouping</th>
@@ -795,24 +1143,40 @@ export default function TrialBalance() {
  {cat.short}
  </div>
  </td>
- <td className="px-2 py-2 text-center">
- <button className="text-muted-foreground hover:text-foreground">
- <MoreVertical className="h-3.5 w-3.5" />
- </button>
+  <td className="px-2 py-2 text-center">
+  {activeYearEditable && (
+  <button className="text-muted-foreground hover:text-foreground">
+  <MoreVertical className="h-3.5 w-3.5" />
+  </button>
+  )}
+  </td>
+  <td className="px-2 py-2"><Checkbox /></td>
+  <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
+  <td className="px-6 py-2 text-foreground whitespace-nowrap">
+  {!activeYearEditable ? (
+  <span className="inline-flex items-center gap-1.5">
+  <Tooltip delayDuration={100}>
+  <TooltipTrigger asChild>
+  <span tabIndex={0} aria-label="Locked" className="inline-flex cursor-help"><Lock className="h-3 w-3 text-foreground shrink-0" /></span>
+  </TooltipTrigger>
+  <TooltipContent side="top" className="max-w-[240px] z-[200]">This year pulls data from the source. Editing is available for CSV years only.</TooltipContent>
+  </Tooltip>
+  <span className="cursor-not-allowed">{row.description}</span>
+  </span>
+  ) : row.description}
  </td>
- <td className="px-2 py-2"><Checkbox /></td>
- <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
- <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.description}</td>
- <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
+ <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(row.original)}</td>
  <td className="px-6 py-2 text-right whitespace-nowrap">
- <button onClick={() => { setSelectedAdjRow({ accNo: row.accNo, description: row.description }); setAdjModalOpen(true); }} className="text-link font-medium hover:underline focus:outline-none">
+ {cyBlank ? dash : <button onClick={() => { setSelectedAdjRow({ accNo: row.accNo, description: row.description }); setAdjModalOpen(true); }} className="text-link font-medium hover:underline focus:outline-none">
    {formatNumber(row.adj)}
- </button>
+ </button>}
  </td>
- <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.final)}</td>
- <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.py1)}</td>
- <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
- <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
+ <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(row.final)}</td>
+ {visibleYearCount >= 2 && <>
+ <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{py1Blank ? dash : formatNumber(row.py1)}</td>
+ <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{cyBlank || py1Blank ? dash : row.changePct}</td>
+ {visibleYearCount >= 3 &&  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{py2Blank ? dash : row.py2}</td>}
+ </>}
  <td className="px-6 py-2 text-right whitespace-nowrap">
  <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
  </td>
@@ -837,12 +1201,14 @@ export default function TrialBalance() {
  {/* Totals row */}
  <tr className="bg-muted border-t border-border">
  <td className="px-6 py-2" colSpan={5}></td>
- <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.original)}</td>
- <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.adj)}</td>
- <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.final)}</td>
- <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py1)}</td>
+ <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(totals.original)}</td>
+ <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(totals.adj)}</td>
+ <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(totals.final)}</td>
+ {visibleYearCount >= 2 && <>
+ <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{py1Blank ? dash : formatNumber(totals.py1)}</td>
  <td className="px-6 py-2"></td>
- <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py2)}</td>
+ {visibleYearCount >= 3 &&  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{py2Blank ? dash : formatNumber(totals.py2)}</td>}
+ </>}
  <td colSpan={7}></td>
  </tr>
 
@@ -850,12 +1216,14 @@ export default function TrialBalance() {
  <tr className="bg-muted border-t border-border">
  <td className="px-6 py-2" colSpan={4}></td>
  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">Net Income (loss)</td>
- <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.original)}</td>
- <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.adj)}</td>
- <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.final)}</td>
- <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.py1)}</td>
+ <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(netIncome.original)}</td>
+ <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(netIncome.adj)}</td>
+ <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{cyBlank ? dash : formatNumber(netIncome.final)}</td>
+ {visibleYearCount >= 2 && <>
+ <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{py1Blank ? dash : formatNumber(netIncome.py1)}</td>
  <td className="px-6 py-2"></td>
- <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{netIncome.py2}</td>
+ {visibleYearCount >= 3 &&  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{py2Blank ? dash : netIncome.py2}</td>}
+ </>}
  <td colSpan={7}></td>
  </tr>
  </tfoot>
@@ -930,5 +1298,55 @@ export default function TrialBalance() {
  <EngagementRightPanel />
  </div>
  </Layout>
+ );
+}
+
+/** CSV → CSV re-import confirmation (neutral styling, DELETE to confirm). */
+function ReimportWarningModal({ open, onOpenChange, yearLabels, onProceed }: {
+ open: boolean;
+ onOpenChange: (open: boolean) => void;
+ yearLabels: string[];
+ onProceed: () => void;
+}) {
+ const [confirmText, setConfirmText] = useState("");
+ useEffect(() => { if (open) setConfirmText(""); }, [open]);
+ const items = [
+  { text: "Already posted adjusting entries", status: "Deleted", variant: "destructive" as const },
+  { text: "Manually added accounts", detail: "To remove them, exit, delete those accounts, and reimport.", status: "Stays as is", variant: "success" as const },
+  { text: "Issues, comments and requests raised till date", status: "Deleted", variant: "destructive" as const },
+  { text: "Documents added till date", detail: "A temporary folder will be created and your documents will be moved there.", status: "Moved", variant: "info" as const },
+ ];
+ return (
+  <Dialog open={open} onOpenChange={onOpenChange}>
+   <DialogContent className="max-w-md bg-background">
+    <div className="flex flex-col items-center text-center gap-2 pt-2">
+     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950/40">
+      <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+     </div>
+     <DialogTitle className="text-lg font-semibold text-foreground">Reimport Warning</DialogTitle>
+     <DialogDescription className="text-xs text-muted-foreground">Re-importing: {yearLabels.join(", ")}</DialogDescription>
+    </div>
+     <div className="rounded-[10px] border border-border px-3.5 py-1">
+     {items.map(({ text, detail, status, variant }, i) => (
+      <div key={text} className={`flex items-start gap-3 py-2.5 ${i < items.length - 1 ? "border-b border-gray-100 dark:border-gray-800" : ""}`}>
+       <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-gray-100 text-[11px] font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-200">{i + 1}</span>
+       <div className="min-w-0 flex-1">
+        <span className="text-sm text-foreground">{text}</span>
+        {detail && <p className="mt-0.5 text-xs text-gray-600 dark:text-gray-300">{detail}</p>}
+       </div>
+       <Badge variant={variant} className="mt-0.5 shrink-0">{status}</Badge>
+      </div>
+     ))}
+    </div>
+    <div className="space-y-1.5">
+     <label htmlFor="reimport-confirm" className="text-sm text-foreground">Type DELETE to confirm you understand *</label>
+     <Input id="reimport-confirm" value={confirmText} onChange={e => setConfirmText(e.target.value)} placeholder="DELETE" autoComplete="off" />
+    </div>
+    <div className="flex gap-3">
+     <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>Cancel</Button>
+     <Button className="flex-1" disabled={confirmText !== "DELETE"} onClick={onProceed}>Proceed</Button>
+    </div>
+   </DialogContent>
+  </Dialog>
  );
 }
