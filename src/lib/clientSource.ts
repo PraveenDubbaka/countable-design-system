@@ -5,19 +5,12 @@ export type ClientSourceIntegration = AccountingProvider | null;
 /** Data Type badge value: provider, null (CSV), or "unknown" (Source CY with no saved provider). */
 export type EngagementDataType = ClientSourceIntegration | "unknown";
 
-const DEMO_DATA_SOURCES: Readonly<Record<string, "csv" | "source">> = {
-  "COM-NEW-Dec312024": "csv",
-  "COM-INPROGRESS-Dec312024": "source",
-  "COM-FYO-RF-Dec312025": "source",
-  "COM-QB-Dec312026": "source",
-  "COM-MRD-Dec312025": "source",
-};
+// TB's demo seeds (its own engagement IDs and clients) are deliberately not carried into this repo: the four
+// DEMO_* / VISIBLE_* constants below stay empty so no TB demo data can apply to an engagement or client here.
+const DEMO_DATA_SOURCES: Readonly<Record<string, "csv" | "source">> = {};
 
 /** Demo: clients whose current connection was re-made outside the engagement (same provider, new connection id). */
-const DEMO_CONNECTION_IDS: Readonly<Record<string, string>> = {
-  "maple ridge dental corp.": "quickbooks-reconnected-1",
-  "maple ridge dental": "quickbooks-reconnected-1",
-};
+const DEMO_CONNECTION_IDS: Readonly<Record<string, string>> = {};
 
 /** Default connection id for engagements/connections saved before connection ids existed. */
 export const initialConnectionId = (provider: AccountingProvider) => `${provider}-initial`;
@@ -43,9 +36,7 @@ export function isConnectionChanged(
 }
 
 /** Exact client-name connections for demo engagements (exact match only, so "Cedar Point Logistics" stays unconnected). */
-const DEMO_EXACT_CONNECTIONS: Readonly<Record<string, "xero" | "quickbooks">> = {
-  "riverstone capital": "quickbooks",
-};
+const DEMO_EXACT_CONNECTIONS: Readonly<Record<string, "xero" | "quickbooks">> = {};
 
 /**
  * Resolve which accounting source a client is connected to.
@@ -134,10 +125,7 @@ export function isEngagementSourceDisconnected(engagementId: string, clientName:
 }
 
 /** The five scenario engagements shown on Dashboard and Engagements, in display order. */
-export const VISIBLE_ENGAGEMENT_IDS: readonly string[] = [
-  "COM-NEW-Dec312024",
-  "COM-INPROGRESS-Dec312024",
-];
+export const VISIBLE_ENGAGEMENT_IDS: readonly string[] = [];
 
 /** Keep only the visible engagements, in the fixed scenario order. */
 export function filterVisibleEngagements<T extends { id: string }>(list: T[]): T[] {
