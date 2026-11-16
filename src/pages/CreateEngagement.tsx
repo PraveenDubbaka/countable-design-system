@@ -1,19 +1,40 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { savedYearSources } from "@/lib/yearSourceSave";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
-import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
+import { EngagementRecord, setEngagementMeta, getEngagementMeta, loadEngagements } from "@/store/engagementsStore";
 import { toast } from "sonner";
-import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
-import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, FileText, Settings2, Check, UserPlus } from "lucide-react";
+import { clientsData as appClientsData } from "@/data/clientsData";
+import { getClientSourceIntegration, sourceLabel, getClientConnectionState, getClientConnectionId, isConnectionChanged, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
+import { accountingProviders } from "@/lib/accountingProviders";
+import { isFutureYearEnd } from "@/lib/tbYearData";
+import { ArrowLeft, Briefcase, Calendar, Users, ChevronDown, Plus, Pencil, Trash2, Search, ExternalLink, X, Building2, Settings2, Check, UserPlus, AlertTriangle, Info, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
+import { format as formatDateFns } from "date-fns";
+
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+
+export const unchangedEditYearSources = (isEditMode: boolean, yearSources: string[], originalYearSources: string[]) =>
+  isEditMode && yearSources.every((source, i) => source === originalYearSources[i]);
+
+export const connectionBlocksSave = (
+  isEditMode: boolean,
+  yearSources: string[],
+  originalYearSources: string[],
+  showNoConnectionError: boolean,
+  showMismatchWarning: boolean,
+) => !unchangedEditYearSources(isEditMode, yearSources, originalYearSources)
+  && (showNoConnectionError || showMismatchWarning);
 
 const INDUSTRIES = [
  "Construction & Real Estate", "Financial Services", "Healthcare & Life Sciences",
@@ -142,6 +163,63 @@ const LabeledInput = ({
  </div>
  )}
  </div>
+ </div>
+ );
+};
+
+// Calendar date field styled to match the global form inputs (h-9, 10px radius, double-border focus)
+const DateField = ({
+ label,
+ value,
+ onChange,
+ required = false,
+ disabled = false,
+}: {
+ label?: string;
+ value: string; // MM/dd/yyyy
+ onChange: (value: string) => void;
+ required?: boolean;
+ disabled?: boolean;
+}) => {
+ const m = value ? value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) : null;
+ const parsed = m ? new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])) : undefined;
+ const selected = parsed && !isNaN(parsed.getTime()) ? parsed : undefined;
+ return (
+ <div className="flex flex-col gap-1">
+ {label && (
+ <label className="text-xs font-medium text-foreground">
+ {label}
+ {required && <span className="text-destructive ml-0.5">*</span>}
+ </label>
+ )}
+ <Popover>
+ <PopoverTrigger asChild disabled={disabled}>
+ <button
+ type="button"
+ disabled={disabled}
+ className={`
+ input-double-border w-full h-9 px-3 py-2 text-sm rounded-[10px] outline-none transition-all duration-200 flex items-center text-left
+ ${disabled
+ ? 'bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed'
+ : 'bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]'
+ }
+ ${selected ? 'text-foreground' : 'text-muted-foreground'}
+ `}
+ >
+ <span className="flex-1 truncate">{selected ? formatDateFns(selected, "MM/dd/yyyy") : "MM/DD/YYYY"}</span>
+ <Calendar className="h-4 w-4 ml-auto shrink-0 text-muted-foreground" />
+ </button>
+ </PopoverTrigger>
+ <PopoverContent className="w-auto p-0" align="start">
+ <DatePickerCalendar
+ mode="single"
+ selected={selected}
+ onSelect={(d) => onChange(d ? formatDateFns(d, "MM/dd/yyyy") : "")}
+ initialFocus
+ className="p-3 pointer-events-auto"
+ />
+ </PopoverContent>
+ </Popover>
  </div>
  );
 };
@@ -620,6 +698,29 @@ const CLIENT_DATA: Record<string, {
  },
 };
 
+function shiftYearStr(mmddyyyy: string, delta: number): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3) return mmddyyyy;
+  return `${p[0]}/${p[1]}/${String(parseInt(p[2]) + delta)}`;
+}
+
+function addDaysStr(mmddyyyy: string, days: number): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3) return mmddyyyy;
+  const d = new Date(parseInt(p[2]), parseInt(p[0]) - 1, parseInt(p[1]));
+  d.setDate(d.getDate() + days);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
+/** Normalize saved dates ("01/01/2024" or "Jan 1, 2025") to MM/DD/YYYY. */
+function toMmDdYyyy(v?: string): string | null {
+ if (!v) return null;
+ if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return v;
+ const d = new Date(v);
+ if (isNaN(d.getTime())) return null;
+ return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
 function formatYearEnd(dateStr: string): string {
  const parts = dateStr.split("/");
  if (parts.length !== 3) return dateStr;
@@ -634,33 +735,202 @@ function formatDateCreated(): string {
  " " + now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 }
 
+type TypeDefaults = { prefix: string; template: string; templateId: string; standards: string };
+
+/** Defaults per engagement type. Edit falls back to these when an engagement has no saved template / standards;
+ *  Create keeps this page's own defaults (the ID `prefix` is unused here: TB's generated engagement IDs are not ported). */
+const TYPE_DEFAULTS: Record<string, TypeDefaults> = {
+ "Audit (AUD)": { prefix: "AUD", template: "CAS Audit", templateId: "audit5100", standards: "ASPE — Canadian Accounting Standards for Private Enterprises" },
+ "Review (REV)": { prefix: "REV", template: "Review Section 2400", templateId: "rev2400", standards: "Section 2400 Review standards" },
+ "Compilation (COM)": { prefix: "COM", template: "Compilation CSRS 4200", templateId: "comp4200", standards: "CSRS 4200 — Compilation Engagements" },
+ "T2 (Corporations)": { prefix: "T2", template: "T2 (Corporations)", templateId: "tax-t2", standards: "ASPE" },
+ "1120 (US C-Corporation)": { prefix: "1120", template: "1120 (US C-Corporation)", templateId: "", standards: "" },
+ "1120S (US S-Corporation)": { prefix: "1120S", template: "1120S (US S-Corporation)", templateId: "", standards: "" },
+};
+
+const typeDefaults = (type: string | undefined): TypeDefaults =>
+ (type && TYPE_DEFAULTS[type]) || TYPE_DEFAULTS["Review (REV)"];
+
+/** Template label shown in edit mode for a saved template id. */
+const TEMPLATE_LABELS: Record<string, string> = {
+ audit5100: "CAS Audit",
+ rev2400: "Review Section 2400",
+ comp4200: "Compilation CSRS 4200",
+ "tax-t2": "T2 (Corporations)",
+};
+
+/** Edit keeps the stored engagement client name; Create uses the selected client. */
+export function resolveSavedClientName(isEditMode: boolean, storedClient: string | undefined, selectedClient: string): string {
+  return isEditMode && storedClient ? storedClient : selectedClient;
+}
+
+/** Connected / Disconnected pill used by the Source Data row and the Data Source dropdowns. */
+const SourceStatusPill = ({ connected }: { connected: boolean }) => (
+ <span className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${
+  connected
+   ? "border-connection-success/30 bg-connection-success-surface text-connection-success"
+   : "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+ }`}>{connected ? "Connected" : "Disconnected"}</span>
+);
+
+/** One source row's identity: provider name, connection status, then the client entity name. */
+const SourceIdentityRow = ({ provider, connected, entityName }: { provider: AccountingProvider; connected: boolean; entityName: string }) => (
+ <span className="flex w-full min-w-0 items-center gap-2">
+  <span className="shrink-0">{accountingProviders[provider].buttonName}</span>
+  <SourceStatusPill connected={connected} />
+  <span className="min-w-0 flex-1 truncate text-muted-foreground" title={entityName}>{entityName}</span>
+ </span>
+);
+
 export default function CreateEngagement() {
  const navigate = useNavigate();
  const location = useLocation();
- const { addEngagement } = useEngagements();
- const prefill = (location.state as { clientName?: string; engagementType?: string } | null) ?? {};
+ const { addEngagement, updateEngagement } = useEngagements();
+  const { engagementId: routeEngagementId } = useParams();
+  const isEditMode = !!routeEngagementId;
+  const editingRecord = isEditMode ? loadEngagements().find(e => e.id === routeEngagementId) : undefined;
+   const editingMeta = routeEngagementId ? getEngagementMeta(routeEngagementId) : undefined;
+  const prefill = isEditMode
+    ? { clientName: editingRecord?.client, engagementType: editingRecord?.type }
+    : ((location.state as { clientName?: string; engagementType?: string } | null) ?? {});
 
- // Engagement Details state
- const [clientName, setClientName] = useState(prefill.clientName || "");
- const clientInfo = CLIENT_DATA[clientName] ?? null;
+  // Edit opens a saved engagement, whose stored client name may be the legal name or a shorter display name, so it is
+  // matched to this page's client records (and the app's client list). Create keeps using the name it was given.
+  const findClientKey = (name: string): string => {
+    if (!name || CLIENT_DATA[name]) return name;
+    const match = Object.entries(CLIENT_DATA).find(([key, c]) =>
+      key === name || c.entityLegalName === name || key.includes(name) || name.includes(key)
+    );
+    return match?.[0] || name;
+  };
+
+  // Engagement Details state
+  const [clientName, setClientName] = useState(isEditMode ? findClientKey(prefill.clientName || "") : (prefill.clientName || ""));
+  const appClient = isEditMode && clientName
+    ? appClientsData.find(c => {
+        const n = clientName.trim().toLowerCase();
+        return c.legalEntityName.toLowerCase() === n || c.entityName.toLowerCase() === n
+          || c.legalEntityName.toLowerCase().includes(n) || n.includes(c.entityName.toLowerCase());
+      })
+    : undefined;
+  const localClientInfo = CLIENT_DATA[clientName]
+     ?? (isEditMode && clientName ? Object.entries(CLIENT_DATA).find(([key, c]) =>
+          key === clientName || c.entityLegalName === clientName || key.includes(clientName) || clientName.includes(key)
+        )?.[1] : undefined)
+     ?? null;
+  // Edit only: a client that is not in this page's records falls back to the app's client list
+  const clientInfo = localClientInfo
+     ?? (appClient ? {
+          entityLegalName: appClient.legalEntityName,
+          entityType: appClient.entityType,
+          contactPerson: appClient.contactPerson,
+          engagementPartner: appClient.engagementPartner,
+          integrations: appClient.integration === "xero" || appClient.integration === "quickbooks" ? [appClient.integration] : [],
+          businessPhone: appClient.businessPhone || "",
+          cellPhone: appClient.cellPhone || "",
+          industryType: appClient.industryType || "",
+          clientCountry: appClient.clientCountry,
+          hasQuebecPersonalInfo: !!appClient.hasQuebecPersonalInfo,
+          isUsTaxpayer: !!appClient.isUsTaxpayer,
+        } : null);
+ // Entity name shown beside the source connection and inside the Data Source dropdowns
+ const sourceEntityName = clientInfo?.entityLegalName || clientName;
  const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
  const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
- const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
- const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "CAS Audit" : "Review Section 2400");
- const [templateId, setTemplateId] = useState(prefillIsAudit ? "audit5100" : "");
+ // Edit falls back to the per-type defaults when nothing was saved; Create keeps this page's own defaults below
+ const initialTypeDefaults = typeDefaults(prefill.engagementType || "Review (REV)");
+ const [engagementId, setEngagementId] = useState(isEditMode ? (editingRecord?.id ?? "") : (prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023"));
+ const [engagementTemplate, setEngagementTemplate] = useState(() => {
+  if (!isEditMode) return prefillIsAudit ? "CAS Audit" : "Review Section 2400";
+  const savedId = editingMeta?.templateId;
+  return (savedId && TEMPLATE_LABELS[savedId]) || initialTypeDefaults.template;
+ });
+ // Edit never invents a template id for an engagement that was saved without one
+ const [templateId, setTemplateId] = useState(editingMeta?.templateId ?? (isEditMode ? "" : prefillIsAudit ? "audit5100" : ""));
  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
- const [budget, setBudget] = useState("10000.00");
- const [accountingStandards, setAccountingStandards] = useState(prefillIsAudit ? "ASPE — Canadian Accounting Standards for Private Enterprises" : "Section 2400 Review standards");
+ const [budget, setBudget] = useState(editingMeta?.budget ?? "10000.00");
+ // For engagements saved before the Data Source field existed, fall back to the
+ // client's live connection so Source-based engagements keep showing as Source.
+ const inferredEditDataSource: "csv" | "source" =
+   isEditMode && getClientSourceIntegration(clientName) !== null ? "source" : "csv";
+  const [dataSource, setDataSource] = useState<"csv" | "source">(editingMeta?.dataSource ?? "csv");
+  // Bumped whenever a client connection may have changed (e.g. user connected on the Clients page)
+  const [connVersion, setConnVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setConnVersion(v => v + 1);
+    const onVisible = () => { if (document.visibilityState === "visible") bump(); };
+    window.addEventListener("focus", bump);
+    window.addEventListener("storage", bump);
+    window.addEventListener(CLIENT_CONNECTION_EVENT, bump);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("focus", bump);
+      window.removeEventListener("storage", bump);
+      window.removeEventListener(CLIENT_CONNECTION_EVENT, bump);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+  const [sourceConnected, setSourceConnected] = useState(() => {
+    if (isEditMode && editingMeta?.dataSource === "source") return true;
+    return false;
+  });
+  const originalDataSource = editingMeta?.dataSource ?? inferredEditDataSource;
+  // Source-to-source (external provider change): set when the user picks the active connection in the dropdown
+  const [hasSelectedActiveConnection, setHasSelectedActiveConnection] = useState(false);
+  const initialClientRef = useRef(clientName);
+
+    /** Client-level connection: saved connect/disconnect first, then demo client data, then app client data. */
+    const resolveClientConnection = (): AccountingProvider | null => {
+      const state = getClientConnectionState(clientName, localClientInfo?.entityLegalName, clientInfo?.entityLegalName);
+      if (state !== undefined) return state;
+      if (localClientInfo?.integrations.includes("xero")) return "xero";
+      if (localClientInfo?.integrations.includes("quickbooks")) return "quickbooks";
+      return getClientSourceIntegration(clientName);
+    };
+    // Sync data source default when client selection changes based on source connection status
+    useEffect(() => {
+      {
+        const integ = resolveClientConnection();
+        setSourceConnected(integ !== null);
+        // Keep the initial data source until the user picks a different client
+        // Never change the data type on a live connection change while editing
+        if (isEditMode || clientName === initialClientRef.current) return;
+        // Default: connected client → Source, not connected → CSV
+        setDataSource(integ ? "source" : "csv");
+      }
+    }, [clientName, clientInfo, localClientInfo, connVersion]);
+
+    // Clear the picked connection when the user switches the data type back
+    useEffect(() => {
+      if (isEditMode && originalDataSource === "csv" && dataSource === "csv") setHasSelectedActiveConnection(false);
+    }, [dataSource]);
+
+ const [accountingStandards, setAccountingStandards] = useState(editingMeta?.accountingStandards ?? (isEditMode
+  ? initialTypeDefaults.standards
+  : (prefillIsAudit ? "ASPE — Canadian Accounting Standards for Private Enterprises" : "Section 2400 Review standards")));
  const [additionalDisclosures, setAdditionalDisclosures] = useState(prefillIsAudit ? "Full financial statements" : "Statement of cash flows");
 
  // Engagement Period state
- const [periodType, setPeriodType] = useState(prefillIsAudit ? "Full Year" : "Full year");
- const [currentYearStart, setCurrentYearStart] = useState("12/01/2022");
- const [currentYearEnd, setCurrentYearEnd] = useState("11/30/2023");
- const [priorYear1Start, setPriorYear1Start] = useState("12/01/2021");
- const [priorYear1End, setPriorYear1End] = useState("11/30/2022");
- const [priorYear2Start, setPriorYear2Start] = useState("12/01/2020");
- const [priorYear2End, setPriorYear2End] = useState("11/30/2021");
+ const [periodType, setPeriodType] = useState(
+  // Legacy: Partial year saved with the old First Year of Operations checkbox opens as the new period type
+  editingMeta?.firstYearOfOperations && /^partial year$/i.test(editingMeta?.auditPeriodType ?? "")
+   ? "First Year of Operations"
+   : editingMeta?.auditPeriodType ?? (prefillIsAudit ? "Full Year" : "Full year"));
+ // Edit: when no period dates were saved, derive a 12-month period from the engagement's Year End
+ const recordYearEnd = (() => {
+  const d = editingRecord?.yearEnd ? new Date(editingRecord.yearEnd) : null;
+  return d && !isNaN(d.getTime())
+   ? `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`
+   : null;
+ })();
+ const initialCyEnd = toMmDdYyyy(editingMeta?.periodEnd) ?? recordYearEnd ?? "11/30/2023";
+ const initialCyStart = toMmDdYyyy(editingMeta?.periodStart) ?? (recordYearEnd ? addDaysStr(shiftYearStr(recordYearEnd, -1), 1) : "12/01/2022");
+ const [currentYearStart, setCurrentYearStart] = useState(initialCyStart);
+ const [currentYearEnd, setCurrentYearEnd] = useState(initialCyEnd);
+ const [priorYear1Start, setPriorYear1Start] = useState(shiftYearStr(initialCyStart, -1));
+ const [priorYear1End, setPriorYear1End] = useState(shiftYearStr(initialCyEnd, -1));
+ const [priorYear2Start, setPriorYear2Start] = useState(shiftYearStr(initialCyStart, -2));
+ const [priorYear2End, setPriorYear2End] = useState(shiftYearStr(initialCyEnd, -2));
  const [priorYear1NoData, setPriorYear1NoData] = useState(false);
  const [priorYear2NoData, setPriorYear2NoData] = useState(false);
 
@@ -671,6 +941,7 @@ export default function CreateEngagement() {
  const isFirstMount = useRef(true);
  useEffect(() => {
  if (isFirstMount.current) { isFirstMount.current = false; return; }
+ if (isEditMode) return; // never overwrite saved values when editing
  if (isAudit) {
  setEngagementId("AUD-HFL-Mar312024");
  if (!templateId) {
@@ -700,14 +971,15 @@ export default function CreateEngagement() {
  }
  }, [accountingStandards]);
 
+ // Audit configuration: Create starts from the defaults; Edit starts from what was saved so that saving keeps it
  const [condensedForms, setCondensedForms] = useState(false);
- const [firstYearAudit, setFirstYearAudit] = useState(false);
- const [firstYearOnPlatform, setFirstYearOnPlatform] = useState("");
- const [isRollForward, setIsRollForward] = useState("");
- 
- const [firstYearTemplates, setFirstYearTemplates] = useState<Set<string>>(new Set());
- const [annualizeInterim, setAnnualizeInterim] = useState(true);
- const [firstTimeAdoption, setFirstTimeAdoption] = useState(false);
+ const [firstYearAudit, setFirstYearAudit] = useState(editingRecord?.firstYearAudit ?? false);
+ const [firstYearOnPlatform, setFirstYearOnPlatform] = useState(editingMeta?.firstYearOnPlatform ?? "");
+ const [isRollForward, setIsRollForward] = useState(editingMeta?.isRollForward ?? "");
+
+ const [firstYearTemplates, setFirstYearTemplates] = useState<Set<string>>(new Set(editingMeta?.firstYearTemplates ?? []));
+ const [annualizeInterim, setAnnualizeInterim] = useState(editingMeta?.annualizeInterim ?? true);
+ const [firstTimeAdoption, setFirstTimeAdoption] = useState(editingMeta?.firstTimeAdoption ?? false);
  const [sevenSixteenConsented, setSevenSixteenConsented] = useState<boolean>(false);
  const toggleFirstYearTemplate = (key: string) =>
  setFirstYearTemplates(prev => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
@@ -720,7 +992,7 @@ export default function CreateEngagement() {
  });
 
  // Team members
- const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+ const [teamMembers, setTeamMembers] = useState<TeamMember[]>(editingMeta?.teamMembers ?? []);
  const [recommendedPending, setRecommendedPending] = useState<TeamMember[]>([]);
  const [pendingRow, setPendingRow] = useState<PendingRow | null>(null);
  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -827,15 +1099,210 @@ export default function CreateEngagement() {
  { value: "Notes to financial statements", label: "Notes to financial statements" },
  ];
 
+ // Audit keeps its existing "Stub Period" value (it is what has always been saved for an audit); First Year of Operations is added
  const periodTypeOptions = isAudit
  ? [
- { value: "Full Year", label: "Full Year" },
- { value: "Stub Period", label: "Stub Period" },
- { value: "Other", label: "Other" },
- ]
- : [
- { value: "Full year", label: "Full year" },
- ];
+  { value: "Full Year", label: "Full Year" },
+  { value: "Stub Period", label: "Stub Period" },
+  { value: "First Year of Operations", label: "Partial Year – First Year of Operations" },
+  { value: "Other", label: "Other" },
+  ]
+  : [
+  { value: "Full year", label: "Full year" },
+  { value: "Partial year", label: "Partial year" },
+  { value: "First Year of Operations", label: "Partial Year – First Year of Operations" },
+  ];
+
+  const isFullYearPeriod = periodType === "Full Year" || periodType === "Full year";
+  const isStubPeriod = periodType === "Partial Year" || periodType === "Partial year" || periodType === "Stub Period";
+  const isFooPeriod = periodType === "First Year of Operations";
+  // Partial year periods are locked to CSV; First Year of Operations allows source
+  const isSourceLockedStub = isStubPeriod;
+  // FOO roll-forward chain: 1 = FOO year (CY only), 2 = CY + PY1, 3 = all years; locked until all three are full years
+  const fyoChain = isFooPeriod ? (editingMeta?.fyoChainYear ?? 1) : 0;
+  const isFyoRolled = fyoChain >= 2;
+ const clientSourceIntegration = resolveClientConnection();
+ const clientHasSourceConnection = clientSourceIntegration !== null;
+ // Engagement was disconnected from its source by a CSV import; switching back to Source reconnects it
+ const savedDisconnectedFrom = editingMeta?.sourceDisconnectedFrom;
+ const isReconnectFlow = isEditMode && clientHasSourceConnection && originalDataSource === "csv" && dataSource === "source" && !!savedDisconnectedFrom;
+ // Roll forward: Current Year pulls from source, prior years stay CSV
+ const isRollForwardSource = isEditMode && !!editingMeta?.sourceRollForward;
+ // Roll forward: where a locked prior year came from (priorYearSources, else its saved per-year source)
+ const lockedYearSource = (k: "py1" | "py2"): "csv" | "nodata" | AccountingProvider => {
+   const pys = editingMeta?.priorYearSources?.[k];
+   if (pys) return pys;
+   return editingMeta?.yearDataSources?.[k] === "source"
+     ? (editingMeta?.yearSourceProviders?.[k] ?? editingMeta?.sourceProvider ?? "csv")
+     : "csv";
+ };
+ // Roll forward of a First Year of Operations file: PY2 is a "No data" year (business didn't exist)
+ const rfPy2NoData = isRollForwardSource && editingMeta?.priorYearSources?.py2 === "nodata";
+ // First locked prior year that pulled from a software (used when Partial year turns it to CSV)
+ const lockedPriorProvider: AccountingProvider | null = isRollForwardSource
+   ? ((["py1", "py2"] as const).map(k => lockedYearSource(k)).find(v => v !== "csv" && v !== "nodata") as AccountingProvider | undefined) ?? null
+   : null;
+const [ackText, setAckText] = useState("");
+    const ackChecked = ackText.trim() === "DELETE";
+   // Per-year data source (V2): "csv" | "source:<provider>" | "locked"
+   // Single source connection per client
+   const activeProvider: AccountingProvider | null = clientSourceIntegration;
+   // Client's active connection id; differs from the engagement's saved one after a disconnect + reconnect
+   const activeConnectionId = activeProvider ? getClientConnectionId(clientName, localClientInfo?.entityLegalName, clientInfo?.entityLegalName) : null;
+   /** Edit only: saved provider equals the active one, but the connection was re-made (new connection id). */
+   const sameProviderReconnected = (yp: AccountingProvider | null | undefined) =>
+     isEditMode && !!yp && yp === activeProvider
+     && isConnectionChanged(yp, editingMeta?.sourceConnectionId, activeProvider, activeConnectionId);
+   const initYearSources = (): string[] => {
+     const p = clientSourceIntegration;
+     if (isRollForwardSource) {
+       const cyProv = editingMeta?.yearSourceProviders?.cy ?? editingMeta?.sourceProvider ?? p;
+       const cy = editingMeta?.yearDataSources?.cy === "csv" ? "csv" : cyProv ? `source:${cyProv}` : "csv";
+       return [cy, "locked", rfPy2NoData ? "nodata" : "locked"];
+     }
+     if (isEditMode) {
+       const savedProvider = editingMeta?.sourceProvider ?? p;
+       const yds = editingMeta?.yearDataSources;
+       if (yds) {
+         const ysp = editingMeta?.yearSourceProviders;
+         return [yds.cy, yds.py1, yds.py2].map((v, i) => {
+           const yp = ysp?.[(["cy", "py1", "py2"] as const)[i]] ?? savedProvider;
+           // Same provider on a new connection: mark the saved row as the previous connection
+           return v === "source" ? (yp ? `source:${yp}${sameProviderReconnected(yp) ? "|prev" : ""}` : "source:none") : "csv";
+         });
+       }
+       const n = editingMeta?.dataSource === "source" && savedProvider ? (editingMeta?.sourceYears ?? 1) : 0;
+       return [0, 1, 2].map(i => (i < n ? `source:${savedProvider}` : "csv"));
+     }
+     return p ? [`source:${p}`, `source:${p}`, `source:${p}`] : ["csv", "csv", "csv"];
+   };
+   const [yearSources, setYearSources] = useState<string[]>(initYearSources);
+   // Future year-end (CY end date after today): display message only, never blocks saving
+   const cyIsFutureYearEnd = isFutureYearEnd(currentYearEnd);
+   const cyRowIsSource = !!yearSources[0]?.startsWith("source:");
+   const [originalCySource] = useState<string>(() => initYearSources()[0]);
+   const originalCyProvider = (originalCySource.startsWith("source:") ? rowProvider(originalCySource) : null) as AccountingProvider | null;
+   const [yearErrors, setYearErrors] = useState<boolean[]>([false, false, false]);
+   useEffect(() => { if (!isEditMode) setYearSources(initYearSources()); }, [clientSourceIntegration, clientName]); // eslint-disable-line react-hooks/exhaustive-deps
+   useEffect(() => {
+     setDataSource(yearSources.some(s => s?.startsWith("source:")) ? "source" : "csv");
+   }, [yearSources]);
+  // Once the client connects, rows picked as "Not connected" become that connection
+  useEffect(() => {
+    if (!clientSourceIntegration) return;
+    setYearSources(s => s.map(v => (v === "source:none" ? `source:${clientSourceIntegration}` : v)));
+    setYearErrors([false, false, false]);
+  }, [clientSourceIntegration]);
+  const setYearSource = (i: number, v: string) => {
+    const err = v === "source:none";
+    setYearErrors(e => e.map((x, j) => (j === i ? err : x)));
+    setYearSources(s => s.map((x, j) => {
+      // Keep the picked "not connected" software visible in the dropdown (save stays blocked)
+      if (j === i) return v;
+       // Full year: source years run in order from CY; roll-forward locked rows never change
+       if (!isFullYearPeriod || err || x === "locked" || x === "nodata") return x;
+       if (v.startsWith("source:") && j < i) return v;
+       if (v === "csv" && j > i) return "csv";
+       return x;
+     }));
+   };
+   const [originalYearSources] = useState<string[]>(initYearSources);
+   // Roll forward: Current Year switched Source → CSV turns every locked prior year to CSV too (data kept)
+   const rfCyToCsv = isRollForwardSource && !!originalYearSources[0]?.startsWith("source:") && yearSources[0] === "csv";
+   const priorYearsToCsv = isSourceLockedStub || rfCyToCsv;
+   const yearChangeKind = (i: number): "toCsv" | "toSource" | "toOtherSource" | null => {
+     if (!isEditMode) return null;
+     const o = originalYearSources[i];
+     // Partial year locks every non-locked row to CSV, so a Source row becomes a switch to CSV
+     const c = isSourceLockedStub && yearSources[i] !== "locked" ? "csv" : yearSources[i];
+     // Partial year on a roll forward also turns locked prior years to CSV
+     if (o === "locked" && c === "locked" && priorYearsToCsv && i > 0) {
+       const k = lockedYearSource(i === 1 ? "py1" : "py2");
+       return k !== "csv" && k !== "nodata" ? "toCsv" : null;
+     }
+     if (!o || !c || o === c || o === "locked" || c === "locked") return null;
+     if (o.startsWith("source:") && c === "csv") return "toCsv";
+     if (o === "csv" && c.startsWith("source:") && c !== "source:none") return "toSource";
+     // Switching off a provider that was disconnected externally (per-row switch prompt)
+     if (o.startsWith("source:") && c.startsWith("source:") && c !== "source:none" && (rowProvider(o) !== activeProvider || o.endsWith("|prev"))) return "toOtherSource";
+     return null;
+   };
+   /** Edit only: the year's saved provider is no longer among the client's active connections (and the row is unchanged). */
+   const yearDisconnectedProvider = (i: number): AccountingProvider | null => {
+     if (!isEditMode) return null;
+     const o = originalYearSources[i];
+     if (!o?.startsWith("source:") || o === "source:none" || yearSources[i] !== o) return null;
+     const p = rowProvider(o);
+     return p === activeProvider && !o.endsWith("|prev") ? null : p;
+   };
+   const visibleYearIdx = [0, 1, 2].filter(i => (!isFooPeriod || i < fyoChain) && !(rfPy2NoData && i === 2) && yearSources[i] !== "nodata");
+   // Edit: date-only changes offer keep/reset choices before saving.
+   const yearEndChanged = isEditMode && (toMmDdYyyy(currentYearEnd) ?? currentYearEnd) !== initialCyEnd;
+   const isCyToCsv = [0, 1, 2].some(i => yearChangeKind(i) !== null) || (isEditMode && hasSelectedActiveConnection && !!editingMeta?.sourceProvider && editingMeta.sourceProvider !== clientSourceIntegration);
+   const showDeleteBlock = isCyToCsv;
+   const [showUpdateWarning, setShowUpdateWarning] = useState(false);
+   const savedVisibleSources = visibleYearIdx.map(i => {
+     const key = (["cy", "py1", "py2"] as const)[i];
+     return editingMeta?.yearDataSources?.[key]
+       ?? (originalYearSources[i] === "locked" && key !== "cy"
+         ? (lockedYearSource(key) === "csv" ? "csv" : "source")
+         : originalYearSources[i]?.startsWith("source:") ? "source" : "csv");
+   });
+   const updateWarningVariant = savedVisibleSources.every(source => source === "source") ? "source"
+     : savedVisibleSources.every(source => source === "csv") ? "csv" : "mixed";
+   // Keep the typed DELETE while the red block stays visible; clear it once the block goes away
+   useEffect(() => { if (!showDeleteBlock) setAckText(""); }, [showDeleteBlock]);
+
+ const applyFullYearPriors = (cyStart: string, cyEnd: string) => {
+ setPriorYear1Start(shiftYearStr(cyStart, -1));
+ setPriorYear1End(shiftYearStr(cyEnd, -1));
+ setPriorYear2Start(shiftYearStr(cyStart, -2));
+ setPriorYear2End(shiftYearStr(cyEnd, -2));
+ };
+
+  const handlePeriodTypeChange = (val: string) => {
+  setPeriodType(val);
+  if (isEditMode && val !== periodType) {
+  toast.info("Period type updated. Please review your engagement dates.", {
+  duration: 3000,
+  classNames: { toast: "toast-progress-3s" },
+  });
+  }
+  const isNowFull = val === "Full Year" || val === "Full year";
+  const isNowStub = val === "Partial Year" || val === "Partial year" || val === "Stub Period";
+  if (isNowFull) {
+  const autoEnd = addDaysStr(shiftYearStr(currentYearStart, 1), -1);
+  setCurrentYearEnd(autoEnd);
+  applyFullYearPriors(currentYearStart, autoEnd);
+  }
+  if (isNowStub && dataSource === "source") {
+  setDataSource("csv");
+  }
+  if (isNowFull && isEditMode && originalDataSource === "source") {
+  setDataSource("source");
+  }
+  };
+
+  // First Year of Operations, first year: only the Current Year exists (dates are entered manually)
+  const fooDerived = isFooPeriod && fyoChain === 1;
+
+ const handleCurrentYearStartChange = (val: string) => {
+ setCurrentYearStart(val);
+ if (isFullYearPeriod) {
+ const autoEnd = addDaysStr(shiftYearStr(val, 1), -1);
+ setCurrentYearEnd(autoEnd);
+ applyFullYearPriors(val, autoEnd);
+ }
+ };
+
+ const handleCurrentYearEndChange = (val: string) => {
+ setCurrentYearEnd(val);
+ if (isFullYearPeriod) {
+ const autoStart = addDaysStr(shiftYearStr(val, -1), 1);
+ setCurrentYearStart(autoStart);
+ applyFullYearPriors(autoStart, val);
+ }
+ };
 
  const engagementDetailsValid =
  engagementId.trim() !== "" &&
@@ -849,40 +1316,150 @@ export default function CreateEngagement() {
  engagementTemplate.trim() !== "" &&
  engagementType !== "" &&
  budget.trim() !== "" &&
+ (isSourceLockedStub || dataSource !== "source" || clientHasSourceConnection || sourceConnected || unchangedEditYearSources(isEditMode, yearSources, originalYearSources)) &&
  accountingStandards !== "" &&
  additionalDisclosures !== "" &&
  currentYearStart.trim() !== "" &&
  currentYearEnd.trim() !== "" &&
- teamMembers.length > 0;
+ (isEditMode || teamMembers.length > 0);
 
- const handleCreate = () => {
+   // Edit-mode scenario 2: engagement was Source, user switched to CSV
+   const isSourceToCsvSwitch = isEditMode && clientHasSourceConnection && originalDataSource === "source" && dataSource === "csv";
+   // Per-year mix of CSV vs Source (locked prior years count as Source; "No data" rows are skipped)
+   const yearSourceMix = (() => {
+     let csv = 0, src = 0;
+     for (let i = 0; i < 3; i++) {
+       if (rfPy2NoData && i === 2) continue;
+       if (isRollForwardSource && i > 0) { src++; continue; }
+       if (fooDerived && i > 0) continue;
+       const v = yearSources[i] ?? "csv";
+       if (v === "locked" || (v.startsWith("source:") && v !== "source:none")) src++;
+       else csv++;
+     }
+     return { csv, src };
+   })();
+   // Edit-mode scenario 5: the client's source connection changed since the engagement was set up
+   const savedSourceProvider = editingMeta?.sourceProvider;
+   // Edit only: the provider this engagement was saved on, when it is no longer the client's active connection
+   const prevSourceProvider: AccountingProvider | null = (() => {
+     if (!isEditMode || originalDataSource !== "source") return null;
+     const fromYears = originalYearSources.find(o => o?.startsWith("source:") && o !== "source:none")as string | undefined;
+     const fromYearsP = fromYears ? rowProvider(fromYears) : undefined;
+     const saved = (savedSourceProvider ?? fromYearsP) ?? null;
+     return saved && (saved !== activeProvider || sameProviderReconnected(saved)) ? saved : null;
+   })();
+   const isSourceProviderMismatch = isEditMode && !isRollForwardSource && clientHasSourceConnection
+     && originalDataSource === "source" && dataSource === "source"
+     && !!savedSourceProvider && (savedSourceProvider !== clientSourceIntegration || sameProviderReconnected(savedSourceProvider));
+    const isExternallyDisconnected = isEditMode && !clientHasSourceConnection && originalDataSource === "source" && dataSource === "source" && !isSourceLockedStub;
+    // Red "No source connection found" error — blocks Create/Update while visible
+    // Blocks Create/Update whenever any year is set to Source without an active client connection;
+    // Only reachable in Edit when a saved Source year has lost its connection.
+    const showNoConnectionError = !clientHasSourceConnection && !isSourceLockedStub
+      && (dataSource === "source" || yearErrors.some(Boolean));
+    // Mismatch warning only while at least one year row still points to the old provider
+    const showMismatchWarning = isSourceProviderMismatch && [0, 1, 2].some(i => yearDisconnectedProvider(i) !== null);
+    const anyRowDisconnected = !isExternallyDisconnected && !isSourceLockedStub && visibleYearIdx.some(i =>
+      yearSources[i] !== "locked" && yearSources[i] !== "nodata" && yearDisconnectedProvider(i) !== null);
+    // "Switching…" messages — while either is visible, the generic per-year source note is hidden
+    // Software the year(s) switching to CSV pulled from: CY's, else (Partial year on a roll forward) a locked prior year's
+    const switchFromProvider: AccountingProvider | null = originalCyProvider ?? (isSourceLockedStub ? lockedPriorProvider : null);
+    const showSwitchToCsvMessage = !showMismatchWarning && !!switchFromProvider && (
+      (isSourceToCsvSwitch && !isSourceLockedStub)
+      // Edit: saved Source engagement (or a roll forward with a Source prior year) switched to Partial Year (shown with the stub note)
+      || (isEditMode && isSourceLockedStub && (originalDataSource === "source" || !!lockedPriorProvider))
+      // Edit/Roll Forward: saved Source, client disconnected, Current Year set to CSV
+      || (isEditMode && !clientHasSourceConnection && !isSourceLockedStub && originalDataSource === "source" && yearChangeKind(0) === "toCsv")
+    );
+    const switchToCsvMessage = showSwitchToCsvMessage && switchFromProvider ? (
+     <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+      <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+      <span className="text-sm text-amber-800 dark:text-amber-200">
+       {`Years switched to CSV will no longer pull data from ${sourceLabel(switchFromProvider)}.`}
+      </span>
+     </div>
+    ) : null;
+    const showSwitchToSourceMessage = !showMismatchWarning && !isSourceLockedStub && (
+      (isReconnectFlow && hasSelectedActiveConnection)
+      || (isEditMode && clientHasSourceConnection && [0, 1, 2].some(i => yearChangeKind(i) === "toSource"))
+    );
+    // Roll forward with no client connection → auto CSV, locked
+    const isRollForwardNoSource = isRollForwardSource && !clientHasSourceConnection;
+    const lockedYearLabel = (k: "py1" | "py2") => {
+      const v = lockedYearSource(k);
+      // Partial year turns every year to CSV, including locked prior years
+      return v === "csv" || v === "nodata" || priorYearsToCsv ? "CSV / Excel / PDF · Prior year" : `${accountingProviders[v].buttonName} · Prior year`;
+    };
+const performSave = (action?: "keep" | "reset") => {
+   const savedDataSource: "csv" | "source" = isSourceLockedStub || isRollForwardNoSource ? "csv" : dataSource;
+   // Save what each row actually uses: Partial year forces every non-locked row to CSV
+   const effectiveYearSources = isSourceLockedStub ? yearSources.map(v => (v === "locked" ? v : "csv")) : yearSources;
+   const isSourceRow = (v?: string) => !!v && v.startsWith("source:") && v !== "source:none";
+   // Locked roll-forward rows keep the source they inherited from last year;
+   // Partial year / roll forward CY Source → CSV save every year as CSV, including locked prior years
+   const yearFields = savedYearSources({
+     rows: effectiveYearSources, lockedSource: lockedYearSource, priorToCsv: priorYearsToCsv,
+     priorYearSources: editingMeta?.priorYearSources, sourceRollForward: editingMeta?.sourceRollForward,
+   });
+   const firstSourceRow = effectiveYearSources.find(isSourceRow);
+   const firstSourceProvider = firstSourceRow ? rowProvider(firstSourceRow) : undefined;
  const record: EngagementRecord = {
  id: engagementId,
- client: clientName,
+ client: resolveSavedClientName(isEditMode, editingRecord?.client, clientName),
  type: engagementType,
  yearEnd: formatYearEnd(currentYearEnd),
- team: "View Assignees",
- status: "New",
- statusVariant: "new",
- hasRF: false,
- dateCreated: formatDateCreated(),
+ team: editingRecord?.team ?? "View Assignees",
+ status: editingRecord?.status ?? "New",
+ statusVariant: editingRecord?.statusVariant ?? "new",
+ hasRF: editingRecord?.hasRF ?? false,
+ dateCreated: editingRecord?.dateCreated ?? formatDateCreated(),
  firstYearAudit,
  };
+ if (isEditMode && editingRecord) {
+ updateEngagement(editingRecord.id, record);
+ } else {
  addEngagement(record);
+ }
+ // Edit keeps every saved field this page does not manage (e.g. an audit's industry) and leaves the Audit configuration,
+ // dates and framework exactly as stored unless the user changed them, so pressing Update never rewrites Audit data.
+ const savedMeta = isEditMode ? editingMeta : undefined;
+ const keepSavedDate = (current: string, saved?: string) => (saved && toMmDdYyyy(saved) === current ? saved : current);
  setEngagementMeta(engagementId, {
+ ...savedMeta,
  firstYearAudit,
- firstYearOnPlatform: firstYearAudit ? firstYearOnPlatform : undefined,
- isRollForward: firstYearAudit ? isRollForward : undefined,
- firstYearTemplates: firstYearAudit ? [...firstYearTemplates] : undefined,
+ firstYearOnPlatform: savedMeta ? savedMeta.firstYearOnPlatform : (firstYearAudit ? firstYearOnPlatform : undefined),
+ isRollForward: savedMeta ? savedMeta.isRollForward : (firstYearAudit ? isRollForward : undefined),
+ firstYearTemplates: savedMeta ? savedMeta.firstYearTemplates : (firstYearAudit ? [...firstYearTemplates] : undefined),
  templateId: templateId || undefined,
- accountingFramework: isAudit ? accountingStandards : undefined,
+ accountingFramework: isAudit ? (savedMeta && accountingStandards === savedMeta.accountingStandards ? savedMeta.accountingFramework : accountingStandards) : undefined,
  accountingStandards,
  budget,
- periodStart: currentYearStart,
- periodEnd: currentYearEnd,
- auditPeriodType: isAudit ? periodType : undefined,
- annualizeInterim: isAudit && periodType === "Interim (6-month)" ? annualizeInterim : undefined,
- firstTimeAdoption: isAudit ? firstTimeAdoption : undefined,
+ periodStart: keepSavedDate(currentYearStart, savedMeta?.periodStart),
+ periodEnd: keepSavedDate(currentYearEnd, savedMeta?.periodEnd),
+dataSource: savedDataSource,
+yearDataSources: yearFields.yearDataSources,
+yearSourceProviders: yearFields.yearSourceProviders,
+ sourceYears: savedDataSource === "source" ? Math.max(1, effectiveYearSources.filter(isSourceRow).length) : undefined,
+ teamMembers: savedMeta && !savedMeta.teamMembers && teamMembers.length === 0 ? undefined : teamMembers,
+ sourceProvider: savedDataSource === "source" ? (firstSourceProvider ?? clientSourceIntegration ?? undefined) : (editingMeta?.sourceDisconnectedFrom ? editingMeta.sourceProvider : undefined),
+ priorYearSources: yearFields.priorYearSources,
+ sourceDisconnectedFrom: savedDataSource === "csv" ? editingMeta?.sourceDisconnectedFrom : undefined,
+ sourceRollForward: yearFields.sourceRollForward,
+ // Rows still on the previous connection keep its id; any row on the active connection moves the engagement to it
+ sourceConnectionId: savedDataSource !== "source" ? undefined
+  : effectiveYearSources.some(v => isSourceRow(v) && !v.endsWith("|prev")) && activeConnectionId ? activeConnectionId
+  : editingMeta?.sourceConnectionId,
+ sourceYearsAvailable: editingMeta?.sourceYearsAvailable,
+ // Only an explicit reset removes CSV data; Source years re-pull on any year-end change.
+ yearRemoveData: yearEndChanged && action === "reset"
+  ? Object.fromEntries(visibleYearIdx.map(i => (["cy", "py1", "py2"] as const)[i]).filter(k => yearFields.yearDataSources?.[k] === "csv").map(k => [k, true]))
+  : undefined,
+ dataPulledAsOf: yearEndChanged ? undefined : editingMeta?.dataPulledAsOf,
+  auditPeriodType: periodType,
+  firstYearOfOperations: isFooPeriod ? true : undefined,
+  fyoChainYear: isFooPeriod ? editingMeta?.fyoChainYear : undefined,
+ annualizeInterim: savedMeta ? savedMeta.annualizeInterim : (isAudit && periodType === "Interim (6-month)" ? annualizeInterim : undefined),
+ firstTimeAdoption: savedMeta ? savedMeta.firstTimeAdoption : (isAudit ? firstTimeAdoption : undefined),
  });
  if (isAudit && teamMembers.length > 0) {
  const roleMap: Record<string, string> = {
@@ -907,7 +1484,9 @@ export default function CreateEngagement() {
  localStorage.setItem(`audit-team-rates-${engagementId}`, JSON.stringify(rateMap));
  }
  }
- if (isAudit && firstYearAudit) {
+ if (isEditMode) {
+ toast.success("Engagement updated successfully.");
+ } else if (isAudit && firstYearAudit) {
  toast.success("Engagement created — IE checklist and predecessor letter added.");
  } else {
  toast.success("Engagement created successfully.");
@@ -915,8 +1494,16 @@ export default function CreateEngagement() {
  navigate("/engagements");
  };
 
+  const handleCreate = () => {
+    if (isEditMode && yearEndChanged && !isCyToCsv) {
+      setShowUpdateWarning(true);
+      return;
+    }
+    performSave();
+  };
+
  return (
- <Layout title="Create Engagement">
+ <Layout title={isEditMode ? "Edit Engagement" : "Create Engagement"}>
  <div className="flex-1 overflow-y-auto bg-background">
  <div className="p-6">
  {/* Header with back button */}
@@ -953,7 +1540,11 @@ export default function CreateEngagement() {
  <span className="text-xs font-semibold text-primary">{col.label}</span>
  {Array.isArray(col.value) ? (
  <div className="flex items-center gap-1.5">
- {col.value.includes("quickbooks") && <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />}
+ {clientSourceIntegration ? (
+ <img src={accountingProviders[clientSourceIntegration].badgeLogo} alt={sourceLabel(clientSourceIntegration)} className="h-5 object-contain" />
+ ) : (
+ <span className="text-sm text-foreground">—</span>
+ )}
  </div>
  ) : (col as any).isFlag ? (
  <span className={`text-sm font-medium ${(col as any).flagActive ? "text-amber-600" : "text-muted-foreground"}`}>{col.value as string}</span>
@@ -1126,38 +1717,202 @@ export default function CreateEngagement() {
  </div>
  )}
 
- <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
- {/* Period Type */}
+<SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
+ {/* Source Data status */}
+ <div className="mt-3 pb-4 mb-2 border-b border-border/50 flex items-center gap-4">
+  <span className="text-sm text-foreground w-[160px] shrink-0">Source Data</span>
+    <div className="flex flex-wrap items-center gap-x-[200px] gap-y-2">
+   <span className="inline-flex flex-nowrap items-center gap-3">
+    {!activeProvider ? (
+     <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-[11px] font-medium text-foreground">Not Connected</span>
+    ) : (<>
+     <span className="inline-flex items-center rounded-[10px] border border-border px-2 py-1"><img src={accountingProviders[activeProvider].badgeLogo} alt={sourceLabel(activeProvider)} className="h-4 object-contain" /></span>
+      <SourceStatusPill connected />
+      <span className="whitespace-nowrap text-sm text-foreground" title={sourceEntityName}>{sourceEntityName}</span>
+    </>)}
+   </span>
+   {prevSourceProvider && (
+    <span className="inline-flex flex-nowrap items-center gap-2">
+     <span className="text-sm text-muted-foreground">Previous</span>
+     <span className="inline-flex items-center rounded-[10px] border border-border px-2 py-1"><img src={accountingProviders[prevSourceProvider].badgeLogo} alt={sourceLabel(prevSourceProvider)} className="h-4 object-contain" /></span>
+       <SourceStatusPill connected={false} />
+      <span className="whitespace-nowrap text-sm text-foreground" title={sourceEntityName}>{sourceEntityName}</span>
+    </span>
+   )}
+  </div>
+ </div>
+{/* Period Type */}
  <div className="flex items-center gap-4 py-2.5">
- <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
+ <span className="text-sm text-foreground w-44 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
  <div className="flex-1 min-w-0 max-w-sm">
- <Select value={periodType} onValueChange={setPeriodType}>
- <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+ <Select value={periodType} onValueChange={handlePeriodTypeChange} disabled={isFyoRolled}>
+ <SelectTrigger className={`h-9 text-sm ${isFyoRolled ? "opacity-60" : ""}`}><SelectValue placeholder="Select..." /></SelectTrigger>
  <SelectContent>
  {periodTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
  </SelectContent>
  </Select>
+ {isFyoRolled && <p className="mt-1 text-xs text-muted-foreground">Locked until all three years are full years.</p>}
  </div>
  </div>
  {/* Year rows */}
  {[
- { label: "Current Year", required: true, start: currentYearStart, setStart: setCurrentYearStart, end: currentYearEnd, setEnd: setCurrentYearEnd },
- { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End },
- { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End },
- ].map(row => (
- <div key={row.label} className="flex items-start gap-4 py-2.5">
- <span className="text-sm text-foreground w-32 shrink-0 whitespace-nowrap pt-5">
- {row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}
- </span>
- <div className="flex gap-3 flex-1 min-w-0">
- <div className="flex-1 min-w-0 max-w-44"><LabeledInput label="Start Date" value={row.start} onChange={row.setStart} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
- <div className="flex-1 min-w-0 max-w-44"><LabeledInput label="End Date" value={row.end} onChange={row.setEnd} required={row.required} icon={<Calendar className="h-4 w-4" />} /></div>
+ { label: "Current Year", required: true, start: currentYearStart, setStart: handleCurrentYearStartChange, end: currentYearEnd, setEnd: handleCurrentYearEndChange, disabled: isFyoRolled, note: "" },
+ { label: "Prior Year 1", required: false, start: fooDerived ? "" : priorYear1Start, setStart: setPriorYear1Start, end: fooDerived ? "" : priorYear1End, setEnd: setPriorYear1End, disabled: isFullYearPeriod || fooDerived || isFyoRolled, note: fooDerived ? "No data for this period" : isFullYearPeriod ? "Auto-derived from Current Year dates" : "" },
+ { label: "Prior Year 2", required: false, start: fooDerived || rfPy2NoData ? "" : priorYear2Start, setStart: setPriorYear2Start, end: fooDerived || rfPy2NoData ? "" : priorYear2End, setEnd: setPriorYear2End, disabled: isFullYearPeriod || fooDerived || rfPy2NoData || isFyoRolled, note: fooDerived || rfPy2NoData ? "No data for this period" : isFullYearPeriod ? "Auto-derived from Current Year dates" : "" },
+ ].filter((_, i) => !(fooDerived && i > 0) && !(rfPy2NoData && i === 2) && !(isFyoRolled && i >= fyoChain)).map((row, i) => {
+  const noData = (fooDerived && i > 0) || (rfPy2NoData && i === 2);
+  const locked = isRollForwardSource && i > 0 && !noData;
+  const stubLocked = isSourceLockedStub;
+  const val = yearSources[i] ?? "csv";
+  const disconnectedP = yearDisconnectedProvider(i);
+  return (
+  <div key={row.label} className="py-2">
+   <div className={`grid grid-cols-[176px_minmax(0,176px)_minmax(0,176px)_minmax(200px,320px)] gap-4 items-start ${i === 0 ? "mt-4" : ""}`}>
+    <div className="flex flex-col gap-1">
+     <span className="text-xs font-medium text-foreground opacity-0" aria-hidden="true">Period</span>
+     <span className={`flex h-9 items-center text-sm text-foreground whitespace-nowrap ${noData ? "opacity-60" : ""}`}>{row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}</span>
+    </div>
+    <div className={row.disabled ? "opacity-60" : ""}>
+     <DateField label="Start Date" value={row.start} onChange={row.setStart} disabled={row.disabled} />
+    </div>
+    <div className={row.disabled ? "opacity-60" : ""}>
+     <DateField label="End Date" value={row.end} onChange={row.setEnd} disabled={row.disabled} />
+    </div>
+    <div className="flex flex-col gap-1">
+     <span className="text-xs font-medium text-foreground">Data Source</span>
+     {locked ? (
+      <Select value="locked" disabled><SelectTrigger className="h-9 text-sm" title={lockedYearLabel(i === 1 ? "py1" : "py2")}><SelectValue /></SelectTrigger>
+       <SelectContent><SelectItem value="locked">{lockedYearLabel(i === 1 ? "py1" : "py2")}</SelectItem></SelectContent></Select>
+     ) : noData ? (
+      <Select value="nodata" disabled><SelectTrigger className="h-9 text-sm" title="No data"><SelectValue /></SelectTrigger>
+       <SelectContent><SelectItem value="nodata">No data</SelectItem></SelectContent></Select>
+     ) : (!stubLocked && disconnectedP) ? (
+      <Select value="disconnected" onValueChange={v => setYearSource(i, v)}>
+       <SelectTrigger className="h-9 text-sm text-muted-foreground" title={`${accountingProviders[disconnectedP].buttonName} · Disconnected`}>
+        <SelectValue><SourceIdentityRow provider={disconnectedP} connected={false} entityName={sourceEntityName} /></SelectValue>
+       </SelectTrigger>
+       <SelectContent>
+        {activeProvider && (activeProvider !== disconnectedP || val.endsWith("|prev")) && (
+         <SelectItem value={`source:${activeProvider}`}><SourceIdentityRow provider={activeProvider} connected entityName={sourceEntityName} /></SelectItem>
+        )}
+        <SelectItem value="csv">CSV / Excel / PDF</SelectItem>
+       </SelectContent>
+      </Select>
+     ) : (
+      <Select value={stubLocked ? "csv" : (val.startsWith("source:") ? val : "csv")} disabled={stubLocked} onValueChange={v => setYearSource(i, v)}>
+       <SelectTrigger className="h-9 text-sm" title={stubLocked || !val.startsWith("source:") ? "CSV / Excel / PDF" : val === "source:none" ? "Not connected" : `${accountingProviders[rowProvider(val)].buttonName}`}>
+        <SelectValue>
+         {stubLocked || !val.startsWith("source:") ? "CSV / Excel / PDF"
+          : val === "source:none" ? "Not connected"
+          : <SourceIdentityRow provider={rowProvider(val)} connected={rowProvider(val) === activeProvider && !val.endsWith("|prev")} entityName={sourceEntityName} />}
+        </SelectValue>
+       </SelectTrigger>
+       <SelectContent>
+        {(() => {
+         // Exactly one source option: the year's saved provider, else the client's single active connection
+         const cur = val.startsWith("source:") && val !== "source:none" ? rowProvider(val) : null;
+         const p = cur ?? activeProvider;
+         return p
+          ? <SelectItem value={`source:${p}`}><SourceIdentityRow provider={p} connected={p === activeProvider && !val.endsWith("|prev")} entityName={sourceEntityName} /></SelectItem>
+          : val === "source:none" ? <SelectItem value="source:none">Not connected</SelectItem> : null; // legacy saved value only; never offered as a choice
+        })()}
+        <SelectItem value="csv">CSV / Excel / PDF</SelectItem>
+       </SelectContent>
+      </Select>
+     )}
+    </div>
+   </div>
+   {row.note && (
+    <div className="grid grid-cols-[176px_minmax(0,176px)_minmax(0,176px)_minmax(200px,320px)] gap-4 mt-1">
+     <span />
+     <span className="col-span-2 text-xs text-muted-foreground">{row.note}</span>
+    </div>
+   )}
+  </div>
+  );
+ })}
+{/* Contextual messages below year rows */}
+{isSourceLockedStub ? (
+ <>
+ <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+  <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+  <span className="text-sm text-amber-800 dark:text-amber-200">Data will not be pulled from source for stub periods.</span>
  </div>
- </div>
- ))}
+ {switchToCsvMessage}
+ </>
+) : (
+ <>
+  {!showMismatchWarning && clientHasSourceConnection && !isSourceToCsvSwitch && yearSourceMix.csv > 0 && !isSourceLockedStub && !isFooPeriod && !showSwitchToCsvMessage && !showSwitchToSourceMessage && (
+   <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+    <span className="text-sm text-amber-800 dark:text-amber-200">
+     Data for each year will come from the data source selected.
+    </span>
+   </div>
+  )}
+  {switchToCsvMessage}
+  {((showMismatchWarning && originalCyProvider) || (!showMismatchWarning && anyRowDisconnected)) && (
+   <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-red-300 bg-red-50 dark:bg-red-950/30 px-3 py-2">
+    <XCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+    <span className="text-sm text-red-800 dark:text-red-200">Your client's source connection has changed.</span>
+   </div>
+  )}
+  {showSwitchToSourceMessage && (
+   <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+    <span className="text-sm text-amber-800 dark:text-amber-200">{`Years switched to ${sourceLabel(activeProvider as AccountingProvider)} will have their CSV trial balance data replaced with data pulled from ${sourceLabel(activeProvider as AccountingProvider)}.`}</span>
+   </div>
+  )}
+ </>
+)}
+ {cyIsFutureYearEnd && (
+  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-blue-200 bg-blue-50 dark:bg-blue-950/30 px-3 py-2">
+   <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+   <span className="text-sm text-blue-800 dark:text-blue-200">
+    {`${isEditMode ? "This is" : "You're creating"} a future year-end engagement. ${cyRowIsSource ? "Data will be pulled as of each refresh until the year ends." : "Data will show what you import."}`}
+   </span>
+  </div>
+ )}
  </SectionCard>
  </div>
 
+
+ {showDeleteBlock && (
+ <div className="overflow-hidden rounded-[12px] border border-border bg-card">
+  <div className="flex items-start gap-3 border-b border-red-200 bg-red-50 px-5 py-3.5 dark:border-red-900 dark:bg-red-950/40">
+   <AlertTriangle className="h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
+   <div className="min-w-0 flex-1">
+    <p className="text-base font-bold leading-snug text-red-700 dark:text-red-300">This action cannot be undone</p>
+    <p className="mt-1 text-sm text-red-900 dark:text-red-200">{isSourceLockedStub ? "This action is triggered because you changed the period type to Partial Year, which uses CSV only. It applies only to the years whose data source changed." : "This action is triggered because you changed one of the data source dropdowns above. It applies only to the years whose data source you changed."}</p>
+   </div>
+  </div>
+  <div className="px-5 py-2">
+   {[
+    { text: "Already posted adjusting entries", sub: "", tag: "Deleted" },
+    { text: "Manually added accounts", sub: "To remove them, exit this page, delete those accounts, and run this change again.", tag: "Stays as is" },
+    { text: "Issues, comments and requests raised till date", sub: "", tag: "Deleted" },
+    { text: "Documents added till date", sub: "A temporary folder will be created and your documents will be moved there.", tag: "Moved" },
+   ].map((row, index, rows) => (
+    <div key={row.text} className={`flex items-start gap-4 py-3 ${index < rows.length - 1 ? "border-b border-gray-100 dark:border-gray-800" : ""}`}>
+     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-200">{index + 1}</span>
+     <div className="min-w-0 flex-1">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+       <span className="text-sm text-foreground">{row.text}</span>
+       <Badge variant={row.tag === "Deleted" ? "destructive" : row.tag === "Stays as is" ? "success" : "info"}>{row.tag}</Badge>
+      </div>
+      {row.sub && <p className="mt-0.5 text-[13px] text-gray-600 dark:text-gray-300">{row.sub}</p>}
+     </div>
+    </div>
+   ))}
+  </div>
+  <div className="border-t border-border px-5 pb-[18px] pt-3.5">
+   <label className="flex items-center gap-1 text-sm font-semibold text-foreground">Type DELETE to confirm you understand<span className="text-destructive">*</span></label>
+   <input type="text" value={ackText} onChange={e => setAckText(e.target.value)} placeholder="DELETE" required aria-required="true"
+    className="input-double-border mt-1 h-10 w-64 rounded-[10px] border border-red-300 bg-card px-3 text-sm text-foreground outline-none" />
+   {ackChecked && <p className="mt-1 text-xs font-medium text-[#2E7D52]">Confirmed</p>}
+  </div>
+ </div>
+ )}
  {/* Assigned Team — full page width, gated */}
  {engagementDetailsValid && (
  <SectionCard
@@ -1275,14 +2030,51 @@ export default function CreateEngagement() {
  <X className="h-4 w-4" />
  Cancel
  </Button>
- <Button disabled={!isFormValid} onClick={handleCreate}>
- <Plus className="h-4 w-4" />
- Create Engagement
+ <Button disabled={!isFormValid || connectionBlocksSave(isEditMode, yearSources, originalYearSources, showNoConnectionError, showMismatchWarning) || (showDeleteBlock && !ackChecked)} onClick={handleCreate}>
+ {isEditMode ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+ {isEditMode ? "Update Engagement" : "Create Engagement"}
  </Button>
  </div>
  </div>
  </div>
- <Dialog open={showAddRoleModal} onOpenChange={setShowAddRoleModal}>
+  <Dialog open={showUpdateWarning} onOpenChange={setShowUpdateWarning}>
+   <DialogContent className="max-w-[460px] gap-5 p-6">
+    <DialogHeader className="items-center gap-3 text-center sm:text-center">
+     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+      <AlertTriangle className="h-6 w-6" />
+     </div>
+     <DialogTitle>Engagement Update Warning</DialogTitle>
+     <DialogDescription className="text-foreground">Changing the year-end date may impact your existing data.</DialogDescription>
+    </DialogHeader>
+    {updateWarningVariant === "source" && <p className="text-sm">Proceeding will permanently delete all existing data, including:</p>}
+    <div className="rounded-lg border border-border p-4 text-sm">
+     <ul className="list-disc space-y-2 pl-4">
+      {updateWarningVariant === "source" ? <>
+       <li>Trial balance</li>
+       <li>Adjusting entries</li>
+       <li>Mapping and related work</li>
+      </> : updateWarningVariant === "csv" ? <>
+       <li><strong>Keep Existing Data:</strong> Retains your current data and update it to the new year-end dates.</li>
+       <li><strong>Reset Data:</strong> Deletes all existing data (including trial balance, adjusting entries and mappings) and reloads fresh data.</li>
+      </> : <>
+       <li><strong>Source-connected years:</strong> Data will be pulled again for the new year-end dates.</li>
+       <li><strong>CSV years – Keep Existing Data:</strong> Retains your current data and updates it to the new year-end dates.</li>
+       <li><strong>CSV years – Reset Data:</strong> Deletes existing data (trial balance, adjusting entries and mappings) for CSV years. Import new data afterwards.</li>
+      </>}
+     </ul>
+    </div>
+    <p className="text-center text-sm text-destructive"><strong>Note:</strong> This action cannot be undone.</p>
+    <DialogFooter className="grid grid-cols-2 gap-3 sm:space-x-0">
+     <Button variant="outline" className="h-auto min-h-9 whitespace-normal" onClick={() => updateWarningVariant === "source" ? setShowUpdateWarning(false) : performSave("keep")}>
+      {updateWarningVariant === "source" ? "Cancel" : updateWarningVariant === "csv" ? "Keep Existing data" : "Keep Existing Data"}
+     </Button>
+     <Button variant="destructive" className="h-auto min-h-9 whitespace-normal" onClick={() => performSave("reset")}>
+      {updateWarningVariant === "source" ? "Proceed" : "Reset Data"}
+     </Button>
+    </DialogFooter>
+   </DialogContent>
+  </Dialog>
+  <Dialog open={showAddRoleModal} onOpenChange={setShowAddRoleModal}>
  <DialogContent className="max-w-sm">
  <DialogHeader>
  <DialogTitle>Add new role</DialogTitle>
