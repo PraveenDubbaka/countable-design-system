@@ -30,6 +30,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+import { getEngagementSourceIntegration, getClientSourceIntegration, isEngagementSourceDisconnected, type EngagementDataType } from "@/lib/clientSource";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { createRollForward } from "@/store/engagementsStore";
+import { accountingProviders } from "@/lib/accountingProviders";
 
 function getActiveFirm() {
   try {
@@ -39,6 +44,47 @@ function getActiveFirm() {
   } catch {
     return { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
   }
+}
+
+const DISCONNECTED_TOOLTIP = "Disconnected. Update the engagement in Edit Engagement to switch source.";
+
+function SourceBadge({ type, disconnected = false }: { type: EngagementDataType; disconnected?: boolean }) {
+ if (!type || type === "unknown") {
+   return (
+     <span className="inline-flex items-center justify-center h-8 px-3 rounded-lg border border-border bg-muted text-xs font-medium text-foreground">
+       {type === "unknown" ? "Source" : "CSV"}
+     </span>
+   );
+ }
+ const badgeClasses = `inline-flex items-center justify-center h-8 w-24 px-1 rounded-lg bg-white border ${
+   disconnected ? "border-red-400 dark:border-red-700" : "border-border"
+ }`;
+ const content =
+   type === "sage" ? (
+     <img src={accountingProviders.sage.logo} alt="Sage" className="h-5" />
+   ) : type === "xero" ? (
+     <>
+       <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-5" />
+       <span className="text-xs font-medium text-gray-900">Xero</span>
+     </>
+   ) : (
+     <img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-5" />
+   );
+ const badge = (
+   <div
+     className={`${badgeClasses}${type === "xero" ? " gap-1.5" : ""}`}
+     aria-label={disconnected ? `${accountingProviders[type].buttonName} — disconnected` : undefined}
+   >
+     {content}
+   </div>
+ );
+ if (!disconnected) return badge;
+ return (
+   <Tooltip>
+     <TooltipTrigger asChild>{badge}</TooltipTrigger>
+     <TooltipContent>{DISCONNECTED_TOOLTIP}</TooltipContent>
+   </Tooltip>
+ );
 }
 
 type AssigneeEntry = { initials: string; name: string; role: string; email: string; phone: string; color: string };
@@ -129,7 +175,7 @@ const filterPeriodOptions = [
 
 export default function Engagements() {
  const navigate = useNavigate();
- const { engagements: engagementListRaw, deleteEngagement } = useEngagements();
+ const { engagements: engagementListRaw, deleteEngagement, addEngagement } = useEngagements();
  const engagementList = engagementListRaw;
  const [searchQuery, setSearchQuery] = useState("");
  const [filterPeriod, setFilterPeriod] = useState("Last 6 Month Engagements");
@@ -177,9 +223,18 @@ export default function Engagements() {
  toast.success(`Engagement ${id} deleted`);
  };
 
+ const handleRollForward = (id: string, client: string, e: React.MouseEvent) => {
+ e.stopPropagation();
+ const record = createRollForward(id, getClientSourceIntegration(client));
+ if (!record) return;
+ addEngagement(record);
+ toast.success(`Rolled forward to ${record.id}`);
+ navigate(`/engagements/${record.id}/edit`);
+ };
+
  const handleEdit = (id: string, e: React.MouseEvent) => {
  e.stopPropagation();
- navigate(`/engagements/${id}`);
+ navigate(`/engagements/${id}/edit`);
  };
 
  return (
@@ -287,6 +342,7 @@ export default function Engagements() {
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Type</th>
  <th className="text-left px-4 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Cell</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Period/Year End Date</th>
+ <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Data Type</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Date Created</th>
@@ -296,7 +352,7 @@ export default function Engagements() {
  <tbody className="divide-y divide-border">
  {filteredEngagements.length === 0 && searchQuery.trim() && (
  <tr>
- <td colSpan={9} className="px-6 py-16 text-center">
+ <td colSpan={10} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
  <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
  <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
@@ -306,6 +362,8 @@ export default function Engagements() {
  {filteredEngagements.map((engagement) => {
  const isExpanded = expandedId === engagement.id;
  const assignees = ENGAGEMENT_ASSIGNEES[engagement.id];
+ const savedType = getEngagementSourceIntegration(engagement.id, engagement.client);
+ const sourceDisconnected = isEngagementSourceDisconnected(engagement.id, engagement.client);
  return (
  <React.Fragment key={engagement.id}>
  <tr className="hover:bg-muted/50 transition-colors group">
@@ -343,6 +401,9 @@ export default function Engagements() {
  </td>
  <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
  <td className="px-6 py-2 whitespace-nowrap">
+ <SourceBadge type={savedType} disconnected={sourceDisconnected} />
+ </td>
+ <td className="px-6 py-2 whitespace-nowrap">
  <button
  className="inline-flex items-center gap-1 text-sm text-link cursor-pointer hover:underline"
  onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : engagement.id); }}
@@ -363,6 +424,14 @@ export default function Engagements() {
  >
  <Pencil className="h-4 w-4 text-link group-hover/edit:icon-edit" />
  </button>
+ <button
+ className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+ title="Roll Forward"
+ aria-label="Roll Forward"
+ onClick={(e) => handleRollForward(engagement.id, engagement.client, e)}
+ >
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-link group-hover/rf:text-link" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5V11" /><path d="M3 6.5V18a1.5 1.5 0 0 0 1.5 1.5H10" /><path d="M7 3v4M13 3v4M3 10h14" /><path d="M14 17h7" /><path d="M18 14l3 3-3 3" /></svg>
+ </button>
  {engagement.id !== 'AUD-NPM-Dec312025' && (
  <button
  className="p-1.5 hover:bg-destructive/10 rounded-lg transition-colors group/trash"
@@ -376,7 +445,7 @@ export default function Engagements() {
  </tr>
  {isExpanded && assignees && (
  <tr className="bg-muted/30">
- <td colSpan={9} className="px-6 py-4">
+ <td colSpan={10} className="px-6 py-4">
  <div className="flex gap-10">
  <div className="flex-1">
  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Firm Team</p>

@@ -62,6 +62,10 @@ import { Audit670Worksheet } from "@/components/Audit670Worksheet";
 import { Audit680Worksheet } from "@/components/Audit680Worksheet";
 import { ConnectorsModal, CONNECTORS_BY_ID } from "@/components/ConnectorsModal";
 import { getEngagementMeta } from "@/store/engagementsStore";
+import { getClientSourceIntegration, CLIENT_CONNECTION_EVENT } from "@/lib/clientSource";
+import { getClientEngagementConnectors, isClientAccountingConnector, withoutClientAccountingConnectors } from "@/lib/engagementConnectors";
+import { accountingProviders } from "@/lib/accountingProviders";
+import { useEngagements } from "@/store/EngagementsContext";
 import FSPageViewer, { FSPageType } from "@/components/FSPageViewer";
 import FSSettingsPanel from "@/components/luka/workspace/FSSettingsPanel";
 import LayoutSettingsPanel from "@/components/luka/workspace/LayoutSettingsPanel";
@@ -996,6 +1000,7 @@ export default function EngagementDetail() {
  checklistKey?: string;
  }>();
  const navigate = useNavigate();
+ const { engagements } = useEngagements();
  const [searchParams] = useSearchParams();
  const { isCollapsed: isPanelCollapsed, toggle: togglePanel } = useSecondaryPanel();
  const [checklist, setChecklist] = useState<Checklist | null>(null);
@@ -1259,22 +1264,50 @@ export default function EngagementDetail() {
  // Connectors modal
  const [connectorsOpen, setConnectorsOpen] = useState(false);
  const [scrollToConnectorId, setScrollToConnectorId] = useState<string | undefined>(undefined);
- const [connectedApps, setConnectedApps] = useState<Set<string>>(() => {
- const stored = localStorage.getItem(`connectors-${engagementId}`);
- if (stored) {
- try { return new Set(JSON.parse(stored) as string[]); } catch { /* fall through */ }
- }
- return new Set(["xero"]);
- });
+ // Accounting connectors (QuickBooks / Xero / Sage) follow the client's connection; only the other connectors are kept per engagement
+ const [localConnectorState, setLocalConnectorState] = useState<{ engagementId: string | undefined; apps: Set<string> }>({ engagementId: undefined, apps: new Set() });
  useEffect(() => {
  if (!engagementId) return;
- localStorage.setItem(`connectors-${engagementId}`, JSON.stringify(Array.from(connectedApps)));
- }, [connectedApps, engagementId]);
+ let apps = new Set<string>();
+ try {
+ const stored: unknown = JSON.parse(localStorage.getItem(`connectors-${engagementId}`) || "[]");
+ if (Array.isArray(stored)) apps = withoutClientAccountingConnectors(stored.filter((id): id is string => typeof id === "string"));
+ } catch { /* ignore invalid local data */ }
+ setLocalConnectorState({ engagementId, apps });
+ }, [engagementId]);
+ // Persist the engagement's own connectors. Accounting entries saved earlier are ignored but left in storage, and the list
+ // is only rewritten when a non-accounting connector actually changes (visiting an engagement never rewrites it).
+ useEffect(() => {
+ if (!engagementId || localConnectorState.engagementId !== engagementId) return;
+ const key = `connectors-${engagementId}`;
+ let saved: string[] = [];
+ try {
+ const stored: unknown = JSON.parse(localStorage.getItem(key) || "[]");
+ if (Array.isArray(stored)) saved = stored.filter((id): id is string => typeof id === "string");
+ } catch { /* ignore invalid local data */ }
+ const next = [
+ ...saved.filter(id => isClientAccountingConnector(id) || localConnectorState.apps.has(id)),
+ ...Array.from(localConnectorState.apps).filter(id => !saved.includes(id)),
+ ];
+ if (JSON.stringify(next) !== JSON.stringify(saved)) localStorage.setItem(key, JSON.stringify(next));
+ }, [localConnectorState, engagementId]);
+ const [clientConnectionVersion, setClientConnectionVersion] = useState(0);
+ useEffect(() => {
+ const update = () => setClientConnectionVersion(version => version + 1);
+ window.addEventListener(CLIENT_CONNECTION_EVENT, update);
+ window.addEventListener("storage", update);
+ return () => {
+ window.removeEventListener(CLIENT_CONNECTION_EVENT, update);
+ window.removeEventListener("storage", update);
+ };
+ }, []);
  const handleConnectorConnect = useCallback((id: string) => {
- setConnectedApps(prev => new Set([...prev, id]));
+ if (isClientAccountingConnector(id)) return;
+ setLocalConnectorState(prev => ({ ...prev, apps: new Set([...prev.apps, id]) }));
  }, []);
  const handleConnectorDisconnect = useCallback((id: string) => {
- setConnectedApps(prev => { const n = new Set(prev); n.delete(id); return n; });
+ if (isClientAccountingConnector(id)) return;
+ setLocalConnectorState(prev => { const apps = new Set(prev.apps); apps.delete(id); return { ...prev, apps }; });
  }, []);
 
  // Client responses hook
@@ -1284,6 +1317,15 @@ export default function EngagementDetail() {
  const displayId = engagementId || "Unknown";
  const clientName = engagement?.client || "Unknown Client";
  const status = engagement?.status || "In Progress";
+ // Connection state follows the client of the engagement as stored: engagements created in the app are not in the local
+ // record above (the header keeps using that record, so it is unchanged for every existing engagement).
+ const contextEngagement = engagements.find((item) => item.id === engagementId);
+ const flowClientName = engagement?.client ?? contextEngagement?.client ?? clientName;
+ const connectedApps = useMemo(
+ () => getClientEngagementConnectors(flowClientName, localConnectorState.engagementId === engagementId ? localConnectorState.apps : []),
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ [flowClientName, localConnectorState, engagementId, clientConnectionVersion]
+ );
 
  // Get unique clients and current client's engagements
  const uniqueClients = useMemo(() => getUniqueClients(), []);
@@ -2254,6 +2296,17 @@ export default function EngagementDetail() {
  );
  };
  // No early return — empty state shown inline when checklist is null
+ // Engagement source connection status (header badge)
+ const headerMeta = getEngagementMeta(engagementId ?? '');
+ const headerSavedProvider = headerMeta.sourceProvider;
+ const headerClientSource = getClientSourceIntegration(flowClientName);
+ const headerConfiguredProvider = headerMeta.dataSource === 'source' ? (headerSavedProvider ?? headerClientSource) : null;
+ const isHeaderExternallyDisconnected = !!headerConfiguredProvider && headerClientSource !== headerConfiguredProvider;
+ const headerDisconnectedFrom = isHeaderExternallyDisconnected
+  ? headerConfiguredProvider
+  : (headerMeta.dataSource !== 'source' ? headerMeta.sourceDisconnectedFrom ?? null : null);
+ const headerSourceProvider = headerConfiguredProvider ?? headerDisconnectedFrom;
+ const isHeaderSourceDisconnected = isHeaderExternallyDisconnected || !!headerDisconnectedFrom;
  const engagementBreadcrumb = (
  <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
  {/* Client Name (read-only) */}
@@ -2311,11 +2364,15 @@ export default function EngagementDetail() {
   </div>
  )}
 
- {/* Xero Integration Badge — shown when Xero is connected */}
- {connectedApps.has("xero") && (
- <div className="ml-1 inline-flex items-center justify-center h-7 w-20 px-1 bg-card border border-border rounded-sm gap-1">
- <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
- <span className="text-xs font-medium text-foreground">Xero</span>
+ {/* Engagement source badge — shows the linked source and its connection status */}
+ {headerSourceProvider && (
+ <div className={`ml-1 inline-flex items-center gap-1.5 h-7 px-1.5 bg-card border rounded-sm ${isHeaderSourceDisconnected ? "border-amber-300" : "border-border"}`}>
+ <img src={accountingProviders[headerSourceProvider].badgeLogo} alt={accountingProviders[headerSourceProvider].name} className="h-4 shrink-0" />
+ {isHeaderSourceDisconnected ? (
+ <span className="inline-flex items-center rounded-full border border-[#B4720A]/30 bg-[#FEF6E7] px-1.5 py-0.5 text-[10px] font-medium text-[#B4720A] whitespace-nowrap">Disconnected</span>
+ ) : (
+ <span className="inline-flex items-center rounded-full border border-[#2E7D52]/30 bg-[#EAF4EE] px-1.5 py-0.5 text-[10px] font-medium text-[#2E7D52] whitespace-nowrap">Connected</span>
+ )}
  </div>
  )}
 
@@ -2438,7 +2495,7 @@ export default function EngagementDetail() {
  <DropdownMenuItem
  key={appId}
  className="flex items-center gap-2 cursor-pointer group"
- onClick={() => { handleConnectorDisconnect(appId); }}
+ onClick={isClientAccountingConnector(appId) ? undefined : () => { handleConnectorDisconnect(appId); }}
  >
  <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: c.bg }} />
  <span className="flex-1 text-xs">{c.name}</span>

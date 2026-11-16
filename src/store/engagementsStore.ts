@@ -168,7 +168,8 @@ export function createRollForward(
  // Last year was First Year of Operations / Partial year → this year is a normal 12-month Full year
  const srcIsFyo = m.auditPeriodType === "First Year of Operations"
   || (!!m.firstYearOfOperations && /^partial year$/i.test(m.auditPeriodType ?? ""));
- const srcIsPartial = !srcIsFyo && /^partial year$/i.test(m.auditPeriodType ?? "");
+ // An audit's partial year is saved as "Stub Period" in this app, so it counts as a partial year too
+ const srcIsPartial = !srcIsFyo && /^(partial year|stub period)$/i.test(m.auditPeriodType ?? "");
  const srcChain = srcIsFyo ? (m.fyoChainYear ?? 1) : 0;
  // FOO stays FOO through roll forward until all three years are full years (chain 1 → 2 → 3 → Full year)
  const keepFyo = srcIsFyo && srcChain < 3;
