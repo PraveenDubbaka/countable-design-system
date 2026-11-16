@@ -38,6 +38,10 @@ export default {
         'financial': ['0.875rem', { lineHeight: '1.5', fontWeight: '400', letterSpacing: '0' }],
       },
       colors: {
+        connection: {
+          success: "hsl(var(--connection-success))",
+          "success-surface": "hsl(var(--connection-success-surface))",
+        },
         border: {
           DEFAULT: "hsl(var(--border))",
           lighter: "hsl(var(--border-lighter))",

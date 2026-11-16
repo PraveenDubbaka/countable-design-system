@@ -199,6 +199,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 @layer base {
   :root {
+    --connection-success: 141 46% 34%;
+    --connection-success-surface: 140 31% 94%;
     /* ========================================
        MATERIAL 3 COLOR SYSTEM
        Generated from brand colors:

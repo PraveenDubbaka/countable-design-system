@@ -7,13 +7,16 @@ import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import xeroLogoFull from "@/assets/xero-logo-full.svg";
 import {
   ArrowLeft, Briefcase, Calendar, Users, Plus, Pencil, Trash2,
-  Search, ExternalLink, X, Settings2, Check, UserPlus, User, AlertTriangle,
+  Search, ExternalLink, X, Settings2, Check, UserPlus, User, AlertTriangle, Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
+import { format as formatDateFns } from "date-fns";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 
@@ -72,11 +75,12 @@ const CLIENT_DATA: Record<string, {
   },
 };
 
-// Source Data (visual only, temporary until the TB import flow is final)
+// Source Data (visual only; follows the TB import flow). `label` is the full name (logo alt text); `shortName` is what
+// the Data Source dropdown and its tooltip show.
 type SourceProvider = "quickbooks" | "xero";
-const SOURCE_PROVIDERS: Record<SourceProvider, { label: string; badgeLogo: string }> = {
-  quickbooks: { label: "QuickBooks Online", badgeLogo: intuitQuickbooksLogo },
-  xero: { label: "Xero", badgeLogo: xeroLogoFull },
+const SOURCE_PROVIDERS: Record<SourceProvider, { label: string; shortName: string; badgeLogo: string }> = {
+  quickbooks: { label: "QuickBooks Online", shortName: "QuickBooks", badgeLogo: intuitQuickbooksLogo },
+  xero: { label: "Xero", shortName: "Xero", badgeLogo: xeroLogoFull },
 };
 
 const ENGAGEMENT_TYPES = [
@@ -160,6 +164,23 @@ function addDays(mmddyyyy: string, days: number): string {
   const d = new Date(parseInt(p[2]), parseInt(p[0]) - 1, parseInt(p[1]));
   d.setDate(d.getDate() + days);
   return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
+// Copied from TB (src/lib/tbYearData.ts): "MM/dd/yyyy" or a display date such as "Dec 31, 2026" -> local date, time stripped.
+function parseDateOnly(s: string | undefined | null): Date | null {
+  if (!s) return null;
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const d = m ? new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])) : new Date(s);
+  if (isNaN(d.getTime())) return null;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+// Copied from TB (src/lib/tbYearData.ts): the Current Year end is after today (dates only), so the year hasn't finished.
+function isFutureYearEnd(yearEnd: string | undefined | null, today: Date = new Date()): boolean {
+  const d = parseDateOnly(yearEnd);
+  if (!d) return false;
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return d.getTime() > t.getTime();
 }
 
 function deriveEngagementId(type: string, client: string, yearEnd: string): string {
@@ -388,6 +409,74 @@ const LabeledInput = ({
   );
 };
 
+// Connected / Disconnected pill used by the Source Data row and the Data Source dropdowns (same as TB)
+const SourceStatusPill = ({ connected }: { connected: boolean }) => (
+  <span className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${
+    connected
+      ? "border-connection-success/30 bg-connection-success-surface text-connection-success"
+      : "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+  }`}>{connected ? "Connected" : "Disconnected"}</span>
+);
+
+// One source row's identity: provider name, connection status, then the client entity name (same as TB)
+const SourceIdentityRow = ({ provider, connected, entityName }: { provider: SourceProvider; connected: boolean; entityName: string }) => (
+  <span className="flex w-full min-w-0 items-center gap-2">
+    <span className="shrink-0">{SOURCE_PROVIDERS[provider].shortName}</span>
+    <SourceStatusPill connected={connected} />
+    <span className="min-w-0 flex-1 truncate text-muted-foreground" title={entityName}>{entityName}</span>
+  </span>
+);
+
+// Calendar date field styled to match the form inputs (h-9, 10px radius, double-border focus); same as TB
+const DateField = ({
+  label, value, onChange, required = false, disabled = false,
+}: {
+  label?: string;
+  value: string; // MM/dd/yyyy
+  onChange: (value: string) => void;
+  required?: boolean;
+  disabled?: boolean;
+}) => {
+  const m = value ? value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) : null;
+  const parsed = m ? new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])) : undefined;
+  const selected = parsed && !isNaN(parsed.getTime()) ? parsed : undefined;
+  return (
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label className="text-xs font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
+      <Popover>
+        <PopoverTrigger asChild disabled={disabled}>
+          <button
+            type="button"
+            disabled={disabled}
+            className={`input-double-border w-full h-9 px-3 py-2 text-sm rounded-[10px] outline-none transition-all duration-200 flex items-center text-left ${
+              disabled
+                ? "bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed"
+                : "bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]"
+            } ${selected ? "text-foreground" : "text-muted-foreground"}`}
+          >
+            <span className="flex-1 truncate">{selected ? formatDateFns(selected, "MM/dd/yyyy") : "MM/DD/YYYY"}</span>
+            <Calendar className="h-4 w-4 ml-auto shrink-0 text-muted-foreground" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <DatePickerCalendar
+            mode="single"
+            selected={selected}
+            onSelect={d => onChange(d ? formatDateFns(d, "MM/dd/yyyy") : "")}
+            initialFocus
+            className="p-3 pointer-events-auto"
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
 export default function CreateNewEngagement() {
   const navigate = useNavigate();
   const { engagements, addEngagement } = useEngagements();
@@ -428,6 +517,8 @@ export default function CreateNewEngagement() {
   // Local state only; defaults to the provider for a connected client, CSV otherwise, and resets when the client changes.
   const activeProvider: SourceProvider | null =
     clientInfo?.integrations.includes("xero") ? "xero" : clientInfo?.integrations.includes("quickbooks") ? "quickbooks" : null;
+  // Shown next to the provider in the Source Data row and the Data Source dropdowns
+  const sourceEntityName = clientInfo?.entityLegalName || clientName;
   const [yearSources, setYearSources] = useState<string[]>(["csv", "csv", "csv"]);
   useEffect(() => {
     setYearSources([0, 1, 2].map(() => (activeProvider ? `source:${activeProvider}` : "csv")));
@@ -516,7 +607,12 @@ export default function CreateNewEngagement() {
   const handlePeriodTypeChange = (val: string) => {
     setPeriodType(val);
     if (val === "Full Year") {
-      applyFullYear(currentYearStart, currentYearEnd);
+      // CY End = CY Start + 1 year - 1 day, then the prior years follow from it (same as TB). The Engagement ID is
+      // derived from CY End, so it follows too, as in the two date handlers above (TB does this in an effect).
+      const autoEnd = addDays(shiftYear(currentYearStart, 1), -1);
+      setCurrentYearEnd(autoEnd);
+      if (autoEnd !== currentYearEnd && engagementType && clientName) setEngagementId(deriveEngagementId(engagementType, clientName, autoEnd));
+      applyFullYear(currentYearStart, autoEnd);
     }
   };
 
@@ -556,6 +652,11 @@ export default function CreateNewEngagement() {
     { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, disabled: isFullYear, note: isFullYear ? "Auto-derived from Current Year dates" : "" },
     { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, disabled: isFullYear, note: isFullYear ? "Auto-derived from Current Year dates" : "" },
   ].filter((_, i) => !(isFirstYearOps && i > 0));
+
+  // Future year-end (CY End after today): info only, never blocks saving. "Source" is the Current Year row as it shows:
+  // Partial Year is locked to CSV even though yearSources[0] keeps its value.
+  const cyIsFutureYearEnd = isFutureYearEnd(currentYearEnd);
+  const cyRowIsSource = !isPartialYear && !!activeProvider && !!yearSources[0]?.startsWith("source:");
 
   // Section 2 gate
   const showDetails = clientName.trim() !== "";
@@ -885,14 +986,14 @@ export default function CreateNewEngagement() {
                 {/* Source Data status (TB also shows a "Previous · Disconnected" badge here; intentionally skipped) */}
                 <div className="mt-3 pb-4 mb-2 border-b border-border/50 flex items-center gap-4">
                   <span className="text-sm text-foreground w-[160px] shrink-0">Source Data</span>
-                  <div className="flex flex-nowrap items-center gap-[200px]">
+                  <div className="flex flex-wrap items-center gap-x-[200px] gap-y-2">
                     <span className="inline-flex flex-nowrap items-center gap-3">
                       {!activeProvider ? (
                         <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-[11px] font-medium text-foreground">Not Connected</span>
                       ) : (<>
                         <span className="inline-flex items-center rounded-[10px] border border-border px-2 py-1"><img src={SOURCE_PROVIDERS[activeProvider].badgeLogo} alt={SOURCE_PROVIDERS[activeProvider].label} className="h-4 object-contain" /></span>
-                        {/* Green = TB's connection-success / connection-success-surface tokens, which this repo doesn't define */}
-                        <span className="inline-flex items-center rounded-full border border-[hsl(141_46%_34%/0.3)] bg-[hsl(140_31%_94%)] px-2.5 py-0.5 text-[11px] font-medium text-[hsl(141_46%_34%)]">Connected</span>
+                        <SourceStatusPill connected />
+                        <span className="whitespace-nowrap text-sm text-foreground" title={sourceEntityName}>{sourceEntityName}</span>
                       </>)}
                     </span>
                   </div>
@@ -922,17 +1023,27 @@ export default function CreateNewEngagement() {
                           <span className="flex h-9 items-center text-sm text-foreground whitespace-nowrap">{row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}</span>
                         </div>
                         <div className={row.disabled ? "opacity-60" : ""}>
-                          <LabeledInput label="Start Date" value={row.start} onChange={row.setStart} type="date" disabled={row.disabled} />
+                          <DateField label="Start Date" value={row.start} onChange={row.setStart} disabled={row.disabled} />
                         </div>
                         <div className={row.disabled ? "opacity-60" : ""}>
-                          <LabeledInput label="End Date" value={row.end} onChange={row.setEnd} type="date" disabled={row.disabled} />
+                          <DateField label="End Date" value={row.end} onChange={row.setEnd} disabled={row.disabled} />
                         </div>
                         <div className="flex flex-col gap-1">
                           <span className="text-xs font-medium text-foreground">Data Source</span>
                           <Select value={val} disabled={isPartialYear} onValueChange={v => setYearSource(i, v)}>
-                            <SelectTrigger className="h-9 text-sm" title={val.startsWith("source:") && activeProvider ? SOURCE_PROVIDERS[activeProvider].label : "CSV / Excel / PDF"}><SelectValue /></SelectTrigger>
+                            <SelectTrigger className="h-9 text-sm" title={val.startsWith("source:") && activeProvider ? SOURCE_PROVIDERS[activeProvider].shortName : "CSV / Excel / PDF"}>
+                              <SelectValue>
+                                {val.startsWith("source:") && activeProvider
+                                  ? <SourceIdentityRow provider={activeProvider} connected entityName={sourceEntityName} />
+                                  : "CSV / Excel / PDF"}
+                              </SelectValue>
+                            </SelectTrigger>
                             <SelectContent>
-                              {activeProvider && <SelectItem value={`source:${activeProvider}`}>{SOURCE_PROVIDERS[activeProvider].label}</SelectItem>}
+                              {activeProvider && (
+                                <SelectItem value={`source:${activeProvider}`}>
+                                  <SourceIdentityRow provider={activeProvider} connected entityName={sourceEntityName} />
+                                </SelectItem>
+                              )}
                               <SelectItem value="csv">CSV / Excel / PDF</SelectItem>
                             </SelectContent>
                           </Select>
@@ -958,6 +1069,14 @@ export default function CreateNewEngagement() {
                   <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
                     <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                     <span className="text-sm text-amber-800 dark:text-amber-200">Data for each year will come from the data source selected.</span>
+                  </div>
+                )}
+                {cyIsFutureYearEnd && (
+                  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-blue-200 bg-blue-50 dark:bg-blue-950/30 px-3 py-2">
+                    <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                    <span className="text-sm text-blue-800 dark:text-blue-200">
+                      {`You're creating a future year-end engagement. ${cyRowIsSource ? "Data will be pulled as of each refresh until the year ends." : "Data will show what you import."}`}
+                    </span>
                   </div>
                 )}
               </SectionCard>
