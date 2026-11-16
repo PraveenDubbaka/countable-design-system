@@ -33,6 +33,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ScrollArea } from "@/components/ui/scroll-area";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { clientsData, loadClients, Client } from "@/data/clientsData";
+import { getClientSourceIntegration, CLIENT_CONNECTION_EVENT } from "@/lib/clientSource";
+import { SourceConnectionModal } from "@/components/SourceConnectionModal";
+import { accountingProviders } from "@/lib/accountingProviders";
 
 function getActiveFirm() {
   try {
@@ -84,22 +87,25 @@ const StatusBadge = ({ status }: { status: string }) => {
  return <Badge variant={getStatusVariant()}>{status}</Badge>;
 };
 
-const IntegrationCell = ({ type }: { type: string }) => {
- if (type === "connect") {
- return <Button variant="outline" size="sm" className="h-7 text-xs font-medium">Connect</Button>;
+const IntegrationCell = ({ type, onConnect }: { type: string; onConnect?: () => void }) => {
+ // The row is clickable (selects the client), so the connect / manage buttons must not bubble up to it.
+ const open = (e: React.MouseEvent) => { e.stopPropagation(); onConnect?.(); };
+ if (type === "connect" || type === "none") {
+ return <Button variant="outline" size="sm" className="h-7 text-xs font-medium" onClick={open}>Connect</Button>;
  }
- const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 bg-card dark:bg-[hsl(var(--m3-inverse-surface))] border border-border rounded-sm";
+ const badgeClasses = "inline-flex items-center justify-center h-7 w-20 px-1 bg-card dark:bg-[hsl(var(--m3-inverse-surface))] border border-border rounded-sm cursor-pointer hover:bg-muted hover:border-foreground/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
  if (type === "xero") {
  return (
- <div className={`${badgeClasses} gap-1`}>
+ <button type="button" aria-label="Manage Xero connection" onClick={open} className={`${badgeClasses} gap-1`}>
  <img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Xero_software_logo.svg" alt="Xero" className="h-4" />
  <span className="text-xs font-medium text-foreground dark:text-[hsl(var(--m3-inverse-on-surface))]">Xero</span>
- </div>
+ </button>
  );
  }
  if (type === "quickbooks") {
- return <div className={badgeClasses}><img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-4" /></div>;
+ return <button type="button" aria-label="Manage QuickBooks connection" onClick={open} className={badgeClasses}><img src={intuitQuickbooksLogo} alt="Intuit QuickBooks" className="h-4" /></button>;
  }
+ if (type === "sage") return <button type="button" aria-label="Manage Sage connection" onClick={open} className={badgeClasses}><img src={accountingProviders.sage.logo} alt="Sage" className="h-5" /></button>;
  return null;
 };
 
@@ -155,6 +161,16 @@ export default function Clients() {
  useEffect(() => {
   setCountryFilter(activeFirm.region);
  }, [activeFirm.region]);
+ // A client connection can change from the modal below (or elsewhere), so re-render the badges when it does.
+ const [, setConnVersion] = useState(0);
+ const [connectingClient, setConnectingClient] = useState<Client | null>(null);
+ const connectingType = connectingClient ? (getClientSourceIntegration(connectingClient.entityName) ?? "none") : "none";
+ const connectingProvider = connectingType === "quickbooks" || connectingType === "xero" || connectingType === "sage" ? connectingType : null;
+ useEffect(() => {
+  const bump = () => setConnVersion(v => v + 1);
+  window.addEventListener(CLIENT_CONNECTION_EVENT, bump);
+  return () => window.removeEventListener(CLIENT_CONNECTION_EVENT, bump);
+ }, []);
 
  const allGroups = Array.from(new Set(clientList.map(c => c.groupName).filter((g): g is string => !!g))).sort();
 
@@ -264,7 +280,12 @@ export default function Clients() {
    <td className="px-6 py-2 whitespace-nowrap"><StatusBadge status={client.status} /></td>
   ) },
   { id: "integrations", label: "Integrations", cell: client => (
-   <td className="px-6 py-2 whitespace-nowrap"><IntegrationCell type={client.integration} /></td>
+   <td className="px-6 py-2 whitespace-nowrap">
+    <IntegrationCell
+     type={getClientSourceIntegration(client.entityName) ?? (client.integration === "connect" ? "connect" : "none")}
+     onConnect={() => setConnectingClient(client)}
+    />
+   </td>
   ) },
   { id: "contactName", label: "Contact Name", cell: client => (
    <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.contactName}</td>
@@ -557,6 +578,7 @@ export default function Clients() {
  {/* Right Panel */}
  <ClientRightPanel className="flex-shrink-0 h-full" clientName={selectedClientData?.entityName || 'Select a client'} />
  </div>
+ <SourceConnectionModal open={connectingClient !== null} onOpenChange={open => { if (!open) setConnectingClient(null); }} clientName={connectingClient?.entityName ?? ""} connectionName={connectingClient?.legalEntityName} onComplete={() => setConnVersion(v => v + 1)} initialStep={connectingProvider ? "connected" : "select"} initialProvider={connectingProvider} />
  </Layout>
  );
 }

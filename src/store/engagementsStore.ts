@@ -66,6 +66,8 @@ export function saveEngagements(list: EngagementRecord[]): void {
  } catch {}
 }
 
+export type YearSourceKind = "csv" | "xero" | "quickbooks" | "sage";
+
 export type EngagementMeta = {
  firstYearAudit: boolean;
  firstYearOnPlatform?: string;
@@ -81,6 +83,20 @@ export type EngagementMeta = {
  auditPeriodType?: string; // "Full Year" | "Interim (6-month)" | "Stub Period" | "Other"
  annualizeInterim?: boolean; // true by default when auditPeriodType === "Interim (6-month)"
  firstTimeAdoption?: boolean; // first-time adoption of accounting standard
+ dataSource?: "csv" | "source";
+ yearDataSources?: {
+   cy: "csv" | "source";
+   py1: "csv" | "source";
+   py2: "csv" | "source";
+ };
+ /** Which connected provider each Source year pulls from (multi-source engagements). */
+ yearSourceProviders?: { cy?: "xero" | "quickbooks" | "sage"; py1?: "xero" | "quickbooks" | "sage"; py2?: "xero" | "quickbooks" | "sage" };
+ sourceYears?: number; // 1 = CY only, 2 = CY + PY1, 3 = all years connected to source
+ sourceRollForward?: boolean; // roll forward: CY from source, prior years stay CSV
+ /** Roll forward: where each locked prior year came from (last year's CY → PY1, last year's PY1 → PY2).
+  *  py2 is "nodata" when last year was the entity's First Year of Operations (no year before it). */
+ priorYearSources?: { py1: YearSourceKind; py2: YearSourceKind | "nodata" };
+ sourceProvider?: "xero" | "quickbooks" | "sage"; // which accounting source the engagement is linked to
 };
 
 export function getEngagementMeta(id: string): EngagementMeta {

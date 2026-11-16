@@ -41,6 +41,10 @@ export default {
         connection: {
           success: "hsl(var(--connection-success))",
           "success-surface": "hsl(var(--connection-success-surface))",
+          action: "hsl(var(--connection-action))",
+          "action-foreground": "hsl(var(--connection-action-foreground))",
+          warning: "hsl(var(--connection-warning))",
+          "warning-surface": "hsl(var(--connection-warning-surface))",
         },
         border: {
           DEFAULT: "hsl(var(--border))",

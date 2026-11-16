@@ -19,6 +19,9 @@ import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
 import { format as formatDateFns } from "date-fns";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { getClientConnectionState, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
+import { accountingProviders } from "@/lib/accountingProviders";
+import { savedYearSources } from "@/lib/yearSourceSave";
 
 // Mirror of CLIENT_DATA in CreateEngagement.tsx — keep in sync if client data changes
 const CLIENT_DATA: Record<string, {
@@ -75,12 +78,13 @@ const CLIENT_DATA: Record<string, {
   },
 };
 
-// Source Data (visual only; follows the TB import flow). `label` is the full name (logo alt text); `shortName` is what
-// the Data Source dropdown and its tooltip show.
-type SourceProvider = "quickbooks" | "xero";
+// Source Data (follows the TB import flow). `label` is the full name (logo alt text); `shortName` is what
+// the Data Source dropdown and its tooltip show. Sage is here because a client can be connected to it from the Clients page.
+type SourceProvider = AccountingProvider;
 const SOURCE_PROVIDERS: Record<SourceProvider, { label: string; shortName: string; badgeLogo: string }> = {
   quickbooks: { label: "QuickBooks Online", shortName: "QuickBooks", badgeLogo: intuitQuickbooksLogo },
   xero: { label: "Xero", shortName: "Xero", badgeLogo: xeroLogoFull },
+  sage: { label: "Sage", shortName: "Sage", badgeLogo: accountingProviders.sage.badgeLogo },
 };
 
 const ENGAGEMENT_TYPES = [
@@ -513,10 +517,20 @@ export default function CreateNewEngagement() {
   const [priorYear2End, setPriorYear2End] = useState("11/30/2021");
   const [priorYear1NoData, setPriorYear1NoData] = useState(false);
   const [priorYear2NoData, setPriorYear2NoData] = useState(false);
-  // Source Data (visual only): the client's connected provider and each year's data source ("csv" | "source:<provider>").
-  // Local state only; defaults to the provider for a connected client, CSV otherwise, and resets when the client changes.
+  // Source Data: the client's connected provider and each year's data source ("csv" | "source:<provider>").
+  // Defaults to the provider for a connected client, CSV otherwise, and resets when the client or its connection changes.
+  // A connection made or removed on the Clients page comes first (same order as TB), then the client's own integrations.
+  // The listener only forces a re-render; the provider itself is read from storage on every render.
+  const [, setConnVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setConnVersion(v => v + 1);
+    window.addEventListener(CLIENT_CONNECTION_EVENT, bump);
+    return () => window.removeEventListener(CLIENT_CONNECTION_EVENT, bump);
+  }, []);
+  const connectionState = getClientConnectionState(clientName, clientInfo?.entityLegalName);
   const activeProvider: SourceProvider | null =
-    clientInfo?.integrations.includes("xero") ? "xero" : clientInfo?.integrations.includes("quickbooks") ? "quickbooks" : null;
+    connectionState !== undefined ? connectionState
+      : clientInfo?.integrations.includes("xero") ? "xero" : clientInfo?.integrations.includes("quickbooks") ? "quickbooks" : null;
   // Shown next to the provider in the Source Data row and the Data Source dropdowns
   const sourceEntityName = clientInfo?.entityLegalName || clientName;
   const [yearSources, setYearSources] = useState<string[]>(["csv", "csv", "csv"]);
@@ -764,6 +778,13 @@ export default function CreateNewEngagement() {
       firstYearAudit,
     };
     addEngagement(record);
+    // Data Source per year (the create-mode part of TB's performSave). Partial year is locked to CSV on screen, so it
+    // saves all three years as CSV whatever yearSources holds; any other period type saves each row as shown.
+    const effectiveYearSources = isPartialYear ? ["csv", "csv", "csv"] : yearSources;
+    const isSourceRow = (v?: string) => !!v && v.startsWith("source:") && v !== "source:none";
+    const sourceRows = effectiveYearSources.filter(isSourceRow);
+    const savedDataSource: "csv" | "source" = sourceRows.length > 0 ? "source" : "csv";
+    const yearFields = savedYearSources({ rows: effectiveYearSources, lockedSource: () => "csv", priorToCsv: false });
     setEngagementMeta(engagementId, {
       firstYearAudit,
       templateId: templateId || undefined,
@@ -774,6 +795,11 @@ export default function CreateNewEngagement() {
       periodEnd: currentYearEnd,
       auditPeriodType: isAudit ? storedPeriodType[periodType] : undefined,
       firstTimeAdoption: isAudit ? firstTimeAdoption : undefined,
+      dataSource: savedDataSource,
+      yearDataSources: yearFields.yearDataSources,
+      yearSourceProviders: yearFields.yearSourceProviders,
+      sourceYears: savedDataSource === "source" ? Math.max(1, sourceRows.length) : undefined,
+      sourceProvider: savedDataSource === "source" ? rowProvider(sourceRows[0]) : undefined,
     });
     if (isAudit && firstYearAudit) {
       toast.success("Engagement created — IE checklist and predecessor letter added.");
