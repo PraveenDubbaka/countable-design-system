@@ -49,7 +49,7 @@ import {
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
+import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { CompletionIcon } from "@/components/icons/CompletionIcon";
@@ -1598,7 +1598,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
    return DEFAULT_FIRMS;
   } catch { return DEFAULT_FIRMS; }
  });
- const [activeFirmId, setActiveFirmId] = useState<string>(() => localStorage.getItem("activeFirmId") ?? "firm-ca-1");
+ const [activeFirmId, setActiveFirmId] = useState<string>(() => activeFirmIdOrMain(localStorage.getItem("activeFirmId")));
  const activeFirm = firmProfiles.find(f => f.id === activeFirmId) ?? firmProfiles[0];
 
  const [registerFirmOpen, setRegisterFirmOpen] = useState(false);
@@ -1625,7 +1625,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     const s = localStorage.getItem("firmProfiles");
     if (s) setFirmProfiles(JSON.parse(s));
     const id = localStorage.getItem("activeFirmId");
-    if (id) setActiveFirmId(id);
+    if (id) setActiveFirmId(activeFirmIdOrMain(id));
    } catch {}
   };
   window.addEventListener("firm-profiles-updated", handler);
@@ -1952,6 +1952,22 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  {/* Firm badge — icon-only, always at bottom */}
  <div className={cn("pb-3 pt-1", isNavExpanded ? "px-2" : "flex justify-center")}>
+  {!SHOW_MULTI_OFFICE ? (
+   <div
+    className={cn(
+     "relative w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold",
+     activeFirm.color
+    )}
+    title={activeFirm.name}
+   >
+    {activeFirm.initials}
+    {SHOW_REGION_LABELS && (
+     <span className="absolute -bottom-2 -right-2 text-[12px] leading-none pointer-events-none">
+      {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}
+     </span>
+    )}
+   </div>
+  ) : (
   <Popover open={firmPopoverOpen} onOpenChange={setFirmPopoverOpen}>
    <PopoverTrigger asChild>
     <button
@@ -2055,6 +2071,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     </button>
    </PopoverContent>
   </Popover>
+  )}
  </div>
 
  </div>

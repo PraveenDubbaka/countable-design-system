@@ -34,12 +34,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
+import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
 function getActiveFirm() {
   try {
     const profiles = JSON.parse(localStorage.getItem("firmProfiles") || "[]");
-    const id = localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+    const id = activeFirmIdOrMain(localStorage.getItem("activeFirmId"));
     return profiles.find((f: { id: string; region: string; name: string }) => f.id === id) as { id: string; region: "ca" | "us"; name: string } ?? { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
   } catch {
     return { id: "firm-ca-1", region: "ca" as const, name: "Maple Grove Accounting PC" };
@@ -331,9 +331,11 @@ export default function Engagements() {
  })}
  </div>
 
+ {SHOW_MULTI_OFFICE && (
  <p className="text-sm text-muted-foreground mt-1">
   {SHOW_REGION_LABELS && <>{activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} </>}{activeFirm.name}{SHOW_REGION_LABELS && <> · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}</>}
  </p>
+ )}
 
  {/* Filter, Search, Export and Create Row - Enhanced spacing */}
  <div className="flex items-center justify-between">

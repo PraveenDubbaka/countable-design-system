@@ -19,6 +19,7 @@ import { loadMembers, type TeamMemberRow } from "@/data/teamMembersData";
 import { applyReassignments, findAssignedWork, type ReassignGroup } from "@/lib/teamAssignments";
 import { useEngagements } from "@/store/EngagementsContext";
 import { cn } from "@/lib/utils";
+import { SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
 // ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
 
@@ -75,7 +76,7 @@ function writeFirmProfiles(profiles: FirmProfile[]) {
  window.dispatchEvent(new CustomEvent("firm-profiles-updated"));
 }
 function readActiveFirmId(): string {
- return localStorage.getItem("activeFirmId") ?? "firm-ca-1";
+ return activeFirmIdOrMain(localStorage.getItem("activeFirmId"));
 }
 function writeActiveFirmId(id: string) {
  localStorage.setItem("activeFirmId", id);
@@ -1204,6 +1205,7 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
  return (
   <div className="space-y-8">
    {/* My Offices */}
+   {SHOW_MULTI_OFFICE && (<>
    <div className="space-y-3">
     <div className="flex items-center justify-between">
      <div className="flex items-center gap-2">
@@ -1306,6 +1308,7 @@ function FirmInfoContent({ initialShowAddOffice }: { initialShowAddOffice?: bool
    </div>
 
    <div className="border-t border-border" />
+   </>)}
 
    {/* Firm Logo */}
    <div className="space-y-3">
@@ -1537,7 +1540,7 @@ function LetterheadContent() {
     const s = localStorage.getItem("firmProfiles");
     if (s) setFirms(JSON.parse(s));
     const id = localStorage.getItem("activeFirmId");
-    if (id) setActiveFirmId(id);
+    if (id) setActiveFirmId(activeFirmIdOrMain(id));
    } catch {}
   };
   window.addEventListener("firm-profiles-updated", handler);
