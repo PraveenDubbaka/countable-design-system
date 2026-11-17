@@ -8,7 +8,7 @@ export const SEED_TEAM_MEMBERS = [
  { id: "-", name: "Shai Firm", title: "ms", status: "Accepted", email: "shfirmuat@yopmail.com", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "60.00", twoFAStatus: "-", licenseNo: "-" },
  { id: "-", name: "Norbert B", title: "Pen Test", status: "Accepted", email: "norbert@strivesec.com", category: "Staff", clients: "2", businessPhone: "-", cellPhone: "-", assignedPartner: "R. Chandra", hourlyRate: "124.00", twoFAStatus: "-", licenseNo: "-", unassigned: false },
  { id: "-", name: "Haroon S", title: "API", status: "Accepted", email: "haroons@countable.co", category: "Staff", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "R. Chandra", hourlyRate: "256.00", twoFAStatus: "-", licenseNo: "-", unassigned: false },
- { id: "-", name: "Amol Patil", title: "-", status: "Accepted", email: "amolp@countable.co", category: "CMS (Countable Managed Staff)", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
+ { id: "-", name: "Amol Patil", title: "-", status: "Accepted", email: "amolp@countable.co", category: "CMS (Countable Managed Staff)", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "R. Chandra", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
  { id: "-", name: "Staff Test", title: "HV", status: "Accepted", email: "stafftest@yopmail.com", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
  { id: "-", name: "Ishaan S", title: "CA", status: "Invite Now", email: "ishaan@yopmail.com", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
  { id: "-", name: "Henry Davis", title: "Mr", status: "Accepted", email: "general_2511281624292@y...", category: "Partner", clients: "-", businessPhone: "-", cellPhone: "-", assignedPartner: "-", hourlyRate: "-", twoFAStatus: "-", licenseNo: "-" },
@@ -26,9 +26,9 @@ export type TeamMemberRow = TeamMember & { key: string };
 // members there; keep the key in sync). Every stored record has a `key`: one keyed "seed-<position>" is an edit that
 // replaces that built-in member, any other is a member added later and is listed first. Deleted built-in members are
 // kept in a removed-keys list so they stay hidden.
-const TEAM_MEMBERS_KEY = "cds_team_members_v2";
+export const TEAM_MEMBERS_KEY = "cds_team_members_v2";
 const REMOVED_KEYS_KEY = "cds_team_members_removed_v1";
-const SEED_PREFIX = "seed-";
+export const SEED_PREFIX = "seed-";
 
 const readList = (storageKey: string): unknown[] => {
  try {

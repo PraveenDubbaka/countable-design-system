@@ -35,13 +35,21 @@ const ReassignSelect = ({
   </Select>
 );
 
+// The reassign step always lists these three tabs, in this order, even when the member has nothing in one of them.
+const TABS = [
+  { id: "clients", title: "Clients" },
+  { id: "team", title: "Team members" },
+  { id: "engagements", title: "Engagements" },
+];
+
 const keyOf = (groupId: string, itemId: string) => `${groupId}:${itemId}`;
 const matches = (label: string, query: string) => label.toLowerCase().includes(query);
 
 interface DeleteTeamMemberDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Work still assigned to the member, by group; empty when there is nothing to reassign. */
+  /** Work still assigned to the member, by group; empty when there is nothing to reassign. A group with no items may be
+   *  left out: the reassign step still shows its tab, empty. */
   groups: ReassignGroup[];
   /** The other team members an item can be handed to. */
   options: ReassignOption[];
@@ -88,10 +96,12 @@ export function DeleteTeamMemberDialog({
   const allAssigned = assigned === total;
   const reassigning = hasWork && step === "reassign";
 
-  const currentTab = groups.some(g => g.id === tab) ? tab : groups[0]?.id ?? "";
-  const group = groups.find(g => g.id === currentTab);
+  // A tab for each of the three groups: the one passed in, or an empty one. It opens on the first tab that has items.
+  const tabGroups: ReassignGroup[] = TABS.map(t => groups.find(g => g.id === t.id) ?? { ...t, items: [] });
+  const group = tabGroups.find(g => g.id === tab) ?? tabGroups.find(g => g.items.length > 0) ?? tabGroups[0];
+  const currentTab = group.id;
   const query = search.trim().toLowerCase();
-  const rows = (group?.items ?? []).filter(item => matches(item.label, query));
+  const rows = group.items.filter(item => matches(item.label, query));
   const rowKeys = rows.map(item => keyOf(currentTab, item.id));
   const selectedShown = rowKeys.filter(k => selected.has(k)).length;
   const allShownSelected = rowKeys.length > 0 && selectedShown === rowKeys.length;
@@ -112,7 +122,7 @@ export function DeleteTeamMemberDialog({
   // Rows the new search hides are deselected, so the bulk bar only ever acts on rows you can see.
   const changeSearch = (value: string) => {
     setSearch(value);
-    const shown = new Set((group?.items ?? []).filter(item => matches(item.label, value.trim().toLowerCase())).map(item => keyOf(currentTab, item.id)));
+    const shown = new Set(group.items.filter(item => matches(item.label, value.trim().toLowerCase())).map(item => keyOf(currentTab, item.id)));
     setSelected(prev => new Set(Array.from(prev).filter(k => shown.has(k))));
   };
   const applyBulk = () => {
@@ -139,8 +149,8 @@ export function DeleteTeamMemberDialog({
             <Tabs value={currentTab} onValueChange={switchTab} className="flex flex-col flex-1 min-h-0 gap-3">
               <div className="flex items-center justify-between gap-3 shrink-0">
                 <TabsList className="h-9">
-                  {groups.map(g => {
-                    const done = g.items.every(item => !!choices[keyOf(g.id, item.id)]);
+                  {tabGroups.map(g => {
+                    const done = g.items.length > 0 && g.items.every(item => !!choices[keyOf(g.id, item.id)]);
                     return (
                       <TabsTrigger key={g.id} value={g.id} className="gap-1.5 px-3 py-1">
                         <span className="truncate">{g.title} ({g.items.length})</span>
@@ -158,7 +168,7 @@ export function DeleteTeamMemberDialog({
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search"
-                    aria-label={`Search ${group?.title.toLowerCase() ?? ""}`}
+                    aria-label={`Search ${group.title.toLowerCase()}`}
                     value={search}
                     onChange={e => changeSearch(e.target.value)}
                     className="pl-9 w-64 h-9 text-sm"
@@ -241,7 +251,9 @@ export function DeleteTeamMemberDialog({
                       })}
                       {rows.length === 0 && (
                         <tr>
-                          <td colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">No matches</td>
+                          <td colSpan={4} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                            {group.items.length === 0 ? `No ${group.title.toLowerCase()} assigned` : "No matches"}
+                          </td>
                         </tr>
                       )}
                     </tbody>
