@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import signatureImg from "@/assets/letter-signature.png";
 import receivedStamp from "@/assets/letter-received-stamp.png";
+import { LETTER_MARGIN_PX, type LetterMargin } from "@/lib/letterMargins";
 
 interface LetterViewProps {
  checklist: Checklist;
@@ -22,6 +23,8 @@ interface LetterViewProps {
  saveRef?: React.MutableRefObject<(() => void) | null>;
  /** When provided, replaces the default template client name with this value in the rendered letter */
  clientName?: string;
+ /** Left/right page margin, applied while editing: default (1in), narrow (0.5in) or wide (1.5in). View mode keeps its own padding. */
+ margin?: LetterMargin;
 }
 
 /**
@@ -32,7 +35,7 @@ interface LetterViewProps {
  * (existing schema, no migration needed). Edit mode toggles a
  * contentEditable surface; Save persists the new HTML back to the checklist.
  */
-export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName }: LetterViewProps) {
+export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName, margin }: LetterViewProps) {
  const isReport = variant === "report";
  const [showAddDialog, setShowAddDialog] = useState(false);
  const [isEditingLocal, setIsEditingLocal] = useState(false);
@@ -96,7 +99,10 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
  )}
 
  {/* Body */}
- <div className="px-12 pb-16 letter-body pt-10">
+ <div
+ className={`${isEditing && margin ? "" : "px-12 "}pb-16 letter-body pt-10`}
+ style={isEditing && margin ? { paddingLeft: LETTER_MARGIN_PX[margin], paddingRight: LETTER_MARGIN_PX[margin] } : undefined}
+ >
  {isEditing ? (
  <div
  ref={editorRef}

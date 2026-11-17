@@ -12,6 +12,15 @@ import { Layout } from "@/components/Layout";
 import { LukaIcon } from "@/components/LukaIcon";
 import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
+import {
+ LetterEditorPanel,
+ ConfirmDialog,
+ UnsavedChangesDialog,
+ useUnsavedNavigationGuard,
+ type LetterEditorTool,
+} from "@/components/letter/LetterEditorPanel";
+import { normalizeLetterMargin, type LetterMargin } from "@/lib/letterMargins";
+import { createLetterTemplate, type LetterTemplateSection } from "@/lib/letterTemplate";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
@@ -1005,6 +1014,112 @@ export default function EngagementDetail() {
  const [objectiveExpanded, setObjectiveExpanded] = useState(false);
  const [isLetterEditing, setIsLetterEditing] = useState(false);
  const letterSaveRef = useRef<(() => void) | null>(null);
+ // Letter edit panel (Elements / Sections / Layout) and its unsaved-changes flow
+ const [letterMargin, setLetterMargin] = useState<LetterMargin>("default");
+ const [letterMarginPreview, setLetterMarginPreview] = useState<LetterMargin>("default");
+ const [letterTool, setLetterTool] = useState<LetterEditorTool>("elements");
+ const [letterPanelSectionsState, setLetterPanelSectionsState] = useState<LetterTemplateSection[]>(
+ () => createLetterTemplate().sections,
+ );
+ const [selectedLetterSection, setSelectedLetterSection] = useState("");
+ const letterEditorWrapRef = useRef<HTMLDivElement | null>(null);
+ const letterCaretRef = useRef<Range | null>(null);
+ useEffect(() => {
+ if (!isLetterEditing) return;
+ const onSelectionChange = () => {
+ const selection = window.getSelection();
+ const editor = letterEditorWrapRef.current?.querySelector('[contenteditable="true"]');
+ if (selection && selection.rangeCount && editor && editor.contains(selection.anchorNode))
+ letterCaretRef.current = selection.getRangeAt(0).cloneRange();
+ };
+ document.addEventListener("selectionchange", onSelectionChange);
+ return () => document.removeEventListener("selectionchange", onSelectionChange);
+ }, [isLetterEditing]);
+ const insertLetterHtml = useCallback((html: string, atEnd = false) => {
+ const editor = letterEditorWrapRef.current?.querySelector<HTMLElement>('[contenteditable="true"]');
+ if (!editor) return;
+ const template = document.createElement("template");
+ template.innerHTML = html;
+ const fragment = template.content;
+ const lastNode = fragment.lastChild;
+ const range =
+ !atEnd && letterCaretRef.current && editor.contains(letterCaretRef.current.startContainer)
+ ? letterCaretRef.current
+ : null;
+ if (range) {
+ range.deleteContents();
+ range.insertNode(fragment);
+ if (lastNode) {
+ range.setStartAfter(lastNode);
+ range.collapse(true);
+ letterCaretRef.current = range.cloneRange();
+ }
+ } else {
+ editor.appendChild(fragment);
+ }
+ }, []);
+ // Unsaved-change tracking for the letter edit mode (Cancel confirmation + leaving the page)
+ const letterCardRef = useRef<HTMLDivElement | null>(null);
+ const letterSnapshotRef = useRef<string | null>(null);
+ const letterSectionsTouchedRef = useRef(false);
+ const [confirmCancelLetter, setConfirmCancelLetter] = useState(false);
+ const isLetterDirty = () => {
+ if (letterMarginPreview !== letterMargin || letterSectionsTouchedRef.current) return true;
+ const editor = letterEditorWrapRef.current?.querySelector<HTMLElement>('[contenteditable="true"]');
+ return !!editor && letterSnapshotRef.current !== null && editor.innerHTML !== letterSnapshotRef.current;
+ };
+ const startLetterEditing = () => {
+ setLetterTool("elements");
+ setSelectedLetterSection("");
+ letterCaretRef.current = null;
+ letterSectionsTouchedRef.current = false;
+ letterSnapshotRef.current = null;
+ setIsLetterEditing(true);
+ setTimeout(() => {
+ const editor = letterEditorWrapRef.current?.querySelector<HTMLElement>('[contenteditable="true"]');
+ letterSnapshotRef.current = editor ? editor.innerHTML : null;
+ }, 50);
+ };
+ const cancelLetterEditing = () => {
+ setLetterMarginPreview(letterMargin);
+ setLetterPanelSectionsState(createLetterTemplate().sections);
+ letterSectionsTouchedRef.current = false;
+ setIsLetterEditing(false);
+ };
+ const requestCancelLetterEditing = () => {
+ if (isLetterDirty()) setConfirmCancelLetter(true);
+ else cancelLetterEditing();
+ };
+ const letterUnsavedGuard = useUnsavedNavigationGuard(isLetterEditing, isLetterDirty, letterCardRef);
+ const saveLetterEditing = () => {
+ letterSectionsTouchedRef.current = false;
+ letterSaveRef.current?.();
+ if (letterMarginPreview !== letterMargin) {
+ if (checklistKey)
+ writeJsonToLocalStorage(`letter-margin-${checklistKey}`, { margin: letterMarginPreview, marginVersion: 2 });
+ setLetterMargin(letterMarginPreview);
+ }
+ setIsLetterEditing(false);
+ };
+
+ const isLetterChecklist = !!(
+ checklist?.sections?.length > 0 &&
+ checklist.sections[0]?.questions?.length > 0 &&
+ checklist.sections[0].questions[0]?.answerType === "none" &&
+ !checklist.objective
+ );
+
+ // Load the saved margin for this letter; new letters start on "Default (1 in)"
+ useEffect(() => {
+ if (!checklistKey) return;
+ const stored = readJsonFromLocalStorage<unknown>(`letter-margin-${checklistKey}`, null);
+ const saved =
+ stored && typeof stored === "object" && "margin" in stored
+ ? normalizeLetterMargin(stored.margin)
+ : normalizeLetterMargin(stored, stored !== null);
+ setLetterMargin(saved);
+ setLetterMarginPreview(saved);
+ }, [checklistKey]);
  const letterPageRef = useRef<LetterSectionPageHandle>(null);
  const [customLetterExists, setCustomLetterExists] = useState(false);
  const [customLetterIsEditing, setCustomLetterIsEditing] = useState(false);
@@ -2335,7 +2450,7 @@ export default function EngagementDetail() {
  <Layout title="Engagements" headerContent={engagementBreadcrumb}>
  <div className="flex h-full overflow-hidden">
  {/* Main Content Area */}
- <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+ <div ref={letterCardRef} className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
  {/* Top Header Bar with title */}
  <div className="sticky top-0 z-10 border-b border-border bg-gradient-to-r from-card via-card to-secondary/20">
  <div className="flex items-center justify-between px-4 py-1.5">
@@ -2666,11 +2781,11 @@ export default function EngagementDetail() {
  if (isLetter) {
  return isLetterEditing ? (
  <>
- <ExpandableIconButton variant="secondary" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={() => setIsLetterEditing(false)} />
- <ExpandableIconButton variant="default" icon={<Check className="h-4 w-4" />} label="Save" size="sm" onClick={() => { letterSaveRef.current?.(); setIsLetterEditing(false); }} />
+ <ExpandableIconButton variant="secondary" icon={<X className="h-4 w-4" />} label="Cancel" size="sm" onClick={requestCancelLetterEditing} />
+ <ExpandableIconButton variant="default" icon={<Check className="h-4 w-4" />} label="Save" size="sm" onClick={saveLetterEditing} />
  </>
  ) : (
- <ExpandableIconButton variant="secondary" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={() => setIsLetterEditing(true)} />
+ <ExpandableIconButton variant="secondary" icon={<Pencil className="h-4 w-4" />} label="Edit" size="sm" onClick={startLetterEditing} />
  );
  }
  return (
@@ -2736,8 +2851,9 @@ export default function EngagementDetail() {
  </div>
  </div>
 
- {/* Content Area */}
- <div className="flex-1 overflow-auto bg-card" id={checklistKey && WORKSHEET_KEYS.has(checklistKey) ? 'worksheet-export-content' : undefined}>
+ {/* Content Area (with the letter edit panel beside it while editing a letter) */}
+ <div className="flex-1 flex min-h-0 min-w-0">
+ <div className="flex-1 min-w-0 overflow-auto bg-card" id={checklistKey && WORKSHEET_KEYS.has(checklistKey) ? 'worksheet-export-content' : undefined}>
  {/* Auto-fill progress indicator */}
  {isAutoFilling && (
  <div className="mx-4 mt-2 rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5 flex items-center gap-3">
@@ -3103,17 +3219,18 @@ export default function EngagementDetail() {
  <p className="text-sm font-medium text-foreground">Loading engagement checklist...</p>
  <p className="text-xs text-muted-foreground mt-1">Please wait while we fetch the data</p>
  </div>
- </div> : <div className="bg-background">
+ </div> : <div ref={letterEditorWrapRef} className="bg-background">
  {(checklist?.sections?.length > 0 && checklist.sections[0]?.questions?.length > 0 && checklist.sections[0].questions[0]?.answerType === 'none' && !checklist.objective) ? (
  <LetterView
  checklist={checklist}
  onUpdate={handleChecklistUpdate}
  isEditing={isLetterEditing}
- onEditStart={() => setIsLetterEditing(true)}
+ onEditStart={startLetterEditing}
  onSaveEdits={() => setIsLetterEditing(false)}
- onCancelEdits={() => setIsLetterEditing(false)}
+ onCancelEdits={requestCancelLetterEditing}
  saveRef={letterSaveRef}
  clientName={clientName !== "Unknown Client" ? clientName : undefined}
+ margin={letterMarginPreview}
  />
  ) : (
  <DocumentView
@@ -3154,6 +3271,68 @@ export default function EngagementDetail() {
  </p>
  </div>
  )}
+ </div>
+ {isLetterChecklist && isLetterEditing && (
+ <LetterEditorPanel
+ active={letterTool}
+ onActiveChange={setLetterTool}
+ sections={letterPanelSectionsState}
+ selectedSection={selectedLetterSection}
+ margin={letterMarginPreview}
+ onMarginChange={setLetterMarginPreview}
+ elementsHint="Click an element to add it where your cursor is in the letter."
+ onInsertField={(field) =>
+ insertLetterHtml(
+ `<span contenteditable="false" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-xs font-medium w-fit border-primary/40 text-primary bg-primary/5">${field}</span>&nbsp;`,
+ )
+ }
+ onAddSection={(name) => {
+ const id = `letter-section-${Date.now()}`;
+ const safeName = name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+ letterSectionsTouchedRef.current = true;
+ setLetterPanelSectionsState((list) => [...list, { id, name, html: "" }]);
+ setSelectedLetterSection(id);
+ insertLetterHtml(
+ `<p class="mt-6 text-sm text-foreground"><strong>${safeName}</strong></p><p class="mt-2 text-sm text-foreground">Start typing here.</p>`,
+ true,
+ );
+ }}
+ onSelectSection={setSelectedLetterSection}
+ onToggleSection={(section, enabled) => {
+ letterSectionsTouchedRef.current = true;
+ return setLetterPanelSectionsState((list) =>
+ list.some((s) => s.id === section.id)
+ ? list.map((s) => (s.id === section.id ? { ...s, enabled } : s))
+ : [...list, { ...section, enabled }],
+ );
+ }}
+ />
+ )}
+ <ConfirmDialog
+ open={confirmCancelLetter}
+ onOpenChange={setConfirmCancelLetter}
+ tone="warning"
+ title="Cancel the Template"
+ description="Changes you made will be lost. Are you sure you want to discard them?"
+ cancelLabel="No"
+ confirmLabel="Yes"
+ onConfirm={() => {
+ setConfirmCancelLetter(false);
+ cancelLetterEditing();
+ }}
+ />
+ <UnsavedChangesDialog
+ open={letterUnsavedGuard.pending}
+ onStay={letterUnsavedGuard.clear}
+ onDontSave={() => {
+ cancelLetterEditing();
+ letterUnsavedGuard.proceed();
+ }}
+ onStayAndSave={() => {
+ letterUnsavedGuard.clear();
+ saveLetterEditing();
+ }}
+ />
  </div>
 
  {/* Floating Action Bar for Preview Mode - Inside content area */}
