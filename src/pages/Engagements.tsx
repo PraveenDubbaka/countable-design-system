@@ -20,10 +20,14 @@ function Highlight({ text, query }: { text: string; query: string }) {
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { toast } from "sonner";
-import { Search, ChevronDown, ChevronUp, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, X, Mail, Phone } from "lucide-react";
+import type { EngagementRecord } from "@/store/engagementsStore";
+import { Search, ChevronDown, ChevronUp, Columns3, Pencil, Trash2, Download, Briefcase, Loader, CheckCircle2, Archive, X, Mail, Phone } from "lucide-react";
+import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -120,6 +124,16 @@ const StatusBadge = ({ status, hasRF }: { status: string; hasRF: boolean }) => {
  );
 };
 
+// One entry per movable table column: its header label and the cell for an engagement.
+// Actions (last) is fixed and is not part of this list.
+type EngagementColumn = {
+ id: string;
+ label: string;
+ // Header padding differs for the Cell column (px-4); every other header uses px-6
+ headerClassName?: string;
+ cell: (engagement: EngagementRecord) => React.ReactNode;
+};
+
 const filterPeriodOptions = [
  "Last 6 Month Engagements",
  "Last 3 Month Engagements",
@@ -181,6 +195,107 @@ export default function Engagements() {
  e.stopPropagation();
  navigate(`/engagements/${id}`);
  };
+
+ // Column config drives both the header and the row cells; order and visibility live in state (not persisted).
+ const columns: EngagementColumn[] = [
+  { id: "engagementId", label: "Engagement ID", cell: engagement => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    <span
+     onClick={() => navigate(`/engagements/${engagement.id}`)}
+     className="text-sm text-link font-medium cursor-pointer hover:underline"
+    >
+     <Highlight text={engagement.id} query={searchQuery} />
+    </span>
+   </td>
+  ) },
+  { id: "clientName", label: "Client Name", cell: engagement => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[240px]">
+    <div className="flex items-center gap-2">
+     <Highlight text={engagement.client} query={searchQuery} />
+     {engagement.id === 'AUD-NPM-Dec312025' && (
+      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#39ADAD] text-white shrink-0">🎬 Demo</span>
+     )}
+    </div>
+   </td>
+  ) },
+  { id: "type", label: "Type", cell: engagement => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
+  ) },
+  { id: "cell", label: "Cell", headerClassName: "px-4", cell: engagement => (
+   <td className="px-4 py-3 whitespace-nowrap">
+    {(() => {
+     const region = engagement.client === "Harbor Freight Logistics LLC" ? "us" : "ca";
+     return (
+      <span className={cn(
+       "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+       region === "us"
+        ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
+        : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
+      )}>
+       {region === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+      </span>
+     );
+    })()}
+   </td>
+  ) },
+  { id: "yearEnd", label: "Period/Year End Date", cell: engagement => (
+   <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
+  ) },
+  { id: "assignedTeam", label: "Assigned Team", cell: engagement => {
+   const isExpanded = expandedId === engagement.id;
+   return (
+    <td className="px-6 py-2 whitespace-nowrap">
+     <button
+      className="inline-flex items-center gap-1 text-sm text-link cursor-pointer hover:underline"
+      onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : engagement.id); }}
+     >
+      View Assignees
+      {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+     </button>
+    </td>
+   );
+  } },
+  { id: "status", label: "Status", cell: engagement => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    <StatusBadge status={engagement.status} hasRF={engagement.hasRF} />
+   </td>
+  ) },
+  { id: "dateCreated", label: "Date Created", cell: engagement => (
+   <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.dateCreated}</td>
+  ) },
+ ];
+
+ const [columnOrder, setColumnOrder] = useState<string[]>(() => columns.map(c => c.id));
+ const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
+
+ const toggleColumn = (id: string) => setHiddenColumns(prev => {
+  const next = new Set(prev);
+  if (next.has(id)) next.delete(id); else next.add(id);
+  return next;
+ });
+
+ // Index in `order` of the nearest visible column from `from` in `direction`, skipping hidden ones (-1 if there is none).
+ const visibleNeighbour = (order: string[], from: number, direction: -1 | 1) => {
+  for (let i = from + direction; i >= 0 && i < order.length; i += direction) {
+   if (!hiddenColumns.has(order[i])) return i;
+  }
+  return -1;
+ };
+
+ // Swaps with the nearest visible neighbour in that direction; hidden columns stay where they are.
+ const moveColumn = (id: string, direction: -1 | 1) => setColumnOrder(prev => {
+  const from = prev.indexOf(id);
+  const to = from < 0 ? -1 : visibleNeighbour(prev, from, direction);
+  if (to < 0) return prev;
+  const next = [...prev];
+  [next[from], next[to]] = [next[to], next[from]];
+  return next;
+ });
+
+ const visibleColumns = columnOrder
+  .filter(id => !hiddenColumns.has(id))
+  .map(id => columns.find(c => c.id === id))
+  .filter((c): c is EngagementColumn => !!c);
 
  return (
  <Layout title="Engagements">
@@ -244,6 +359,43 @@ export default function Engagements() {
  </DropdownMenuContent>
  </DropdownMenu>
  <div className="flex items-center gap-2">
+ <Popover>
+ <PopoverTrigger asChild>
+ <ExpandableIconButton variant="secondary" icon={<Columns3 className="h-4 w-4" />} label="Columns" />
+ </PopoverTrigger>
+ <PopoverContent className="p-1 bg-card min-w-max max-h-[70vh] overflow-y-auto" align="end">
+  {columnOrder.map((id, index) => {
+   const col = columns.find(c => c.id === id);
+   if (!col) return null;
+   return (
+    <div key={id} className="flex items-center gap-2 px-2.5 py-1.5 text-xs rounded hover:bg-muted transition-colors">
+     <label className="flex flex-1 items-center gap-2 cursor-pointer whitespace-nowrap text-foreground">
+      <Checkbox checked={!hiddenColumns.has(id)} onCheckedChange={() => toggleColumn(id)} />
+      {col.label}
+     </label>
+     <button
+      type="button"
+      aria-label={`Move ${col.label} up`}
+      disabled={visibleNeighbour(columnOrder, index, -1) < 0}
+      onClick={() => moveColumn(id, -1)}
+      className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
+     >
+      <ChevronUp className="h-3.5 w-3.5" />
+     </button>
+     <button
+      type="button"
+      aria-label={`Move ${col.label} down`}
+      disabled={visibleNeighbour(columnOrder, index, 1) < 0}
+      onClick={() => moveColumn(id, 1)}
+      className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
+     >
+      <ChevronDown className="h-3.5 w-3.5" />
+     </button>
+    </div>
+   );
+  })}
+ </PopoverContent>
+ </Popover>
  <div className="relative">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground icon-search" />
  <Input
@@ -282,21 +434,18 @@ export default function Engagements() {
  <table className="w-full">
  <thead className="sticky top-0 z-10 shadow-sm">
  <tr className="bg-muted border-b border-border">
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Engagement ID</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Client Name</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Type</th>
- <th className="text-left px-4 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Cell</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Period/Year End Date</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Assigned Team</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Status</th>
- <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Date Created</th>
+ {visibleColumns.map(col => (
+ <th key={col.id} className={`text-left ${col.headerClassName ?? "px-6"} py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap`}>
+ {col.label}
+ </th>
+ ))}
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actions</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  {filteredEngagements.length === 0 && searchQuery.trim() && (
  <tr>
- <td colSpan={9} className="px-6 py-16 text-center">
+ <td colSpan={visibleColumns.length + 1} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
  <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
  <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
@@ -309,52 +458,7 @@ export default function Engagements() {
  return (
  <React.Fragment key={engagement.id}>
  <tr className="hover:bg-muted/50 transition-colors group">
- <td className="px-6 py-2 whitespace-nowrap">
- <span
- onClick={() => navigate(`/engagements/${engagement.id}`)}
- className="text-sm text-link font-medium cursor-pointer hover:underline"
- >
- <Highlight text={engagement.id} query={searchQuery} />
- </span>
- </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[240px]">
- <div className="flex items-center gap-2">
- <Highlight text={engagement.client} query={searchQuery} />
- {engagement.id === 'AUD-NPM-Dec312025' && (
- <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#39ADAD] text-white shrink-0">🎬 Demo</span>
- )}
- </div>
- </td>
- <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
- <td className="px-4 py-3 whitespace-nowrap">
-  {(() => {
-   const region = engagement.client === "Harbor Freight Logistics LLC" ? "us" : "ca";
-   return (
-    <span className={cn(
-     "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
-     region === "us"
-      ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
-      : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
-    )}>
-     {region === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
-    </span>
-   );
-  })()}
- </td>
- <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
- <td className="px-6 py-2 whitespace-nowrap">
- <button
- className="inline-flex items-center gap-1 text-sm text-link cursor-pointer hover:underline"
- onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : engagement.id); }}
- >
- View Assignees
- {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
- </button>
- </td>
- <td className="px-6 py-2 whitespace-nowrap">
- <StatusBadge status={engagement.status} hasRF={engagement.hasRF} />
- </td>
- <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.dateCreated}</td>
+ {visibleColumns.map(col => <React.Fragment key={col.id}>{col.cell(engagement)}</React.Fragment>)}
  <td className="px-6 py-2 whitespace-nowrap">
  <div className="flex items-center gap-2">
  <button
@@ -376,7 +480,7 @@ export default function Engagements() {
  </tr>
  {isExpanded && assignees && (
  <tr className="bg-muted/30">
- <td colSpan={9} className="px-6 py-4">
+ <td colSpan={visibleColumns.length + 1} className="px-6 py-4">
  <div className="flex gap-10">
  <div className="flex-1">
  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Firm Team</p>
