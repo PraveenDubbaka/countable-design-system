@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 
 function Highlight({ text, query }: { text: string; query: string }) {
  if (!query.trim()) return <>{text}</>;
@@ -420,7 +421,7 @@ export default function Clients() {
  </div>
 
  <p className="text-sm text-muted-foreground">
-  {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+  {SHOW_REGION_LABELS && <>{activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} </>}{activeFirm.name}{SHOW_REGION_LABELS && <> · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}</>}
  </p>
 
  {/* Tabs and Actions Row */}

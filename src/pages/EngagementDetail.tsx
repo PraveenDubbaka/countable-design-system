@@ -12,6 +12,7 @@ import { Layout } from "@/components/Layout";
 import { LukaIcon } from "@/components/LukaIcon";
 import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
+import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 import {
  LetterEditorPanel,
  ConfirmDialog,
@@ -2421,7 +2422,7 @@ export default function EngagementDetail() {
  </Badge>
 
  {/* Jurisdiction Badge */}
- {engagement?.jurisdiction && (
+ {SHOW_REGION_LABELS && engagement?.jurisdiction && (
   <div className="ml-1 inline-flex items-center gap-1 h-7 px-2 bg-muted border border-border rounded-sm">
    <span className="text-[11px] font-semibold text-muted-foreground">
     {engagement.region === "ca" ? "🇨🇦" : "🇺🇸"} {engagement.jurisdiction}

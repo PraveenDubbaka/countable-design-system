@@ -49,6 +49,7 @@ import {
 import { readJsonFromLocalStorage, removeLocalStorageKey, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 import { LetterIcon } from "@/components/icons/LetterIcon";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
 import { CompletionIcon } from "@/components/icons/CompletionIcon";
@@ -1964,9 +1965,11 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
      title={activeFirm.name}
     >
      {activeFirm.initials}
-     <span className="absolute -bottom-2 -right-2 text-[12px] leading-none pointer-events-none">
-      {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}
-     </span>
+     {SHOW_REGION_LABELS && (
+      <span className="absolute -bottom-2 -right-2 text-[12px] leading-none pointer-events-none">
+       {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}
+      </span>
+     )}
     </button>
    </PopoverTrigger>
    <PopoverContent

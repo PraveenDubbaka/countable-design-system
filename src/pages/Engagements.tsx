@@ -34,6 +34,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 
 function getActiveFirm() {
   try {
@@ -263,7 +264,7 @@ export default function Engagements() {
   { id: "dateCreated", label: "Date Created", cell: engagement => (
    <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.dateCreated}</td>
   ) },
- ];
+ ].filter(c => SHOW_REGION_LABELS || c.id !== "cell"); // the Cell (data residency) column is hidden with the region labels
 
  const [columnOrder, setColumnOrder] = useState<string[]>(() => columns.map(c => c.id));
  const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
@@ -331,7 +332,7 @@ export default function Engagements() {
  </div>
 
  <p className="text-sm text-muted-foreground mt-1">
-  {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+  {SHOW_REGION_LABELS && <>{activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} </>}{activeFirm.name}{SHOW_REGION_LABELS && <> · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}</>}
  </p>
 
  {/* Filter, Search, Export and Create Row - Enhanced spacing */}

@@ -10,6 +10,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import sageLogo from "@/assets/sage-logo.svg";
 
@@ -508,7 +509,7 @@ export default function Dashboard() {
   <p className="text-sm text-muted-foreground mt-1">Aggregated across all offices · Switch to an office to view client records</p>
  ) : (
   <p className="text-sm text-muted-foreground mt-1">
-   {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} {activeFirm.name} · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}
+   {SHOW_REGION_LABELS && <>{activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} </>}{activeFirm.name}{SHOW_REGION_LABELS && <> · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}</>}
   </p>
  )}
  </div>
