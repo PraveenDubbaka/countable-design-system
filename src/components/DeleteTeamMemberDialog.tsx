@@ -16,11 +16,11 @@ const DEFAULT_WARNINGS = [
 
 // Every item goes to a person, so there is no "Unassign" choice. A member's role shows beside the name in muted text.
 const ReassignSelect = ({
-  value, onChange, options, label, className = "w-44 shrink-0", error,
+  value, onChange, options, label, className = "w-44 shrink-0", error, disabled,
 }: {
-  value: string; onChange: (value: string) => void; options: ReassignOption[]; label: string; className?: string; error?: boolean;
+  value: string; onChange: (value: string) => void; options: ReassignOption[]; label: string; className?: string; error?: boolean; disabled?: boolean;
 }) => (
-  <Select value={value} onValueChange={onChange}>
+  <Select value={value} onValueChange={onChange} disabled={disabled}>
     <SelectTrigger className={className} aria-label={label} error={error}>
       <SelectValue placeholder="Select member" />
     </SelectTrigger>
@@ -103,6 +103,7 @@ export function DeleteTeamMemberDialog({
   const query = search.trim().toLowerCase();
   const rows = group.items.filter(item => matches(item.label, query));
   const rowKeys = rows.map(item => keyOf(currentTab, item.id));
+  const hasSelection = selected.size > 0;
   const selectedShown = rowKeys.filter(k => selected.has(k)).length;
   const allShownSelected = rowKeys.length > 0 && selectedShown === rowKeys.length;
   const someShownSelected = selectedShown > 0 && !allShownSelected;
@@ -177,25 +178,22 @@ export function DeleteTeamMemberDialog({
               </div>
 
               <TabsContent key={currentTab} value={currentTab} className="mt-0 flex flex-col flex-1 min-h-0 gap-3">
-                {/* The bar's space is always reserved, so the rows do not jump down when the first one is ticked */}
-                <div className="shrink-0 min-h-[54px]">
-                  {selected.size > 0 && (
-                    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/50 px-3 py-2">
-                      <span className="text-sm font-semibold text-foreground">{selected.size} selected</span>
-                      <span className="text-sm text-muted-foreground" aria-hidden="true">·</span>
-                      <span className="text-sm text-foreground">Assign to</span>
-                      <ReassignSelect
-                        value={bulkMember}
-                        onChange={value => { setBulkMember(value); setBulkError(false); }}
-                        options={options}
-                        label="Assign selected to"
-                        className="w-64 shrink-0"
-                        error={bulkError}
-                      />
-                      <Button onClick={applyBulk} className="h-9">Apply</Button>
-                      {bulkError && <span role="alert" className="text-xs text-destructive">Select a member first</span>}
-                    </div>
-                  )}
+                {/* Always shown, so it holds its own space and the rows never move; muted and disabled until a row is selected */}
+                <div className={`shrink-0 flex flex-wrap items-center gap-3 rounded-xl border border-border px-3 py-2 text-sm ${hasSelection ? "bg-muted/50 text-foreground" : "bg-muted/30 text-muted-foreground/70"}`}>
+                  <span className="font-semibold">{selected.size} selected</span>
+                  <span className={hasSelection ? "text-muted-foreground" : undefined} aria-hidden="true">·</span>
+                  <span>Assign to</span>
+                  <ReassignSelect
+                    value={bulkMember}
+                    onChange={value => { setBulkMember(value); setBulkError(false); }}
+                    options={options}
+                    label="Assign selected to"
+                    className="w-64 shrink-0"
+                    error={bulkError}
+                    disabled={!hasSelection}
+                  />
+                  <Button onClick={applyBulk} disabled={!hasSelection} className="h-9">Apply</Button>
+                  {bulkError && <span role="alert" className="text-xs text-destructive">Select a member first</span>}
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-border">
