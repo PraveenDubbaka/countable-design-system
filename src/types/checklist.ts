@@ -77,6 +77,7 @@ export interface Section {
  isExpanded: boolean;
  formLayout?: FormLayout;
  note?: string;
+ isUserAdded?: boolean; // Track if section was added by user in engagement mode (absent = template section)
 }
 
 /** Optional column-header / select-option overrides for WorksheetView */

@@ -1867,10 +1867,10 @@ export function DocumentSectionBlock({
  onAddCategoryAtPosition, isPreviewMode, isEngagementMode,
  numberingFormat, applyingQuestionId,
  selectedQuestions, onSelectionChange, showNumbering,
- onNumberingFormatChange, onShowNumberingChange, isCompactMode = false,
+ onNumberingFormatChange, onShowNumberingChange, showTitles, onShowTitlesChange, isCompactMode = false,
  isGlobalTemplate = false,
  onCollapseSections, onExpandSections, allSectionsCollapsed = false, onReorder
-}: {section: Section;sectionIndex: number;onUpdate: (s: Section) => void;onDelete: () => void;onAddItem: () => void;onAddCategoryAtPosition: (pos: 'above' | 'below') => void;isPreviewMode: boolean;isEngagementMode: boolean;numberingFormat: NumberingFormat;applyingQuestionId?: string | null;selectedQuestions?: Set<string>;onSelectionChange?: (questionId: string, selected: boolean) => void;showNumbering: boolean;onNumberingFormatChange: (f: NumberingFormat) => void;onShowNumberingChange: (v: boolean) => void;isCompactMode?: boolean;isGlobalTemplate?: boolean;onCollapseSections?: () => void;onExpandSections?: () => void;allSectionsCollapsed?: boolean;onReorder: () => void;}) {
+}: {section: Section;sectionIndex: number;onUpdate: (s: Section) => void;onDelete: () => void;onAddItem: () => void;onAddCategoryAtPosition: (pos: 'above' | 'below') => void;isPreviewMode: boolean;isEngagementMode: boolean;numberingFormat: NumberingFormat;applyingQuestionId?: string | null;selectedQuestions?: Set<string>;onSelectionChange?: (questionId: string, selected: boolean) => void;showNumbering: boolean;onNumberingFormatChange: (f: NumberingFormat) => void;onShowNumberingChange: (v: boolean) => void;showTitles: boolean;onShowTitlesChange: (v: boolean) => void;isCompactMode?: boolean;isGlobalTemplate?: boolean;onCollapseSections?: () => void;onExpandSections?: () => void;allSectionsCollapsed?: boolean;onReorder: () => void;}) {
  const [isEditingTitle, setIsEditingTitle] = useState(false);
  const [draftTitle, setDraftTitle] = useState(section.title);
  const [sectionMenuOpen, setSectionMenuOpen] = useState(false);
@@ -1986,8 +1986,8 @@ export function DocumentSectionBlock({
  {allSectionsCollapsed ? 'Expand all sections' : 'Collapse all sections'}
  </DropdownMenuItem>
  )}
- {/* Structural editing is template-only: hidden (not disabled) inside an engagement */}
- {!isEngagementMode && <>
+ {/* Structural editing: every section in the template builder; inside an engagement only sections added there (isUserAdded). Hidden (not disabled) on template sections inside an engagement */}
+ {(!isEngagementMode || section.isUserAdded) && <>
  <DropdownMenuSeparator />
  {/* Add / reorder */}
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddCategoryAtPosition('above'); setSectionMenuOpen(false); }}>
@@ -1999,6 +1999,8 @@ export function DocumentSectionBlock({
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReorder(); setSectionMenuOpen(false); }}>
  <ArrowUpDown className="h-4 w-4 mr-2 shrink-0" />Reorder
  </DropdownMenuItem>
+ {/* Numbering format is template-builder only: never shown inside an engagement */}
+ {!isEngagementMode && <>
  <DropdownMenuSeparator />
  {/* Numbering format submenu */}
  <DropdownMenuSub>
@@ -2009,6 +2011,10 @@ export function DocumentSectionBlock({
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShowNumberingChange(!showNumbering); setSectionMenuOpen(false); }}>
  {showNumbering ? <EyeOff className="h-4 w-4 mr-2 shrink-0" /> : <Eye className="h-4 w-4 mr-2 shrink-0" />}
  {showNumbering ? 'Hide numbering' : 'Show numbering'}
+ </DropdownMenuItem>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShowTitlesChange(!showTitles); setSectionMenuOpen(false); }}>
+ {showTitles ? <EyeOff className="h-4 w-4 mr-2 shrink-0" /> : <Eye className="h-4 w-4 mr-2 shrink-0" />}
+ {showTitles ? 'Hide titles' : 'Show titles'}
  </DropdownMenuItem>
  {showNumbering && <>
  <DropdownMenuSeparator />
@@ -2032,6 +2038,7 @@ export function DocumentSectionBlock({
  </>}
  </DropdownMenuSubContent>
  </DropdownMenuSub>
+ </>}
  <DropdownMenuSeparator />
  {/* Delete */}
  <DropdownMenuItem
@@ -2054,8 +2061,8 @@ export function DocumentSectionBlock({
  <div className="shrink-0 w-px self-stretch mx-0 pointer-events-none" style={{ backgroundColor: 'var(--dv-separator)' }} />
  </>}
 
- {/* Title */}
- {isEditingTitle && !isPreviewMode ?
+ {/* Title — "Hide titles" only makes the text invisible, so the number, kebab and 48px header geometry never shift */}
+ {isEditingTitle && showTitles && !isPreviewMode ?
  <Input
  value={draftTitle}
  onChange={(e) => setDraftTitle(e.target.value)}
@@ -2072,7 +2079,7 @@ export function DocumentSectionBlock({
  <h3
  onClick={() => {if (!isPreviewMode) setIsEditingTitle(true);}}
  className={`dv-section-title text-sm font-semibold text-category-title flex-1 pl-[6px] ${
- !isPreviewMode ? 'cursor-text' : ''}`
+ !isPreviewMode ? 'cursor-text' : ''} ${!showTitles ? 'invisible' : ''}`
  }>
 
  {cleanTitle(section.title)}
@@ -2287,6 +2294,11 @@ export function DocumentView({
  const saved = localStorage.getItem('dv-show-numbering');
  return saved !== null ? saved === 'true' : true;
  });
+ // Hide titles — same persistence and scope as Hide numbering (one browser-wide preference)
+ const [showTitles, setShowTitles] = useState(() => {
+ const saved = localStorage.getItem('dv-show-titles');
+ return saved !== null ? saved === 'true' : true;
+ });
  const [activeId, setActiveId] = useState<string | null>(null);
  const [activeData, setActiveData] = useState<{type: string;text: string;} | null>(null);
  const [noteExpanded, setNoteExpanded] = useState(true);
@@ -2327,6 +2339,8 @@ export function DocumentView({
  };
 
  const handleSectionDelete = (idx: number) => {
+ // Inside an engagement only sections added there can be deleted — template sections never can
+ if (isEngagementMode && !checklist.sections[idx]?.isUserAdded) return;
  onUpdate({...checklist, sections: checklist.sections.filter((_, i) => i !== idx) });
  };
 
@@ -2345,7 +2359,8 @@ export function DocumentView({
 
  const handleAddCategoryAtPosition = (sectionIdx: number, pos: 'above' | 'below') => {
  const newSection: Section = {
- id: `section-${Date.now()}`, title: 'New Section', questions: [], isExpanded: true
+ id: `section-${Date.now()}`, title: 'New Section', questions: [], isExpanded: true,
+ isUserAdded: isEngagementMode ? true : undefined
  };
  const insertIdx = pos === 'above' ? sectionIdx : sectionIdx + 1;
  const newSections = [
@@ -2366,6 +2381,7 @@ export function DocumentView({
  title: 'New Section',
  questions: [],
  isExpanded: true,
+ isUserAdded: isEngagementMode ? true : undefined,
  formLayout: {
  columns,
  elements
@@ -2560,6 +2576,8 @@ export function DocumentView({
  showNumbering={showNumbering}
  onNumberingFormatChange={(f) => { setNumberingFormat(f); localStorage.setItem('dv-numbering-format', f); }}
  onShowNumberingChange={(v) => { setShowNumbering(v); localStorage.setItem('dv-show-numbering', String(v)); }}
+ showTitles={showTitles}
+ onShowTitlesChange={(v) => { setShowTitles(v); localStorage.setItem('dv-show-titles', String(v)); }}
  isCompactMode={isCompactMode}
  isGlobalTemplate={isGlobalTemplate}
  onCollapseSections={onCollapseSections}
