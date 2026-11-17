@@ -1448,24 +1448,22 @@ export default function EngagementDetail() {
  const defaultById = new Map(defaults.map(item => [item.id, item]));
  const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
  const missing = defaults.filter(d => !existingIds.has(d.id));
- // A stored copy counts as user-edited (and is kept) when it has a row added in the engagement (a sub-item counts too)...
- const rowIsUserAdded = (q: any): boolean => !!q?.isUserAdded || (Array.isArray(q?.subQuestions) && q.subQuestions.some(rowIsUserAdded));
- // ...an answered row, a section added in the engagement, or a per-section Hide numbering / Hide titles flag.
- // A missing or malformed copy has none of these, so it falls back to the seeded default.
+ // A stored copy counts as user-edited (and is kept) when it has an answered row, a row added in the engagement, a section
+ // added in the engagement, or a per-section Hide numbering / Hide titles flag. Rows are checked at every depth, so an answer
+ // in a sub-row and a sub-item added in the engagement both count. A missing or malformed copy has none of these.
+ const rowIsEdited = (q: any): boolean =>
+ !!q?.isUserAdded || !!(q?.answer && q.answer !== '') || (Array.isArray(q?.subQuestions) && q.subQuestions.some(rowIsEdited));
  const hasUserEdits = (c: any): boolean => Array.isArray(c?.data?.sections) && c.data.sections.some((s: any) =>
- !!s?.isUserAdded || !!s?.hideNumbering || !!s?.hideTitle ||
- (Array.isArray(s?.questions) && s.questions.some((q: any) => !!(q?.answer && q.answer !== '') || rowIsUserAdded(q)))
+ !!s?.isUserAdded || !!s?.hideNumbering || !!s?.hideTitle || (Array.isArray(s?.questions) && s.questions.some(rowIsEdited))
  );
  const refreshed = savedChecklists
 .filter((c: any) => !LEGACY_COMPILATION_CHECKLIST_IDS.has(c?.id))
 .map((c: any) => {
  const def = defaultById.get(c?.id);
  if (!def) return c;
- // If section IDs diverge from the default, the schema changed — always use the fresh default.
- const storedFirstSectionId = c?.data?.sections?.[0]?.id;
- const defaultFirstSectionId = def?.data?.sections?.[0]?.id;
- if (storedFirstSectionId && defaultFirstSectionId && storedFirstSectionId !== defaultFirstSectionId) return def;
- // Preserve entries the user has changed (answers e.g. from Luka autofill, engagement-added sections/rows, per-section Hide numbering/titles)
+ // A copy with edits or answers (e.g. from Luka autofill) is always kept, even when its sections were reordered — a reorder
+ // changes the first section's id, which used to be read as "the schema changed" and reset the copy. Only an unedited copy
+ // gets the fresh seeded default.
  return hasUserEdits(c) ? c : def;
 });
  if (missing.length > 0 || refreshed.length !== savedChecklists.length || refreshed.some((item: any, idx: number) => item !== savedChecklists[idx])) {
