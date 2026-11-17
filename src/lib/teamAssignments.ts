@@ -10,7 +10,7 @@ export const UNASSIGN = "__unassign__";
 
 export type ReassignItem = { id: string; label: string; detail?: string };
 export type ReassignGroup = { id: string; title: string; items: ReassignItem[] };
-export type ReassignOption = { value: string; label: string };
+export type ReassignOption = { value: string; label: string; role?: string };
 
 // Whose work it is: the exact name to match, their category (partners also own the team members assigned to them) and
 // a key, so a team member is never listed as owning their own assignment.

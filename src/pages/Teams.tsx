@@ -425,8 +425,9 @@ export default function Teams() {
  open={deleteOpen}
  onOpenChange={setDeleteOpen}
  groups={deleteGroups}
- options={members.filter(m => m.key !== deleteTarget.key).map(m => ({ value: m.key, label: m.name }))}
+ options={members.filter(m => m.key !== deleteTarget.key).map(m => ({ value: m.key, label: m.name, role: m.category }))}
  onConfirm={confirmDelete}
+ reassignTitle={`Reassign ${deleteTarget.name}'s work`}
  />
  )}
  </Layout>

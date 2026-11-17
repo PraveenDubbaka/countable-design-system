@@ -1086,7 +1086,7 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
      open={removeOpen}
      onOpenChange={setRemoveOpen}
      groups={removeGroups}
-     options={removeRows.filter(r => r.name !== removeTarget.name).map(r => ({ value: r.key, label: r.name }))}
+     options={removeRows.filter(r => r.name !== removeTarget.name).map(r => ({ value: r.key, label: r.name, role: r.category }))}
      onConfirm={confirmRemoveAccess}
      title="Remove Access"
      question={`Remove access for ${removeTarget.name}?`}
