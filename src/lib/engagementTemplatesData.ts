@@ -134,13 +134,13 @@ export const templateTree: TreeItem[] = [
  children: [
  {
  id: "audit-ca", label: "Canada", type: "folder", children: [
- { id: "audit5100", label: "CAS / ASPE — Private (5100)", type: "file", suggested: true },
+ { id: "audit5100", label: "Audit ASPE 5100", type: "file", suggested: true },
  ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit5101", label: "CAS / NFP — ASNPO (5101)", type: "file" as const }] : []),
  ],
  },
  {
  id: "audit-us", label: "United States", type: "folder", children: [
- { id: "audit6100", label: "GAAS / US GAAP — Private (6100)", type: "file", suggested: true },
+ { id: "audit6100", label: "Audit GAAP 6100", type: "file", suggested: true },
  ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" as const }] : []),
  ],
  },
@@ -298,7 +298,7 @@ const review2400: TemplateView = {
 // ── Audit 5100 (Canada CAS/ASPE) ──
 const audit5100: TemplateView = {
  id: "audit5100",
- title: "Audit Section 5100",
+ title: "Audit ASPE 5100",
  subtitle: "CAS — Canadian Auditing Standards · ASPE (Accounting Standards for Private Enterprises)",
  standardsBanner: {
  label: "Standards covered:",
@@ -543,7 +543,7 @@ const audit5101: TemplateView = {
 // ── Audit 6100 (US GAAS / US GAAP — Private) ──
 const audit6100: TemplateView = {
  id: "audit6100",
- title: "Audit Section 6100",
+ title: "Audit GAAP 6100",
  subtitle: "United States · GAAS (AU-C Sections) · US GAAP (ASC) · Private Companies",
  standardsBanner: {
   label: "Standards covered:",
