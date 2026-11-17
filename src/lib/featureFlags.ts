@@ -4,3 +4,4 @@ export const SHOW_MULTI_OFFICE = false; // Multi-office (switcher, add office, a
 // With multi-office hidden the active office is always the main one; a stored activeFirmId is ignored (not deleted).
 export const MAIN_FIRM_ID = "firm-ca-1";
 export const activeFirmIdOrMain = (stored: string | null): string => (SHOW_MULTI_OFFICE ? stored ?? MAIN_FIRM_ID : MAIN_FIRM_ID);
+export const SHOW_NFP_PCAOB_TEMPLATES = false; // ASNPO 5101 and PCAOB 6200 not being built for now (Atin, Nov 16)

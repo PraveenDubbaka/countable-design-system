@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 
 const INDUSTRIES = [
  "Construction & Real Estate", "Financial Services", "Healthcare & Life Sciences",
@@ -1248,7 +1249,7 @@ export default function CreateEngagement() {
  open={showTemplatePicker}
  onClose={() => setShowTemplatePicker(false)}
  suggestedTemplateId={
- isAudit && accountingStandards.includes("ASNPO") ? "audit5101" :
+ isAudit && SHOW_NFP_PCAOB_TEMPLATES && accountingStandards.includes("ASNPO") ? "audit5101" :
  isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :
  isAudit ? "audit5100" :
  engagementType.includes("Compilation") ? "comp4200" :

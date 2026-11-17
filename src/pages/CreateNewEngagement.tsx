@@ -19,6 +19,7 @@ import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
 import { format as formatDateFns } from "date-fns";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 import { getClientConnectionState, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
 import { accountingProviders } from "@/lib/accountingProviders";
 import { savedYearSources } from "@/lib/yearSourceSave";
@@ -1213,7 +1214,7 @@ export default function CreateNewEngagement() {
             open={showTemplatePicker}
             onClose={() => setShowTemplatePicker(false)}
             suggestedTemplateId={
-              isAudit && accountingStandards.includes("ASNPO") ? "audit5101" :
+              isAudit && SHOW_NFP_PCAOB_TEMPLATES && accountingStandards.includes("ASNPO") ? "audit5101" :
               isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :
               isAudit ? "audit5100" :
               engagementType.includes("Compilation") ? "comp4200" :

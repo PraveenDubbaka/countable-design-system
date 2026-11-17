@@ -1,3 +1,4 @@
+import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 // ── Engagement Templates Data ──
 // All template views for the Engagement Templates page
 
@@ -134,13 +135,13 @@ export const templateTree: TreeItem[] = [
  {
  id: "audit-ca", label: "Canada", type: "folder", children: [
  { id: "audit5100", label: "CAS / ASPE — Private (5100)", type: "file", suggested: true },
- { id: "audit5101", label: "CAS / NFP — ASNPO (5101)", type: "file" },
+ ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit5101", label: "CAS / NFP — ASNPO (5101)", type: "file" as const }] : []),
  ],
  },
  {
  id: "audit-us", label: "United States", type: "folder", children: [
  { id: "audit6100", label: "GAAS / US GAAP — Private (6100)", type: "file", suggested: true },
- { id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" },
+ ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" as const }] : []),
  ],
  },
  ],
