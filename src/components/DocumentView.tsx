@@ -2044,7 +2044,7 @@ export function DocumentSectionBlock({
  return isEngagementMode ? (
  <Tooltip key={opt.value}>
  <TooltipTrigger asChild><div>{item}</div></TooltipTrigger>
- <TooltipContent side="right"><p className="text-xs">Numbering format is set by the template</p></TooltipContent>
+ <TooltipContent side="right"><p className="text-xs">Numbering format can only be changed in the template builder</p></TooltipContent>
  </Tooltip>
  ) : item;
  })}

@@ -1448,6 +1448,14 @@ export default function EngagementDetail() {
  const defaultById = new Map(defaults.map(item => [item.id, item]));
  const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
  const missing = defaults.filter(d => !existingIds.has(d.id));
+ // A stored copy counts as user-edited (and is kept) when it has a row added in the engagement (a sub-item counts too)...
+ const rowIsUserAdded = (q: any): boolean => !!q?.isUserAdded || (Array.isArray(q?.subQuestions) && q.subQuestions.some(rowIsUserAdded));
+ // ...an answered row, a section added in the engagement, or a per-section Hide numbering / Hide titles flag.
+ // A missing or malformed copy has none of these, so it falls back to the seeded default.
+ const hasUserEdits = (c: any): boolean => Array.isArray(c?.data?.sections) && c.data.sections.some((s: any) =>
+ !!s?.isUserAdded || !!s?.hideNumbering || !!s?.hideTitle ||
+ (Array.isArray(s?.questions) && s.questions.some((q: any) => !!(q?.answer && q.answer !== '') || rowIsUserAdded(q)))
+ );
  const refreshed = savedChecklists
 .filter((c: any) => !LEGACY_COMPILATION_CHECKLIST_IDS.has(c?.id))
 .map((c: any) => {
@@ -1457,11 +1465,8 @@ export default function EngagementDetail() {
  const storedFirstSectionId = c?.data?.sections?.[0]?.id;
  const defaultFirstSectionId = def?.data?.sections?.[0]?.id;
  if (storedFirstSectionId && defaultFirstSectionId && storedFirstSectionId !== defaultFirstSectionId) return def;
- // Preserve entries that have user-filled answers (e.g. Luka autofill)
- const hasAnswers = c?.data?.sections?.some((s: any) =>
- s?.questions?.some((q: any) => q?.answer && q.answer !== '')
- );
- return hasAnswers ? c : def;
+ // Preserve entries the user has changed (answers e.g. from Luka autofill, engagement-added sections/rows, per-section Hide numbering/titles)
+ return hasUserEdits(c) ? c : def;
 });
  if (missing.length > 0 || refreshed.length !== savedChecklists.length || refreshed.some((item: any, idx: number) => item !== savedChecklists[idx])) {
  savedChecklists = [...refreshed,...missing];
