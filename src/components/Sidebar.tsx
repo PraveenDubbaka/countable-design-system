@@ -1951,23 +1951,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
 
  {/* Firm badge — icon-only, always at bottom */}
+ {SHOW_MULTI_OFFICE && (
  <div className={cn("pb-3 pt-1", isNavExpanded ? "px-2" : "flex justify-center")}>
-  {!SHOW_MULTI_OFFICE ? (
-   <div
-    className={cn(
-     "relative w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold",
-     activeFirm.color
-    )}
-    title={activeFirm.name}
-   >
-    {activeFirm.initials}
-    {SHOW_REGION_LABELS && (
-     <span className="absolute -bottom-2 -right-2 text-[12px] leading-none pointer-events-none">
-      {activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"}
-     </span>
-    )}
-   </div>
-  ) : (
   <Popover open={firmPopoverOpen} onOpenChange={setFirmPopoverOpen}>
    <PopoverTrigger asChild>
     <button
@@ -2071,8 +2056,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
     </button>
    </PopoverContent>
   </Popover>
-  )}
  </div>
+ )}
 
  </div>
 
