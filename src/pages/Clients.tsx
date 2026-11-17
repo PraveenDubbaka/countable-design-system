@@ -265,7 +265,7 @@ export default function Clients() {
        ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/40"
        : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/40"
      )}>
-      {client.clientCountry === "us" ? "🇺🇸 US" : "🇨🇦 CA"}
+      {client.clientCountry === "us" ? (SHOW_REGION_LABELS ? "🇺🇸 US" : "US") : (SHOW_REGION_LABELS ? "🇨🇦 CA" : "CA")}
      </span>
     </td>
    ) },
