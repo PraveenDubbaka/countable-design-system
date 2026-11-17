@@ -78,6 +78,8 @@ export interface Section {
  formLayout?: FormLayout;
  note?: string;
  isUserAdded?: boolean; // Track if section was added by user in engagement mode (absent = template section)
+ hideNumbering?: boolean; // Per-section: hide this section's header number and its rows' numbers (absent = shown)
+ hideTitle?: boolean; // Per-section: hide this section's title text (absent = shown)
 }
 
 /** Optional column-header / select-option overrides for WorksheetView */

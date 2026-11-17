@@ -1866,17 +1866,22 @@ export function DocumentSectionBlock({
  section, sectionIndex, onUpdate, onDelete, onAddItem,
  onAddCategoryAtPosition, isPreviewMode, isEngagementMode,
  numberingFormat, applyingQuestionId,
- selectedQuestions, onSelectionChange, showNumbering,
- onNumberingFormatChange, onShowNumberingChange, showTitles, onShowTitlesChange, isCompactMode = false,
+ selectedQuestions, onSelectionChange,
+ onNumberingFormatChange, isCompactMode = false,
  isGlobalTemplate = false,
  onCollapseSections, onExpandSections, allSectionsCollapsed = false, onReorder
-}: {section: Section;sectionIndex: number;onUpdate: (s: Section) => void;onDelete: () => void;onAddItem: () => void;onAddCategoryAtPosition: (pos: 'above' | 'below') => void;isPreviewMode: boolean;isEngagementMode: boolean;numberingFormat: NumberingFormat;applyingQuestionId?: string | null;selectedQuestions?: Set<string>;onSelectionChange?: (questionId: string, selected: boolean) => void;showNumbering: boolean;onNumberingFormatChange: (f: NumberingFormat) => void;onShowNumberingChange: (v: boolean) => void;showTitles: boolean;onShowTitlesChange: (v: boolean) => void;isCompactMode?: boolean;isGlobalTemplate?: boolean;onCollapseSections?: () => void;onExpandSections?: () => void;allSectionsCollapsed?: boolean;onReorder: () => void;}) {
+}: {section: Section;sectionIndex: number;onUpdate: (s: Section) => void;onDelete: () => void;onAddItem: () => void;onAddCategoryAtPosition: (pos: 'above' | 'below') => void;isPreviewMode: boolean;isEngagementMode: boolean;numberingFormat: NumberingFormat;applyingQuestionId?: string | null;selectedQuestions?: Set<string>;onSelectionChange?: (questionId: string, selected: boolean) => void;onNumberingFormatChange: (f: NumberingFormat) => void;isCompactMode?: boolean;isGlobalTemplate?: boolean;onCollapseSections?: () => void;onExpandSections?: () => void;allSectionsCollapsed?: boolean;onReorder: () => void;}) {
  const [isEditingTitle, setIsEditingTitle] = useState(false);
  const [draftTitle, setDraftTitle] = useState(section.title);
- const [sectionMenuOpen, setSectionMenuOpen] = useState(false);
+ // Hide numbering / Hide titles are per-section settings kept on the section itself (absent = shown)
+ const showNumbering = !section.hideNumbering;
+ const showTitles = !section.hideTitle;
+ const [sectionMenuOpen, setSectionMenuOpenState] = useState(false);
  const { id: globalOpenId, set: setGlobalOpenId } = useContext(KebabOpenCtx);
- const handleSectionMenuOpenChange = (open: boolean) => {
- setSectionMenuOpen(open);
+ // The one place the section menu opens or closes. It also publishes/releases the shared open-kebab id, so every way the
+ // menu can close (item, submenu item, Escape, outside click) frees it and the other kebabs keep appearing on hover.
+ const setSectionMenuOpen = (open: boolean) => {
+ setSectionMenuOpenState(open);
  setGlobalOpenId(open ? `s:${section.id}` : null);
  };
  const showSectionKebab = globalOpenId === null || globalOpenId === `s:${section.id}`;
@@ -1963,7 +1968,7 @@ export function DocumentSectionBlock({
  sectionMenuOpen || sectionKebabActive ? 'opacity-100 pointer-events-auto' :
  'opacity-0 pointer-events-none'
  }`}>
- <DropdownMenu open={sectionMenuOpen} onOpenChange={handleSectionMenuOpenChange}>
+ <DropdownMenu open={sectionMenuOpen} onOpenChange={setSectionMenuOpen}>
  <DropdownMenuTrigger asChild>
  <button
  onMouseDown={(e) => e.preventDefault()}
@@ -1999,20 +2004,18 @@ export function DocumentSectionBlock({
  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onReorder(); setSectionMenuOpen(false); }}>
  <ArrowUpDown className="h-4 w-4 mr-2 shrink-0" />Reorder
  </DropdownMenuItem>
- {/* Numbering format is template-builder only: never shown inside an engagement */}
- {!isEngagementMode && <>
  <DropdownMenuSeparator />
- {/* Numbering format submenu */}
+ {/* Numbering format submenu — Hide numbering / Hide titles are per-section; inside an engagement the format options are read-only (the template sets the format) */}
  <DropdownMenuSub>
  <DropdownMenuSubTrigger className="px-3 py-2 text-sm">
  <Hash className="h-4 w-4 mr-2 shrink-0 text-muted-foreground" />Numbering format
  </DropdownMenuSubTrigger>
  <DropdownMenuSubContent className="min-w-[200px] p-1">
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShowNumberingChange(!showNumbering); setSectionMenuOpen(false); }}>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onUpdate({...section, hideNumbering: section.hideNumbering ? undefined : true }); setSectionMenuOpen(false); }}>
  {showNumbering ? <EyeOff className="h-4 w-4 mr-2 shrink-0" /> : <Eye className="h-4 w-4 mr-2 shrink-0" />}
  {showNumbering ? 'Hide numbering' : 'Show numbering'}
  </DropdownMenuItem>
- <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onShowTitlesChange(!showTitles); setSectionMenuOpen(false); }}>
+ <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onUpdate({...section, hideTitle: section.hideTitle ? undefined : true }); setSectionMenuOpen(false); }}>
  {showTitles ? <EyeOff className="h-4 w-4 mr-2 shrink-0" /> : <Eye className="h-4 w-4 mr-2 shrink-0" />}
  {showTitles ? 'Hide titles' : 'Show titles'}
  </DropdownMenuItem>
@@ -2022,10 +2025,12 @@ export function DocumentSectionBlock({
  { value: 'number' as NumberingFormat, label: 'Numbers Only', example: '1. → 1.1' },
  { value: 'number-alphabet' as NumberingFormat, label: 'Number + Alphabet', example: '1. → 1.A' },
  { value: 'alphabet-number' as NumberingFormat, label: 'Alphabet + Number', example: 'A. → A.1' },
- ]).map(opt => (
+ ]).map(opt => {
+ const item = (
  <DropdownMenuItem
  key={opt.value}
- onClick={(e) => { e.stopPropagation(); onNumberingFormatChange(opt.value); setSectionMenuOpen(false); }}
+ disabled={isEngagementMode}
+ onClick={isEngagementMode ? undefined : (e) => { e.stopPropagation(); onNumberingFormatChange(opt.value); setSectionMenuOpen(false); }}
  className="flex items-center gap-2 px-3 py-2 text-sm"
  >
  <span className="w-4 shrink-0 flex items-center justify-center">
@@ -2034,11 +2039,18 @@ export function DocumentSectionBlock({
  <span className="flex-1">{opt.label}</span>
  <span className="text-[10px] text-muted-foreground">{opt.example}</span>
  </DropdownMenuItem>
- ))}
+ );
+ // A disabled item gets no pointer events, so the tooltip hangs off a wrapper
+ return isEngagementMode ? (
+ <Tooltip key={opt.value}>
+ <TooltipTrigger asChild><div>{item}</div></TooltipTrigger>
+ <TooltipContent side="right"><p className="text-xs">Numbering format is set by the template</p></TooltipContent>
+ </Tooltip>
+ ) : item;
+ })}
  </>}
  </DropdownMenuSubContent>
  </DropdownMenuSub>
- </>}
  <DropdownMenuSeparator />
  {/* Delete */}
  <DropdownMenuItem
@@ -2289,15 +2301,6 @@ export function DocumentView({
  const [numberingFormat, setNumberingFormat] = useState<NumberingFormat>(() => {
  const saved = localStorage.getItem('dv-numbering-format');
  return (saved as NumberingFormat) || 'number';
- });
- const [showNumbering, setShowNumbering] = useState(() => {
- const saved = localStorage.getItem('dv-show-numbering');
- return saved !== null ? saved === 'true' : true;
- });
- // Hide titles — same persistence and scope as Hide numbering (one browser-wide preference)
- const [showTitles, setShowTitles] = useState(() => {
- const saved = localStorage.getItem('dv-show-titles');
- return saved !== null ? saved === 'true' : true;
  });
  const [activeId, setActiveId] = useState<string | null>(null);
  const [activeData, setActiveData] = useState<{type: string;text: string;} | null>(null);
@@ -2573,11 +2576,7 @@ export function DocumentView({
  if (selected) newSelected.add(questionId); else newSelected.delete(questionId);
  onSelectionChange(newSelected);
  } : undefined}
- showNumbering={showNumbering}
  onNumberingFormatChange={(f) => { setNumberingFormat(f); localStorage.setItem('dv-numbering-format', f); }}
- onShowNumberingChange={(v) => { setShowNumbering(v); localStorage.setItem('dv-show-numbering', String(v)); }}
- showTitles={showTitles}
- onShowTitlesChange={(v) => { setShowTitles(v); localStorage.setItem('dv-show-titles', String(v)); }}
  isCompactMode={isCompactMode}
  isGlobalTemplate={isGlobalTemplate}
  onCollapseSections={onCollapseSections}
