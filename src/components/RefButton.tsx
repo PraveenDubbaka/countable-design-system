@@ -25,6 +25,9 @@ export interface RefButtonProps {
   showAllRefs?: boolean;
 }
 
+// One corner radius for every element in the Reference column (the "+ Ref" button and the references box, expanded and collapsed)
+const REF_CORNER = "rounded-md";
+
 export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode = false, disabled, showAllRefs = false }: RefButtonProps) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen]     = useState(false);
@@ -169,8 +172,8 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
     <button
       onClick={(e) => e.stopPropagation()}
       aria-label={`Attached references: ${mnemonics.join(', ')}`}
-      className={`flex min-w-0 gap-1 px-2 text-left text-xs text-blue-600 hover:text-blue-700 border border-border transition-colors ${
-        isCompactMode ? 'items-center py-0.5 rounded max-w-full' : 'w-full items-start justify-between py-1 rounded-md'
+      className={`flex min-w-0 gap-1 px-2 text-left text-xs text-blue-600 hover:text-blue-700 border border-border transition-colors ${REF_CORNER} ${
+        isCompactMode ? 'items-center py-0.5 max-w-full' : 'w-full items-start justify-between py-1'
       }`}
     >
       {isCompactMode ? (
@@ -206,7 +209,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
             <PopoverTrigger asChild>
               <button
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors whitespace-nowrap"
+                className={`flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 ${REF_CORNER} border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors whitespace-nowrap`}
               >
                 <Paperclip className="h-3 w-3" />
                 <span>+ Ref</span>
@@ -289,7 +292,7 @@ export function RefButton({ reference, onAttach, onRemove, onOpen, isCompactMode
         <PopoverTrigger asChild>
           <button
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors shrink-0 whitespace-nowrap"
+            className={`flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 ${REF_CORNER} border border-dashed border-blue-300 dark:border-blue-700/60 transition-colors shrink-0 whitespace-nowrap`}
           >
             <Paperclip className="h-3.5 w-3.5" />
             <span>+ Ref</span>
