@@ -12,6 +12,7 @@ import { Layout } from "@/components/Layout";
 import { LukaIcon } from "@/components/LukaIcon";
 import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
+import { loadClients } from "@/data/clientsData";
 import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 import {
  LetterEditorPanel,
@@ -359,7 +360,7 @@ const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklis
 // Default Compilation-folder checklists seeded into the engagement on first load
 const COMPILATION_FOLDER_ID = "5";
 const COMPILATION_FOLDER_NAME = "Compilation Checklists";
-const buildDefaultCompilationChecklists = () => {
+const buildDefaultCompilationChecklists = (entityType: string = "Corporation") => {
  const items = [
  { generator: generateClientAcceptanceContinuanceChecklist, id: "default-compilation-cac" },
  { generator: generateIndependenceChecklist, id: "default-compilation-independence" },
@@ -369,7 +370,7 @@ const buildDefaultCompilationChecklists = () => {
  { generator: generateManagementResponsibilityChecklist, id: "default-compilation-mr" },
  ];
  return items.map(({ generator, id }) => {
- const data = generator();
+ const data = generator(entityType);
  return {
  id,
  name: data.title,
@@ -1405,6 +1406,13 @@ export default function EngagementDetail() {
  const uniqueClients = useMemo(() => getUniqueClients(), []);
  const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
  const currentChecklistId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
+ // The Compilation checklists/letters are entity-type aware (P3): resolve the real client record's
+ // entityType so their content reflects this engagement's client. Falls back to Corporation when the
+ // client can't be matched, matching the P1 migration default.
+ const clientEntityType = useMemo(() => {
+ const match = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+ return match?.entityType ?? "Corporation";
+ }, [clientName]);
 
  // Compute banner fill status + counts
  const { bannerFillStatus, bannerFilledCount, bannerTotalCount } = useMemo(() => {
@@ -1551,7 +1559,7 @@ export default function EngagementDetail() {
  // Seed the engagement with the Compilation folder defaults the first
  // time we load (or after a migration cleared the list).
  if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) {
- const seeded = [...buildDefaultCompilationChecklists(),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
+ const seeded = [...buildDefaultCompilationChecklists(clientEntityType),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
  writeJsonToLocalStorage('savedChecklists', seeded);
  savedChecklists = seeded;
  // Notify the sidebar so it picks up the seeded checklists immediately.
@@ -1560,7 +1568,7 @@ export default function EngagementDetail() {
  });
  } else {
  // Backfill: keep seeded compilation + audit entries current and remove legacy duplicate EL/MR ids.
- const defaults = [...buildDefaultCompilationChecklists(),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
+ const defaults = [...buildDefaultCompilationChecklists(clientEntityType),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
  const defaultById = new Map(defaults.map(item => [item.id, item]));
  const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
  const missing = defaults.filter(d => !existingIds.has(d.id));
@@ -1617,7 +1625,7 @@ export default function EngagementDetail() {
  setIsLoading(false);
  }, 500);
  return () => clearTimeout(loadTimer);
- }, [engagementId, checklistKey]);
+ }, [engagementId, checklistKey, clientEntityType]);
 
  // Listen for real-time sync events from templates page (same tab)
  useEffect(() => {
@@ -3232,6 +3240,7 @@ export default function EngagementDetail() {
  saveRef={letterSaveRef}
  clientName={clientName !== "Unknown Client" ? clientName : undefined}
  margin={letterMarginPreview}
+ entityType={clientEntityType}
  />
  ) : (
  <DocumentView
