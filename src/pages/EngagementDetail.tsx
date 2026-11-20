@@ -825,7 +825,7 @@ const FS_PAGE_KEYS = new Set([
  'aud-fs-cover', 'aud-fs-toc', 'aud-fs-iar', 'aud-fs-bs', 'aud-fs-is', 'aud-fs-cf', 'aud-fs-eq', 'aud-fs-notes',
  'aud-us-fs-cover', 'aud-us-fs-toc', 'aud-us-fs-bs', 'aud-us-fs-is', 'aud-us-fs-cf', 'aud-us-fs-eq', 'aud-us-fs-notes',
  // Compilation / Review FS
- 'fs-cover', 'fs-toc', 'fs-comp', 'fs-bs', 'fs-is', 'fs-cf', 'fs-notes',
+ 'fs-cover', 'fs-toc', 'fs-comp', 'fs-bs', 'fs-is', 'fs-pc', 'fs-cf', 'fs-notes',
 ]);
 const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
  'aud-fs-cover': 'cover', 'aud-fs-toc': 'toc', 'aud-fs-iar': 'auditor-report',
@@ -834,12 +834,12 @@ const FS_PAGE_TYPE_MAP: Record<string, FSPageType> = {
  'aud-us-fs-is': 'is', 'aud-us-fs-cf': 'cf', 'aud-us-fs-eq': 'eq', 'aud-us-fs-notes': 'notes',
  // Compilation / Review FS
  'fs-cover': 'cover', 'fs-toc': 'toc', 'fs-comp': 'comp-report',
- 'fs-bs': 'bs', 'fs-is': 'is', 'fs-cf': 'cf', 'fs-notes': 'notes',
+ 'fs-bs': 'bs', 'fs-is': 'is', 'fs-pc': 'eq', 'fs-cf': 'cf', 'fs-notes': 'notes',
 };
 const FS_SCREEN_NAMES: Record<FSPageType, string> = {
  'cover': 'Cover Page', 'toc': 'Table of Contents',
  'bs': 'Balance Sheet', 'is': 'Statement of Income Loss',
- 'cf': 'Statement of Cash Flows', 'eq': 'Statement of Equity',
+ 'cf': 'Statement of Cash Flows', 'eq': 'Statement of Partners\' Capital',
  'auditor-report': "Independent Auditor's Report",
  'notes': 'Notes to Financial Information', 'comp-report': 'Compilation Report',
 };
@@ -2480,6 +2480,7 @@ export default function EngagementDetail() {
  || (checklistKey?.startsWith('notes-') && `Notes — ${searchParams.get('t') || CUSTOM_WORKSHEET_TITLES[checklistKey.slice('notes-'.length)] || checklistKey.slice('notes-'.length)}`)
  || (checklistKey?.startsWith('node-note-') && (searchParams.get('t') || checklistKey.slice('node-note-'.length)))
  || (checklistKey?.startsWith('custom-') && (() => { const s = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey); return s?.name; })())
+ || (checklistKey === 'fs-pc' && (clientEntityType === "Trust" ? "Statement of Changes in Trust Net Assets" : "Statement of Partners' Capital"))
  || (checklistKey && FS_PAGE_KEYS.has(checklistKey) && FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]])
  || 'Client acceptance and continuance'}
  </h1>
@@ -3033,7 +3034,7 @@ export default function EngagementDetail() {
  {checklistKey && FS_PAGE_KEYS.has(checklistKey) && engagementId ? (
  <LayoutSettingsProvider>
  <CommentProvider>
- <FSCommentsBridge open={isFSCommentsOpen} currentScreen={FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]] ?? 'Balance Sheet'} />
+ <FSCommentsBridge open={isFSCommentsOpen} currentScreen={(checklistKey === 'fs-pc' ? (clientEntityType === "Trust" ? "Statement of Changes in Trust Net Assets" : "Statement of Partners' Capital") : FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]]) ?? 'Balance Sheet'} />
  <div className="flex h-full overflow-hidden">
  <FSScrollCanvas onCommentsToggle={setIsFSCommentsOpen}>
  <FSPageViewer
@@ -3042,13 +3043,14 @@ export default function EngagementDetail() {
  isUS={checklistKey.startsWith('aud-us-fs-')}
  isCompilation={checklistKey.startsWith('fs-')}
  isEditing={isFSEditing}
+ entityType={clientEntityType}
  />
  </FSScrollCanvas>
  <CommentsPanel />
  <VersionHistoryPanel
  open={isVersionsOpen}
  onClose={() => setIsVersionsOpen(false)}
- currentScreen={FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]] ?? 'Balance Sheet'}
+ currentScreen={(checklistKey === 'fs-pc' ? (clientEntityType === "Trust" ? "Statement of Changes in Trust Net Assets" : "Statement of Partners' Capital") : FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]]) ?? 'Balance Sheet'}
  />
  </div>
  <FSSettingsPanel open={isFSSettingsOpen} onClose={() => setIsFSSettingsOpen(false)} />

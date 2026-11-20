@@ -26,6 +26,8 @@ import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
 import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { loadEngagements } from "@/store/engagementsStore";
+import { loadClients } from "@/data/clientsData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -2192,6 +2194,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const isUSAuditEngagement = sidebarType === 'audit-us';
  const isAuditEngagement = sidebarType === 'audit-ca' || sidebarType === 'audit-us';
  const engFirstYear = engMeta?.firstYearAudit === true;
+ // P4: the Financial Statements tree/pages are entity-type aware (Partnership/Trust get a
+ // Statement of Partners'/Trust Capital page instead of Retained Earnings). Resolve the real
+ // client record behind this engagement the same way EngagementDetail does.
+ const clientEntityType = (() => {
+ const client = engId ? loadEngagements().find(e => e.id === engId)?.client : undefined;
+ const match = client ? loadClients().find(c => c.legalEntityName === client || c.entityName === client) : undefined;
+ return match?.entityType ?? "Corporation";
+ })();
 
  // Find a node by ID within a GlobalTemplate tree (used for building procedure children)
  const findInGlobalTemplates = (nodes: GlobalTemplate[], id: string): GlobalTemplate | null => {
@@ -2810,7 +2820,14 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/fs-toc" },
  { id: "fs-comp", label: "Compilation report", icon: "doc", route: "checklist/fs-comp" },
  { id: "fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/fs-bs" },
- { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc", route: "checklist/fs-is" },
+ {
+ id: "fs-is",
+ label: clientEntityType === "Partnership" || clientEntityType === "Trust" ? "Statement of Income" : "Statement of Income and Retained Earnings",
+ icon: "doc", route: "checklist/fs-is",
+ },
+ ...(clientEntityType === "Partnership" ? [{ id: "fs-pc", label: "Statement of Partners' Capital", icon: "doc" as const, route: "checklist/fs-pc" }]
+ : clientEntityType === "Trust" ? [{ id: "fs-pc", label: "Statement of Changes in Trust Net Assets", icon: "doc" as const, route: "checklist/fs-pc" }]
+ : []),
  { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/fs-cf" },
  { id: "fs-notes", label: "Notes to Financial Information", icon: "doc", route: "checklist/fs-notes" },
  ]

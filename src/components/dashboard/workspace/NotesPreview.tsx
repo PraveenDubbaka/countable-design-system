@@ -6,9 +6,12 @@ import { useLayoutSettings, getFontFamily, getBodyPadding, getCompressionScale }
 interface NotesPreviewProps {
  isEditMode?: boolean;
  onContentChanged?: (hasChanges: boolean) => void;
+ entityType?: string;
 }
 
-const NotesPreview = ({ isEditMode = false, onContentChanged }: NotesPreviewProps) => {
+const NotesPreview = ({ isEditMode = false, onContentChanged, entityType = "Corporation" }: NotesPreviewProps) => {
+ const isPartnership = entityType === "Partnership";
+ const isTrust = entityType === "Trust";
  const { settings } = useLayoutSettings();
  const { pageRef, renderOverlays } = useStatementOverlays(isEditMode);
  const fontFamily = getFontFamily(settings);
@@ -79,6 +82,45 @@ const NotesPreview = ({ isEditMode = false, onContentChanged }: NotesPreviewProp
  <div style={bodyStyle}>
  {titleBlock}
 
+ {isPartnership || isTrust ? (
+ <>
+ {/* Partnership/Trust notes (P4) — ported verbatim from the existing Templates gallery
+ reference (TemplatePartnershipNotesPreview.tsx / TemplateTrustNotesPreview.tsx), the
+ closest real written content for these entity types in this codebase. */}
+ {isPartnership ? (
+ <>
+ {sectionTitle("1", "Nature of the Partnership")}
+ <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
+ ABC Partnership is a general partnership formed under the laws of the Province of [Province] and is engaged in [description of business activities]. The partnership agreement provides for the allocation of net income and losses between partners based on agreed profit-sharing ratios.
+ </p>
+ {sectionTitle("2", "Related Party Transactions")}
+ <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
+ During the year, guaranteed payments to partners totalling $10,000 (20XX — $8,000) were made to Partners A and B for management services. These transactions were measured at the exchange amount, which is the amount of consideration established and agreed to by the related parties.
+ </p>
+ {sectionTitle("3", "Partnership Agreement")}
+ <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
+ The partnership agreement provides for a 60/40 profit and loss sharing ratio between Partner A and Partner B respectively. Partners are entitled to draw against their capital accounts in accordance with the terms of the agreement.
+ </p>
+ </>
+ ) : (
+ <>
+ {sectionTitle("1", "Nature of the Trust")}
+ <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
+ [Trust Name] was established pursuant to a trust indenture dated [Date] under the laws of [Province/Territory], Canada. The trust was created for the purpose of [holding and managing assets / providing for beneficiaries]. The trustee(s) of the trust is/are [Name(s)].
+ </p>
+ {sectionTitle("2", "Distributions to Beneficiaries")}
+ <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
+ In accordance with the trust indenture, the trustee has discretion to allocate and distribute trust income to the beneficiaries. Income is allocated based on the percentages determined by the trustee each year: Beneficiary A (40%), Beneficiary B (30%), and Beneficiary C (30%). T3 slips are issued reflecting the character of income (eligible dividends, interest, taxable capital gains, rental income).
+ </p>
+ {sectionTitle("3", "Income Taxes")}
+ <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
+ The trust is subject to income tax under Part I of the Income Tax Act (Canada) on income that is not distributed or allocated to beneficiaries. Inter vivos trusts are taxed at the highest marginal rate. Income designated and paid or payable to beneficiaries is deductible by the trust and taxable in the hands of the beneficiaries. The provision for income taxes of $5,000 (prior year — $3,500) relates to income retained in the trust.
+ </p>
+ </>
+ )}
+ </>
+ ) : (
+ <>
  {/* Top-level column headers */}
  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: baseFontSize, marginBottom: 8 }}>
  <thead>
@@ -181,6 +223,8 @@ const NotesPreview = ({ isEditMode = false, onContentChanged }: NotesPreviewProp
  <p style={{ fontSize: baseFontSize, marginBottom: 8, textAlign: "justify" }}>
  This is sample placeholder text. This area will contain your note reference paragraph, where you can outline key explanations, add supporting details, and provide the necessary information required for your document.
  </p>
+ </>
+ )}
  </div>
  {renderOverlays("foreground")}
  {showFooter && <div style={footerStyle}>Footer will come here</div>}
