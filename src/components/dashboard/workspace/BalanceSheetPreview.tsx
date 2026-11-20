@@ -24,9 +24,10 @@ const ManualCell = ({ className }: { className?: string }) => {
 interface BalanceSheetPreviewProps {
  isEditMode?: boolean;
  onContentChanged?: (hasChanges: boolean) => void;
+ entityType?: string;
 }
 
-const BalanceSheetPreview = ({ isEditMode = false, onContentChanged }: BalanceSheetPreviewProps) => {
+const BalanceSheetPreview = ({ isEditMode = false, onContentChanged, entityType = "Corporation" }: BalanceSheetPreviewProps) => {
  const { settings, addManualColumn } = useLayoutSettings();
  const { pageRef, renderOverlays } = useStatementOverlays(isEditMode);
  const fontFamily = getFontFamily(settings);
@@ -84,7 +85,21 @@ const BalanceSheetPreview = ({ isEditMode = false, onContentChanged }: BalanceSh
  totalLiabilities: { col1: "4,862,100", col2: "5,328,760" },
  };
 
- const equity = [
+ // Equity rows vary by entity type (P4). The overall total stays the same either way — only
+ // the labels/row count change, since corporation and partnership/trust represent the same
+ // underlying balance differently (per-partner detail lives on its own capital statement).
+ const equity = entityType === "Partnership"
+ ? [
+ { label: "Partners' capital", col1: "4,755,240", col2: "4,267,340" },
+ { label: "", col1: "", col2: "" },
+ ]
+ : entityType === "Trust"
+ ? [
+ { label: "Capital contributed", col1: "1,000", col2: "1,000" },
+ { label: "Accumulated income", col1: "4,754,240", col2: "4,266,340" },
+ { label: "", col1: "", col2: "" },
+ ]
+ : [
  { label: "Share capital", col1: "1,000", col2: "1,000" },
  { label: "Retained earnings", col1: "4,754,240", col2: "4,266,340" },
  { label: "", col1: "", col2: "" },

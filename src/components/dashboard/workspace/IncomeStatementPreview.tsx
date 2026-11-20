@@ -24,9 +24,13 @@ const ManualCell = ({ className }: { className?: string }) => {
 interface IncomeStatementPreviewProps {
  isEditMode?: boolean;
  onContentChanged?: (hasChanges: boolean) => void;
+ entityType?: string;
 }
 
-const IncomeStatementPreview = ({ isEditMode = false, onContentChanged }: IncomeStatementPreviewProps) => {
+const IncomeStatementPreview = ({ isEditMode = false, onContentChanged, entityType = "Corporation" }: IncomeStatementPreviewProps) => {
+ // Partnership/Trust drop the combined Retained Earnings roll-forward: that content moves to
+ // its own Statement of Partners'/Trust Capital page (P4). Net income remains the bottom line.
+ const isPartnershipOrTrust = entityType === "Partnership" || entityType === "Trust";
  const { settings, addManualColumn } = useLayoutSettings();
  const { pageRef, renderOverlays } = useStatementOverlays(isEditMode);
  const fontFamily = getFontFamily(settings);
@@ -79,11 +83,15 @@ const IncomeStatementPreview = ({ isEditMode = false, onContentChanged }: Income
  { label: "", col1: "", col2: "", indent: 1 },
  { label: "", col1: "", col2: "", indent: 1, bottomBorder: true },
  { label: "Total Income Taxes", col1: "302,100", col2: "268,000", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
+ ...(isPartnershipOrTrust
+ ? [{ label: "Net income", col1: "837,900", col2: "681,650", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true }]
+ : [
  { label: "Net income", col1: "837,900", col2: "681,650", bold: true },
  { label: "Retained earnings, beginning of year", col1: "4,266,340", col2: "3,934,690", bold: true },
  { label: "Dividends declared", col1: "(350,000)", col2: "(350,000)", bold: true, bottomBorder: true },
  { label: "Retained Earnings, end of year", col1: "4,754,240", col2: "4,266,340", bold: true, topBorder: true, bottomBorder: true, thick: true, isTotal: true },
  { label: "", col1: "0", col2: "0", topBorder: true, bottomBorder: true, thick: true, red: true },
+ ]),
  ];
 
  let firstDataRow = true;
@@ -169,7 +177,7 @@ const IncomeStatementPreview = ({ isEditMode = false, onContentChanged }: Income
  isEditMode={isEditMode}
  onContentChanged={onContentChanged}
  entityName="Northline Precision Manufacturing Inc."
- pageName="Statement of Income (Loss) and Retained Earnings (Deficit)"
+ pageName={isPartnershipOrTrust ? "Statement of Income" : "Statement of Income (Loss) and Retained Earnings (Deficit)"}
  dateLabel="For the year ended December 31, 2025"
  />
 
