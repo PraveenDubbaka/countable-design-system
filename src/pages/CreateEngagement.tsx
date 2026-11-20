@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
+import { loadClients } from "@/data/clientsData";
 
 const INDUSTRIES = [
  "Construction & Real Estate", "Financial Services", "Healthcare & Life Sciences",
@@ -643,7 +644,10 @@ export default function CreateEngagement() {
 
  // Engagement Details state
  const [clientName, setClientName] = useState(prefill.clientName || "");
- const clientInfo = CLIENT_DATA[clientName] ?? null;
+ const realClient = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+ const clientInfo = CLIENT_DATA[clientName]
+ ? { ...CLIENT_DATA[clientName], entityType: realClient?.entityType ?? CLIENT_DATA[clientName].entityType }
+ : null;
  const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
  const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
  const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");

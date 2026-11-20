@@ -32,6 +32,17 @@ export interface Client {
  incorporationDate?: string;
 }
 
+export const ENTITY_TYPE_OPTIONS: { value: string; label: string }[] = [
+ { value: 'corporation', label: 'Corporation' },
+ { value: 'partnership', label: 'Partnership' },
+ { value: 'sole-proprietor', label: 'Sole Proprietor' },
+ { value: 'trust', label: 'Trust' },
+];
+
+export const ENTITY_TYPE_LABELS: Record<string, string> = Object.fromEntries(
+ ENTITY_TYPE_OPTIONS.map(o => [o.value, o.label])
+);
+
 export const clientsData: Client[] = [
  {
   id: 'DEMO-NPM',
@@ -563,7 +574,10 @@ export function saveClientGroups(groups: string[]): void {
 export function loadClients(): Client[] {
  try {
   const raw = localStorage.getItem(CLIENTS_KEY);
-  if (raw) return JSON.parse(raw);
+  if (raw) {
+   const parsed: Client[] = JSON.parse(raw);
+   return parsed.map(c => ({ ...c, entityType: c.entityType || 'Corporation' }));
+  }
  } catch {}
  return clientsData;
 }
