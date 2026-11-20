@@ -24,6 +24,7 @@ import {
 import { normalizeLetterMargin, type LetterMargin } from "@/lib/letterMargins";
 import { createLetterTemplate, type LetterTemplateSection } from "@/lib/letterTemplate";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
+import { PartnersCapitalWorksheet } from "@/components/PartnersCapitalWorksheet";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
@@ -757,6 +758,7 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
 };
 
 const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
+ 'pc-worksheet': "Partners' Capital",
  'aud-plan': 'Team Planning Discussions', 'aud-us-plan': 'Team Planning Discussions',
  'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
  'aud-tt': 'Time Tracker', 'aud-us-tt': 'Time Tracker',
@@ -801,6 +803,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
 
 // All custom-component worksheet pages (not checklist-based) that support PDF/Word export
 const WORKSHEET_KEYS = new Set([
+ 'pc-worksheet',
  'aud-asm', 'aud-us-asm',
  'aud-plan', 'aud-us-plan',
  'aud-scope', 'aud-us-scope',
@@ -3086,7 +3089,9 @@ export default function EngagementDetail() {
  />
  </div>
  );
- })() : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
+ })() : checklistKey === 'pc-worksheet' ? (
+ <PartnersCapitalWorksheet engagementId={engagementId ?? ''} entityType={clientEntityType} />
+ ) : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
  <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
  ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
  <AuditTimeTrackerWorksheet />

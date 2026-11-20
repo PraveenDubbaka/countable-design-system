@@ -2722,7 +2722,12 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {
  id: "do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
  children: [
- { id: "do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+ {
+ id: "do-sha",
+ code: clientEntityType === "Partnership" ? "PA" : clientEntityType === "Trust" ? "TD" : "SHA",
+ label: clientEntityType === "Partnership" ? "Partnership Agreement" : clientEntityType === "Trust" ? "Trust Deed" : "Shareholders Agreements",
+ icon: "folder",
+ },
  { id: "do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
  { id: "do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
  { id: "do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
@@ -2731,6 +2736,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {
  id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
  },
+ ...(clientEntityType === "Partnership" || clientEntityType === "Trust" ? [{
+ id: "pc", code: "PC", label: "Partners' Capital", icon: "worksheet" as const, route: "checklist/pc-worksheet",
+ }] : []),
  {
  id: "pr", code: "PR", label: "Procedures", icon: "folder",
  children: [
