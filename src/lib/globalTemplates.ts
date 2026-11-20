@@ -1,7 +1,9 @@
 import { Checklist, Section, Question } from '@/types/checklist';
 
 // Client Acceptance and Continuance template data
-export const generateClientAcceptanceContinuanceChecklist = (): Checklist => {
+export const generateClientAcceptanceContinuanceChecklist = (entityType: string = "Corporation"): Checklist => {
+ void entityType; // TODO(P3): spec says "add partnership and trust to the entity questions" here, but this
+ // checklist has no existing entity-type question to extend — flagged for the user rather than guessed at.
  const q = (id: string, text: string, subQuestions?: Question[]): Question => ({
  id, text, answerType: 'yes-no-na' as const, options: ['Yes', 'No', 'NA'],
  required: false, answer: '',...(subQuestions? { subQuestions } : {})
@@ -90,12 +92,22 @@ export const generateClientAcceptanceContinuanceChecklist = (): Checklist => {
 };
 
 // Independence template data
-export const generateIndependenceChecklist = (): Checklist => {
+export const generateIndependenceChecklist = (entityType: string = "Corporation"): Checklist => {
+ const isPartnership = entityType === "Partnership";
+ const isTrust = entityType === "Trust";
  const sections: Section[] = [
  {
  id: 'section-independence',
  title: 'Independence Assessment',
  questions: [
+ ...(isPartnership || isTrust ? [{
+ id: 'ind-q0-pt',
+ text: `<p><strong>${isPartnership ? "Partners are" : "The trustee and beneficiaries are"} related parties under the Code of Professional Conduct / Code of Ethics — has this been considered in assessing the threats below (e.g., self-interest, familiarity, intimidation)?</strong></p>`,
+ answerType: 'yes-no-na' as const,
+ options: ['Yes', 'No', 'NA'],
+ required: true,
+ answer: ''
+ }] : []),
  {
  id: 'ind-q1',
  text: '<p><strong>Are there any significant "threats" to independence that should be disclosed?</strong></p>',
@@ -162,15 +174,32 @@ export const generateIndependenceChecklist = (): Checklist => {
 };
 
 // Knowledge of Client Business template data
-export const generateKnowledgeOfClientBusinessChecklist = (): Checklist => {
+// entityType is left undefined (not defaulted to "Corporation") so a generic/no-engagement caller
+// (e.g. the global Sidebar template seed, which isn't tied to any specific client) gets the original
+// unprefilled Q1 rather than a guessed value that could later be mistaken for a real user answer.
+export const generateKnowledgeOfClientBusinessChecklist = (entityType?: string): Checklist => {
+ const isPartnership = entityType === "Partnership";
+ const isTrust = entityType === "Trust";
+ const structureLabel = isPartnership
+ ? 'Partnership structure (partners, ownership interests, including any related group(s))'
+ : isTrust
+ ? 'Trust structure (trustee, beneficiaries, including any related group(s))'
+ : 'Corporate structure (ownership, investments, including any related group(s))';
  const sections: Section[] = [
  {
  id: 'section-general-info',
  title: 'General Information',
  questions: [
- { id: 'kcb-q1', text: '<p><strong>Type of entity</strong></p>', answerType: 'long-answer', options: [], required: true, answer: '' },
+ { id: 'kcb-q1', text: '<p><strong>Type of entity</strong></p>', answerType: 'long-answer', options: [], required: true, answer: entityType ?? '' },
  { id: 'kcb-q2', text: '<p><strong>Jurisdiction of incorporation (statue, date)</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
- { id: 'kcb-q3', text: '<p><strong>Corporate structure (ownership, investments, including any related group(s))</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
+ { id: 'kcb-q3', text: `<p><strong>${structureLabel}</strong></p>`, answerType: 'long-answer', options: [], required: false, answer: '' },
+ ...(isPartnership || isTrust ? [{
+ id: 'kcb-q3a',
+ text: isPartnership
+ ? '<p><strong>Partnership agreement — key terms (capital contributions, profit/loss allocation, admission and retirement provisions)</strong></p>'
+ : '<p><strong>Trust deed — key terms (trustee powers, beneficiary classes, distribution provisions)</strong></p>',
+ answerType: 'long-answer' as const, options: [], required: false, answer: ''
+ }] : []),
  { id: 'kcb-q4', text: '<p><strong>Governance And Key Management</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
  { id: 'kcb-q5', text: '<p><strong>Key advisors to the entity (e.g., lawyer and bank)</strong></p>', answerType: 'long-answer', options: [], required: false, answer: '' },
  {
@@ -250,7 +279,9 @@ export const generateKnowledgeOfClientBusinessChecklist = (): Checklist => {
 };
 
 // Planning template data
-export const generatePlanningChecklist = (): Checklist => {
+export const generatePlanningChecklist = (entityType: string = "Corporation"): Checklist => {
+ const isPartnership = entityType === "Partnership";
+ const isTrust = entityType === "Trust";
  const sections: Section[] = [
  {
  id: 'section-planning',
@@ -264,6 +295,14 @@ export const generatePlanningChecklist = (): Checklist => {
  required: false,
  answer: ''
  },
+ ...(isPartnership || isTrust ? [{
+ id: 'plan-q1a-alloc',
+ text: `<p><strong>Basis for allocating net income to ${isPartnership ? "partners" : "beneficiaries"} (fixed percentage, units, or manual), and whether it agrees with the ${isPartnership ? "partnership agreement" : "trust deed"}</strong></p>`,
+ answerType: 'long-answer' as const,
+ options: [],
+ required: false,
+ answer: ''
+ }] : []),
  {
  id: 'plan-q2',
  text: '<p><strong>Document any discussions between client throughout the year regarding their business, major operations or any other information that may be relevant to this engagement.</strong></p>',
@@ -297,7 +336,8 @@ export const generatePlanningChecklist = (): Checklist => {
 };
 
 // Engagement Letter — rendered by LetterView, single HTML blob
-export const generateEngagementLetterChecklist = (): Checklist => {
+export const generateEngagementLetterChecklist = (entityType: string = "Corporation"): Checklist => {
+ void entityType; // signature block wording is handled by LetterView, not this body
  const html = `
  <p class="text-sm text-foreground">${formatTodayLong()}</p>
  <p class="mt-6 text-sm text-foreground">Entity Name<br/>Complete address</p>
@@ -361,7 +401,13 @@ function formatTodayLong(): string {
 }
 
 // Management Responsibility and Acknowledgement template data
-export const generateManagementResponsibilityChecklist = (): Checklist => {
+export const generateManagementResponsibilityChecklist = (entityType: string = "Corporation"): Checklist => {
+ const responsibleParty = entityType === "Partnership" ? "the partners"
+ : entityType === "Trust" ? "the trustee"
+ : "management";
+ const responsiblePartyPossessive = entityType === "Partnership" ? "the partners'"
+ : entityType === "Trust" ? "the trustee's"
+ : "management's";
  const html = `
  <p class="text-sm text-foreground">${formatTodayLong()}</p>
  <p class="mt-6 text-sm text-foreground">Entity Name<br/>Complete address</p>
@@ -369,7 +415,7 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
  <p class="mt-4 text-sm text-foreground">
  Further to the engagement letter dated
  <span class="letter-placeholder" data-field="engagement-letter-date">Engagement Letter Date</span>,
- management acknowledges that it is responsible for:
+ ${responsibleParty} acknowledge${responsibleParty === "management" ? "s" : ""} that it is responsible for:
  </p>
  <p class="mt-3 text-sm text-foreground">a. The compiled financial information;</p>
  <p class="mt-3 text-sm text-foreground">
@@ -385,7 +431,7 @@ export const generateManagementResponsibilityChecklist = (): Checklist => {
  </p>
  <p class="mt-4 text-sm text-foreground">
  If there are any questions about the contents of this letter, please raise them with the Engagement
- Partner. Please sign and return the attached copy of this letter to indicate management's
+ Partner. Please sign and return the attached copy of this letter to indicate ${responsiblePartyPossessive}
  acknowledgement of, and agreement with, its responsibilities for the compilation engagement.
  </p>
  <p class="mt-4 text-sm text-foreground">
