@@ -729,7 +729,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Engagement Templates tree state
  const [engTemplateExpandedFolders, setEngTemplateExpandedFolders] = useState<Set<string>>(
- () => new Set(["compilation", "review", "audit"])
+ () => new Set(["corporation", "corp-ca"])
  );
  const engTemplateSelectedId = searchParams.get("template") || "comp4200";
  const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
@@ -1070,8 +1070,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Already on the page — just update the search param to select first item.
  setSearchParams({ template: firstTemplate }, { replace: true });
  }
- // Expand the compilation folder so the selected item is visible in the tree.
- setEngTemplateExpandedFolders(prev => new Set([...prev, "compilation"]));
+ // Expand Corporation · Canada so the selected item is visible in the tree.
+ setEngTemplateExpandedFolders(prev => new Set([...prev, "corporation", "corp-ca"]));
  } else if (itemId === "checklists") {
  navigate("/create", { state: { contentType: "checklists" } });
  } else {

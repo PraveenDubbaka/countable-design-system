@@ -110,48 +110,64 @@ export const categoryConfig: Record<CategoryType, { icon: string; label: string;
 };
 
 // ── Tree structure ──
+// Entity type is the top level (Corporation / Partnership / Trust), then country/framework,
+// then Compilation/Review/Tax/Audit. Audit only exists for Corporation (private entities only —
+// see ground rules; Partnership/Trust audit is out of scope). Audit's own content is untouched,
+// just repositioned under Corporation's Canada/US folders instead of its own top-level folder.
 export const templateTree: TreeItem[] = [
  {
- id: "compilation",
- label: "Compilation",
+ id: "corporation",
+ label: "Corporation",
  type: "folder",
  children: [
+ { id: "corp-ca", label: "Canada · ASPE", type: "folder", children: [
  { id: "comp4200", label: "Compilation CSRS 4200", type: "file", suggested: true },
- ],
- },
- {
- id: "review",
- label: "Review",
- type: "folder",
- children: [
  { id: "rev2400", label: "Review Section 2400", type: "file", suggested: true },
- ],
- },
- {
- id: "audit",
- label: "Audit",
- type: "folder",
- children: [
- {
- id: "audit-ca", label: "Canada", type: "folder", children: [
+ { id: "tax-t2", label: "Tax · T2 (Corporations)", type: "file" },
  { id: "audit5100", label: "Audit ASPE 5100", type: "file", suggested: true },
  ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit5101", label: "CAS / NFP — ASNPO (5101)", type: "file" as const }] : []),
- ],
- },
- {
- id: "audit-us", label: "United States", type: "folder", children: [
+ ]},
+ { id: "corp-us", label: "United States · US GAAP", type: "folder", children: [
+ { id: "corp-us-comp", label: "Compilation AR-C 80", type: "file", suggested: true },
+ { id: "corp-us-review", label: "Review AR-C 90", type: "file", suggested: true },
+ { id: "corp-us-tax", label: "Tax · 1120 / 1120-S", type: "file" },
  { id: "audit6100", label: "Audit GAAP 6100", type: "file", suggested: true },
  ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" as const }] : []),
- ],
- },
+ ]},
  ],
  },
  {
- id: "tax",
- label: "Tax",
+ id: "partnership",
+ label: "Partnership",
  type: "folder",
  children: [
- { id: "tax-t2", label: "T2 (Corporations)", type: "file" },
+ { id: "partnership-ca", label: "Canada · ASPE", type: "folder", children: [
+ { id: "partnership-ca-comp", label: "Compilation CSRS 4200", type: "file", suggested: true },
+ { id: "partnership-ca-review", label: "Review Section 2400", type: "file", suggested: true },
+ { id: "partnership-ca-tax", label: "Tax · T5013", type: "file" },
+ ]},
+ { id: "partnership-us", label: "United States · US GAAP", type: "folder", children: [
+ { id: "partnership-us-comp", label: "Compilation AR-C 80", type: "file", suggested: true },
+ { id: "partnership-us-review", label: "Review AR-C 90", type: "file", suggested: true },
+ { id: "partnership-us-tax", label: "Tax · 1065", type: "file" },
+ ]},
+ ],
+ },
+ {
+ id: "trust",
+ label: "Trust",
+ type: "folder",
+ children: [
+ { id: "trust-ca", label: "Canada · ASPE", type: "folder", children: [
+ { id: "trust-ca-comp", label: "Compilation CSRS 4200", type: "file", suggested: true },
+ { id: "trust-ca-review", label: "Review Section 2400", type: "file", suggested: true },
+ { id: "trust-ca-tax", label: "Tax · T3", type: "file" },
+ ]},
+ { id: "trust-us", label: "United States · US GAAP", type: "folder", children: [
+ { id: "trust-us-comp", label: "Compilation AR-C 80", type: "file", suggested: true },
+ { id: "trust-us-review", label: "Review AR-C 90", type: "file", suggested: true },
+ { id: "trust-us-tax", label: "Tax · 1041", type: "file" },
+ ]},
  ],
  },
 ];
@@ -2026,9 +2042,202 @@ const taxT2: TemplateView = {
  ],
 };
 
+// ── P2: shared statement-set layer ──
+// Corporation · Canada's Compilation/Review/Tax content (comp4200/review2400/taxT2 above) is kept
+// as hand-written literals so existing Corporation behaviour cannot regress. The other five
+// entity+country combinations are generated from one StatementSet each, so a caption change for a
+// set propagates to all three engagement types (Compilation/Review/Tax) it covers.
+interface StatementSet {
+ compilationStandard: string; // e.g. "CSRS 4200" | "AR-C 80"
+ reviewStandard: string; // e.g. "Section 2400" | "AR-C 90"
+ taxCode: string; // e.g. "T5013" | "1065" | "T3" | "1041" | "1120 / 1120-S"
+ standardsBody: string; // e.g. "CPA Canada" | "AICPA"
+ framework: string; // e.g. "ASPE" | "US GAAP"
+}
+
+function buildCompilationView(id: string, s: StatementSet): TemplateView {
+ return {
+ id,
+ title: `Compilation ${s.compilationStandard}`,
+ subtitle: `${s.compilationStandard} — Compilation Engagement`,
+ standardsBanner: {
+ label: "Standard:",
+ standards: `${s.compilationStandard} – Compilation Engagements`,
+ badge: s.standardsBody,
+ color: "blue",
+ },
+ sections: [
+ { name: "Client Onboarding", rows: [
+ { section: "Client acceptance and continuance", category: "checklist", mappedTemplate: `Client Acceptance & Continuance ${s.compilationStandard}` },
+ { section: "Independence", category: "checklist", mappedTemplate: `Independence ${s.compilationStandard}` },
+ { section: "Knowledge of client business", category: "checklist", mappedTemplate: `Knowledge of client business ${s.compilationStandard}` },
+ { section: "Planning", category: "checklist", mappedTemplate: `Planning ${s.compilationStandard}` },
+ { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement compilation ${s.compilationStandard}` },
+ { section: "Management responsibility and acknowledgement", category: "letter", mappedTemplate: `Management responsibility & acknowledgement ${s.compilationStandard}` },
+ ]},
+ { name: "Documents", rows: [
+ { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ ]},
+ { name: "Trial Balance & Adjusting entries", rows: [
+ { section: "Trial Balance & Adjusting entries", category: "module", mappedTemplate: "Automated" },
+ ]},
+ { name: "Procedures", rows: [
+ { section: "Procedures", category: "module", mappedTemplate: "Automated" },
+ ]},
+ { name: "Financial Statements", rows: [
+ { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Cover Page", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Table of Contents", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Compilation Report", category: "report", mappedTemplate: `Compilation Report ${s.compilationStandard}` },
+ { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: "Compilation template" },
+ ]},
+ { name: "Completion & Signoffs", rows: [
+ { section: "Completion", category: "checklist", mappedTemplate: `Final Completion ${s.compilationStandard}` },
+ { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
+ { section: "Final Review", category: "module", mappedTemplate: "Automated" },
+ ]},
+ ],
+ };
+}
+
+function buildReviewView(id: string, s: StatementSet): TemplateView {
+ return {
+ id,
+ title: `Review ${s.reviewStandard}`,
+ sections: [
+ { name: "Client Onboarding", rows: [
+ { section: "New engagement acceptance", category: "checklist", mappedTemplate: `New engagement acceptance ${s.reviewStandard}` },
+ { section: "Existing engagement continuance", category: "checklist", mappedTemplate: `Existing engagement continuance ${s.reviewStandard}` },
+ { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement review ${s.reviewStandard}` },
+ ]},
+ { name: "Planning", rows: [
+ { section: "Understanding the entity - Basics", category: "checklist", mappedTemplate: `Understanding the entity basics ${s.reviewStandard}` },
+ { section: "Understanding the entity - Systems", category: "checklist", mappedTemplate: `Understanding the entity systems ${s.reviewStandard}` },
+ { section: "Materiality", category: "worksheet", mappedTemplate: `Materiality ${s.reviewStandard}` },
+ { section: "Engagement Scope", category: "worksheet", mappedTemplate: `Engagement scope ${s.reviewStandard}` },
+ { section: "Engagement Planning", category: "checklist", mappedTemplate: `Engagement Planning ${s.reviewStandard}` },
+ ]},
+ { name: "Documents", rows: [
+ { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ ]},
+ { name: "Trial Balance & Adjusting entries", rows: [
+ { section: "Trial Balance & Adjusting entries", category: "module", mappedTemplate: "Automated" },
+ ]},
+ { name: "Procedures", rows: [
+ { section: "Procedures", category: "module", mappedTemplate: "Automated" },
+ ]},
+ { name: "Financial Statements", rows: [
+ { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Cover Page", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Table of Contents", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Review Engagement Report", category: "report", mappedTemplate: `Review Engagement Report ${s.reviewStandard}` },
+ { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Statement of Cash Flows", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: "Review template" },
+ ]},
+ { name: "Completion & Signoffs", rows: [
+ { section: "Accumulation of Identified Misstatements (AIM)", category: "worksheet", mappedTemplate: `AIM ${s.reviewStandard}` },
+ { section: "Management representation letter", category: "letter", mappedTemplate: `Management representation ${s.reviewStandard}` },
+ { section: "Completion", category: "checklist", mappedTemplate: `Final Completion ${s.reviewStandard}` },
+ { section: "Subsequent events", category: "checklist", mappedTemplate: `Subsequent events ${s.reviewStandard}` },
+ { section: "Disclosure", category: "checklist", mappedTemplate: `${s.framework} - General - Disclosure checklist` },
+ { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
+ { section: "Final Review", category: "module", mappedTemplate: "Automated" },
+ ]},
+ ],
+ };
+}
+
+function buildTaxView(id: string, s: StatementSet): TemplateView {
+ return {
+ id,
+ title: s.taxCode,
+ sections: [
+ { name: "Client Onboarding", rows: [
+ { section: "Engagement Letter", category: "letter", mappedTemplate: "Engagement Letter" },
+ ]},
+ { name: "Documents", rows: [
+ { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ ]},
+ { name: "Trial Balance & Adjusting entries", rows: [
+ { section: "Trial Balance & Adjusting entries", category: "module", mappedTemplate: "Automated" },
+ ]},
+ { name: "Procedures", rows: [
+ { section: "Procedures", category: "module", mappedTemplate: "Automated" },
+ ]},
+ { name: "Financial Statements", rows: [
+ { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ { section: "Cover Page", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ { section: "Table of Contents", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ { section: "Balance Sheet", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ ]},
+ { name: "Completion & Signoffs", rows: [
+ { section: "Completion", category: "checklist", mappedTemplate: "Completion" },
+ { section: "Signoffs", category: "module", mappedTemplate: "Automated" },
+ { section: "Final Review", category: "module", mappedTemplate: "Automated" },
+ ]},
+ ],
+ };
+}
+
+const CORP_US_SET: StatementSet = { compilationStandard: "AR-C 80", reviewStandard: "AR-C 90", taxCode: "1120 / 1120-S", standardsBody: "AICPA", framework: "US GAAP" };
+const PARTNERSHIP_CA_SET: StatementSet = { compilationStandard: "CSRS 4200", reviewStandard: "Section 2400", taxCode: "T5013", standardsBody: "CPA Canada", framework: "ASPE" };
+const PARTNERSHIP_US_SET: StatementSet = { compilationStandard: "AR-C 80", reviewStandard: "AR-C 90", taxCode: "1065", standardsBody: "AICPA", framework: "US GAAP" };
+const TRUST_CA_SET: StatementSet = { compilationStandard: "CSRS 4200", reviewStandard: "Section 2400", taxCode: "T3", standardsBody: "CPA Canada", framework: "ASPE" };
+const TRUST_US_SET: StatementSet = { compilationStandard: "AR-C 80", reviewStandard: "AR-C 90", taxCode: "1041", standardsBody: "AICPA", framework: "US GAAP" };
+
+const corpUsComp = buildCompilationView("corp-us-comp", CORP_US_SET);
+const corpUsReview = buildReviewView("corp-us-review", CORP_US_SET);
+const corpUsTax = buildTaxView("corp-us-tax", CORP_US_SET);
+
+const partnershipCaComp = buildCompilationView("partnership-ca-comp", PARTNERSHIP_CA_SET);
+const partnershipCaReview = buildReviewView("partnership-ca-review", PARTNERSHIP_CA_SET);
+const partnershipCaTax = buildTaxView("partnership-ca-tax", PARTNERSHIP_CA_SET);
+
+const partnershipUsComp = buildCompilationView("partnership-us-comp", PARTNERSHIP_US_SET);
+const partnershipUsReview = buildReviewView("partnership-us-review", PARTNERSHIP_US_SET);
+const partnershipUsTax = buildTaxView("partnership-us-tax", PARTNERSHIP_US_SET);
+
+const trustCaComp = buildCompilationView("trust-ca-comp", TRUST_CA_SET);
+const trustCaReview = buildReviewView("trust-ca-review", TRUST_CA_SET);
+const trustCaTax = buildTaxView("trust-ca-tax", TRUST_CA_SET);
+
+const trustUsComp = buildCompilationView("trust-us-comp", TRUST_US_SET);
+const trustUsReview = buildReviewView("trust-us-review", TRUST_US_SET);
+const trustUsTax = buildTaxView("trust-us-tax", TRUST_US_SET);
+
 export const allTemplateViews: Record<string, TemplateView> = {
  comp4200,
  rev2400: review2400,
+ "corp-us-comp": corpUsComp,
+ "corp-us-review": corpUsReview,
+ "corp-us-tax": corpUsTax,
+ "partnership-ca-comp": partnershipCaComp,
+ "partnership-ca-review": partnershipCaReview,
+ "partnership-ca-tax": partnershipCaTax,
+ "partnership-us-comp": partnershipUsComp,
+ "partnership-us-review": partnershipUsReview,
+ "partnership-us-tax": partnershipUsTax,
+ "trust-ca-comp": trustCaComp,
+ "trust-ca-review": trustCaReview,
+ "trust-ca-tax": trustCaTax,
+ "trust-us-comp": trustUsComp,
+ "trust-us-review": trustUsReview,
+ "trust-us-tax": trustUsTax,
  audit5100,
  audit5101,
  audit6100,
@@ -2164,4 +2373,14 @@ export const TEMPLATE_CONFIG: Record<string, {
  'audit6200': { sidebarType: 'audit-us', defaultFramework: 'US GAAP — Generally Accepted Accounting Principles (United States)', engagementTypeLabel: 'Audit (AUD)' },
  'rev2400': { sidebarType: 'review-comp', defaultFramework: 'Section 2400 Review standards', engagementTypeLabel: 'Review (REV)' },
  'comp4200': { sidebarType: 'review-comp', defaultFramework: 'CSRS 4200 - Current Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
+ 'corp-us-comp': { sidebarType: 'review-comp', defaultFramework: 'AR-C 80 - Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
+ 'corp-us-review': { sidebarType: 'review-comp', defaultFramework: 'AR-C 90 Review standards', engagementTypeLabel: 'Review (REV)' },
+ 'partnership-ca-comp': { sidebarType: 'review-comp', defaultFramework: 'CSRS 4200 - Current Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
+ 'partnership-ca-review': { sidebarType: 'review-comp', defaultFramework: 'Section 2400 Review standards', engagementTypeLabel: 'Review (REV)' },
+ 'partnership-us-comp': { sidebarType: 'review-comp', defaultFramework: 'AR-C 80 - Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
+ 'partnership-us-review': { sidebarType: 'review-comp', defaultFramework: 'AR-C 90 Review standards', engagementTypeLabel: 'Review (REV)' },
+ 'trust-ca-comp': { sidebarType: 'review-comp', defaultFramework: 'CSRS 4200 - Current Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
+ 'trust-ca-review': { sidebarType: 'review-comp', defaultFramework: 'Section 2400 Review standards', engagementTypeLabel: 'Review (REV)' },
+ 'trust-us-comp': { sidebarType: 'review-comp', defaultFramework: 'AR-C 80 - Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
+ 'trust-us-review': { sidebarType: 'review-comp', defaultFramework: 'AR-C 90 Review standards', engagementTypeLabel: 'Review (REV)' },
 };

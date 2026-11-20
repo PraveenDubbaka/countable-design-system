@@ -8,7 +8,7 @@ import { StyledCard } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { loadClientGroups, saveClientGroups, loadClients, saveClients } from "@/data/clientsData";
+import { loadClientGroups, saveClientGroups, loadClients, saveClients, ENTITY_TYPE_OPTIONS, ENTITY_TYPE_LABELS } from "@/data/clientsData";
 
 const InlineField = ({
  label, required, hint, children, className,
@@ -590,7 +590,7 @@ export default function AddNewClient() {
      id: newId,
      entityName: legalEntityName.split(' ').slice(0, 2).join(' '),
      legalEntityName,
-     entityType: entityType || 'Corporation',
+     entityType: ENTITY_TYPE_LABELS[entityType] ?? 'Corporation',
      status: 'Accepted' as const,
      integration: 'none' as const,
      contactName: '',
@@ -721,10 +721,9 @@ export default function AddNewClient() {
  <Select value={entityType} onValueChange={v => { setEntityType(v); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only"); setGstRegistered(""); setSubCorpType(""); }}>
  <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="corporation">Corporation</SelectItem>
- <SelectItem value="partnership">Partnership</SelectItem>
- <SelectItem value="sole-proprietor">Sole Proprietor</SelectItem>
- <SelectItem value="trust">Trust</SelectItem>
+ {ENTITY_TYPE_OPTIONS.map(o => (
+ <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+ ))}
  </SelectContent>
  </Select>
  </InlineField>

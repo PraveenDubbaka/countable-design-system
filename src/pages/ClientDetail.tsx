@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Pencil, Trash2, Search, Users, Layers, Clock, CheckCircle2, Archive } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Search, Users, Layers, Clock, CheckCircle2, Archive, Lock } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { loadClients } from "@/data/clientsData";
+import { loadClients, saveClients, ENTITY_TYPE_OPTIONS } from "@/data/clientsData";
 import type { ClientEngagement } from "@/data/clientsData";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 
@@ -59,7 +59,17 @@ export default function ClientDetail() {
  setSearch('');
  }, [clientId]);
 
+ const [, forceUpdate] = useState({});
  const client = loadClients().find(c => c.id === clientId);
+
+ const handleEntityTypeChange = (newType: string) => {
+ if (!client) return;
+ const all = loadClients();
+ const updated = all.map(c => c.id === client.id ? { ...c, entityType: newType } : c);
+ saveClients(updated);
+ forceUpdate({});
+ toast.success("Entity type updated");
+ };
 
  if (!client) {
  return (
@@ -102,7 +112,7 @@ export default function ClientDetail() {
 
  const infoFields = [
  { label: 'Legal Entity Name', value: client.legalEntityName },
- { label: 'Entity Type', value: client.entityType },
+ { label: 'Entity Type', value: client.entityType, isEntityType: true },
  { label: 'Country', value: client.clientCountry === 'us' ? '🇺🇸 United States' : '🇨🇦 Canada' },
  ...(client.groupName ? [{ label: 'Client Group', value: client.groupName }] : []),
  { label: 'Contact Person', value: client.contactPerson },
@@ -166,6 +176,31 @@ export default function ClientDetail() {
  <span className="text-xs text-primary font-medium">{f.label}</span>
  {f.isIntegration ? (
  <IntegrationBadge type={client.integration} />
+ ) : f.isEntityType ? (
+ client.engagements.length === 0 ? (
+ <Select value={client.entityType} onValueChange={handleEntityTypeChange}>
+ <SelectTrigger className="h-7 w-36 text-xs"><SelectValue /></SelectTrigger>
+ <SelectContent>
+ {ENTITY_TYPE_OPTIONS.map(o => (
+ <SelectItem key={o.label} value={o.label} className="text-xs">{o.label}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ ) : (
+ <TooltipProvider>
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <span className="flex items-center gap-1 text-sm text-foreground cursor-default w-fit">
+ {f.value}
+ <Lock className="h-3 w-3 text-muted-foreground" />
+ </span>
+ </TooltipTrigger>
+ <TooltipContent className="max-w-56 text-xs">
+ Entity type can't be changed once an engagement has been created.
+ </TooltipContent>
+ </Tooltip>
+ </TooltipProvider>
+ )
  ) : f.isLink ? (
  <span className="text-sm text-link font-medium cursor-pointer hover:underline">{f.value}</span>
  ) : (

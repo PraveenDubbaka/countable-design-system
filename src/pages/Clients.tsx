@@ -61,6 +61,7 @@ const partners = [
 ];
 
 const allIndustries = Array.from(new Set(clientsData.map(c => c.industryType).filter(Boolean))).sort() as string[];
+const allEntityTypes = Array.from(new Set(clientsData.map(c => c.entityType).filter(Boolean))).sort() as string[];
 
 const acceptedCount = clientsData.filter(c => c.status === 'Accepted').length;
 const pendingCount = clientsData.filter(c => c.status === 'Invite Now' || c.status === 'Pending').length;
@@ -152,6 +153,7 @@ export default function Clients() {
  const [clientList, setClientList] = useState<Client[]>(() => loadClients());
  const [countryFilter, setCountryFilter] = useState<"all" | "ca" | "us">("all");
  const [industryFilter, setIndustryFilter] = useState<string>("all");
+ const [entityTypeFilter, setEntityTypeFilter] = useState<string>("all");
  const [groupFilter, setGroupFilter] = useState<string>("__all__");
  const [activeFirm, setActiveFirm] = useState(getActiveFirm);
  useEffect(() => {
@@ -178,6 +180,7 @@ export default function Clients() {
  const filteredClients = clientList
   .filter(c => countryFilter === "all" || c.clientCountry === countryFilter)
   .filter(c => industryFilter === "all" || c.industryType === industryFilter)
+  .filter(c => entityTypeFilter === "all" || c.entityType === entityTypeFilter)
   .filter(c => groupFilter === "__all__" || (groupFilter === "__none__" ? !c.groupName : c.groupName === groupFilter))
   .filter(c =>
    c.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -246,7 +249,14 @@ export default function Clients() {
     </ColFilterHeader>
    ),
    cell: client => <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.groupName || '—'}</td> },
-  { id: "entityType", label: "Entity Type", cell: client => (
+  { id: "entityType", label: "Entity Type",
+   header: (
+    <ColFilterHeader label="Entity Type" active={entityTypeFilter !== "all"}>
+     {filterOption("all", "All Entity Types", entityTypeFilter, () => setEntityTypeFilter("all"))}
+     {allEntityTypes.map(et => filterOption(et, et, entityTypeFilter, () => setEntityTypeFilter(et)))}
+    </ColFilterHeader>
+   ),
+   cell: client => (
    <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{client.entityType}</td>
   ) },
   { id: "country", label: "Country",
