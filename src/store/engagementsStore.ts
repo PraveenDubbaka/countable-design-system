@@ -97,6 +97,10 @@ export type EngagementMeta = {
   *  py2 is "nodata" when last year was the entity's First Year of Operations (no year before it). */
  priorYearSources?: { py1: YearSourceKind; py2: YearSourceKind | "nodata" };
  sourceProvider?: "xero" | "quickbooks" | "sage"; // which accounting source the engagement is linked to
+ // Partnership/Trust (P5) — asked at Create Engagement, not discovered at export.
+ ownershipMode?: "percentage" | "units"; // chosen once per engagement, applies to every participant
+ capitalPresentation?: "itemised" | "totalOnly"; // balance sheet face; defaults to totalOnly (P9)
+ capitalVisibility?: "open" | "restricted" | "partnerOnly";
 };
 
 export function getEngagementMeta(id: string): EngagementMeta {

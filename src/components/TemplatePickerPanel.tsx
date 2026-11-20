@@ -75,21 +75,35 @@ function TreeNodes({
  );
 }
 
+// Maps a client's entityType to the matching top-level templateTree folder id (P5: a
+// Partnership/Trust client cannot select a Corporation template, and vice versa).
+function entityFolderId(entityType?: string): string | null {
+ if (entityType === "Partnership") return "partnership";
+ if (entityType === "Trust") return "trust";
+ if (entityType === "Corporation") return "corporation";
+ return null; // unknown/other entity types (e.g. Sole Proprietor): show everything, don't guess
+}
+
 export function TemplatePickerPanel({
  open,
  onClose,
  onSelect,
  suggestedTemplateId,
+ clientEntityType,
 }: {
  open: boolean;
  onClose: () => void;
  onSelect: (id: string, name: string) => void;
  suggestedTemplateId?: string;
+ /** When provided, the tree is restricted to this client's entity-type folder. */
+ clientEntityType?: string;
 }) {
  const [tab, setTab] = useState<"global" | "my">("global");
  const [search, setSearch] = useState("");
+ const folderId = entityFolderId(clientEntityType);
+ const visibleTree = folderId ? templateTree.filter(f => f.id === folderId) : templateTree;
  const [expanded, setExpanded] = useState<Set<string>>(
- new Set(["corporation", "corp-ca"])
+ () => new Set(folderId ? [folderId, `${folderId === "corporation" ? "corp" : folderId}-ca`] : ["corporation", "corp-ca"])
  );
 
  const myTemplates = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);
@@ -140,7 +154,7 @@ export function TemplatePickerPanel({
 
  <div className="flex-1 overflow-y-auto p-2">
  {tab === "global" ? (
- <TreeNodes items={templateTree} depth={0} search={q} expanded={expanded} toggle={toggle} onSelect={(id, name) => { onSelect(id, name); onClose(); }} suggestedTemplateId={suggestedTemplateId} />
+ <TreeNodes items={visibleTree} depth={0} search={q} expanded={expanded} toggle={toggle} onSelect={(id, name) => { onSelect(id, name); onClose(); }} suggestedTemplateId={suggestedTemplateId} />
  ) : myTemplates.length === 0 ? (
  <p className="text-sm text-muted-foreground text-center py-8">No custom templates yet</p>
  ) : (
