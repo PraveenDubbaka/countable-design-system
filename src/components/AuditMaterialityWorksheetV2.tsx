@@ -14,6 +14,7 @@ import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
 import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
 import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
+import { LukaIcon } from "@/components/LukaIcon";
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
 import { GreenDot } from '@/components/demo/GreenDot';
 import { RefButton, RefDoc } from "@/components/RefButton";
@@ -641,7 +642,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <tr className="bg-muted border-b border-border">
  <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Period to date ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[230px]">Period to date ($)</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">This period anticipated ($)</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Previous period ($)</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-32">Benchmark % applied</th>
@@ -692,15 +693,8 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  />
  )}
  </td>
- <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
- {isDemoEngagement && row.basis === 'grossRevenue' ? (
-   <div className="flex items-center justify-end gap-1.5 min-h-[32px]">
-     <ProvenancePopover data={DEMO_PROVENANCE.revenue}>
-       <span className="text-sm tabular-nums">{row.periodAmount ? formatDisplay(row.periodAmount) : "—"}</span>
-     </ProvenancePopover>
-   </div>
- ) : (
- <div className="relative">
+ <td className="px-4 py-2.5 align-top min-w-[230px] text-right">
+  <div className="relative flex items-start gap-1.5">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-amount')}>
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
@@ -709,8 +703,14 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  className="tabular-nums text-right"
  />
  </LukaTypingRow>
+ {isDemoEngagement && (row.basis === 'grossRevenue' ? (
+ <ProvenancePopover data={DEMO_PROVENANCE.revenue} className="no-underline">
+ <button type="button" aria-label="View source" className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+ <LukaIcon size={14} bare />
+ </button>
+ </ProvenancePopover>
+ ) : <span className="h-6 w-6 shrink-0" aria-hidden="true" />)}
  </div>
- )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  <div className="flex items-start gap-1.5">
@@ -809,28 +809,29 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <thead>
  <tr>
  <th className="w-40" />
- <th className="px-2 pb-1 text-right text-xs font-medium text-muted-foreground w-44">Amount ($)</th>
+ <th className="px-2 pb-1 text-right text-xs font-medium text-muted-foreground w-56">Amount ($)</th>
  <th className="px-2 pb-1 text-left text-xs font-medium text-muted-foreground">Reasoning</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  <tr>
  <td className="py-2 text-sm text-muted-foreground">Previous period</td>
- <td className="px-2 py-1.5 w-44"><TdInput value={prevMatAmount ? formatDisplay(prevMatAmount) : ""} onChange={(v) => setPrevMatAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="tabular-nums text-right" /></td>
+ <td className="px-2 py-1.5 w-56"><TdInput value={prevMatAmount ? formatDisplay(prevMatAmount) : ""} onChange={(v) => setPrevMatAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="tabular-nums text-right" /></td>
  <td className="px-2 py-1.5"><TdInput value={prevMatReasoning} onChange={setPrevMatReasoning} placeholder="Reasoning…" /></td>
  </tr>
  <tr>
  <td className="py-2 text-sm font-semibold text-primary">Preliminary</td>
- <td className="px-2 py-1.5 w-44">
- {isDemoEngagement && overallMateriality ? (
- <div className="flex items-center justify-end gap-1.5 min-h-[32px] px-3">
- <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
- <span className="font-bold text-primary tabular-nums">{formatDisplay(overallMateriality)}</span>
- </ProvenancePopover>
- </div>
- ) : (
+ <td className="px-2 py-1.5 w-56">
+ <div className="flex items-start gap-1.5">
  <TdInput value={overallMateriality ? formatDisplay(overallMateriality) : "—"} readOnly className="tabular-nums text-right font-semibold" />
+ {isDemoEngagement && overallMateriality && (
+ <ProvenancePopover data={DEMO_PROVENANCE.materiality} className="no-underline">
+ <button type="button" aria-label="View source" className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
+ <LukaIcon size={14} bare />
+ </button>
+ </ProvenancePopover>
  )}
+ </div>
  </td>
  <td className="px-2 py-1.5"><TdInput value={prelimReasoning} onChange={setPrelimReasoning} placeholder="Reasoning…" /></td>
  </tr>
