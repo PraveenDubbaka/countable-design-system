@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Pause, Play } from "lucide-react";
+import { ChevronRight, ChevronDown, Landmark, FileText, Triangle, FileSpreadsheet, PencilLine, Pencil, Settings2, Download, FileDown, FileType, Share2, Save, RefreshCw, Trash2, Building2, Calendar, Check, AlertTriangle, Loader2, History, Upload, FileUp, Bell, Plus, X, LayoutGrid, CheckCircle2, PlugZap, Zap, ClipboardList, UserPlus, UploadCloud, FileCheck2, ExternalLink, Maximize2, Minimize2, Minus, SendHorizontal, MessageSquare, Pause, Play } from "lucide-react";
 import { getEnabled, subscribeEnabled, registerEngagement, unregisterEngagement, updateEngagementTime } from "@/lib/timeTrackerStore";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { ChecklistIcon } from "@/components/icons/ChecklistIcon";
@@ -13,6 +13,7 @@ import { LukaIcon } from "@/components/LukaIcon";
 import { DocumentView } from "@/components/DocumentView";
 import { LetterView } from "@/components/LetterView";
 import { loadClients } from "@/data/clientsData";
+import { useEngagements } from "@/store/EngagementsContext";
 import { SHOW_REGION_LABELS } from "@/lib/featureFlags";
 import {
  LetterEditorPanel,
@@ -25,6 +26,10 @@ import { normalizeLetterMargin, type LetterMargin } from "@/lib/letterMargins";
 import { createLetterTemplate, type LetterTemplateSection } from "@/lib/letterTemplate";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
 import { PartnersCapitalWorksheet } from "@/components/PartnersCapitalWorksheet";
+import { PartnershipAgreementWorksheet } from "@/components/PartnershipAgreementWorksheet";
+import { getEntityLabels } from "@/lib/entityLabels";
+import { TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
+import { generatePartnerPackages } from "@/lib/partnerPackagePdf";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
@@ -256,6 +261,9 @@ import {
  generate506FraudIdentificationChecklist,
  generateAuditCACompletionChecklist,
  generateAuditCADisclosureChecklist,
+ generateReviewEngagementLetterMaster,
+ generateReviewManagementRepresentationLetter,
+ generateTaxEngagementLetter,
 } from "@/lib/globalTemplates";
 
 // Sample engagement data matching the engagements page
@@ -361,14 +369,15 @@ const fallbackChecklist: Checklist = generateClientAcceptanceContinuanceChecklis
 // Default Compilation-folder checklists seeded into the engagement on first load
 const COMPILATION_FOLDER_ID = "5";
 const COMPILATION_FOLDER_NAME = "Compilation Checklists";
-const buildDefaultCompilationChecklists = (entityType: string = "Corporation") => {
+const buildDefaultCompilationChecklists = (entityType: string = "Corporation", isUS: boolean = false, trustVariant: "unit" | "other" = "other") => {
  const items = [
  { generator: generateClientAcceptanceContinuanceChecklist, id: "default-compilation-cac" },
  { generator: generateIndependenceChecklist, id: "default-compilation-independence" },
  { generator: generateKnowledgeOfClientBusinessChecklist, id: "default-compilation-kcb" },
  { generator: generatePlanningChecklist, id: "default-compilation-planning" },
- { generator: generateEngagementLetterChecklist, id: "default-compilation-el" },
- { generator: generateManagementResponsibilityChecklist, id: "default-compilation-mr" },
+ // Standards-aware (AR-C 80 vs. CSRS 4200) — needs isUS, which the other generators here don't.
+ { generator: () => generateEngagementLetterChecklist(entityType, isUS), id: "default-compilation-el" },
+ { generator: () => generateManagementResponsibilityChecklist(entityType, trustVariant), id: "default-compilation-mr" },
  ];
  return items.map(({ generator, id }) => {
  const data = generator(entityType);
@@ -380,6 +389,44 @@ const buildDefaultCompilationChecklists = (entityType: string = "Corporation") =
  data,
  };
  });
+};
+
+// Review and Tax engagements share the Compilation folder's Client Onboarding checklists
+// (acceptance/independence/KCB/planning — the underlying firm-level checks don't differ by
+// engagement type), but need their own Engagement Letter (and, for Review, Management
+// Representation) content — CSRE 2400 wording, not CSRS 4200 — seeded under their own ids so they
+// don't collide with Compilation's in the shared savedChecklists store, the same way Audit's ids
+// already coexist with Compilation's.
+const REVIEW_FOLDER_ID = "7";
+const REVIEW_FOLDER_NAME = "Review Checklists";
+const buildDefaultReviewChecklists = (entityType: string = "Corporation", isUS: boolean = false, trustVariant: "unit" | "other" = "other") => {
+ const items = [
+ { generator: () => generateReviewEngagementLetterMaster(entityType, isUS, trustVariant), id: "default-review-el" },
+ { generator: () => generateReviewManagementRepresentationLetter(entityType, isUS), id: "default-review-mr" },
+ ];
+ return items.map(({ generator, id }) => {
+ const data = generator();
+ return {
+ id,
+ name: data.title,
+ folderId: REVIEW_FOLDER_ID,
+ folderName: REVIEW_FOLDER_NAME,
+ data,
+ };
+ });
+};
+
+const TAX_FOLDER_ID = "8";
+const TAX_FOLDER_NAME = "Tax Checklists";
+const buildDefaultTaxChecklists = (entityType: string = "Corporation", isUS: boolean = false, trustVariant: "unit" | "other" = "other") => {
+ const data = generateTaxEngagementLetter(entityType, isUS, trustVariant);
+ return [{
+ id: "default-tax-el",
+ name: data.title,
+ folderId: TAX_FOLDER_ID,
+ folderName: TAX_FOLDER_NAME,
+ data,
+ }];
 };
 
 const AUDIT_FOLDER_ID = "6";
@@ -757,8 +804,23 @@ const NAV_KEY_TO_CHECKLIST_ID: Record<string, string> = {
  "aud-us-rp-gwi": "default-us-audit-rp-gwi",
 };
 
+// "co-el"/"co-mr" are the one shared nav key each that Compilation, Review and Tax engagements
+// all route through (Sidebar.tsx's single engagementTree has no separate "re-el"/"tax-el"), so
+// their target checklist id depends on the engagement's real type rather than being a static
+// lookup. Every other key is unaffected.
+function resolveChecklistId(navKey: string, engagementKind: "Compilation" | "Review" | "Tax"): string | undefined {
+ if (navKey === "co-el") {
+ return engagementKind === "Tax" ? "default-tax-el" : engagementKind === "Review" ? "default-review-el" : "default-compilation-el";
+ }
+ if (navKey === "co-mr") {
+ return engagementKind === "Review" ? "default-review-mr" : "default-compilation-mr";
+ }
+ return NAV_KEY_TO_CHECKLIST_ID[navKey];
+}
+
 const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
  'pc-worksheet': "Partners' Capital",
+ 'pw-worksheet': "Partnership Agreement & Capital",
  'aud-plan': 'Team Planning Discussions', 'aud-us-plan': 'Team Planning Discussions',
  'aud-mat': 'Materiality', 'aud-us-mat': 'Materiality',
  'aud-tt': 'Time Tracker', 'aud-us-tt': 'Time Tracker',
@@ -804,6 +866,7 @@ const CUSTOM_WORKSHEET_TITLES: Record<string, string> = {
 // All custom-component worksheet pages (not checklist-based) that support PDF/Word export
 const WORKSHEET_KEYS = new Set([
  'pc-worksheet',
+ 'pw-worksheet',
  'aud-asm', 'aud-us-asm',
  'aud-plan', 'aud-us-plan',
  'aud-scope', 'aud-us-scope',
@@ -857,6 +920,11 @@ const CHECKLIST_SIDEBAR_INFO: Record<string, { section: string; code: string; la
  'default-compilation-planning': { section: 'CO', code: 'PL', label: 'Planning' },
  'default-compilation-el': { section: 'CO', code: 'AL1.1', label: 'Engagement Letter' },
  'default-compilation-mr': { section: 'CO', code: 'MR', label: 'Management Responsibility' },
+ // Review — CO (shares the co-el/co-mr nav keys with Compilation; see engagementKind above)
+ 'default-review-el': { section: 'CO', code: 'AL1.1', label: 'Engagement Letter' },
+ 'default-review-mr': { section: 'CO', code: 'MR', label: 'Management Representation' },
+ // Tax — CO (shares the co-el nav key with Compilation; no Tax-specific co-mr content yet)
+ 'default-tax-el': { section: 'CO', code: 'AL1.1', label: 'Engagement Letter' },
  // CA Audit — CO (sub-forms that share a sidebar nav item use that item's code+label)
  'default-audit-form-408': { section: 'CO', code: 'IAE', label: 'Initial Audit Engagements' },
  'default-audit-form-410': { section: 'CO', code: 'AC', label: 'New or Existing Engagement — Acceptance/Continuance' },
@@ -1134,6 +1202,7 @@ export default function EngagementDetail() {
  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
  const [isFSCommentsOpen, setIsFSCommentsOpen] = useState(false);
  const [isVersionsOpen, setIsVersionsOpen] = useState(false);
+ const [isGeneratingPartnerPackages, setIsGeneratingPartnerPackages] = useState(false);
  const [showAssignDialog, setShowAssignDialog] = useState(false);
  const [priorYearFile, setPriorYearFile] = useState<File | null>(null);
  const [isDraggingOverPriorYear, setIsDraggingOverPriorYear] = useState(false);
@@ -1400,7 +1469,14 @@ export default function EngagementDetail() {
  // Client responses hook
  const checklistAssignments = useChecklistAssignments(engagementId ?? '', checklist?.id ?? checklistKey ?? '');
  const clientResponses = useClientResponses(checklist, checklistAssignments.assignments);
- const engagement = engagementId ? engagementsData[engagementId] : null;
+ // Prefer the real engagement store over the local demo table above — that table only seeds a
+ // handful of demo engagement IDs, so any engagement created through the real Create Engagement
+ // flow previously fell through to "Unknown Client" here, which silently defaulted clientEntityType
+ // to Corporation regardless of the engagement's actual client (see clientEntityType below).
+ const { engagements: contextEngagements } = useEngagements();
+ const contextEng = engagementId ? contextEngagements.find(e => e.id === engagementId) : undefined;
+ const staticEng = engagementId ? engagementsData[engagementId] : null;
+ const engagement = contextEng ?? staticEng;
  const displayId = engagementId || "Unknown";
  const clientName = engagement?.client || "Unknown Client";
  const status = engagement?.status || "In Progress";
@@ -1408,7 +1484,16 @@ export default function EngagementDetail() {
  // Get unique clients and current client's engagements
  const uniqueClients = useMemo(() => getUniqueClients(), []);
  const clientEngagements = useMemo(() => getEngagementsForClient(clientName), [clientName]);
- const currentChecklistId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
+ // Compilation/Review/Tax engagements share one "co-el"/"co-mr" nav key each (see Sidebar.tsx's
+ // single shared engagementTree), but need different seeded content — resolve which one this
+ // engagement's real type points to rather than always assuming Compilation.
+ const engagementKind: "Compilation" | "Review" | "Tax" = useMemo(() => {
+ const type = engagement?.type;
+ if (type && TAX_ENGAGEMENT_TYPE_LABELS.has(type)) return "Tax";
+ if (type === "Review (REV)") return "Review";
+ return "Compilation";
+ }, [engagement?.type]);
+ const currentChecklistId = checklistKey ? resolveChecklistId(checklistKey, engagementKind) : undefined;
  // The Compilation checklists/letters are entity-type aware (P3): resolve the real client record's
  // entityType so their content reflects this engagement's client. Falls back to Corporation when the
  // client can't be matched, matching the P1 migration default.
@@ -1416,6 +1501,24 @@ export default function EngagementDetail() {
  const match = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
  return match?.entityType ?? "Corporation";
  }, [clientName]);
+ // Compilation/Review engagement letters are standards-aware (AR-C 80/90 vs. CSRS 4200/CSRE 2400) —
+ // unlike Audit, which has its own separate CA/US checklist trees, Compilation/Review share one set
+ // of nav keys for every country, so this is the only signal for which wording to seed.
+ const isUSClient = useMemo(() => {
+ const match = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+ return match?.clientCountry === "us";
+ }, [clientName]);
+ // Only meaningful when clientEntityType === "Trust" (see entityLabels.ts) — which column of its
+ // terminology table applies. Defaults to "other" for every Trust client created before this
+ // field existed.
+ const clientTrustVariant: "unit" | "other" = useMemo(() => {
+ const match = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+ return match?.trustVariant ?? "other";
+ }, [clientName]);
+ const entityCapitalLabels = useMemo(
+ () => (clientEntityType === "Partnership" || clientEntityType === "Trust" ? getEntityLabels(clientEntityType, clientTrustVariant) : null),
+ [clientEntityType, clientTrustVariant]
+ );
 
  // Compute banner fill status + counts
  const { bannerFillStatus, bannerFilledCount, bannerTotalCount } = useMemo(() => {
@@ -1443,10 +1546,10 @@ export default function EngagementDetail() {
  const idx = keys.indexOf(checklistKey);
  if (idx === -1 || idx >= keys.length - 1) return { nextChecklistLabel: undefined, nextChecklistKey: undefined };
  const nKey = keys[idx + 1];
- const nId = NAV_KEY_TO_CHECKLIST_ID[nKey];
+ const nId = resolveChecklistId(nKey, engagementKind);
  const nInfo = nId ? CHECKLIST_SIDEBAR_INFO[nId] : undefined;
  return { nextChecklistLabel: nInfo?.label ?? nKey, nextChecklistKey: nKey };
- }, [checklistKey]);
+ }, [checklistKey, engagementKind]);
 
  // Sync custom letter existence state when navigating to/from custom sections
  useEffect(() => {
@@ -1528,6 +1631,21 @@ export default function EngagementDetail() {
  setPendingEngagementId(null);
  };
 
+ // P14: batch-generate the Full package + one Partner package per holder, zipped, for the
+ // Capital Statement page only (see partnerPackagePdf.ts for why BS/IS/Notes aren't bundled).
+ const handleGeneratePartnerPackages = async () => {
+ if (!engagementId || (clientEntityType !== "Partnership" && clientEntityType !== "Trust")) return;
+ setIsGeneratingPartnerPackages(true);
+ try {
+ const { fileCount } = await generatePartnerPackages(engagementId, clientEntityType, clientName, engagement?.yearEnd ?? "", clientTrustVariant);
+ toast.success(`Generated ${fileCount} PDFs in the zip (1 Full package + ${fileCount - 1} Partner packages).`);
+ } catch (err) {
+ toast.error(err instanceof Error ? err.message : "Couldn't generate partner packages.");
+ } finally {
+ setIsGeneratingPartnerPackages(false);
+ }
+ };
+
  // Load checklist from localStorage - use first saved checklist or fallback
  useEffect(() => {
  // FS pages, standalone custom worksheets, and notes pages render without a checklist
@@ -1562,7 +1680,7 @@ export default function EngagementDetail() {
  // Seed the engagement with the Compilation folder defaults the first
  // time we load (or after a migration cleared the list).
  if (!Array.isArray(savedChecklists) || savedChecklists.length === 0) {
- const seeded = [...buildDefaultCompilationChecklists(clientEntityType),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
+ const seeded = [...buildDefaultCompilationChecklists(clientEntityType, isUSClient, clientTrustVariant),...buildDefaultReviewChecklists(clientEntityType, isUSClient, clientTrustVariant),...buildDefaultTaxChecklists(clientEntityType, isUSClient, clientTrustVariant),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
  writeJsonToLocalStorage('savedChecklists', seeded);
  savedChecklists = seeded;
  // Notify the sidebar so it picks up the seeded checklists immediately.
@@ -1570,8 +1688,8 @@ export default function EngagementDetail() {
  window.dispatchEvent(new CustomEvent('checklistSaved', { detail: item }));
  });
  } else {
- // Backfill: keep seeded compilation + audit entries current and remove legacy duplicate EL/MR ids.
- const defaults = [...buildDefaultCompilationChecklists(clientEntityType),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
+ // Backfill: keep seeded compilation/review/tax + audit entries current and remove legacy duplicate EL/MR ids.
+ const defaults = [...buildDefaultCompilationChecklists(clientEntityType, isUSClient, clientTrustVariant),...buildDefaultReviewChecklists(clientEntityType, isUSClient, clientTrustVariant),...buildDefaultTaxChecklists(clientEntityType, isUSClient, clientTrustVariant),...buildDefaultAuditChecklists(),...buildDefaultUSAuditChecklists()];
  const defaultById = new Map(defaults.map(item => [item.id, item]));
  const existingIds = new Set(savedChecklists.map((c: any) => c?.id));
  const missing = defaults.filter(d => !existingIds.has(d.id));
@@ -1604,7 +1722,7 @@ export default function EngagementDetail() {
 
  if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
  // Pick the requested checklist via route param, else fall back to first.
- const targetId = checklistKey ? NAV_KEY_TO_CHECKLIST_ID[checklistKey] : undefined;
+ const targetId = checklistKey ? resolveChecklistId(checklistKey, engagementKind) : undefined;
  const requested = targetId
  ? savedChecklists.find((c: any) => c?.id === targetId)
  : undefined;
@@ -1628,7 +1746,7 @@ export default function EngagementDetail() {
  setIsLoading(false);
  }, 500);
  return () => clearTimeout(loadTimer);
- }, [engagementId, checklistKey, clientEntityType]);
+ }, [engagementId, checklistKey, clientEntityType, engagementKind, isUSClient, clientTrustVariant]);
 
  // Listen for real-time sync events from templates page (same tab)
  useEffect(() => {
@@ -2432,11 +2550,18 @@ export default function EngagementDetail() {
  {status}
  </Badge>
 
- {/* Jurisdiction Badge */}
- {SHOW_REGION_LABELS && engagement?.jurisdiction && (
+ {/* Entity Type Badge — Corporation/Partnership/Trust, so the entity type driving the
+ checklists/letters/FS content on this page is visible wherever the engagement itself is. */}
+ <Badge variant="outline" className="ml-1 whitespace-nowrap">
+ {clientEntityType}
+ </Badge>
+
+ {/* Jurisdiction Badge — only the local demo table carries region/jurisdiction today;
+ a real engagement created via Create Engagement doesn't collect it yet. */}
+ {SHOW_REGION_LABELS && staticEng?.jurisdiction && (
   <div className="ml-1 inline-flex items-center gap-1 h-7 px-2 bg-muted border border-border rounded-sm">
    <span className="text-[11px] font-semibold text-muted-foreground">
-    {engagement.region === "ca" ? "🇨🇦" : "🇺🇸"} {engagement.jurisdiction}
+    {staticEng.region === "ca" ? "🇨🇦" : "🇺🇸"} {staticEng.jurisdiction}
    </span>
   </div>
  )}
@@ -2706,7 +2831,7 @@ export default function EngagementDetail() {
  <DropdownMenuTrigger asChild>
  <ExpandableIconButton variant="secondary" size="sm" icon={<Download className="h-4 w-4" />} label="Export" />
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-40">
+ <DropdownMenuContent align="end" className="w-56">
  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer group" onClick={() => window.print()}>
  <FileText className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
  <span>PDF</span>
@@ -2715,6 +2840,16 @@ export default function EngagementDetail() {
  <FileType className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
  <span>Word</span>
  </DropdownMenuItem>
+ {checklistKey === 'fs-pc' && (clientEntityType === "Partnership" || clientEntityType === "Trust") && (
+ <DropdownMenuItem
+ className="flex items-center gap-2 cursor-pointer group"
+ disabled={isGeneratingPartnerPackages}
+ onClick={handleGeneratePartnerPackages}
+ >
+ <FileDown className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+ <span>{isGeneratingPartnerPackages ? "Generating…" : `Partner packages (zip)`}</span>
+ </DropdownMenuItem>
+ )}
  </DropdownMenuContent>
  </DropdownMenu>
  </>
@@ -3037,7 +3172,7 @@ export default function EngagementDetail() {
  {checklistKey && FS_PAGE_KEYS.has(checklistKey) && engagementId ? (
  <LayoutSettingsProvider>
  <CommentProvider>
- <FSCommentsBridge open={isFSCommentsOpen} currentScreen={(checklistKey === 'fs-pc' ? (clientEntityType === "Trust" ? "Statement of Changes in Trust Net Assets" : "Statement of Partners' Capital") : FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]]) ?? 'Balance Sheet'} />
+ <FSCommentsBridge open={isFSCommentsOpen} currentScreen={(checklistKey === 'fs-pc' ? entityCapitalLabels?.statementTitle : FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]]) ?? 'Balance Sheet'} />
  <div className="flex h-full overflow-hidden">
  <FSScrollCanvas onCommentsToggle={setIsFSCommentsOpen}>
  <FSPageViewer
@@ -3047,13 +3182,16 @@ export default function EngagementDetail() {
  isCompilation={checklistKey.startsWith('fs-')}
  isEditing={isFSEditing}
  entityType={clientEntityType}
+ trustVariant={clientTrustVariant}
+ clientName={clientName}
+ yearEnd={engagement?.yearEnd}
  />
  </FSScrollCanvas>
  <CommentsPanel />
  <VersionHistoryPanel
  open={isVersionsOpen}
  onClose={() => setIsVersionsOpen(false)}
- currentScreen={(checklistKey === 'fs-pc' ? (clientEntityType === "Trust" ? "Statement of Changes in Trust Net Assets" : "Statement of Partners' Capital") : FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]]) ?? 'Balance Sheet'}
+ currentScreen={(checklistKey === 'fs-pc' ? entityCapitalLabels?.statementTitle : FS_SCREEN_NAMES[FS_PAGE_TYPE_MAP[checklistKey]]) ?? 'Balance Sheet'}
  />
  </div>
  <FSSettingsPanel open={isFSSettingsOpen} onClose={() => setIsFSSettingsOpen(false)} />
@@ -3084,6 +3222,8 @@ export default function EngagementDetail() {
  sectionId={checklistKey}
  sectionName={sec?.name ?? 'Letter'}
  engagementId={engagementId ?? ''}
+ entityType={clientEntityType}
+ trustVariant={clientTrustVariant}
  onLetterExistsChange={setCustomLetterExists}
  onEditingChange={setCustomLetterIsEditing}
  />
@@ -3091,6 +3231,13 @@ export default function EngagementDetail() {
  );
  })() : checklistKey === 'pc-worksheet' ? (
  <PartnersCapitalWorksheet engagementId={engagementId ?? ''} entityType={clientEntityType} />
+ ) : checklistKey === 'pw-worksheet' ? (
+ <PartnershipAgreementWorksheet
+ engagementId={engagementId ?? ''}
+ entityType={clientEntityType === "Trust" ? "Trust" : "Partnership"}
+ trustVariant={clientTrustVariant}
+ clientName={clientName}
+ />
  ) : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
  <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
  ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
@@ -3248,6 +3395,7 @@ export default function EngagementDetail() {
  clientName={clientName !== "Unknown Client" ? clientName : undefined}
  margin={letterMarginPreview}
  entityType={clientEntityType}
+ trustVariant={clientTrustVariant}
  />
  ) : (
  <DocumentView

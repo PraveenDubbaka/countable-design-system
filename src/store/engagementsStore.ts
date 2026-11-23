@@ -28,6 +28,12 @@ export const SEED_ENGAGEMENTS: EngagementRecord[] = [
  { id: "COM-CAS-Dec312024", client: "cash flow ls", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 13, 2026 09:21 AM", firstYearAudit: false },
  { id: "COM-QB-Jan142026", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Jan 14, 2026", team: "R. Chandra", status: "New", statusVariant: "new", hasRF: false, dateCreated: "Jan 13, 2026 04:36 AM", firstYearAudit: false },
  { id: "COM-SHR-Dec302023", client: "ShRoll Forward", type: "Compilation (COM)", yearEnd: "Dec 30, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: true, dateCreated: "Jan 13, 2026 03:51 AM", firstYearAudit: false },
+ // Committed Partnership/Trust demo fixtures — see matching Client entries in clientsData.ts
+ // and SEED_PARTICIPANTS in participantsStore.ts.
+ { id: "COM-WCP-Dec312024", client: "Willow Creek Partners LLP", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "COM-WCP-Dec312023", client: "Willow Creek Partners LLP", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 12, 2024 09:00 AM", firstYearAudit: false },
+ { id: "COM-BFT-Dec312024", client: "Birchwood Family Trust", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "COM-BFT-Dec312023", client: "Birchwood Family Trust", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 12, 2024 09:00 AM", firstYearAudit: false },
 ];
 
 function seedDemoEngagementMeta() {
