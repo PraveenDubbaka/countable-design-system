@@ -1122,6 +1122,8 @@ export default function EngagementDetail() {
  setLetterMarginPreview(saved);
  }, [checklistKey]);
  const letterPageRef = useRef<LetterSectionPageHandle>(null);
+ // `${engagementId}-${checklistKey}` of the custom checklist section whose checklist is currently in state (null otherwise)
+ const customChecklistOwnerRef = useRef<string | null>(null);
  const [customLetterExists, setCustomLetterExists] = useState(false);
  const [customLetterIsEditing, setCustomLetterIsEditing] = useState(false);
  const [isFSEditing, setIsFSEditing] = useState(false);
@@ -1519,8 +1521,20 @@ export default function EngagementDetail() {
 
  // Load checklist from localStorage - use first saved checklist or fallback
  useEffect(() => {
+ customChecklistOwnerRef.current = null;
+ // Custom sections created with category 'checklist' keep their picked checklist under their own key.
+ if (checklistKey?.startsWith('custom-')) {
+ const customSec = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(sec => sec.id === checklistKey);
+ if (customSec?.category === 'checklist') {
+ const savedCustom = readJsonFromLocalStorage<Checklist | null>(`engagement-custom-checklist-${engagementId}-${checklistKey}`, null);
+ customChecklistOwnerRef.current = `${engagementId}-${checklistKey}`;
+ setChecklist(savedCustom && savedCustom.sections ? savedCustom : null);
+ setIsLoading(false);
+ return;
+ }
+ }
  // FS pages, standalone custom worksheets, and notes pages render without a checklist
- if (checklistKey && checklistKey !== 'aud-ra-pap501a' && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('node-note-') || checklistKey.startsWith('custom-'))) {
+ if (checklistKey &&checklistKey !== 'aud-ra-pap501a' && (FS_PAGE_KEYS.has(checklistKey) || checklistKey in CUSTOM_WORKSHEET_TITLES || checklistKey.startsWith('notes-') || checklistKey.startsWith('node-note-') || checklistKey.startsWith('custom-'))) {
  setIsLoading(false);
  setChecklist(null);
  return;
@@ -1619,6 +1633,16 @@ export default function EngagementDetail() {
  return () => clearTimeout(loadTimer);
  }, [engagementId, checklistKey]);
 
+ // Persist the checklist of a custom checklist section (picked checklist, answers, edits, delete) under its own key.
+ useEffect(() => {
+ if (!checklistKey?.startsWith('custom-') || customChecklistOwnerRef.current !== `${engagementId}-${checklistKey}`) return;
+ const storageKey = `engagement-custom-checklist-${engagementId}-${checklistKey}`;
+ if (!checklist) return; // deleting is handled by handleDeleteChecklist; a null here is just the not-yet-loaded state
+ try {
+ localStorage.setItem(storageKey, JSON.stringify(checklist));
+ } catch {}
+ }, [checklist]); // eslint-disable-line react-hooks/exhaustive-deps
+
  // Listen for real-time sync events from templates page (same tab)
  useEffect(() => {
  const unsubscribe = subscribeToChecklistSync(payload => {
@@ -1648,6 +1672,8 @@ export default function EngagementDetail() {
  }, []);
  const handleChecklistUpdate = (updatedChecklist: Checklist) => {
  setChecklist(updatedChecklist);
+ // A custom checklist section is stored under its own key by the persist effect, never in the shared savedChecklists list
+ if (checklistKey?.startsWith('custom-')) return;
  // In preview mode, we also save changes back to localStorage and dispatch sync
  const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
  if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
@@ -2060,7 +2086,7 @@ export default function EngagementDetail() {
  };
 
  const handleSave = () => {
- if (checklist) {
+ if (checklist && !checklistKey?.startsWith('custom-')) {
  const savedChecklists = readJsonFromLocalStorage<any[]>('savedChecklists', []);
  if (Array.isArray(savedChecklists) && savedChecklists.length > 0) {
  const checklistId = currentChecklistId ?? savedChecklists[0]?.id;
@@ -2262,6 +2288,9 @@ export default function EngagementDetail() {
  setClipboardResponses({ checklistTitle: checklist.title, responses });
  }
  setChecklist(null);
+ if (checklistKey?.startsWith('custom-')) {
+ try { localStorage.removeItem(`engagement-custom-checklist-${engagementId}-${checklistKey}`); } catch {}
+ }
  toast.success('Checklist deleted');
  };
 
@@ -2269,6 +2298,10 @@ export default function EngagementDetail() {
  const handleAddChecklist = (saved: { id: string; name: string; data?: any }) => {
  if (saved.data) {
  setChecklist(saved.data);
+ if (checklistKey?.startsWith('custom-')) {
+ // Picked for a custom checklist section: owner is set so the persist effect stores it under the section's own key
+ customChecklistOwnerRef.current = `${engagementId}-${checklistKey}`;
+ }
  setShowAddChecklistSheet(false);
  // Check if clipboard has responses for same checklist title
  if (clipboardResponses && clipboardResponses.checklistTitle === saved.data.title) {
@@ -2708,7 +2741,12 @@ export default function EngagementDetail() {
  </>
  ) : null}
  {checklistKey?.startsWith('custom-') && (
- customLetterExists ? (
+ readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey)?.category === 'checklist' ? (
+ <Button size="sm" className="gap-1.5 h-7 px-2.5 text-xs" onClick={() => setShowAddChecklistSheet(true)}>
+ <Plus className="h-3.5 w-3.5" />
+ Checklist
+ </Button>
+ ) : customLetterExists ? (
  <>
  {customLetterIsEditing ? (
  <>
@@ -3066,6 +3104,49 @@ export default function EngagementDetail() {
  ) : checklistKey?.startsWith('custom-') ? (() => {
  const sections = readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []);
  const sec = sections.find(s => s.id === checklistKey);
+ if (sec?.category === 'checklist') {
+ if (!checklist) {
+ return (
+ <div className="flex flex-col items-center justify-center flex-1 py-24 gap-6">
+ <div className="w-28 h-28 relative flex items-center justify-center">
+ <div className="absolute inset-0 rounded-full bg-primary/5" />
+ <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-16 h-16 relative z-10">
+ <circle cx="40" cy="40" r="38" fill="hsl(var(--primary)/0.08)" />
+ <rect x="20" y="22" width="40" height="36" rx="3" fill="hsl(var(--card))" stroke="hsl(var(--primary)/0.3)" strokeWidth="1.5" />
+ <line x1="27" y1="32" x2="53" y2="32" stroke="hsl(var(--primary)/0.25)" strokeWidth="1.5" strokeLinecap="round" />
+ <line x1="27" y1="38" x2="53" y2="38" stroke="hsl(var(--primary)/0.25)" strokeWidth="1.5" strokeLinecap="round" />
+ <line x1="27" y1="44" x2="44" y2="44" stroke="hsl(var(--primary)/0.25)" strokeWidth="1.5" strokeLinecap="round" />
+ </svg>
+ </div>
+ <div className="text-center">
+ <p className="text-base font-semibold text-foreground">No Checklist Found</p>
+ <p className="text-sm text-muted-foreground mt-1">Please add a checklist by clicking '+ Checklist'<br />button on top right</p>
+ </div>
+ </div>
+ );
+ }
+ return (
+ <div className="p-4 bg-background">
+ <div ref={letterEditorWrapRef} className="bg-background">
+ <DocumentView
+ checklist={checklist}
+ onUpdate={handleChecklistUpdate}
+ isPreviewMode={false}
+ isCompactMode={isCompactMode}
+ selectedQuestions={selectedQuestions}
+ onSelectionChange={setSelectedQuestions}
+ isEngagementMode={true}
+ applyingQuestionId={liveApplyingId ?? clientResponses.applyingQuestionId}
+ objectiveExpanded={objectiveExpanded}
+ onToggleObjective={() => setObjectiveExpanded(prev => !prev)}
+ onCollapseSections={handleCollapseSections}
+ onExpandSections={handleExpandSections}
+ allSectionsCollapsed={allSectionsCollapsed}
+ />
+ </div>
+ </div>
+ );
+ }
  return (
  <div className="relative flex flex-col flex-1 min-h-0">
  <LetterSectionPage
