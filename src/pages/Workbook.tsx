@@ -427,14 +427,35 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
 }
 
 // ── Statement of Partners'/Unitholders' Capital (P10) ───────────────────────────────────────
-function CapitalStatementCentre({ data, labels, onGoToIncome }: {
+function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capitalVisibility = "open", onGoToIncome }: {
  data: CapitalStatementData;
  labels: EntityLabels;
+ client: string;
+ yearEnd: string;
+ detail: CapDetail;
+ capitalVisibility?: "open" | "restricted" | "partnerOnly";
  onGoToIncome: () => void;
 }) {
  const hasAdj = Math.abs(data.totals.adjustments) > 0.005;
+ const manyHolders = data.rows.length > 12;
+ const visibilityRestricted = capitalVisibility !== "open";
  return (
  <div className="flex flex-col gap-6">
+ <CapitalStatementHeader client={client} title={labels.statementTitle} yearEnd={yearEnd} />
+
+ {(manyHolders && detail === "individual") || visibilityRestricted ? (
+ <div className="flex flex-col gap-1">
+ {manyHolders && detail === "individual" && (
+ <p className="text-[11px] text-muted-foreground">{data.rows.length} {labels.holders.toLowerCase()}: too many to show individually — grouped by class.</p>
+ )}
+ {visibilityRestricted && (
+ <p className="text-[11px] text-muted-foreground">
+ Capital visibility is set to {capitalVisibility === "partnerOnly" ? "Partner-only" : "Restricted"} for this engagement — each {labels.holder.toLowerCase()}'s individual figures are hidden here; use the Partner package export to share one {labels.holder.toLowerCase()}'s own account.
+ </p>
+ )}
+ </div>
+ ) : null}
+
  <GroupingTableShell>
  <tr className="border-t border-border/60">
  <td className="px-3 py-2 font-medium text-foreground">Balance, beginning of year</td>
@@ -567,19 +588,49 @@ function CapRow({ label, v, bold }: { label: string; v: number; bold?: boolean }
  );
 }
 
-function CapitalStatementPreview({ data, labels, client, yearEnd, capitalVisibility = "open" }: {
+// Shared statement header — same serif title block the centre builder and the preview both show,
+// so opening the preview never looks like a different document from what you were just editing.
+function CapitalStatementHeader({ client, title, yearEnd }: { client: string; title: string; yearEnd: string }) {
+ return (
+ <div className="text-center font-serif">
+ <h2 className="text-lg font-bold">{client}</h2>
+ <h3 className="text-base font-bold">{title}</h3>
+ <p className="text-xs text-muted-foreground mt-1">For the year ended {yearEnd}</p>
+ </div>
+ );
+}
+
+// Shared pill-style segmented control — used for the Layout/Show toggles (now in the centre panel).
+// A single button that shows the current selection up front (e.g. "Layout: Partners down") and
+// opens a dropdown to change it — used for the Capital Statement's Layout/Show controls instead
+// of a permanently-expanded segmented control.
+function CapControlDropdown({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string; disabled?: boolean }[]; onChange: (v: string) => void }) {
+ const current = options.find(o => o.value === value);
+ return (
+ <DropdownMenu>
+ <DropdownMenuTrigger asChild>
+ <Button variant="outline" className="h-9 gap-1.5 text-xs bg-card border-border hover:bg-muted">
+ <span className="text-muted-foreground font-medium">{label}:</span>
+ <span className="font-semibold text-foreground">{current?.label}</span>
+ <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+ </Button>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent align="start">
+ {options.map(o => (
+ <DropdownMenuItem key={o.value} disabled={o.disabled} onClick={() => onChange(o.value)} className="gap-2">
+ <Check className={cn("h-3.5 w-3.5", value === o.value ? "opacity-100 text-primary" : "opacity-0")} />
+ {o.label}
+ </DropdownMenuItem>
+ ))}
+ </DropdownMenuContent>
+ </DropdownMenu>
+ );
+}
+
+function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail }: {
  data: CapitalStatementData; labels: EntityLabels; client: string; yearEnd: string;
- capitalVisibility?: "open" | "restricted" | "partnerOnly";
+ layout: CapLayout; detail: CapDetail;
 }) {
- const many = data.rows.length > 12;
- // Restricted/partner-only (set at Create Engagement time) hides the per-holder breakdown from
- // whoever is looking at this screen — "Should a staff preparer see every partner's drawings on
- // screen?" A real per-partner "my account only" view is what the Partner package PDF export
- // already does (byte-verified to mask every other holder); this screen can only force
- // class/totals, since it has no signed-in-as-this-partner concept to restrict further to.
- const visibilityRestricted = capitalVisibility !== "open";
- const [layout, setLayout] = useState<CapLayout>("vertical");
- const [detail, setDetail] = useState<CapDetail>(many || visibilityRestricted ? "class" : "individual");
  const hasAdj = Math.abs(data.totals.adjustments) > 0.005;
  const ents = capitalEntities(data, detail);
  const rowKeys: CapRowKey[] = ["opening", "contributions", "ni", "drawings", ...(hasAdj ? ["adjustments" as const] : [])];
@@ -591,57 +642,13 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, capitalVisibil
  const rowVal = (o: { opening: number; contributions: number; ni: number; drawings: number; adjustments: number }, k: CapRowKey) =>
  k === "drawings" ? -o.drawings : o[k];
 
- const seg = (value: string, options: { value: string; label: string; disabled?: boolean }[], onChange: (v: string) => void) => (
- <div className="inline-flex rounded-md border border-border overflow-hidden text-xs">
- {options.map(o => (
- <button
- key={o.value}
- type="button"
- disabled={o.disabled}
- onClick={() => onChange(o.value)}
- className={cn(
- "px-2.5 py-1 font-medium transition-colors",
- value === o.value ? "bg-primary text-primary-foreground" : "bg-card text-foreground hover:bg-muted",
- o.disabled && "opacity-40 cursor-not-allowed",
- )}
- >
- {o.label}
- </button>
- ))}
- </div>
- );
-
  const totalEntity: CapEntity = { name: "Total", opening: data.totals.opening, contributions: data.totals.contributions, ni: data.totals.ni, drawings: data.totals.drawings, adjustments: data.totals.adjustments, closing: data.totals.closing };
 
  return (
  <div className="bg-white text-[#1B2533] text-sm">
- <div className="p-5 border-b border-border/60 bg-muted/10 flex flex-col gap-3">
- <div className="flex items-center gap-2">
- <span className="text-xs font-semibold text-muted-foreground w-14">Layout</span>
- {seg(layout, [{ value: "vertical", label: `${labels.holder}s down` }, { value: "horizontal", label: `${labels.holder}s across` }], v => setLayout(v as CapLayout))}
- </div>
- <div className="flex items-center gap-2">
- <span className="text-xs font-semibold text-muted-foreground w-14">Show</span>
- {seg(detail, [
- { value: "individual", label: `Each ${labels.holder.toLowerCase()}`, disabled: many || visibilityRestricted },
- { value: "class", label: labels.hasClassSplit ? "General / limited" : `All ${labels.holders.toLowerCase()}` },
- { value: "total", label: "Totals only" },
- ], v => setDetail(v as CapDetail))}
- </div>
- {many && detail === "individual" && (
- <p className="text-[11px] text-muted-foreground">{data.rows.length} {labels.holders.toLowerCase()}: too many to show individually — grouped by class.</p>
- )}
- {visibilityRestricted && (
- <p className="text-[11px] text-muted-foreground">
- Capital visibility is set to {capitalVisibility === "partnerOnly" ? "Partner-only" : "Restricted"} for this engagement — each {labels.holder.toLowerCase()}'s individual figures are hidden here; use the Partner package export to share one {labels.holder.toLowerCase()}'s own account.
- </p>
- )}
- </div>
  <div className="p-8 font-serif">
- <div className="text-center mb-6">
- <h2 className="text-lg font-bold">{client}</h2>
- <h3 className="text-base font-bold">{labels.statementTitle}</h3>
- <p className="text-xs text-muted-foreground mt-1">For the year ended {yearEnd}</p>
+ <div className="mb-6">
+ <CapitalStatementHeader client={client} title={labels.statementTitle} yearEnd={yearEnd} />
  </div>
  {layout === "horizontal" ? (
  <div className="overflow-x-auto">
@@ -915,6 +922,16 @@ export default function Workbook() {
  () => (isPartnershipOrTrust ? buildCapitalStatement(engId, engagement.entityType as EntityKind, participants, pwWorksheet, engagement.trustVariant) : null),
  [engId, isPartnershipOrTrust, engagement.entityType, engagement.trustVariant, participants, pwWorksheet]
  );
+ // Layout/Show now live in the centre panel (not the preview) and control what the preview
+ // renders when expanded — the preview itself is left settings-free, matching the centre area.
+ const [capLayout, setCapLayout] = useState<CapLayout>("vertical");
+ const [capDetail, setCapDetail] = useState<CapDetail>(() =>
+ ((capitalStatement?.rows.length ?? 0) > 12 || engagement.capitalVisibility !== "open") ? "class" : "individual"
+ );
+ // Minimised by default for every statement's preview (Balance Sheet, Income, Capital
+ // Statement) — a thin trigger tab on the right slides it open on click, same control
+ // regardless of which statement is active.
+ const [previewCollapsed, setPreviewCollapsed] = useState(true);
 
  const navItems = useMemo(() => {
  const items = [...NAV_ITEMS];
@@ -1107,6 +1124,26 @@ export default function Workbook() {
  </SelectContent>
  </Select>
  </div>
+ {active === "capital-statement" && capitalStatement && labels && (
+ <>
+ <CapControlDropdown
+ label="Layout"
+ value={capLayout}
+ options={[{ value: "vertical", label: `${labels.holder}s down` }, { value: "horizontal", label: `${labels.holder}s across` }]}
+ onChange={v => setCapLayout(v as CapLayout)}
+ />
+ <CapControlDropdown
+ label="Show"
+ value={capDetail}
+ options={[
+ { value: "individual", label: `Each ${labels.holder.toLowerCase()}`, disabled: capitalStatement.rows.length > 12 || engagement.capitalVisibility !== "open" },
+ { value: "class", label: labels.hasClassSplit ? "General / limited" : `All ${labels.holders.toLowerCase()}` },
+ { value: "total", label: "Totals only" },
+ ]}
+ onChange={v => setCapDetail(v as CapDetail)}
+ />
+ </>
+ )}
  </div>
  <div className="flex items-center gap-2">
  <div className="relative">
@@ -1128,8 +1165,7 @@ export default function Workbook() {
  )}
 
  {/* Content */}
- <div className="flex gap-6 flex-1 min-h-0 overflow-hidden">
- <div className="flex-1 min-w-0 overflow-y-auto">
+ <div className="flex-1 min-w-0 min-h-0 overflow-y-auto">
  {active === "tb-grouping" && (
  <table className="w-full text-sm rounded-lg border border-border bg-card overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.04)]">
  <thead>
@@ -1231,7 +1267,15 @@ export default function Workbook() {
  <IncomeStatementCentre is={incomeStatement} expandedLines={expandedLines} toggleLine={toggleLine} onAddSchedule={addSchedule} scheduleByGroupId={scheduleByGroupId} />
  )}
  {active === "capital-statement" && capitalStatement && labels && (
- <CapitalStatementCentre data={capitalStatement} labels={labels} onGoToIncome={() => setActive("income")} />
+ <CapitalStatementCentre
+ data={capitalStatement}
+ labels={labels}
+ client={engagement.client}
+ yearEnd={engagement.yearEnd}
+ detail={capDetail}
+ capitalVisibility={engagement.capitalVisibility}
+ onGoToIncome={() => setActive("income")}
+ />
  )}
  {active === "cash-flows" && (
  <div className="flex flex-col items-center justify-center gap-3 py-24 text-muted-foreground border border-dashed border-border rounded-xl">
@@ -1252,8 +1296,41 @@ export default function Workbook() {
  />
  )}
  </div>
+ </div>
+ </main>
+
+ {/* RHS preview — a direct sibling of the sidebar/main (like <aside> above), not nested inside
+ main's padded content, so it always runs the full height of the body top to bottom, flush
+ against the header above and the bottom edge below, in both the collapsed and open state. */}
  {showPreview && (active === "balance-sheet" || active === "income" || active === "capital-statement") && (
- <div className="w-[420px] shrink-0 border border-border rounded-lg overflow-y-auto">
+ <div
+ className={cn(
+ "shrink-0 border-l border-border bg-card overflow-hidden transition-all duration-300 ease-in-out",
+ previewCollapsed ? "w-9" : "w-[420px]",
+ )}
+ >
+ {previewCollapsed ? (
+ <button
+ type="button"
+ onClick={() => setPreviewCollapsed(false)}
+ className="h-full w-full flex flex-col items-center justify-center gap-2 py-4 bg-card hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+ aria-label="Show preview"
+ title="Show preview"
+ >
+ <ChevronRight className="h-4 w-4 rotate-180" />
+ <span className="text-[11px] font-semibold tracking-wide [writing-mode:vertical-rl] rotate-180">Preview</span>
+ </button>
+ ) : (
+ <div className="h-full overflow-y-auto relative">
+ <button
+ type="button"
+ onClick={() => setPreviewCollapsed(true)}
+ className="absolute top-3 right-3 z-10 h-7 w-7 rounded-md flex items-center justify-center border border-border bg-card/90 hover:bg-muted text-muted-foreground hover:text-foreground"
+ aria-label="Minimize preview"
+ title="Minimize preview"
+ >
+ <ChevronRight className="h-4 w-4" />
+ </button>
  {active === "balance-sheet" && (
  <BalanceSheetPreview bs={balanceSheet} client={engagement.client} yearEnd={engagement.yearEnd} scheduleByGroupId={scheduleByGroupId} />
  )}
@@ -1261,13 +1338,12 @@ export default function Workbook() {
  <IncomeStatementPreview is={incomeStatement} client={engagement.client} yearEnd={engagement.yearEnd} />
  )}
  {active === "capital-statement" && capitalStatement && labels && (
- <CapitalStatementPreview data={capitalStatement} labels={labels} client={engagement.client} yearEnd={engagement.yearEnd} capitalVisibility={engagement.capitalVisibility} />
+ <CapitalStatementPreview data={capitalStatement} labels={labels} client={engagement.client} yearEnd={engagement.yearEnd} layout={capLayout} detail={capDetail} />
  )}
  </div>
  )}
  </div>
- </div>
- </main>
+ )}
  </div>
  </div>
  );
