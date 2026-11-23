@@ -433,17 +433,92 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <div className="px-6 py-2.5 border-b border-border bg-primary/[0.03] flex items-start gap-2">
  <Info className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
  <span className="text-sm font-semibold text-primary whitespace-nowrap">Objective:</span>
- <p className="text-sm text-muted-foreground flex-1 leading-relaxed">
- Establish overall materiality, performance materiality, and the clearly trivial threshold for the audit
- and document the rationale for each determination.
- </p>
+ <ul className="text-sm text-muted-foreground flex-1 leading-relaxed list-disc pl-4 space-y-0.5">
+ <li>Overall materiality, including possible misstatements in qualitative disclosures, based on the F/S users (CAS 320.10)</li>
+ <li>Performance materiality to reduce the risk that aggregate uncorrected/undetected misstatements exceed overall materiality (CAS 320.11)</li>
+ <li>Specific materiality and specific performance materiality where required (CAS 320.10, .A11-A12)</li>
+ </ul>
  </div>
  <div className="p-6 space-y-4">
+
+ {/* ── Intended Users ── */}
+ <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+ <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+ <span className="text-sm font-semibold text-foreground">Principal Users of the F/S</span>
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+ </TooltipTrigger>
+ <TooltipContent>Identify the primary users of the financial statements and the factors affecting their decision making.</TooltipContent>
+ </Tooltip>
+ </div>
+ <div className="overflow-x-auto">
+ <table className="w-full">
+ <thead className="sticky top-0 z-10">
+ <tr className="bg-muted border-b border-border">
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Factors that would influence users' decision-making</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {intendedUsers.map((u) => (
+ <tr key={u.id} className="hover:bg-muted/50 transition-colors">
+ <td className="px-4 py-2.5 align-top">
+ <TdInput
+ value={u.user}
+ onChange={(v) =>
+ setIntendedUsers((prev) =>
+ prev.map((x) => (x.id === u.id ? {...x, user: v } : x))
+ )
+ }
+ placeholder="Define user"
+ />
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <TdInput
+ value={u.factors}
+ onChange={(v) =>
+ setIntendedUsers((prev) =>
+ prev.map((x) => (x.id === u.id ? {...x, factors: v } : x))
+ )
+ }
+ placeholder="Describe factors"
+ />
+ </td>
+ <td className="px-4 py-2.5 align-top text-center">
+ <button
+ onClick={() =>
+ setIntendedUsers((prev) => prev.filter((x) => x.id !== u.id))
+ }
+ className="text-muted-foreground hover:text-destructive transition-colors"
+ disabled={intendedUsers.length === 1}
+ >
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </td>
+ </tr>
+ ))}
+ </tbody>
+ </table>
+ </div>
+ <div className="px-6 py-3 border-t border-border">
+ <Button
+ size="sm"
+ variant="outline"
+ className="h-7 text-xs gap-1"
+ onClick={() => setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])}
+ >
+ <Plus className="h-3.5 w-3.5" />
+ Add Row
+ </Button>
+ </div>
+ </div>
 
  {/* ── Preliminary Materiality ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">Preliminary Materiality</span>
+ <span className="text-sm font-semibold text-foreground">A. Overall Materiality</span>
  <Tooltip>
  <TooltipTrigger asChild>
  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
@@ -468,15 +543,6 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </svg>
  </Button>
  <div className="flex-1" />
- <Button
- variant="outline"
- size="sm"
- onClick={addEntityRow}
- className="h-7 text-xs gap-1"
- >
- <Plus className="h-3.5 w-3.5 mr-1.5" />
- Add Row
- </Button>
  <Button
  variant="outline"
  size="sm"
@@ -545,7 +611,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
  onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
- placeholder="e.g. 12,500,000.00"
+ placeholder="0.00"
  className="tabular-nums text-right"
  />
  </LukaTypingRow>
@@ -558,7 +624,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
    <TdInput
    value={row.extrapolatedPeriod ? formatDisplay(row.extrapolatedPeriod) : ""}
    onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
-   placeholder="e.g. 12,500,000.00"
+   placeholder="0.00"
    className="tabular-nums text-right flex-1"
    />
  </div>
@@ -645,30 +711,11 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </tbody>
  </table>
  </div>
- {/* Clearly Trivial Misstatements footer — inside the same card */}
- <div className="border-t border-border px-4 py-3">
- <div className="flex items-center">
- <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
- <div className="flex items-center gap-8 mr-8">
- <div className="flex flex-col items-end gap-1">
- <span className="text-sm text-muted-foreground">Threshold (%)</span>
- <TdInput
- value={ctThresholdPct}
- onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
- placeholder="5.00"
- className="w-24 tabular-nums text-right"
- />
- </div>
- <div className="flex flex-col items-end gap-1">
- <span className="text-sm text-muted-foreground">Amount ($)</span>
- <TdInput
- value={ctAmount ? formatDisplay(ctAmount) : ""}
- readOnly
- className="w-32 tabular-nums text-right"
- />
- </div>
- </div>
- </div>
+ <div className="px-6 py-3 border-t border-border">
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addEntityRow}>
+ <Plus className="h-3.5 w-3.5" />
+ Add Row
+ </Button>
  </div>
  {/* Opening balances note */}
  <div className="border-t border-border px-4 py-3 flex items-start gap-2 bg-muted/20">
@@ -677,10 +724,27 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </div>
  </div>
 
+ {/* ── Section B: Possible misstatements in qualitative disclosures ── */}
+ <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+ <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+ <span className="text-sm font-semibold text-foreground">B. Possible Misstatements in Qualitative Disclosures</span>
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+ </TooltipTrigger>
+ <TooltipContent>Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity.</TooltipContent>
+ </Tooltip>
+ </div>
+ <div className="px-6 py-5">
+ <p className="text-sm text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
+ <AttributedComment value={qualDisclosures} onChange={v => setQualDisclosures(v)} storageKey={`materiality-qualDisc-v2-${isUS ? "us" : "ca"}`} placeholder="Describe qualitative disclosures that could be material…" className="min-h-[80px] text-sm resize-none" />
+ </div>
+ </div>
+
  {/* ── Performance Materiality ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">Performance Materiality</span>
+ <span className="text-sm font-semibold text-foreground">C. Performance Materiality</span>
  <Tooltip>
  <TooltipTrigger asChild>
  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
@@ -731,175 +795,10 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </div>
  </div>
 
- {/* ── Intended Users ── */}
+ {/* ── Section C (subsection): Adjusted: Performance materiality for specific F/S areas ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">Intended Users</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Identify the primary users of the financial statements and the factors affecting their decision making.</TooltipContent>
- </Tooltip>
- </div>
- <div className="overflow-x-auto">
- <table className="w-full">
- <thead className="sticky top-0 z-10">
- <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Factors affecting users decision making</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-border">
- {intendedUsers.map((u) => (
- <tr key={u.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2.5 align-top">
- <TdInput
- value={u.user}
- onChange={(v) =>
- setIntendedUsers((prev) =>
- prev.map((x) => (x.id === u.id ? {...x, user: v } : x))
- )
- }
- placeholder="Define user"
- />
- </td>
- <td className="px-4 py-2.5 align-top">
- <TdInput
- value={u.factors}
- onChange={(v) =>
- setIntendedUsers((prev) =>
- prev.map((x) => (x.id === u.id ? {...x, factors: v } : x))
- )
- }
- placeholder="Describe factors"
- />
- </td>
- <td className="px-4 py-2.5 align-top text-center">
- <button
- onClick={() =>
- setIntendedUsers((prev) => prev.filter((x) => x.id !== u.id))
- }
- className="text-muted-foreground hover:text-destructive transition-colors"
- disabled={intendedUsers.length === 1}
- >
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="px-6 py-3 border-t border-border">
- <Button
- size="sm"
- variant="outline"
- className="h-7 text-xs gap-1"
- onClick={() => setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])}
- >
- <Plus className="h-3.5 w-3.5" />
- Add Row
- </Button>
- </div>
- </div>
-
- {/* ── Qualitative Considerations ── */}
- <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
- <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">Qualitative Considerations</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Document any qualitative factors that influenced the materiality determination.</TooltipContent>
- </Tooltip>
- </div>
- <div className="overflow-x-auto">
- <table className="w-full">
- <thead className="sticky top-0 z-10">
- <tr className="bg-muted border-b border-border">
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/2">Nature</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Impact</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-border">
- {qualitative.map((item) => (
- <tr key={item.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2.5 align-top">
- <TdInput
- value={item.nature}
- onChange={(v) =>
- setQualitative((prev) =>
- prev.map((x) => (x.id === item.id ? {...x, nature: v } : x))
- )
- }
- placeholder="Describe Nature"
- />
- </td>
- <td className="px-4 py-2.5 align-top">
- <TdInput
- value={item.impact}
- onChange={(v) =>
- setQualitative((prev) =>
- prev.map((x) => (x.id === item.id ? {...x, impact: v } : x))
- )
- }
- placeholder="Describe impact"
- />
- </td>
- <td className="px-4 py-2.5 align-top text-center">
- <button
- onClick={() =>
- setQualitative((prev) => prev.filter((x) => x.id !== item.id))
- }
- className="text-muted-foreground hover:text-destructive transition-colors"
- disabled={qualitative.length === 1}
- >
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="px-6 py-3 border-t border-border">
- <Button
- size="sm"
- variant="outline"
- className="h-7 text-xs gap-1"
- onClick={() => setQualitative((prev) => [...prev, { id: uid(), nature: "", impact: "" }])}
- >
- <Plus className="h-3.5 w-3.5" />
- Add Row
- </Button>
- </div>
- </div>
-
- {/* ── Section B: Possible misstatements in qualitative disclosures ── */}
- <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
- <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">B. Possible Misstatements in Qualitative Disclosures</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity.</TooltipContent>
- </Tooltip>
- </div>
- <div className="px-6 py-5">
- <p className="text-sm text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
- <AttributedComment value={qualDisclosures} onChange={v => setQualDisclosures(v)} storageKey={`materiality-qualDisc-v2-${isUS ? "us" : "ca"}`} placeholder="Describe qualitative disclosures that could be material…" className="min-h-[80px] text-sm resize-none" />
- </div>
- </div>
-
- {/* ── Section C Adjusted: Performance materiality for specific F/S areas ── */}
- <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
- <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">C. Adjusted Performance Materiality Levels</span>
+ <span className="text-sm font-semibold text-foreground">Adjusted performance materiality levels</span>
  <Tooltip>
  <TooltipTrigger asChild>
  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
@@ -1012,6 +911,122 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </tr>
  </tbody>
  </table>
+ </div>
+ </div>
+
+ {/* ── Section F: Trivial misstatements ── */}
+ <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+ <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+ <span className="text-sm font-semibold text-foreground">F. Trivial Misstatements</span>
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+ </TooltipTrigger>
+ <TooltipContent>Threshold below which misstatements are clearly trivial and need not be accumulated (CAS 450.A2).</TooltipContent>
+ </Tooltip>
+ </div>
+ <div className="border-t border-border px-4 py-3">
+ <div className="flex items-center">
+ <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
+ <div className="flex items-center gap-8 mr-8">
+ <div className="flex flex-col items-end gap-1">
+ <span className="text-sm text-muted-foreground">Threshold (%)</span>
+ <TdInput
+ value={ctThresholdPct}
+ onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
+ placeholder="5.00"
+ className="w-24 tabular-nums text-right"
+ />
+ </div>
+ <div className="flex flex-col items-end gap-1">
+ <span className="text-sm text-muted-foreground">Amount ($)</span>
+ <TdInput
+ value={ctAmount ? formatDisplay(ctAmount) : ""}
+ readOnly
+ className="w-32 tabular-nums text-right"
+ />
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+ <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+ Document any changes in the materiality assessments and the final materiality on Form 335.
+ </p>
+
+ {/* ── Qualitative Considerations ── */}
+ <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
+ <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
+ <span className="text-sm font-semibold text-foreground">Qualitative Considerations</span>
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+ </TooltipTrigger>
+ <TooltipContent>Document any qualitative factors that influenced the materiality determination.</TooltipContent>
+ </Tooltip>
+ </div>
+ <div className="overflow-x-auto">
+ <table className="w-full">
+ <thead className="sticky top-0 z-10">
+ <tr className="bg-muted border-b border-border">
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/2">Nature</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Impact</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {qualitative.map((item) => (
+ <tr key={item.id} className="hover:bg-muted/50 transition-colors">
+ <td className="px-4 py-2.5 align-top">
+ <TdInput
+ value={item.nature}
+ onChange={(v) =>
+ setQualitative((prev) =>
+ prev.map((x) => (x.id === item.id ? {...x, nature: v } : x))
+ )
+ }
+ placeholder="Describe Nature"
+ />
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <TdInput
+ value={item.impact}
+ onChange={(v) =>
+ setQualitative((prev) =>
+ prev.map((x) => (x.id === item.id ? {...x, impact: v } : x))
+ )
+ }
+ placeholder="Describe impact"
+ />
+ </td>
+ <td className="px-4 py-2.5 align-top text-center">
+ <button
+ onClick={() =>
+ setQualitative((prev) => prev.filter((x) => x.id !== item.id))
+ }
+ className="text-muted-foreground hover:text-destructive transition-colors"
+ disabled={qualitative.length === 1}
+ >
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </td>
+ </tr>
+ ))}
+ </tbody>
+ </table>
+ </div>
+ <div className="px-6 py-3 border-t border-border">
+ <Button
+ size="sm"
+ variant="outline"
+ className="h-7 text-xs gap-1"
+ onClick={() => setQualitative((prev) => [...prev, { id: uid(), nature: "", impact: "" }])}
+ >
+ <Plus className="h-3.5 w-3.5" />
+ Add Row
+ </Button>
  </div>
  </div>
 
