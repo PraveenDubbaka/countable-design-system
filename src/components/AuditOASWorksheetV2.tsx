@@ -405,9 +405,9 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <tr className="bg-muted border-b border-border">
  <th className="w-10 px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">#</th>
  <th className="w-[200px] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Description (CAS 300.7–8)</th>
- <th className="w-[150px] px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">W/P Ref.</th>
- <th className="px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Responses and Comments</th>
  <th className="w-[210px] px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Initials and Date</th>
+ <th className="px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Responses and Comments</th>
+ <th className="w-[150px] px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">W/P Ref.</th>
  </tr>
  </thead>
  <tbody>
@@ -463,9 +463,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <SelectContent>{TEAM_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
  </Select>
  </td>
- <td className="px-3 py-2.5 align-top w-[150px]">
- <RefButton reference={row.wpRef} onAttach={attachTeam(row.id)} onRemove={removeTeam(row.id)} disabled={locked} />
- </td>
+ <InitialsDateCell initials={row.initials} date={row.date} onInitials={v => updTeam(row.id,"initials",v)} onDate={v => updTeam(row.id,"date",v)} disabled={locked} />
  <td className="px-3 py-2 align-top">
  <div className="flex items-center gap-1">
  <Select value={row.name} onValueChange={v => updTeam(row.id,"name",v)} disabled={locked}>
@@ -475,7 +473,9 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {!locked && <button onClick={() => removeTeamRow(row.id)} className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors rounded shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>}
  </div>
  </td>
- <InitialsDateCell initials={row.initials} date={row.date} onInitials={v => updTeam(row.id,"initials",v)} onDate={v => updTeam(row.id,"date",v)} disabled={locked} />
+ <td className="px-3 py-2.5 align-top w-[150px]">
+ <RefButton reference={row.wpRef} onAttach={attachTeam(row.id)} onRemove={removeTeam(row.id)} disabled={locked} />
+ </td>
  </tr>
  ))}
  {!locked && (
@@ -590,14 +590,14 @@ return (
 <tr className="hover:bg-muted/50 transition-colors border-b border-border/40">
 <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap w-10">{num}</td>
 <td className="px-4 py-2.5 text-sm text-foreground align-top w-[200px]">{description}</td>
-<td className="px-3 py-2.5 align-top w-[150px]">
-<RefButton reference={row.wpRef} onAttach={onRefAttach} onRemove={onRefRemove} disabled={dis} />
-</td>
+<InitialsDateCell initials={row.initials} date={row.date} onInitials={v => onRow("initials", v)} onDate={v => onRow("date", v)} disabled={dis} />
 <td className="px-3 py-2 align-top">
 <Textarea className="min-h-[88px] text-sm resize-y" value={row.response} onChange={e => onRow("response", e.target.value)} disabled={dis} />
 {extra && <div className="mt-1.5">{extra}</div>}
 </td>
-<InitialsDateCell initials={row.initials} date={row.date} onInitials={v => onRow("initials", v)} onDate={v => onRow("date", v)} disabled={dis} />
+<td className="px-3 py-2.5 align-top w-[150px]">
+<RefButton reference={row.wpRef} onAttach={onRefAttach} onRemove={onRefRemove} disabled={dis} />
+</td>
 </tr>
 );
 }
