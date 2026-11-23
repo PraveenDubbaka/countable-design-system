@@ -2742,10 +2742,12 @@ export default function EngagementDetail() {
  ) : null}
  {checklistKey?.startsWith('custom-') && (
  readJsonFromLocalStorage<CustomSection[]>(`engagement-custom-sections-${engagementId}`, []).find(s => s.id === checklistKey)?.category === 'checklist' ? (
+ !checklist ? (
  <Button size="sm" className="gap-1.5 h-7 px-2.5 text-xs" onClick={() => setShowAddChecklistSheet(true)}>
  <Plus className="h-3.5 w-3.5" />
  Checklist
  </Button>
+ ) : null
  ) : customLetterExists ? (
  <>
  {customLetterIsEditing ? (
