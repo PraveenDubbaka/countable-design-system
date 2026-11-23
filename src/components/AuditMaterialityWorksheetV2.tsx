@@ -21,6 +21,7 @@ import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -32,10 +33,15 @@ interface EntityRow {
  periodAmount: string;
  extrapolatedPeriod: string;
  benchmarkPct: string;
- materialityCY: string; // calculated
- materialityPY: string;
+ materialityCY: string; // legacy stored value; possible materiality is derived at render
+ prevAmount: string; // previous period's BASIS amount (manual)
+ basisOther: string; // free-text description when basis is "other"
+ pctManual: boolean; // benchmark % entered manually instead of from the form range
+ extrapManual: boolean; // "this period anticipated" overwritten by the user
  comments: string;
 }
+
+type EntityType = "profit" | "nfp";
 
 interface IntendedUser {
  id: string;
@@ -84,13 +90,46 @@ const TB_US = { grossRevenue: 18400000, profitBeforeTax: 1003000, totalAssets: 1
 const TB_NPM = { grossRevenue: 14200000, profitBeforeTax: 1140000, totalAssets: 9617340, totalExpenses: 13060000, netAssets: 4800000 };
 type TBKey = keyof typeof TB_CA;
 
-const BASIS_OPTIONS: { value: string; label: string; tbKey: TBKey }[] = [
- { value: "grossRevenue", label: "Gross Revenue", tbKey: "grossRevenue" },
- { value: "profitBeforeTax", label: "Profit Before Tax", tbKey: "profitBeforeTax" },
- { value: "totalAssets", label: "Total Assets", tbKey: "totalAssets" },
- { value: "totalExpenses", label: "Total Expenses", tbKey: "totalExpenses" },
- { value: "netAssets", label: "Net Assets / Equity", tbKey: "netAssets" },
-];
+type BasisOption = { value: string; label: string; tbKey?: TBKey; range?: number[] };
+
+const BASIS_OPTIONS_BY_TYPE: Record<EntityType, BasisOption[]> = {
+ profit: [
+ { value: "profitBeforeTax", label: "Income before tax (continuing ops, adjusted)", tbKey: "profitBeforeTax", range: [3, 4, 5, 6, 7] },
+ { value: "grossRevenue", label: "Gross revenues", tbKey: "grossRevenue", range: [1, 2, 3] },
+ { value: "other", label: "Other (describe)" },
+ ],
+ nfp: [
+ { value: "nfpRevenues", label: "Total revenues", tbKey: "grossRevenue", range: [1, 2, 3] },
+ { value: "nfpExpenses", label: "Total expenses", tbKey: "totalExpenses", range: [1, 2, 3] },
+ { value: "other", label: "Other (describe)" },
+ ],
+};
+const ALL_BASIS_OPTIONS: BasisOption[] = [...BASIS_OPTIONS_BY_TYPE.profit, ...BASIS_OPTIONS_BY_TYPE.nfp];
+const findBasis = (v: string) => ALL_BASIS_OPTIONS.find(o => o.value === v);
+const defaultPctFor = (basis: string) => (basis === "profitBeforeTax" ? "5.00" : "1.00");
+
+const fmtInt = (n: number) => Math.round(n).toLocaleString("en-US");
+
+// Months from a to b (fractional, by calendar months)
+function monthsBetween(a: Date, b: Date): number {
+ return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()) + (b.getDate() - a.getDate()) / 30;
+}
+
+// "This period anticipated": extrapolate period-to-date over the whole period while the period is still running
+function anticipatedFor(row: EntityRow, periodStart: string, periodEnd: string, now: Date): { value: string; note: string } {
+ if (row.extrapManual) return { value: row.extrapolatedPeriod, note: "Manual" };
+ const ptd = parseFloat(String(row.periodAmount).replace(/[^0-9.]/g, ""));
+ if (isNaN(ptd)) return { value: "", note: "" };
+ const start = new Date(periodStart + "T00:00:00");
+ const end = new Date(periodEnd + "T00:00:00");
+ if (isNaN(start.getTime()) || isNaN(end.getTime())) return { value: row.periodAmount, note: "" };
+ if (now >= end) return { value: row.periodAmount, note: "Period ended" };
+ const elapsed = Math.max(1, Math.round(monthsBetween(start, now)));
+ if (now < start) return { value: row.periodAmount, note: "Period not started" };
+ const total = Math.max(1, Math.round(monthsBetween(start, new Date(end.getTime() + 86400000))));
+ const value = ptd * total / elapsed;
+ return { value: String(Math.round(value * 100) / 100), note: `${fmtInt(ptd)} x ${total} / ${elapsed} mo` };
+}
 
 const SEED_ROW_A = "mat-row-a";
 const SEED_ROW_B = "mat-row-b";
@@ -184,7 +223,10 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  extrapolatedPeriod: String(TB.grossRevenue),
  benchmarkPct: "1.00",
  materialityCY: calcMatCY(String(TB.grossRevenue), "1.00"),
- materialityPY: "",
+ prevAmount: "",
+ basisOther: "",
+ pctManual: false,
+ extrapManual: false,
  comments: "",
  },
  {
@@ -195,10 +237,25 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  extrapolatedPeriod: String(TB.profitBeforeTax),
  benchmarkPct: "5.00",
  materialityCY: calcMatCY(String(TB.profitBeforeTax), "5.00"),
- materialityPY: "",
+ prevAmount: "",
+ basisOther: "",
+ pctManual: false,
+ extrapManual: false,
  comments: "",
  },
  ]);
+
+ // Entity type drives the basis options
+ const [entityType, setEntityType] = useState<EntityType>("profit");
+
+ // A — previous / preliminary overall materiality rows
+ const [prevMatAmount, setPrevMatAmount] = useState("");
+ const [prevMatReasoning, setPrevMatReasoning] = useState("");
+ const [prelimReasoning, setPrelimReasoning] = useState("");
+
+ // C — previous performance materiality row
+ const [pmPrevAmount, setPmPrevAmount] = useState("");
+ const [pmPrevReasoning, setPmPrevReasoning] = useState("");
 
  // Clearly trivial
  const [ctThresholdPct, setCtThresholdPct] = useState("5.00");
@@ -272,42 +329,53 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
 
  // ── Derived ──────────────────────────────────────────────────────────────────
 
+ const patchRow = useCallback((id: string, patch: Partial<EntityRow>) => {
+ setEntityRows((prev) => prev.map((row) => (row.id === id ? {...row,...patch } : row)));
+ }, []);
+
  const updateEntityRow = useCallback(
- (id: string, field: keyof EntityRow, value: string) => {
- setEntityRows((prev) =>
- prev.map((row) => {
- if (row.id !== id) return row;
- const updated = {...row, [field]: value };
- // auto-populate from TB when basis changes
- if (field === "basis") {
- const opt = BASIS_OPTIONS.find(o => o.value === value);
- if (opt) {
- const tbVal = String(TB[opt.tbKey]);
- updated.periodAmount = tbVal;
- updated.extrapolatedPeriod = tbVal;
- updated.materialityCY = calcMatCY(tbVal, row.benchmarkPct);
- }
- }
- // recalculate when amounts or % change (use extrapolated as the basis amount)
- if (field === "periodAmount" || field === "extrapolatedPeriod" || field === "benchmarkPct") {
- const extAmt = field === "extrapolatedPeriod" ? value
- : (row.extrapolatedPeriod || (field === "periodAmount" ? value : row.periodAmount));
- const bPct = field === "benchmarkPct" ? value : row.benchmarkPct;
- updated.materialityCY = calcMatCY(extAmt, bPct);
- }
- return updated;
- })
+ (id: string, field: keyof EntityRow, value: string) => patchRow(id, { [field]: value } as Partial<EntityRow>),
+ [patchRow]
  );
- },
- [TB]
- );
+
+ // Basis change: pull the matching TB amount (manual for "Other") and reset the % to the form range default when it no longer fits
+ const pullBasis = (row: EntityRow, basis: string): Partial<EntityRow> => {
+ const opt = findBasis(basis);
+ const patch: Partial<EntityRow> = { basis, extrapManual: false };
+ if (opt?.tbKey) patch.periodAmount = String(TB[opt.tbKey]);
+ else patch.periodAmount = "";
+ if (opt?.range) {
+ if (!opt.range.includes(parseFloat(row.benchmarkPct))) patch.benchmarkPct = defaultPctFor(basis);
+ patch.pctManual = false;
+ } else {
+ patch.pctManual = true;
+ }
+ return patch;
+ };
+ const handleBasisChange = (id: string, basis: string) => {
+ setEntityRows((prev) => prev.map((row) => (row.id === id ? {...row,...pullBasis(row, basis) } : row)));
+ };
+
+ // Switching entity type swaps the basis lists; rows whose basis no longer exists take the next unused option of the new list
+ const handleEntityTypeChange = (next: EntityType) => {
+ if (next === entityType) return;
+ setEntityType(next);
+ setEntityRows((prev) => {
+ const valid = BASIS_OPTIONS_BY_TYPE[next];
+ const free = valid.filter(o => o.value !== "other" && !prev.some(r => r.basis === o.value));
+ return prev.map((row) => {
+ if (!row.basis || valid.some(o => o.value === row.basis)) return row;
+ const target = free.shift();
+ return target ? {...row,...pullBasis(row, target.value) } : {...row, basis: "", periodAmount: "", extrapManual: false };
+ });
+ });
+ };
 
  const handleRefresh = () => {
  setEntityRows(prev => prev.map(row => {
- const opt = BASIS_OPTIONS.find(o => o.value === row.basis);
- if (!opt) return row;
- const tbVal = String(TB[opt.tbKey]);
- return {...row, periodAmount: tbVal, extrapolatedPeriod: tbVal, materialityCY: calcMatCY(tbVal, row.benchmarkPct) };
+ const opt = findBasis(row.basis);
+ if (!opt?.tbKey) return {...row, extrapManual: false };
+ return {...row, periodAmount: String(TB[opt.tbKey]), extrapManual: false };
  }));
  toast.success("Benchmarks refreshed from Trial Balance");
  };
@@ -323,7 +391,10 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  extrapolatedPeriod: "",
  benchmarkPct: "1.00",
  materialityCY: "",
- materialityPY: "",
+ prevAmount: "",
+ basisOther: "",
+ pctManual: false,
+ extrapManual: false,
  comments: "",
  },
  ]);
@@ -337,14 +408,16 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  });
  };
 
- // Overall materiality = selected row's materialityCY (not a sum)
- const selectedRow = entityRows.find(r => r.id === selectedRowId) ?? entityRows[0];
- const overallMateriality = selectedRow?.materialityCY ?? "";
+ // Derived per-row values: anticipated amount (extrapolated while the period runs) and possible materiality
+ const now = new Date();
+ const rows = entityRows.map((r) => {
+ const ant = anticipatedFor(r, periodStart, periodEnd, now);
+ return {...r, anticipated: ant.value, anticipatedNote: ant.note, possible: calcMatCY(ant.value || r.periodAmount, r.benchmarkPct) };
+ });
 
- // Reference totals (period/extrapolated displayed in summary row)
- const totalPeriod = sumColumn(entityRows, "periodAmount");
- const totalExtrapolated = sumColumn(entityRows, "extrapolatedPeriod");
- const totalMatPY = sumColumn(entityRows, "materialityPY");
+ // Overall materiality = selected row's possible materiality (not a sum)
+ const selectedRow = rows.find(r => r.id === selectedRowId) ?? rows[0];
+ const overallMateriality = selectedRow?.possible ?? "";
 
  // Clearly trivial — flows from overall materiality
  const ctAmount = (() => {
@@ -410,7 +483,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
          },
          { set: () => {
              setEntityRows(prev => prev.map((r, i) => i === 0
-               ? { ...r, materialityPY: '138,000.00' }
+               ? { ...r, prevAmount: '13,800,000.00' }
                : r));
              markLukaFilled('mat-row-0-py');
            }
@@ -553,24 +626,37 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  Refresh
  </Button>
  </div>
+ <div className="px-6 py-3 border-b border-border flex items-center gap-3">
+ <span className="text-sm text-muted-foreground">Entity type</span>
+ <Tabs value={entityType} onValueChange={(v) => handleEntityTypeChange(v as EntityType)}>
+ <TabsList className="h-8">
+ <TabsTrigger value="profit" className="text-xs px-3">Profit-oriented</TabsTrigger>
+ <TabsTrigger value="nfp" className="text-xs px-3">Not-for-profit</TabsTrigger>
+ </TabsList>
+ </Tabs>
+ </div>
  <div className="overflow-x-auto">
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
  <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">{periodLabel}</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Extrapolated ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-28">Benchmark (%)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Materiality CY ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Materiality PY ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Period to date ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">This period anticipated ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Previous period ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-32">Benchmark % applied</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Possible materiality ($)</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Comments</th>
  <th className="px-2 py-3 w-8" />
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
- {entityRows.map((row, rowIdx) => {
+ {rows.map((row, rowIdx) => {
  const isSelected = row.id === selectedRowId;
+ const basisOpt = findBasis(row.basis);
+ const range = basisOpt?.range;
+ const pctNum = parseFloat(row.benchmarkPct);
+ const showPctInput = !range || row.pctManual || !range.includes(pctNum);
  return (
  <tr
  key={row.id}
@@ -590,13 +676,21 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  className="h-4 w-4 accent-primary cursor-pointer"
  />
  </td>
- <td className="px-4 py-2.5 align-top min-w-[170px]">
+ <td className="px-4 py-2.5 align-top min-w-[200px]">
  <TdSelect
  value={row.basis}
- onChange={(v) => updateEntityRow(row.id, "basis", v)}
- options={BASIS_OPTIONS}
+ onChange={(v) => handleBasisChange(row.id, v)}
+ options={BASIS_OPTIONS_BY_TYPE[entityType]}
  placeholder="Select basis…"
  />
+ {row.basis === "other" && (
+ <TdInput
+ value={row.basisOther}
+ onChange={(v) => updateEntityRow(row.id, "basisOther", v)}
+ placeholder="Describe basis…"
+ className="mt-1.5"
+ />
+ )}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  {isDemoEngagement && row.basis === 'grossRevenue' ? (
@@ -620,44 +714,59 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </td>
  <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
  <div className="flex items-start gap-1.5">
-   <GreenDot show={!!row.extrapolatedPeriod} />
+   <GreenDot show={!!row.anticipated} />
    <TdInput
-   value={row.extrapolatedPeriod ? formatDisplay(row.extrapolatedPeriod) : ""}
-   onChange={(v) => updateEntityRow(row.id, "extrapolatedPeriod", v.replace(/[^0-9.]/g, ""))}
+   value={row.anticipated ? formatDisplay(row.anticipated) : ""}
+   onChange={(v) => {
+     const cleaned = v.replace(/[^0-9.]/g, "");
+     patchRow(row.id, cleaned ? { extrapolatedPeriod: cleaned, extrapManual: true } : { extrapolatedPeriod: "", extrapManual: false });
+   }}
    placeholder="0.00"
    className="tabular-nums text-right flex-1"
    />
  </div>
- </td>
- <td className="px-4 py-2.5 align-top w-28 text-right">
- <TdInput
- value={row.benchmarkPct}
- onChange={(v) => updateEntityRow(row.id, "benchmarkPct", v.replace(/[^0-9.]/g, ""))}
- placeholder="1.00"
- className="tabular-nums text-right"
- />
- </td>
- <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
- <TdInput
- value={formatDisplay(row.materialityCY)}
- readOnly
- className={`tabular-nums text-right${isSelected ? " font-semibold" : ""}`}
- />
+ {row.anticipatedNote && <p className="mt-1 text-xs text-muted-foreground text-right">{row.anticipatedNote}</p>}
  </td>
  <td className="px-4 py-2.5 align-top min-w-[165px] text-right">
  <div className="relative">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
  <div className="flex items-start gap-1.5">
-   <GreenDot show={!!row.materialityPY} />
+   <GreenDot show={!!row.prevAmount} />
    <TdInput
-   value={row.materialityPY ? formatDisplay(row.materialityPY) : ""}
-   onChange={(v) => updateEntityRow(row.id, "materialityPY", v.replace(/[^0-9.]/g, ""))}
-   placeholder="—"
+   value={row.prevAmount ? formatDisplay(row.prevAmount) : ""}
+   onChange={(v) => updateEntityRow(row.id, "prevAmount", v.replace(/[^0-9.]/g, ""))}
+   placeholder="0.00"
    className="tabular-nums text-right flex-1"
    />
  </div>
  </LukaTypingRow>
  </div>
+ </td>
+ <td className="px-4 py-2.5 align-top w-32 text-right">
+ {showPctInput ? (
+ <TdInput
+ value={row.benchmarkPct}
+ onChange={(v) => patchRow(row.id, { benchmarkPct: v.replace(/[^0-9.]/g, ""), pctManual: true })}
+ placeholder="0.00"
+ className="tabular-nums text-right"
+ />
+ ) : (
+ <TdSelect
+ value={String(pctNum)}
+ onChange={(v) => v === "manual" ? patchRow(row.id, { pctManual: true }) : patchRow(row.id, { benchmarkPct: Number(v).toFixed(2), pctManual: false })}
+ options={[...range!.map(n => ({ value: String(n), label: `${n}%` })), { value: "manual", label: "Manual…" }]}
+ />
+ )}
+ <p className="mt-1 text-xs text-muted-foreground text-right">
+ {range ? <>Range {range[0]}–{range[range.length - 1]}%{showPctInput && <> · <button type="button" className="underline hover:text-foreground" onClick={() => patchRow(row.id, { benchmarkPct: range.includes(pctNum) ? row.benchmarkPct : defaultPctFor(row.basis), pctManual: false })}>Use range</button></>}</> : "Manual entry"}
+ </p>
+ </td>
+ <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
+ <TdInput
+ value={formatDisplay(row.possible)}
+ readOnly
+ className={`tabular-nums text-right${isSelected ? " font-semibold" : ""}`}
+ />
  </td>
  <td className="px-4 py-2.5 align-top min-w-[160px]">
  <div className="relative">
@@ -686,28 +795,6 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </tr>
  );
  })}
- {/* Overall Materiality summary row */}
- <tr className="bg-primary/[0.06] border-t-2 border-primary/20">
- <td className="px-3 py-2" />
- <td className="px-4 py-2 text-sm font-semibold text-primary">
- Overall Materiality — {BASIS_OPTIONS.find(o => o.value === selectedRow?.basis)?.label ?? "Select a primary benchmark ↑"}
- </td>
- <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.periodAmount ? formatDisplay(selectedRow.periodAmount) : "—"}</td>
- <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.extrapolatedPeriod ? formatDisplay(selectedRow.extrapolatedPeriod) : "—"}</td>
- <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.benchmarkPct || "—"}</td>
- <td className="pl-4 pr-7 py-2 text-sm tabular-nums font-bold text-primary text-right">
- {isDemoEngagement && overallMateriality ? (
-   <div className="flex items-center justify-end gap-1.5">
-     <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
-       <span className="font-bold text-primary">{formatDisplay(overallMateriality)}</span>
-     </ProvenancePopover>
-   </div>
- ) : (overallMateriality ? formatDisplay(overallMateriality) : "—")}
- </td>
- <td className="pl-4 pr-7 py-2 text-sm tabular-nums text-foreground text-right">{selectedRow?.materialityPY || "—"}</td>
- <td className="px-4 py-2" />
- <td className="px-4 py-2" />
- </tr>
  </tbody>
  </table>
  </div>
@@ -716,6 +803,39 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <Plus className="h-3.5 w-3.5" />
  Add Row
  </Button>
+ </div>
+ <div className="border-t border-border px-6 py-4">
+ <table className="w-full text-sm">
+ <thead>
+ <tr>
+ <th className="w-40" />
+ <th className="px-2 pb-1 text-right text-xs font-medium text-muted-foreground w-44">Amount ($)</th>
+ <th className="px-2 pb-1 text-left text-xs font-medium text-muted-foreground">Reasoning</th>
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ <tr>
+ <td className="py-2 text-sm text-muted-foreground">Previous period</td>
+ <td className="px-2 py-1.5 w-44"><TdInput value={prevMatAmount ? formatDisplay(prevMatAmount) : ""} onChange={(v) => setPrevMatAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="tabular-nums text-right" /></td>
+ <td className="px-2 py-1.5"><TdInput value={prevMatReasoning} onChange={setPrevMatReasoning} placeholder="Reasoning…" /></td>
+ </tr>
+ <tr>
+ <td className="py-2 text-sm font-semibold text-primary">Preliminary</td>
+ <td className="px-2 py-1.5 w-44">
+ {isDemoEngagement && overallMateriality ? (
+ <div className="flex items-center justify-end gap-1.5 min-h-[32px] px-3">
+ <ProvenancePopover data={DEMO_PROVENANCE.materiality}>
+ <span className="font-bold text-primary tabular-nums">{formatDisplay(overallMateriality)}</span>
+ </ProvenancePopover>
+ </div>
+ ) : (
+ <TdInput value={overallMateriality ? formatDisplay(overallMateriality) : "—"} readOnly className="tabular-nums text-right font-semibold" />
+ )}
+ </td>
+ <td className="px-2 py-1.5"><TdInput value={prelimReasoning} onChange={setPrelimReasoning} placeholder="Reasoning…" /></td>
+ </tr>
+ </tbody>
+ </table>
  </div>
  {/* Opening balances note */}
  <div className="border-t border-border px-4 py-3 flex items-start gap-2 bg-muted/20">
@@ -753,40 +873,44 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </Tooltip>
  </div>
  <div className="px-6 py-5">
+ <p className="mb-3 text-sm text-muted-foreground">Set based on, but lower than, overall materiality — typically 60%–75%.</p>
  <table className="w-full text-sm">
- <tbody className="divide-y divide-border">
- <tr className="hover:bg-muted/10 transition-colors">
- <td className="py-2 text-sm text-muted-foreground w-56">% of Overall Materiality</td>
- <td className="px-1 py-1 w-36">
+ <tbody>
+ <tr>
+ <td className="py-2 text-sm text-muted-foreground w-40">% of Overall Materiality</td>
+ <td className="px-2 py-1 w-44">
  <TdInput
  value={pmPct}
  onChange={(v) => setPmPct(v.replace(/[^0-9.]/g, ""))}
  placeholder="70"
- className="tabular-nums text-right w-28"
+ className="tabular-nums text-right"
  />
  </td>
+ <td />
  </tr>
- <tr className="hover:bg-muted/10 transition-colors">
- <td className="py-2 text-sm text-muted-foreground">Performance Materiality ($)</td>
- <td className="px-1 py-1">
- <TdInput
- value={pmAmount ? pmAmount : "—"}
- readOnly
- className="tabular-nums text-right font-semibold w-28"
- />
- </td>
+ </tbody>
+ </table>
+ <table className="w-full text-sm mt-3">
+ <thead>
+ <tr>
+ <th className="w-40" />
+ <th className="px-2 pb-1 text-right text-xs font-medium text-muted-foreground w-44">Amount ($)</th>
+ <th className="px-2 pb-1 text-left text-xs font-medium text-muted-foreground">Reasoning</th>
  </tr>
- <tr className="hover:bg-muted/10 transition-colors">
- <td className="py-2 text-sm text-muted-foreground align-top pt-3">Rationale</td>
- <td className="px-2 py-2 w-full">
+ </thead>
+ <tbody className="divide-y divide-border">
+ <tr>
+ <td className="py-2 text-sm text-muted-foreground">Previous period</td>
+ <td className="px-2 py-1.5 w-44"><TdInput value={pmPrevAmount ? formatDisplay(pmPrevAmount) : ""} onChange={(v) => setPmPrevAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="tabular-nums text-right" /></td>
+ <td className="px-2 py-1.5"><TdInput value={pmPrevReasoning} onChange={setPmPrevReasoning} placeholder="Reasoning…" /></td>
+ </tr>
+ <tr>
+ <td className="py-2 text-sm font-semibold text-primary">Preliminary</td>
+ <td className="px-2 py-1.5 w-44"><TdInput value={pmAmount ? pmAmount : "—"} readOnly className="tabular-nums text-right font-semibold" /></td>
+ <td className="px-2 py-1.5">
  <div className="flex items-start gap-1.5">
-   <GreenDot show={!!pmRationale} />
-   <Textarea
-   value={pmRationale}
-   onChange={(e) => setPmRationale(e.target.value)}
-   placeholder="Explain why this percentage was selected…"
-   className="min-h-[72px] text-sm resize-none bg-background border-border flex-1"
-   />
+ <GreenDot show={!!pmRationale} />
+ <TdInput value={pmRationale} onChange={setPmRationale} placeholder="Explain why this percentage was selected…" className="flex-1" />
  </div>
  </td>
  </tr>
