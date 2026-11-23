@@ -579,6 +579,8 @@ export const clientsData: Client[] = [
   engagements: [
    { id: 'COM-WCP-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
    { id: 'COM-WCP-Dec312023', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 12, 2024 09:00 AM' },
+   { id: 'REV-WCP-Dec312024', type: 'Review (REV)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+   { id: 'T5013-WCP-Dec312024', type: 'T5013 (Partnerships)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
   ],
  },
  {
@@ -602,6 +604,8 @@ export const clientsData: Client[] = [
   engagements: [
    { id: 'COM-BFT-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
    { id: 'COM-BFT-Dec312023', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 12, 2024 09:00 AM' },
+   { id: 'REV-BFT-Dec312024', type: 'Review (REV)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+   { id: 'T3-BFT-Dec312024', type: 'T3 (Trusts)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
   ],
  },
 ];

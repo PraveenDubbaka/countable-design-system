@@ -36,6 +36,8 @@ import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 import { loadClients } from "@/data/clientsData";
+import { EntityBadge } from "@/components/EntityBadge";
+import { EntityEngagementShortcuts } from "@/components/EntityEngagementShortcuts";
 
 function getActiveFirm() {
   try {
@@ -247,8 +249,10 @@ export default function Engagements() {
     </div>
    </td>
   ) },
-  { id: "entityType", label: "Entity Type", cell: engagement => (
-   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{clientEntityTypeByName.get(engagement.client) ?? "Corporation"}</td>
+  { id: "entityType", label: "Entity", cell: engagement => (
+   <td className="px-6 py-2 whitespace-nowrap">
+    <EntityBadge entityType={clientEntityTypeByName.get(engagement.client)} />
+   </td>
   ) },
   { id: "type", label: "Type", cell: engagement => (
    <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
@@ -367,6 +371,8 @@ export default function Engagements() {
   {SHOW_REGION_LABELS && <>{activeFirm.region === "ca" ? "🇨🇦" : "🇺🇸"} </>}{activeFirm.name}{SHOW_REGION_LABELS && <> · {activeFirm.region === "ca" ? "CA-cell" : "US-cell"}</>}
  </p>
  )}
+
+ <EntityEngagementShortcuts />
 
  {/* Filter, Search, Export and Create Row - Enhanced spacing */}
  <div className="flex items-center justify-between">

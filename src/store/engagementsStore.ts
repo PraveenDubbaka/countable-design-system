@@ -34,6 +34,14 @@ export const SEED_ENGAGEMENTS: EngagementRecord[] = [
  { id: "COM-WCP-Dec312023", client: "Willow Creek Partners LLP", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 12, 2024 09:00 AM", firstYearAudit: false },
  { id: "COM-BFT-Dec312024", client: "Birchwood Family Trust", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
  { id: "COM-BFT-Dec312023", client: "Birchwood Family Trust", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 12, 2024 09:00 AM", firstYearAudit: false },
+ // Review/Tax demo fixtures for the same two Partnership/Trust clients — give the dashboard
+ // and engagements list shortcuts a real Review and Tax engagement to jump into, not just
+ // Compilation. Type strings match TEMPLATE_CONFIG's engagementTypeLabel in
+ // engagementTemplatesData.ts so EngagementDetail.tsx resolves the right engagementKind.
+ { id: "REV-WCP-Dec312024", client: "Willow Creek Partners LLP", type: "Review (REV)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "T5013-WCP-Dec312024", client: "Willow Creek Partners LLP", type: "T5013 (Partnerships)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "REV-BFT-Dec312024", client: "Birchwood Family Trust", type: "Review (REV)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "T3-BFT-Dec312024", client: "Birchwood Family Trust", type: "T3 (Trusts)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
 ];
 
 function seedDemoEngagementMeta() {

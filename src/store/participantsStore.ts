@@ -47,6 +47,26 @@ const SEED_PARTICIPANTS: Record<string, Participant[]> = {
  { id: "BFT-TAYLOR", engagementId: "COM-BFT-Dec312024", name: "Taylor Novak", participantType: "individual", participantClass: "income", ownershipMode: "percentage", ownershipValue: 60, priorYearOwnershipValue: 60, signingAuthority: true, openingCapital: 162000, admissionDate: null, retirementDate: null, displayOrder: 0 },
  { id: "BFT-JORDAN", engagementId: "COM-BFT-Dec312024", name: "Jordan Singh", participantType: "individual", participantClass: "income", ownershipMode: "percentage", ownershipValue: 40, priorYearOwnershipValue: 40, signingAuthority: false, openingCapital: 108000, admissionDate: null, retirementDate: null, displayOrder: 1 },
  ],
+ // Same 2024 participants, carried onto the Review/Tax demo engagements for the same client/year
+ // (engagementsStore.ts) so those engagements' worksheet and capital statement aren't empty.
+ "REV-WCP-Dec312024": [
+ { id: "WCP-ALEX", engagementId: "REV-WCP-Dec312024", name: "Alex Rivera", participantType: "individual", participantClass: "general", ownershipMode: "percentage", ownershipValue: 55, priorYearOwnershipValue: 60, signingAuthority: true, openingCapital: 200000, admissionDate: null, retirementDate: null, displayOrder: 0 },
+ { id: "WCP-MORGAN", engagementId: "REV-WCP-Dec312024", name: "Morgan Hale", participantType: "individual", participantClass: "general", ownershipMode: "percentage", ownershipValue: 30, priorYearOwnershipValue: 40, signingAuthority: true, openingCapital: 130000, admissionDate: null, retirementDate: null, displayOrder: 1 },
+ { id: "WCP-PRIYA", engagementId: "REV-WCP-Dec312024", name: "Priya Nandan", participantType: "individual", participantClass: "limited", ownershipMode: "percentage", ownershipValue: 15, signingAuthority: false, openingCapital: 0, admissionDate: "2024-07-01", retirementDate: null, displayOrder: 2 },
+ ],
+ "T5013-WCP-Dec312024": [
+ { id: "WCP-ALEX", engagementId: "T5013-WCP-Dec312024", name: "Alex Rivera", participantType: "individual", participantClass: "general", ownershipMode: "percentage", ownershipValue: 55, priorYearOwnershipValue: 60, signingAuthority: true, openingCapital: 200000, admissionDate: null, retirementDate: null, displayOrder: 0 },
+ { id: "WCP-MORGAN", engagementId: "T5013-WCP-Dec312024", name: "Morgan Hale", participantType: "individual", participantClass: "general", ownershipMode: "percentage", ownershipValue: 30, priorYearOwnershipValue: 40, signingAuthority: true, openingCapital: 130000, admissionDate: null, retirementDate: null, displayOrder: 1 },
+ { id: "WCP-PRIYA", engagementId: "T5013-WCP-Dec312024", name: "Priya Nandan", participantType: "individual", participantClass: "limited", ownershipMode: "percentage", ownershipValue: 15, signingAuthority: false, openingCapital: 0, admissionDate: "2024-07-01", retirementDate: null, displayOrder: 2 },
+ ],
+ "REV-BFT-Dec312024": [
+ { id: "BFT-TAYLOR", engagementId: "REV-BFT-Dec312024", name: "Taylor Novak", participantType: "individual", participantClass: "income", ownershipMode: "percentage", ownershipValue: 60, priorYearOwnershipValue: 60, signingAuthority: true, openingCapital: 162000, admissionDate: null, retirementDate: null, displayOrder: 0 },
+ { id: "BFT-JORDAN", engagementId: "REV-BFT-Dec312024", name: "Jordan Singh", participantType: "individual", participantClass: "income", ownershipMode: "percentage", ownershipValue: 40, priorYearOwnershipValue: 40, signingAuthority: false, openingCapital: 108000, admissionDate: null, retirementDate: null, displayOrder: 1 },
+ ],
+ "T3-BFT-Dec312024": [
+ { id: "BFT-TAYLOR", engagementId: "T3-BFT-Dec312024", name: "Taylor Novak", participantType: "individual", participantClass: "income", ownershipMode: "percentage", ownershipValue: 60, priorYearOwnershipValue: 60, signingAuthority: true, openingCapital: 162000, admissionDate: null, retirementDate: null, displayOrder: 0 },
+ { id: "BFT-JORDAN", engagementId: "T3-BFT-Dec312024", name: "Jordan Singh", participantType: "individual", participantClass: "income", ownershipMode: "percentage", ownershipValue: 40, priorYearOwnershipValue: 40, signingAuthority: false, openingCapital: 108000, admissionDate: null, retirementDate: null, displayOrder: 1 },
+ ],
 };
 
 export function loadParticipants(engagementId: string): Participant[] {
