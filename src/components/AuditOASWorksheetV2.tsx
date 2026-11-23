@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useRef, useEffect, createContext, useContext } from "react";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,8 +22,7 @@ interface SignOff { id: string; name: string; role: string; initials: string; da
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const TEAM_ROLES = [
- "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
- "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert (SME)", "Other",
+ "Partner", "Manager", "Senior", "Assistant", "Assistant 1", "Expert", "EQCR", "Other",
 ];
 
 const TEAM_MEMBERS_CA = ["J. Patel, CPA", "A. Nguyen, CPA", "T. Brown", "D. Kim", "S. Lavoie, CPA"];
@@ -38,12 +38,12 @@ const S2_LABELS = [
 ];
 
 const S3_LABELS = [
- "Material financial statement areas and disclosures.",
+ "Material financial statement areas and disclosures (Form 590).",
  "Major operational or control changes during the period.",
  "Impact of changes in accounting standards.",
- "Matters raised from past experience (prior-year findings).",
+ "Matters raised (such as problem areas) from past experience.",
  "Significant risks and going-concern uncertainties.",
- "Use of auditor's experts.",
+ "Use of auditor experts.",
  "Use of service organization reports.",
  "Use of component auditors.",
  "Coordination of work with a group auditor.",
@@ -90,11 +90,13 @@ const CA_SEED = {
  areaRow(false, "N/A — private company audit, ASPE. Not applicable."),
  ],
  teamRows: [
- { id: "t1", role: "Engagement Partner", name: "J. Patel, CPA", experience: "15 years experience", wpRef: [], initials: "", date: "" },
+ { id: "t1", role: "Partner", name: "J. Patel, CPA", experience: "15 years experience", wpRef: [], initials: "", date: "" },
  { id: "t2", role: "Manager", name: "A. Nguyen, CPA", experience: "7 years experience", wpRef: [], initials: "", date: "" },
- { id: "t3", role: "Senior Auditor", name: "T. Brown", experience: "3 years experience", wpRef: [], initials: "", date: "" },
- { id: "t4", role: "Staff Auditor / Assistant",name: "D. Kim", experience: "1 year experience", wpRef: [], initials: "", date: "" },
- { id: "t5", role: "EQCR (Quality Reviewer)", name: "S. Lavoie, CPA", experience: "Independent reviewer", wpRef: [], initials: "", date: "" },
+ { id: "t3", role: "Senior", name: "T. Brown", experience: "3 years experience", wpRef: [], initials: "", date: "" },
+ { id: "t4", role: "Assistant", name: "D. Kim", experience: "1 year experience", wpRef: [], initials: "", date: "" },
+ { id: "t5", role: "Assistant 1", name: "", experience: "", wpRef: [], initials: "", date: "" },
+ { id: "t6", role: "Expert", name: "", experience: "", wpRef: [], initials: "", date: "" },
+ { id: "t7", role: "EQCR", name: "S. Lavoie, CPA", experience: "Independent reviewer", wpRef: [], initials: "", date: "" },
  ] as TeamRow[],
  s5: seedRow("Budgeted fee: $31,000. Estimated hours: 195.."),
  s6: seedRow("Audit plan documented in Forms 500-590. TCWG planning communication: Letter AL3.1 sent April 9, 2024."),
@@ -135,12 +137,13 @@ const US_SEED = {
  areaRow(false, "N/A — private company audit (AICPA non-issuer). CAMs not required."),
  ],
  teamRows: [
- { id: "t1", role: "Engagement Partner", name: "M. Thompson, CPA", experience: "18 years experience", wpRef: [], initials: "", date: "" },
+ { id: "t1", role: "Partner", name: "M. Thompson, CPA", experience: "18 years experience", wpRef: [], initials: "", date: "" },
  { id: "t2", role: "Manager", name: "L. Garcia, CPA", experience: "9 years experience", wpRef: [], initials: "", date: "" },
- { id: "t3", role: "Senior Auditor", name: "K. Patel", experience: "4 years experience", wpRef: [], initials: "", date: "" },
- { id: "t4", role: "Staff Auditor / Assistant",name: "J. Chen", experience: "1 year experience", wpRef: [], initials: "", date: "" },
- { id: "t5", role: "Subject Matter Expert (SME)", name: "Summit Valuation Group", experience: "Goodwill impairment", wpRef: [], initials: "", date: "" },
- { id: "t6", role: "EQCR (Quality Reviewer)", name: "D. Anderson, CPA", experience: "Independent reviewer", wpRef: [], initials: "", date: "" },
+ { id: "t3", role: "Senior", name: "K. Patel", experience: "4 years experience", wpRef: [], initials: "", date: "" },
+ { id: "t4", role: "Assistant", name: "J. Chen", experience: "1 year experience", wpRef: [], initials: "", date: "" },
+ { id: "t5", role: "Assistant 1", name: "", experience: "", wpRef: [], initials: "", date: "" },
+ { id: "t6", role: "Expert", name: "Summit Valuation Group", experience: "Goodwill impairment", wpRef: [], initials: "", date: "" },
+ { id: "t7", role: "EQCR", name: "D. Anderson, CPA", experience: "Independent reviewer", wpRef: [], initials: "", date: "" },
  ] as TeamRow[],
  s5: seedRow("Budgeted fee: $42,500. Estimated hours: 280.."),
  s6: seedRow("Audit plan documented in Forms 500-590. TCWG planning communication: Letter AL3.1 sent January 22, 2025."),
@@ -225,7 +228,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  }, [entity, period, s1, s2, s3, teamRows, s5, s6, subseq, conclusion, meetingImported, concluded, concludedBy, concludedOn, storageKey]);
 
  // ── Row updaters ───────────────────────────────────────────────────────────
- type StrField = Exclude<keyof RowState, 'wpRef'>;
  type StrTeamField = Exclude<keyof TeamRow, 'wpRef'>;
  function updRow(setter: React.Dispatch<React.SetStateAction<RowState[]>>, i: number, f: StrField, v: string) {
  setter(prev => { const n = [...prev]; n[i] = {...n[i], [f]: v }; return n; });
@@ -283,45 +285,6 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  }, [importStep]);
 
  // ── Render helpers ─────────────────────────────────────────────────────────
-
- function SectionHeader({ label }: { label: string }) {
- return (
- <tr className="bg-muted/60">
- <td className="px-3 py-2.5 text-sm font-bold text-foreground" colSpan={4}>{label}</td>
- </tr>
- );
- }
-
- function SubNote({ text }: { text: string }) {
- return (
- <tr className="bg-muted/20">
- <td className="px-3 py-1" /><td className="px-4 py-1.5 text-sm text-muted-foreground italic" colSpan={3}>{text}</td>
- </tr>
- );
- }
-
- function DataRow({ num, description, row, onRow, onRefAttach, onRefRemove, extra, locked: rowLocked }: {
- num: string; description: React.ReactNode;
- row: RowState; onRow: (f: StrField, v: string) => void;
- onRefAttach: (doc: RefDoc) => void;
- onRefRemove: (i: number) => void;
- extra?: React.ReactNode; locked?: boolean;
- }) {
- const dis = rowLocked ?? locked;
- return (
- <tr className="hover:bg-muted/50 transition-colors border-b border-border/40">
- <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap w-10">{num}</td>
- <td className="px-4 py-2.5 text-sm text-foreground align-top w-[200px]">{description}</td>
- <td className="px-3 py-2 align-top">
- <Textarea className="min-h-[88px] text-sm resize-y" value={row.response} onChange={e => onRow("response", e.target.value)} disabled={dis} />
- {extra && <div className="mt-1.5">{extra}</div>}
- </td>
- <td className="px-3 py-2.5 align-top w-[150px]">
- <RefButton reference={row.wpRef} onAttach={onRefAttach} onRemove={onRefRemove} disabled={dis} />
- </td>
- </tr>
- );
- }
 
  // ── JSX ────────────────────────────────────────────────────────────────────
  return (
@@ -435,21 +398,23 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
 
  {/* Main table */}
+ <LockedContext.Provider value={locked}>
  <div className="overflow-x-auto">
  <table className="w-full text-sm">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
  <th className="w-10 px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">#</th>
- <th className="w-[200px] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Description</th>
- <th className="px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Responses and Comments</th>
+ <th className="w-[200px] px-4 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Description (CAS 300.7–8)</th>
  <th className="w-[150px] px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">W/P Ref.</th>
+ <th className="px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Responses and Comments</th>
+ <th className="w-[210px] px-3 py-2.5 text-left text-sm font-semibold text-foreground uppercase">Initials and Date</th>
  </tr>
  </thead>
  <tbody>
 
  {/* Section 1 */}
  <SectionHeader label="1. Reporting Requirements" />
- <DataRow num="1.1" description="The applicable financial reporting framework (such as ASPE or IFRS)." row={s1[0]} onRow={(f,v) => updRow(setS1,0,f,v)} onRefAttach={attachRef(setS1,0)} onRefRemove={removeRef(setS1,0)} />
+ <DataRow num="1.1" description="The applicable financial reporting framework (such as Canadian Accounting Standards for Private Enterprises (ASPE))." row={s1[0]} onRow={(f,v) => updRow(setS1,0,f,v)} onRefAttach={attachRef(setS1,0)} onRefRemove={removeRef(setS1,0)} />
  <DataRow num="1.2" description="Industry-specific or specialized requirements." row={s1[1]} onRow={(f,v) => updRow(setS1,1,f,v)} onRefAttach={attachRef(setS1,1)} onRefRemove={removeRef(setS1,1)} />
 
  {/* Section 2 */}
@@ -488,7 +453,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
 
  {/* Section 4 — Audit Team (dynamic) */}
  <SectionHeader label="4. Audit Team" />
- <SubNote text="Assign appropriately experienced team members to areas with higher risk of material misstatement." />
+ <SubNote text="Ensure the assignment of appropriately experienced team members to areas where there may be higher risks of material misstatement." />
  {teamRows.map((row, i) => (
  <tr key={row.id} className="hover:bg-muted/50 transition-colors border-b border-border/40">
  <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap">{`4.${i+1}`}</td>
@@ -497,6 +462,9 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
  <SelectContent>{TEAM_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
  </Select>
+ </td>
+ <td className="px-3 py-2.5 align-top w-[150px]">
+ <RefButton reference={row.wpRef} onAttach={attachTeam(row.id)} onRemove={removeTeam(row.id)} disabled={locked} />
  </td>
  <td className="px-3 py-2 align-top">
  <div className="flex items-center gap-1">
@@ -507,14 +475,12 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  {!locked && <button onClick={() => removeTeamRow(row.id)} className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors rounded shrink-0"><Trash2 className="h-3.5 w-3.5" /></button>}
  </div>
  </td>
- <td className="px-3 py-2.5 align-top w-[150px]">
- <RefButton reference={row.wpRef} onAttach={attachTeam(row.id)} onRemove={removeTeam(row.id)} disabled={locked} />
- </td>
+ <InitialsDateCell initials={row.initials} date={row.date} onInitials={v => updTeam(row.id,"initials",v)} onDate={v => updTeam(row.id,"date",v)} disabled={locked} />
  </tr>
  ))}
  {!locked && (
  <tr>
- <td colSpan={4} className="px-4 py-2.5">
+ <td colSpan={5} className="px-4 py-2.5">
  <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addTeamRow}>
  <Plus className="h-3.5 w-3.5" />Add team member
  </Button>
@@ -524,15 +490,15 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
 
  {/* Section 5 */}
  <SectionHeader label="5. Budget" />
- <DataRow num="5.1" description="Establish the budgeted audit fee and labour hours." row={s5} onRow={(f,v) => updSingle(setS5,f,v)} onRefAttach={attachSingle(setS5)} onRefRemove={removeSingle(setS5)} />
+ <DataRow num="5.1" description={<>Establish the budgeted audit fee and labour hours (<Link to={`/engagements/${engagementId}/checklist/aud-tt`} className="text-primary underline underline-offset-2">Form 450</Link>).</>} row={s5} onRow={(f,v) => updSingle(setS5,f,v)} onRefAttach={attachSingle(setS5)} onRefRemove={removeSingle(setS5)} />
 
  {/* Section 6 */}
  <SectionHeader label="6. Audit Strategy" />
- <DataRow num="6.1" description="Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG." row={s6} onRow={(f,v) => updSingle(setS6,f,v)} onRefAttach={attachSingle(setS6)} onRefRemove={removeSingle(setS6)} />
+ <DataRow num="6.1" description={<>Provide a cross-reference to documents that outline the planned scope and timing of the audit, such as the communication with management and to TCWG (CAS 260.15).<p className="mt-1.5 text-xs text-muted-foreground">For an example of a written planning letter, refer to Sample Letter AL3.1.</p></>} row={s6} onRow={(f,v) => updSingle(setS6,f,v)} onRefAttach={attachSingle(setS6)} onRefRemove={removeSingle(setS6)} />
 
  {/* Subsequent Changes */}
  <tr className="bg-muted">
- <td className="px-3 py-3 text-sm font-bold text-foreground uppercase tracking-wide" colSpan={4}>Subsequent Changes in Strategy</td>
+ <td className="px-3 py-3 text-sm font-bold text-foreground uppercase tracking-wide" colSpan={5}>Subsequent Changes in Strategy</td>
  </tr>
  <DataRow
  num="" description="Outline any significant changes made to the original audit strategy for this period as a result of performing further procedures or obtaining new information."
@@ -542,6 +508,7 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  </tbody>
  </table>
  </div>
+ </LockedContext.Provider>
 
  {/* Conclusion */}
  <div className="px-6 py-5 border-t border-border space-y-3">
@@ -576,6 +543,63 @@ function WorksheetInner({ isUS }: { isUS: boolean }) {
  </div>
  </div>
  );
+}
+
+// Row helpers live at module level so their identity is stable across renders (defining them inside the worksheet
+// remounted every input on each keystroke and dropped focus).
+type StrField = Exclude<keyof RowState, 'wpRef'>;
+const LockedContext = createContext(false);
+
+ function SectionHeader({ label }: { label: string }) {
+return (
+<tr className="bg-muted/60">
+<td className="px-3 py-2.5 text-sm font-bold text-foreground" colSpan={5}>{label}</td>
+</tr>
+);
+}
+
+function SubNote({ text }: { text: string }) {
+return (
+<tr className="bg-muted/20">
+<td className="px-3 py-1" /><td className="px-4 py-1.5 text-sm text-muted-foreground italic" colSpan={4}>{text}</td>
+</tr>
+);
+}
+
+function InitialsDateCell({ initials, date, onInitials, onDate, disabled }: { initials: string; date: string; onInitials: (v: string) => void; onDate: (v: string) => void; disabled?: boolean }) {
+return (
+<td className="px-3 py-2.5 align-top w-[210px]">
+<div className="flex items-start gap-1.5">
+<Input className="h-8 w-16 px-2 text-sm" placeholder="Init." value={initials} onChange={e => onInitials(e.target.value)} disabled={disabled} />
+<Input type="date" className="h-8 w-[130px] px-2 text-sm" value={date} onChange={e => onDate(e.target.value)} disabled={disabled} />
+</div>
+</td>
+);
+}
+
+function DataRow({ num, description, row, onRow, onRefAttach, onRefRemove, extra, locked: rowLocked }: {
+num: string; description: React.ReactNode;
+row: RowState; onRow: (f: StrField, v: string) => void;
+onRefAttach: (doc: RefDoc) => void;
+onRefRemove: (i: number) => void;
+extra?: React.ReactNode; locked?: boolean;
+}) {
+const lockedAll = useContext(LockedContext);
+const dis = rowLocked ?? lockedAll;
+return (
+<tr className="hover:bg-muted/50 transition-colors border-b border-border/40">
+<td className="px-3 py-2.5 text-xs text-muted-foreground font-mono align-top whitespace-nowrap w-10">{num}</td>
+<td className="px-4 py-2.5 text-sm text-foreground align-top w-[200px]">{description}</td>
+<td className="px-3 py-2.5 align-top w-[150px]">
+<RefButton reference={row.wpRef} onAttach={onRefAttach} onRemove={onRefRemove} disabled={dis} />
+</td>
+<td className="px-3 py-2 align-top">
+<Textarea className="min-h-[88px] text-sm resize-y" value={row.response} onChange={e => onRow("response", e.target.value)} disabled={dis} />
+{extra && <div className="mt-1.5">{extra}</div>}
+</td>
+<InitialsDateCell initials={row.initials} date={row.date} onInitials={v => onRow("initials", v)} onDate={v => onRow("date", v)} disabled={dis} />
+</tr>
+);
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
