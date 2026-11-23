@@ -21,9 +21,15 @@ interface FSPageViewerProps {
  * and which page 'eq' renders (Statement of Partners'/Trust Capital for Partnership/Trust,
  * unchanged Income Statement fallback for Corporation and Audit). */
  entityType?: string;
+ /** Only meaningful when entityType === "Trust" — see entityLabels.ts. */
+ trustVariant?: "unit" | "other";
+ /** Client name and year-end, for the 'eq' page's Statement of Partners'/Trust Capital, which is
+ * data-driven off the real engagement's participants/worksheet (src/lib/capitalStatement.ts). */
+ clientName?: string;
+ yearEnd?: string;
 }
 
-const FSPageContent = ({ pageType, isEditing, isCompilation, entityType = "Corporation" }: FSPageViewerProps) => {
+const FSPageContent = ({ pageType, isEditing, isCompilation, entityType = "Corporation", trustVariant = "other", engagementId, clientName, yearEnd }: FSPageViewerProps) => {
  const templateType = isCompilation ? 'compilation' : null;
 
  switch (pageType) {
@@ -40,8 +46,18 @@ const FSPageContent = ({ pageType, isEditing, isCompilation, entityType = "Corpo
  case 'is':
  return <IncomeStatementPreview isEditMode={isEditing} entityType={entityType} />;
  case 'eq':
- if (entityType === "Partnership") return <PartnersCapitalPreview isEditMode={isEditing} />;
- if (entityType === "Trust") return <TrustCapitalPreview isEditMode={isEditing} />;
+ if ((entityType === "Partnership" || entityType === "Trust") && engagementId) {
+ const CapitalPreview = entityType === "Partnership" ? PartnersCapitalPreview : TrustCapitalPreview;
+ return (
+ <CapitalPreview
+ isEditMode={isEditing}
+ engagementId={engagementId}
+ trustVariant={trustVariant}
+ clientName={clientName ?? "Unknown Client"}
+ yearEnd={yearEnd ?? ""}
+ />
+ );
+ }
  return <IncomeStatementPreview isEditMode={isEditing} entityType={entityType} />;
  case 'cf':
  return <CashFlowsPreview isEditMode={isEditing} />;
