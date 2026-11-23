@@ -11,12 +11,9 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import { Info, RefreshCw, Trash2, Plus, Calendar } from "lucide-react";
-import { ProvenancePopover } from "@/components/demo/ProvenancePopover";
-import { DEMO_PROVENANCE, DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
+import { DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
-import { LukaIcon } from "@/components/LukaIcon";
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
-import { GreenDot } from '@/components/demo/GreenDot';
 import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import { AttributedComment } from "@/components/ui/AttributedComment";
@@ -150,6 +147,7 @@ function TdInput({
  type = "text",
  readOnly,
  className = "",
+ luka,
 }: {
  value: string;
  onChange?: (v: string) => void;
@@ -157,6 +155,8 @@ function TdInput({
  type?: string;
  readOnly?: boolean;
  className?: string;
+ /** Value suggested by Luka (demo): purple border + tooltip until the user edits it */
+ luka?: boolean;
 }) {
  return (
  <Input
@@ -165,7 +165,8 @@ function TdInput({
  value={value}
  onChange={(e) => onChange?.(e.target.value)}
  placeholder={placeholder}
- className={`h-8 text-sm ${className}`}
+ title={luka ? "Suggested by Luka" : undefined}
+ className={`h-8 text-sm ${luka ? "border-[#8649F1] hover:border-[#8649F1] dark:border-[#8649F1] dark:hover:border-[#8649F1] focus:ring-[#8649F1]/30 focus-visible:!outline-[#8649F1] " : ""}${className}`}
  />
  );
 }
@@ -320,6 +321,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
 
  const [lukaState, setLukaState] = useState<'idle' | 'loading' | 'done'>('idle');
  const [lukaFilledFields, setLukaFilledFields] = useState<Set<string>>(new Set());
+ // Luka-suggested fields the user has edited in this session lose their purple border
+ const [lukaEditedFields, setLukaEditedFields] = useState<Set<string>>(new Set());
+ const markEdited = (id: string) => setLukaEditedFields(prev => (prev.has(id) ? prev : new Set(prev).add(id)));
  const [lukaHighlightFields, setLukaHighlightFields] = useState<Set<string>>(new Set());
  const matFillRef = useRef<HTMLTableRowElement>(null);
  function markLukaFilled(fieldId: string) {
@@ -642,9 +646,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <tr className="bg-muted border-b border-border">
  <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[230px]">Period to date ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">This period anticipated ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[165px]">Previous period ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[170px]">Period to date ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[170px]">This period anticipated ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[170px]">Previous period ($)</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-32">Benchmark % applied</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Possible materiality ($)</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Comments</th>
@@ -668,7 +672,8 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
      : ''
  }`}
  >
- <td className="px-3 py-2.5 align-middle text-center">
+ <td className="px-3 py-2.5 align-top text-center">
+ <div className="flex h-8 items-center justify-center">
  <input
  type="radio"
  name="primary-benchmark"
@@ -676,6 +681,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  onChange={() => setSelectedRowId(row.id)}
  className="h-4 w-4 accent-primary cursor-pointer"
  />
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top min-w-[200px]">
  <TdSelect
@@ -693,54 +699,39 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  />
  )}
  </td>
- <td className="px-4 py-2.5 align-top min-w-[230px] text-right">
-  <div className="relative flex items-start gap-1.5">
+ <td className="px-4 py-2.5 align-top min-w-[170px] text-right">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-amount')}>
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
- onChange={(v) => updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, ""))}
+ onChange={(v) => { markEdited(`ptd-${row.id}`); updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, "")); }}
  placeholder="0.00"
- className="tabular-nums text-right"
+ className="w-full tabular-nums text-right"
+ luka={isDemoEngagement && !lukaEditedFields.has(`ptd-${row.id}`) && (row.basis === 'grossRevenue' || (rowIdx === 0 && lukaFilledFields.has('mat-row-0-amount')))}
  />
  </LukaTypingRow>
- {isDemoEngagement && (row.basis === 'grossRevenue' ? (
- <ProvenancePopover data={DEMO_PROVENANCE.revenue} className="no-underline">
- <button type="button" aria-label="View source" className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
- <LukaIcon size={14} bare />
- </button>
- </ProvenancePopover>
- ) : <span className="h-6 w-6 shrink-0" aria-hidden="true" />)}
- </div>
  </td>
- <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
- <div className="flex items-start gap-1.5">
-   <GreenDot show={!!row.anticipated} />
-   <TdInput
-   value={row.anticipated ? formatDisplay(row.anticipated) : ""}
-   onChange={(v) => {
-     const cleaned = v.replace(/[^0-9.]/g, "");
-     patchRow(row.id, cleaned ? { extrapolatedPeriod: cleaned, extrapManual: true } : { extrapolatedPeriod: "", extrapManual: false });
-   }}
-   placeholder="0.00"
-   className="tabular-nums text-right flex-1"
-   />
- </div>
- {row.anticipatedNote && <p className="mt-1 text-xs text-muted-foreground text-right">{row.anticipatedNote}</p>}
+ <td className="px-4 py-2.5 align-top min-w-[170px] text-right">
+ <TdInput
+ value={row.anticipated ? formatDisplay(row.anticipated) : ""}
+ onChange={(v) => {
+   const cleaned = v.replace(/[^0-9.]/g, "");
+   patchRow(row.id, cleaned ? { extrapolatedPeriod: cleaned, extrapManual: true } : { extrapolatedPeriod: "", extrapManual: false });
+ }}
+ placeholder="0.00"
+ className="w-full tabular-nums text-right"
+ />
+  {row.anticipatedNote && <p className="mt-1 text-xs text-muted-foreground text-right">{row.anticipatedNote}</p>}
  </td>
- <td className="px-4 py-2.5 align-top min-w-[165px] text-right">
- <div className="relative">
+ <td className="px-4 py-2.5 align-top min-w-[170px] text-right">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
- <div className="flex items-start gap-1.5">
-   <GreenDot show={!!row.prevAmount} />
-   <TdInput
-   value={row.prevAmount ? formatDisplay(row.prevAmount) : ""}
-   onChange={(v) => updateEntityRow(row.id, "prevAmount", v.replace(/[^0-9.]/g, ""))}
-   placeholder="0.00"
-   className="tabular-nums text-right flex-1"
-   />
- </div>
+ <TdInput
+ value={row.prevAmount ? formatDisplay(row.prevAmount) : ""}
+ onChange={(v) => { markEdited(`prev-${row.id}`); updateEntityRow(row.id, "prevAmount", v.replace(/[^0-9.]/g, "")); }}
+ placeholder="0.00"
+ className="w-full tabular-nums text-right"
+ luka={isDemoEngagement && !lukaEditedFields.has(`prev-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-py')}
+ />
  </LukaTypingRow>
- </div>
  </td>
  <td className="px-4 py-2.5 align-top w-32 text-right">
  {showPctInput ? (
@@ -769,21 +760,17 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  />
  </td>
  <td className="px-4 py-2.5 align-top min-w-[160px]">
- <div className="relative">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-comments')}>
- <div className="flex items-start gap-1.5">
-   <GreenDot show={!!row.comments} />
-   <TdInput
-   value={row.comments}
-   onChange={(v) => updateEntityRow(row.id, "comments", v)}
-   placeholder="Comments…"
-   className="flex-1"
-   />
- </div>
+ <TdInput
+ value={row.comments}
+ onChange={(v) => { markEdited(`comments-${row.id}`); updateEntityRow(row.id, "comments", v); }}
+ placeholder="Comments…"
+ luka={isDemoEngagement && !lukaEditedFields.has(`comments-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-comments')}
+ />
  </LukaTypingRow>
- </div>
  </td>
  <td className="px-2 py-2.5 align-top text-center">
+ <div className="flex h-8 items-center justify-center">
  <button
  onClick={() => removeEntityRow(row.id)}
  className="text-muted-foreground hover:text-destructive transition-colors"
@@ -791,6 +778,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  >
  <Trash2 className="h-3.5 w-3.5" />
  </button>
+ </div>
  </td>
  </tr>
  );
@@ -822,16 +810,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <tr>
  <td className="py-2 text-sm font-semibold text-primary">Preliminary</td>
  <td className="px-2 py-1.5 w-56">
- <div className="flex items-start gap-1.5">
- <TdInput value={overallMateriality ? formatDisplay(overallMateriality) : "—"} readOnly className="tabular-nums text-right font-semibold" />
- {isDemoEngagement && overallMateriality && (
- <ProvenancePopover data={DEMO_PROVENANCE.materiality} className="no-underline">
- <button type="button" aria-label="View source" className="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8649F1] to-[#2355A4]">
- <LukaIcon size={14} bare />
- </button>
- </ProvenancePopover>
- )}
- </div>
+ <TdInput value={overallMateriality ? formatDisplay(overallMateriality) : "—"} readOnly className="w-full tabular-nums text-right font-semibold" luka={isDemoEngagement && !!overallMateriality} />
  </td>
  <td className="px-2 py-1.5"><TdInput value={prelimReasoning} onChange={setPrelimReasoning} placeholder="Reasoning…" /></td>
  </tr>
@@ -879,7 +858,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <tbody>
  <tr>
  <td className="py-2 text-sm text-muted-foreground w-40">% of Overall Materiality</td>
- <td className="px-2 py-1 w-44">
+ <td className="px-2 py-1 w-56">
  <TdInput
  value={pmPct}
  onChange={(v) => setPmPct(v.replace(/[^0-9.]/g, ""))}
@@ -895,24 +874,21 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <thead>
  <tr>
  <th className="w-40" />
- <th className="px-2 pb-1 text-right text-xs font-medium text-muted-foreground w-44">Amount ($)</th>
+ <th className="px-2 pb-1 text-right text-xs font-medium text-muted-foreground w-56">Amount ($)</th>
  <th className="px-2 pb-1 text-left text-xs font-medium text-muted-foreground">Reasoning</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
  <tr>
  <td className="py-2 text-sm text-muted-foreground">Previous period</td>
- <td className="px-2 py-1.5 w-44"><TdInput value={pmPrevAmount ? formatDisplay(pmPrevAmount) : ""} onChange={(v) => setPmPrevAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="tabular-nums text-right" /></td>
+ <td className="px-2 py-1.5 w-56"><TdInput value={pmPrevAmount ? formatDisplay(pmPrevAmount) : ""} onChange={(v) => setPmPrevAmount(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="tabular-nums text-right" /></td>
  <td className="px-2 py-1.5"><TdInput value={pmPrevReasoning} onChange={setPmPrevReasoning} placeholder="Reasoning…" /></td>
  </tr>
  <tr>
  <td className="py-2 text-sm font-semibold text-primary">Preliminary</td>
- <td className="px-2 py-1.5 w-44"><TdInput value={pmAmount ? pmAmount : "—"} readOnly className="tabular-nums text-right font-semibold" /></td>
+ <td className="px-2 py-1.5 w-56"><TdInput value={pmAmount ? pmAmount : "—"} readOnly className="tabular-nums text-right font-semibold" /></td>
  <td className="px-2 py-1.5">
- <div className="flex items-start gap-1.5">
- <GreenDot show={!!pmRationale} />
- <TdInput value={pmRationale} onChange={setPmRationale} placeholder="Explain why this percentage was selected…" className="flex-1" />
- </div>
+ <TdInput value={pmRationale} onChange={setPmRationale} placeholder="Explain why this percentage was selected…" />
  </td>
  </tr>
  </tbody>
