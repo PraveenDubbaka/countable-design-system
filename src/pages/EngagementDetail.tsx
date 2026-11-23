@@ -2680,7 +2680,7 @@ export default function EngagementDetail() {
  </TooltipTrigger>
  <TooltipContent side="bottom"><p>Start a Luka thread for this workpaper</p></TooltipContent>
  </Tooltip>
- {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') && (
+ {checklistKey === 'aud-mat' && (
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5">
@@ -3194,8 +3194,8 @@ export default function EngagementDetail() {
  </div>
  );
  })() : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
- matVersion === 'v2'
- ? <AuditMaterialityWorksheetV2 isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
+ (matVersion === 'v2' && checklistKey === 'aud-mat')
+ ? <AuditMaterialityWorksheetV2 isUS={false} engagementId={engagementId} />
  : <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
  ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
  <AuditTimeTrackerWorksheet />

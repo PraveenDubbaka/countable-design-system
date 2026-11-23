@@ -292,6 +292,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  { id: uid(), area: "Vessel PP&E (impairment)", amount: "62000", reasoning: "Significant judgment in impairment assessment. PM set at 50% of performance materiality.", pyAmount: "" },
  ];
  const [adjPMRows, setAdjPMRows] = useState<AdjPMRow[]>(initAdjPM);
+ const [adjWPRef, setAdjWPRef] = useState<RefDoc[]>([]);
 
  // Section D — Materiality for specific circumstances
  interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: RefDoc[]; pyAmount: string; }
@@ -535,7 +536,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-1/3">Users</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Factors that would influence users' decision-making</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Factors that would influence users' decision-making
+ <span className="mt-0.5 block text-xs font-normal normal-case tracking-normal text-muted-foreground">Consider key F/S areas and disclosures, laws/regulations and other matters</span>
+ </th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-16">Action</th>
  </tr>
  </thead>
@@ -601,7 +604,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <TooltipTrigger asChild>
  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
  </TooltipTrigger>
- <TooltipContent>Set the period dates and populate the table below to calculate overall materiality.</TooltipContent>
+ <TooltipContent>Use professional judgment to set the highest amount of misstatement that could exist without affecting the decisions of the users identified above.</TooltipContent>
  </Tooltip>
  <Input
  type="date"
@@ -854,6 +857,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </div>
  <div className="px-6 py-5">
  <p className="mb-3 text-sm text-muted-foreground">Set based on, but lower than, overall materiality — typically 60%–75%.</p>
+ <p className="mb-3 text-sm text-muted-foreground">Consider expected misstatements this period, business and fraud risks (Form 520), risk assessment results and misstatements found in prior audits.</p>
  <table className="w-full text-sm">
  <tbody>
  <tr>
@@ -862,7 +866,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <TdInput
  value={pmPct}
  onChange={(v) => setPmPct(v.replace(/[^0-9.]/g, ""))}
- placeholder="70"
+ placeholder="0"
  className="tabular-nums text-right"
  />
  </td>
@@ -932,11 +936,14 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  </table>
  </div>
  <div className="px-6 py-3 border-t border-border space-y-2">
- <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setAdjPMRows(p => [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>
- <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+ {adjPMRows.length < 2 && <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setAdjPMRows(p => p.length >= 2 ? p : [...p, {id: uid(), area:"", amount:"", reasoning:"", pyAmount:""}])}><Plus className="h-3.5 w-3.5" />Add Row</Button>}
+ <div className="flex items-start gap-3">
+ <p className="flex flex-1 items-start gap-1.5 text-sm text-muted-foreground">
  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
  If there are more than two F/S areas or disclosures that require an adjusted performance materiality level, provide details on a supplementary work paper that cross-references to this form.
  </p>
+ <RefButton reference={adjWPRef} onAttach={(doc) => setAdjWPRef(p => [...p, doc])} onRemove={(idx) => setAdjWPRef(p => p.filter((_,j) => j !== idx))} />
+ </div>
  </div>
  </div>
 
@@ -948,7 +955,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <TooltipTrigger asChild>
  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
  </TooltipTrigger>
- <TooltipContent>Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive.</TooltipContent>
+ <TooltipContent>Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive. Consider the views and expectations of management and TCWG.</TooltipContent>
  </Tooltip>
  </div>
  <div className="overflow-x-auto">
@@ -1035,7 +1042,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <TdInput
  value={ctThresholdPct}
  onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
- placeholder="5.00"
+ placeholder="0.00"
  className="w-24 tabular-nums text-right"
  />
  </div>
