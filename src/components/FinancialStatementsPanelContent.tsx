@@ -17,7 +17,8 @@ import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsI
 import {
  myTemplatesByEntity,
  myCanadaTemplatesByEntity,
- globalTemplatesByEntity,
+ globalTemplatesByEntityUS,
+ globalTemplatesByEntityCanada,
  US_ENTITY_TYPES,
  CA_ENTITY_TYPES,
  type MenuItem,
@@ -77,21 +78,22 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  const [checkedMy, setCheckedMy] = useState<Set<string>>(new Set());
  const [checkedGlobal, setCheckedGlobal] = useState<Set<string>>(new Set());
 
- // My Templates — mutable local state initialized from static defaults
- const initialMy = {...myTemplatesByEntity,...myCanadaTemplatesByEntity };
+ // My Templates — mutable local state initialized from static defaults. Keyed by
+ // "<country>:<entityType>", not entityType alone — US and Canada both use plain entity-type
+ // names like "Partnership"/"Trust" as keys in their own source maps, so a flat merge of the
+ // two would let Canada's ASPE-worded entry silently clobber the US GAAP one (or vice versa).
+ const initialMy: Record<string, MenuItem[]> = {
+ ...Object.fromEntries(Object.entries(myTemplatesByEntity).map(([k, v]) => [`US:${k}`, v])),
+ ...Object.fromEntries(Object.entries(myCanadaTemplatesByEntity).map(([k, v]) => [`Canada:${k}`, v])),
+ };
  const [myState, setMyState] = useState<Record<string, MenuItem[]>>(initialMy);
 
  const entityTypes = selectedCountry === "US" ? US_ENTITY_TYPES : CA_ENTITY_TYPES;
 
- const entityKey =
- selectedEntityType === "Trust"
- ? "Trusts"
- : selectedEntityType === "Partnership" && selectedCountry !== "US"
- ? "Partnerships"
- : selectedEntityType;
-
- const myData: MenuItem[] = myState[selectedEntityType] ?? [];
- const globalData: MenuItem[] = globalTemplatesByEntity[entityKey] ?? globalTemplatesByEntity["C-Corp"] ?? [];
+ const myStateKey = `${selectedCountry}:${selectedEntityType}`;
+ const myData: MenuItem[] = myState[myStateKey] ?? [];
+ const currentGlobalTemplatesByEntity = selectedCountry === "US" ? globalTemplatesByEntityUS : globalTemplatesByEntityCanada;
+ const globalData: MenuItem[] = currentGlobalTemplatesByEntity[selectedEntityType] ?? globalTemplatesByEntityUS["C-Corp"] ?? [];
  const activeData = activeTab === "my" ? myData : globalData;
  const activeChecked = activeTab === "my" ? checkedMy : checkedGlobal;
 
@@ -164,7 +166,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
 
  setMyState(prev => ({
 ...prev,
- [selectedEntityType]: pruneItems(prev[selectedEntityType] ?? []),
+ [myStateKey]: pruneItems(prev[myStateKey] ?? []),
  }));
  setCheckedMy(new Set());
  };
@@ -187,7 +189,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  if (newItems.length === 0) return;
 
  setMyState(prev => {
- const current = prev[selectedEntityType] ?? [];
+ const current = prev[myStateKey] ?? [];
  const addFolder = current.find(f => f.code === "COMP") ?? {
  code: "MY",
  label: "My Templates",
@@ -199,7 +201,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  children: [...(addFolder.children ?? []),...newItems],
  };
  const rest = current.filter(f => f.code !== addFolder.code);
- return {...prev, [selectedEntityType]: [updatedFolder,...rest] };
+ return {...prev, [myStateKey]: [updatedFolder,...rest] };
  });
  setCheckedGlobal(new Set());
  setActiveTab("my");
@@ -219,7 +221,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  if (item.label === label) return [item, {...item, label: `${item.label} (Copy)`, code: `${item.code}_copy` }];
  return [item];
  });
- setMyState(prev => ({...prev, [selectedEntityType]: dupeItem(prev[selectedEntityType] ?? []) }));
+ setMyState(prev => ({...prev, [myStateKey]: dupeItem(prev[myStateKey] ?? []) }));
  };
 
  // Delete a single leaf by label
@@ -231,7 +233,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  return item.label === label ? null : item;
  })
 .filter(Boolean) as MenuItem[];
- setMyState(prev => ({...prev, [selectedEntityType]: pruneOne(prev[selectedEntityType] ?? []) }));
+ setMyState(prev => ({...prev, [myStateKey]: pruneOne(prev[myStateKey] ?? []) }));
  setCheckedMy(prev => { const n = new Set(prev); n.delete(label); return n; });
  };
 
@@ -252,7 +254,7 @@ export function FinancialStatementsPanelContent({ isCollapsed, hasDarkSecondary 
  if (item.type === "folder") return {...item, children: renameIn(item.children ?? []) };
  return item.label === oldLabel ? {...item, label: newLabel } : item;
  });
- setMyState(prev => ({...prev, [selectedEntityType]: renameIn(prev[selectedEntityType] ?? []) }));
+ setMyState(prev => ({...prev, [myStateKey]: renameIn(prev[myStateKey] ?? []) }));
  if (selectedItem === oldLabel) setSelectedItem(newLabel);
  setCheckedMy(prev => {
  const n = new Set(prev);

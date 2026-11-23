@@ -121,18 +121,26 @@ export const myCanadaTemplatesByEntity: Record<string, MenuItem[]> = {
  "Trust": makeCanadaEntityTemplates("Trust", ""),
 };
 
-export const globalTemplatesByEntity: Record<string, MenuItem[]> = {
- Corporations: makeCanadaEntityTemplates("Corporations", "G"),
+// Split by country (instead of one shared map) so a Partnership/Trust/LLC/Sole Proprietorship
+// client always gets its own country's wording — GAAP terms for a US entity, ASPE terms for a
+// Canadian one — never the other country's terms regardless of which one is selected.
+export const globalTemplatesByEntityUS: Record<string, MenuItem[]> = {
  "C-Corp": makeEntityTemplates("C-Corp", "G"),
  "S-Corp": makeEntityTemplates("S-Corp", "G"),
+ "Partnership": makeEntityTemplates("Partnership", "G"),
+ "LLC (Single Member)": makeEntityTemplates("LLC (Single Member)", "G"),
+ "LLC (Multiple Members)": makeEntityTemplates("LLC (Multiple Members)", "G"),
+ "Sole Proprietorship": makeEntityTemplates("Sole Proprietorship", "G"),
+ "Trust": makeEntityTemplates("Trust", "G"),
+};
+
+export const globalTemplatesByEntityCanada: Record<string, MenuItem[]> = {
+ Corporations: makeCanadaEntityTemplates("Corporations", "G"),
  "Partnership": makeCanadaEntityTemplates("Partnership", "G"),
  "LLC (Single Member)": makeCanadaEntityTemplates("LLC (Single Member)", "G"),
  "LLC (Multiple Members)": makeCanadaEntityTemplates("LLC (Multiple Members)", "G"),
  "Sole Proprietorship": makeCanadaEntityTemplates("Sole Proprietorship", "G"),
  "Trust": makeCanadaEntityTemplates("Trust", "G"),
- LLC: makeCanadaEntityTemplates("LLC", "G"),
- Partnerships: makeCanadaEntityTemplates("Partnership", "G"),
- Trusts: makeCanadaEntityTemplates("Trust", "G"),
  NFPs: [
  { code: "GCOMP", label: "Compilations", type: "folder", children: [
  { code: "GCS1", label: "NFP Compilation", type: "document" },
@@ -328,9 +336,8 @@ const TemplateSidebarMenu = ({ onSelectItem, selectedItem, collapsed = false, on
  
  const sidebarRef = useRef<HTMLDivElement>(null);
 
- // Map entity type names to globalTemplatesByEntity keys
- const entityKey = selectedEntityType === "Trust" ? "Trusts" : selectedEntityType === "Partnership" ? "Partnerships" : selectedEntityType;
- const globalTemplatesData = globalTemplatesByEntity[entityKey] || globalTemplatesByEntity["Corporations"];
+ const currentGlobalTemplatesByEntity = selectedCountry === "US" ? globalTemplatesByEntityUS : globalTemplatesByEntityCanada;
+ const globalTemplatesData = currentGlobalTemplatesByEntity[selectedEntityType] || globalTemplatesByEntityCanada["Corporations"];
  const currentMyTemplatesByEntity = selectedCountry === "Canada" ? myCanadaTemplatesByEntity : myTemplatesByEntity;
  
  // Determine which data to show based on template type

@@ -7,6 +7,7 @@ import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import signatureImg from "@/assets/letter-signature.png";
 import receivedStamp from "@/assets/letter-received-stamp.png";
 import { LETTER_MARGIN_PX, type LetterMargin } from "@/lib/letterMargins";
+import { getEntityLabels } from "@/lib/entityLabels";
 
 interface LetterViewProps {
  checklist: Checklist;
@@ -25,6 +26,10 @@ interface LetterViewProps {
  clientName?: string;
  /** Left/right page margin, applied while editing: default (1in), narrow (0.5in) or wide (1.5in). View mode keeps its own padding. */
  margin?: LetterMargin;
+ /** The engagement client's entity type — changes the signature block's acknowledgement wording. */
+ entityType?: string;
+ /** Only meaningful when entityType === "Trust" — see entityLabels.ts. */
+ trustVariant?: "unit" | "other";
 }
 
 /**
@@ -35,8 +40,14 @@ interface LetterViewProps {
  * (existing schema, no migration needed). Edit mode toggles a
  * contentEditable surface; Save persists the new HTML back to the checklist.
  */
-export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName, margin }: LetterViewProps) {
+export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName, margin, entityType = "Corporation", trustVariant = "other" }: LetterViewProps) {
  const isReport = variant === "report";
+ // Sourced from entityLabels.ts so the signature block always matches the Partnership/Trust
+ // worksheets' terminology (e.g. "Trustees", not a hand-rolled "the trustee").
+ const acknowledgedOnBehalfOf =
+ entityType === "Partnership" ? `the ${getEntityLabels("Partnership").holders.toLowerCase()} of`
+ : entityType === "Trust" ? `the ${getEntityLabels("Trust", trustVariant).whoSigns.toLowerCase()} of`
+ : "the management of";
  const [showAddDialog, setShowAddDialog] = useState(false);
  const [isEditingLocal, setIsEditingLocal] = useState(false);
  // Use lifted state if provided, otherwise use local state
@@ -144,7 +155,7 @@ export function LetterView({ checklist, onUpdate, variant = "letter", isEditing:
  </p>
 
  <p className="mt-6 text-sm text-foreground uppercase tracking-wide">
- Acknowledged and agreed on behalf of the management of{" "}
+ Acknowledged and agreed on behalf of {acknowledgedOnBehalfOf}{" "}
  <FieldChip>Entity Name</FieldChip>
  </p>
 

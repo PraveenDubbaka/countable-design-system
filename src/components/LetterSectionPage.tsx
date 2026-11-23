@@ -150,10 +150,14 @@ interface LetterSectionPageProps {
  engagementId: string;
  onLetterExistsChange?: (exists: boolean) => void;
  onEditingChange?: (editing: boolean) => void;
+ /** The engagement client's entity type — changes the signature block's acknowledgement wording. */
+ entityType?: string;
+ /** Only meaningful when entityType === "Trust" — see entityLabels.ts. */
+ trustVariant?: "unit" | "other";
 }
 
 export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSectionPageProps>(
- ({ sectionName, sectionId, engagementId, onLetterExistsChange, onEditingChange }, ref) => {
+ ({ sectionName, sectionId, engagementId, onLetterExistsChange, onEditingChange, entityType, trustVariant }, ref) => {
  const storageKey = LETTER_HTML_KEY(engagementId, sectionId);
  const [letterHtml, setLetterHtml] = useState<string | null>(() =>
  readJsonFromLocalStorage<string | null>(storageKey, null)
@@ -246,6 +250,8 @@ export const LetterSectionPage = forwardRef<LetterSectionPageHandle, LetterSecti
  onSaveEdits={() => { setIsEditing(false); onEditingChange?.(false); }}
  onCancelEdits={() => { setIsEditing(false); onEditingChange?.(false); }}
  saveRef={letterSaveRef}
+ entityType={entityType}
+ trustVariant={trustVariant}
  />
  ) : (
  <div className="flex flex-col items-center justify-center flex-1 py-24 gap-6">

@@ -13,8 +13,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
-import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { TEMPLATE_CONFIG, TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
+import { getAccountingStandardsOptions } from "@/lib/accountingStandards";
+import { DateField } from "@/components/DateField";
+import { ParticipantsSection, validateParticipants } from "@/components/ParticipantsSection";
+import { type Participant, type OwnershipMode, saveParticipants, findPriorEngagementParticipants } from "@/store/participantsStore";
+import { loadClients } from "@/data/clientsData";
 
 const INDUSTRIES = [
  "Construction & Real Estate", "Financial Services", "Healthcare & Life Sciences",
@@ -34,14 +39,6 @@ const SPF_VALUES = [
  "Compliance / Regulatory Basis",
  "Contractual Basis",
  "Other Comprehensive Basis of Accounting (OCBOA)",
-];
-const ACCOUNTING_FRAMEWORKS = [
- "ASPE — Canadian Accounting Standards for Private Enterprises",
- "IFRS — International Financial Reporting Standards",
- "US GAAP — Generally Accepted Accounting Principles (United States)",
- "Tax Basis",
- "Cash Basis",
- "Modified Cash Basis",
 ];
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
 const AUDIT_ROLES = [
@@ -638,12 +635,41 @@ function formatDateCreated(): string {
 export default function CreateEngagement() {
  const navigate = useNavigate();
  const location = useLocation();
- const { addEngagement } = useEngagements();
+ const { engagements, addEngagement } = useEngagements();
  const prefill = (location.state as { clientName?: string; engagementType?: string } | null) ?? {};
 
  // Engagement Details state
  const [clientName, setClientName] = useState(prefill.clientName || "");
- const clientInfo = CLIENT_DATA[clientName] ?? null;
+ const realClient = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+ // Prefer the real client record over the static demo table — CLIENT_DATA only seeds a
+ // handful of demo names, so any client created through the real Add Client flow (e.g. a
+ // new Partnership/Trust) previously fell through to null here and silently lost its entity
+ // type, disabling the Participants section regardless of what was actually set on the client.
+ const clientInfo = realClient
+ ? {
+ entityLegalName: realClient.legalEntityName || realClient.entityName,
+ entityType: realClient.entityType,
+ contactPerson: realClient.contactPerson || realClient.contactName || "",
+ engagementPartner: realClient.engagementPartner || realClient.assignedPartner || "",
+ integrations: realClient.integration ? [realClient.integration] : [],
+ businessPhone: realClient.businessPhone || "-",
+ cellPhone: realClient.cellPhone || "-",
+ industryType: realClient.industryType || "",
+ clientCountry: realClient.clientCountry || "ca",
+ hasQuebecPersonalInfo: realClient.hasQuebecPersonalInfo ?? false,
+ isUsTaxpayer: realClient.isUsTaxpayer ?? false,
+ }
+ : CLIENT_DATA[clientName] ?? null;
+ const isPartnershipOrTrust = clientInfo?.entityType === "Partnership" || clientInfo?.entityType === "Trust";
+
+ // Participants (P5) — shown only for Partnership/Trust clients.
+ const [participants, setParticipants] = useState<Participant[]>([]);
+ const [ownershipMode, setOwnershipMode] = useState<OwnershipMode>("percentage");
+ const [capitalPresentation, setCapitalPresentation] = useState<"itemised" | "totalOnly">("totalOnly");
+ const [capitalVisibility, setCapitalVisibility] = useState<"open" | "restricted" | "partnerOnly">("open");
+ const priorParticipants = isPartnershipOrTrust
+ ? findPriorEngagementParticipants(engagements.filter(e => e.client === clientName).map(e => e.id), "")
+ : null;
  const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
  const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
  const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
@@ -667,6 +693,7 @@ export default function CreateEngagement() {
 
  // Audit-specific state
  const isAudit = engagementType === "Audit (AUD)";
+ const isTax = TAX_ENGAGEMENT_TYPE_LABELS.has(engagementType);
 
  // Sync engagement details when type changes (skip initial render)
  const isFirstMount = useRef(true);
@@ -806,22 +833,18 @@ export default function CreateEngagement() {
  { value: "T2 (Corporations)", label: "T2 (Corporations)" },
  { value: "1120 (US C-Corporation)", label: "1120 (US C-Corporation)" },
  { value: "1120S (US S-Corporation)", label: "1120S (US S-Corporation)" },
+ { value: "T5013 (Partnerships)", label: "T5013 (Partnerships)" },
+ { value: "1065 (Partnerships)", label: "1065 (Partnerships)" },
+ { value: "T3 (Trusts)", label: "T3 (Trusts)" },
+ { value: "1041 (Trusts)", label: "1041 (Trusts)" },
  ];
 
- const accountingStandardsOptions = (() => {
- const frameworks = isAudit ? ACCOUNTING_FRAMEWORKS : [
-  "ASPE — Canadian Accounting Standards for Private Enterprises",
-  "IFRS — International Financial Reporting Standards",
-  "US GAAP — Generally Accepted Accounting Principles (United States)",
-  "Tax Basis", "Cash Basis", "Modified Cash Basis",
- ];
- if (clientInfo?.clientCountry === "us") {
-  const usFirst = frameworks.filter(fw => fw.includes("US GAAP") || fw.includes("PCAOB"));
-  const rest = frameworks.filter(fw => !fw.includes("US GAAP") && !fw.includes("PCAOB"));
-  return [...usFirst, ...rest].map(fw => ({ value: fw, label: fw }));
- }
- return frameworks.map(fw => ({ value: fw, label: fw }));
- })();
+ const accountingStandardsOptions = getAccountingStandardsOptions({
+ isAudit,
+ isTax,
+ clientCountry: clientInfo?.clientCountry,
+ entityType: clientInfo?.entityType,
+ });
 
  const disclosureOptions = [
  { value: "Statement of cash flows", label: "Statement of cash flows" },
@@ -844,6 +867,8 @@ export default function CreateEngagement() {
  engagementType !== "" &&
  accountingStandards !== "";
 
+ const participantsValidation = isPartnershipOrTrust ? validateParticipants(participants, ownershipMode, clientInfo?.entityType ?? "") : null;
+
  const isFormValid =
  clientName.trim() !== "" &&
  engagementId.trim() !== "" &&
@@ -854,7 +879,8 @@ export default function CreateEngagement() {
  additionalDisclosures !== "" &&
  currentYearStart.trim() !== "" &&
  currentYearEnd.trim() !== "" &&
- teamMembers.length > 0;
+ teamMembers.length > 0 &&
+ (!participantsValidation || participantsValidation.errors.length === 0);
 
  const handleCreate = () => {
  const record: EngagementRecord = {
@@ -884,7 +910,13 @@ export default function CreateEngagement() {
  auditPeriodType: isAudit ? periodType : undefined,
  annualizeInterim: isAudit && periodType === "Interim (6-month)" ? annualizeInterim : undefined,
  firstTimeAdoption: isAudit ? firstTimeAdoption : undefined,
+ ownershipMode: isPartnershipOrTrust ? ownershipMode : undefined,
+ capitalPresentation: isPartnershipOrTrust ? capitalPresentation : undefined,
+ capitalVisibility: isPartnershipOrTrust ? capitalVisibility : undefined,
  });
+ if (isPartnershipOrTrust) {
+ saveParticipants(engagementId, participants.map(p => ({ ...p, engagementId })));
+ }
  if (isAudit && teamMembers.length > 0) {
  const roleMap: Record<string, string> = {
  "Engagement Partner": "partner",
@@ -1159,6 +1191,23 @@ export default function CreateEngagement() {
  </SectionCard>
  </div>
 
+ {/* Participants — Partnership/Trust only */}
+ {isPartnershipOrTrust && (
+ <ParticipantsSection
+ entityType={clientInfo?.entityType ?? ""}
+ engagementId={engagementId}
+ participants={participants}
+ onChange={setParticipants}
+ ownershipMode={ownershipMode}
+ onOwnershipModeChange={setOwnershipMode}
+ capitalPresentation={capitalPresentation}
+ onCapitalPresentationChange={setCapitalPresentation}
+ capitalVisibility={capitalVisibility}
+ onCapitalVisibilityChange={setCapitalVisibility}
+ priorParticipants={priorParticipants}
+ />
+ )}
+
  {/* Assigned Team — full page width, gated */}
  {engagementDetailsValid && (
  <SectionCard
@@ -1248,6 +1297,7 @@ export default function CreateEngagement() {
  <TemplatePickerPanel
  open={showTemplatePicker}
  onClose={() => setShowTemplatePicker(false)}
+ clientEntityType={clientInfo?.entityType}
  suggestedTemplateId={
  isAudit && SHOW_NFP_PCAOB_TEMPLATES && accountingStandards.includes("ASNPO") ? "audit5101" :
  isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :

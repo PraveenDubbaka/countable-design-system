@@ -684,6 +684,9 @@ export default function AddNewClientV2() {
   const [country, setCountry] = useState<string>("ca");
   const [entityType, setEntityType] = useState<string>("");
   const [subCorpType, setSubCorpType] = useState<string>("");
+  // Only meaningful for entityType === "trust" — which column of entityLabels.ts's terminology
+  // table applies (Unitholder/Declaration of trust vs. Beneficiary/Trust deed).
+  const [trustVariant, setTrustVariant] = useState<"unit" | "other">("other");
   const [showDba, setShowDba] = useState<boolean>(false);
   const [dbaName, setDbaName] = useState<string>("");
   const [dbaDisplay, setDbaDisplay] = useState<string>("legal-only");
@@ -785,6 +788,7 @@ export default function AddNewClientV2() {
       industryType: industryType || undefined,
       groupName: resolvedGroup || undefined,
       incorporationDate: cfg?.hasIncorporation && incorporationDate ? incorporationDate : undefined,
+      trustVariant: entityType === "trust" ? trustVariant : undefined,
       engagements: [],
     };
     const existing = loadClients();
@@ -1032,6 +1036,7 @@ export default function AddNewClientV2() {
                       setDbaDisplay("legal-only");
                       setGstRegistered("");
                       setSubCorpType("");
+                      setTrustVariant("other");
                     }}
                   >
                     <SelectTrigger><SelectValue placeholder="Select entity type" /></SelectTrigger>
@@ -1051,6 +1056,17 @@ export default function AddNewClientV2() {
                         {subTypeCfg.options.map(o => (
                           <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                  </InlineField>
+                )}
+                {entityType === "trust" && (
+                  <InlineField label="Trust Capital Terminology" hint="Unit trust statements say 'Unitholder' and 'Declaration of trust'; other trusts say 'Beneficiary' and 'Trust deed'. Controls wording on the trust's worksheet, statements and letters.">
+                    <Select value={trustVariant} onValueChange={v => setTrustVariant(v as "unit" | "other")}>
+                      <SelectTrigger><SelectValue placeholder="Select trust capital terminology" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="other">Other trust (Beneficiary / Trust deed)</SelectItem>
+                        <SelectItem value="unit">Unit trust (Unitholder / Declaration of trust)</SelectItem>
                       </SelectContent>
                     </Select>
                   </InlineField>

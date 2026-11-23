@@ -11,6 +11,9 @@ import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
+import { loadClients } from "@/data/clientsData";
+import { EntityBadge } from "@/components/EntityBadge";
+import { EntityEngagementShortcuts } from "@/components/EntityEngagementShortcuts";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import sageLogo from "@/assets/sage-logo.svg";
 
@@ -402,7 +405,10 @@ function EngagementProgressPanel({ progress }: {
 export default function Dashboard() {
  const navigate = useNavigate();
  const { engagements: allEngagementsRaw } = useEngagements();
- const allEngagements = allEngagementsRaw.filter(e => e.type === 'Audit (AUD)');
+ // Previously restricted to Audit (AUD) only, which meant Compilation/Review/Tax engagements
+ // — including every Partnership/Trust engagement, since those entity types never have an
+ // Audit — could never appear on the dashboard no matter how recently they were created.
+ const allEngagements = allEngagementsRaw;
  const [searchQuery, setSearchQuery] = useState("");
  const [expandedEngagement, setExpandedEngagement] = useState<string | null>(null);
  function toggleExpand(id: string) { setExpandedEngagement(prev => prev === id ? null : id); }
@@ -422,6 +428,14 @@ export default function Dashboard() {
  }, []);
  const hasMultipleFirms = allFirmProfiles.length > 1;
  const stats = showGroupView ? AGGREGATE_STATS : getStatsForFirm(activeFirm.region);
+ const clientEntityTypeByName = (() => {
+ const map = new Map<string, string>();
+ loadClients().forEach(c => {
+ map.set(c.legalEntityName, c.entityType);
+ map.set(c.entityName, c.entityType);
+ });
+ return map;
+ })();
  const dashboardEngagements = allEngagements.map(e => {
  let integration: string | null = null;
  try {
@@ -434,14 +448,23 @@ export default function Dashboard() {
  return {
  id: e.id,
  client: e.client,
+ entityType: clientEntityTypeByName.get(e.client) ?? "Corporation",
  yearEnd: e.yearEnd,
  integration,
  status: e.status,
  statusVariant: e.status === "New" ? ("secondary" as const) : ("default" as const),
  };
  });
+ const clientCountryByName = (() => {
+ const map = new Map<string, string>();
+ loadClients().forEach(c => {
+ map.set(c.legalEntityName, c.clientCountry);
+ map.set(c.entityName, c.clientCountry);
+ });
+ return map;
+ })();
  const filteredDashboardEngagements = dashboardEngagements
-  .filter(e => (e.client === "Harbor Freight Logistics LLC" ? "us" : "ca") === activeFirm.region)
+  .filter(e => (clientCountryByName.get(e.client) ?? "ca") === activeFirm.region)
   .filter(e =>
    !searchQuery.trim() ||
    e.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -500,6 +523,8 @@ export default function Dashboard() {
  })}
  </div>
 
+ <EntityEngagementShortcuts />
+
  {/* Engagements Table - Enhanced styling */}
  <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0">
  <div className="px-6 py-5 flex items-center justify-between flex-shrink-0 bg-card">
@@ -527,6 +552,7 @@ export default function Dashboard() {
  <tr className="bg-muted">
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Engagement ID</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Client Name</th>
+ <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Entity</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Year End</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Integrations</th>
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
@@ -537,7 +563,7 @@ export default function Dashboard() {
  <tbody className="divide-y divide-border">
  {filteredDashboardEngagements.length === 0 && searchQuery.trim() && (
  <tr>
- <td colSpan={7} className="px-6 py-16 text-center">
+ <td colSpan={8} className="px-6 py-16 text-center">
  <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
  <p className="text-sm font-medium text-foreground">No results for &ldquo;{searchQuery}&rdquo;</p>
  <p className="text-xs text-muted-foreground mt-1">Try a different search term or clear the filter</p>
@@ -552,6 +578,7 @@ export default function Dashboard() {
  </span>
  </td>
  <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap truncate max-w-[200px]"><Highlight text={engagement.client} query={searchQuery} /></td>
+ <td className="px-6 py-2 whitespace-nowrap"><EntityBadge entityType={engagement.entityType} /></td>
  <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{engagement.yearEnd}</td>
  <td className="px-6 py-2 whitespace-nowrap">
  <IntegrationBadge type={engagement.integration} />
@@ -599,7 +626,7 @@ export default function Dashboard() {
   const progress = calcEngagementProgress(engagement.id);
   return (
    <tr key={`${engagement.id}-progress`}>
-    <td colSpan={7} className="p-0">
+    <td colSpan={8} className="p-0">
      <EngagementProgressPanel progress={progress} />
     </td>
    </tr>

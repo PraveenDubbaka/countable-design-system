@@ -5,7 +5,10 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/",
+  // GitHub Pages serves this as a project site at /countable-design-system/, not at the
+  // domain root — only the production build (GitHub Actions) needs the repo-name base path;
+  // the dev server must stay at "/" or local routes like /engagements/:id break.
+  base: mode === "production" ? "/countable-design-system/" : "/",
   server: {
     host: "127.0.0.1",
     port: process.env.PORT ? parseInt(process.env.PORT) : undefined,

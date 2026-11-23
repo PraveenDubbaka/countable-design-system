@@ -30,7 +30,23 @@ export interface Client {
  isUsTaxpayer?: boolean;
  groupName?: string;
  incorporationDate?: string;
+ /** Only meaningful when entityType === "Trust" — which column of entityLabels.ts's terminology
+ * table applies ("Unitholder"/"Declaration of trust" vs. "Beneficiary"/"Trust deed"). Defaults to
+ * "other" (via getEntityLabels's own default param) when unset, matching every Trust client
+ * created before this field existed. */
+ trustVariant?: "unit" | "other";
 }
+
+export const ENTITY_TYPE_OPTIONS: { value: string; label: string }[] = [
+ { value: 'corporation', label: 'Corporation' },
+ { value: 'partnership', label: 'Partnership' },
+ { value: 'sole-proprietor', label: 'Sole Proprietor' },
+ { value: 'trust', label: 'Trust' },
+];
+
+export const ENTITY_TYPE_LABELS: Record<string, string> = Object.fromEntries(
+ ENTITY_TYPE_OPTIONS.map(o => [o.value, o.label])
+);
 
 export const clientsData: Client[] = [
  {
@@ -537,6 +553,61 @@ export const clientsData: Client[] = [
    { id: 'COM-MHF-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 10, 2025 08:00 AM' },
   ],
  },
+ // Committed Partnership/Trust demo fixtures (doc section 4 item 9 — seed data) — give every
+ // Partnership/Trust surface (worksheet, capital statement, letters) a real, permanent example to
+ // verify against instead of ad hoc data created and deleted each session. Two years each, so
+ // year-over-year roll-forward has real prior-engagement data to carry forward from; the
+ // Partnership fixture also carries a participant admitted mid-year (Priya Nandan).
+ {
+  id: 'DEMO-WCP',
+  entityName: 'Willow Creek Partners',
+  legalEntityName: 'Willow Creek Partners LLP',
+  entityType: 'Partnership',
+  status: 'Accepted',
+  integration: 'none',
+  contactName: 'Alex Rivera',
+  contactPerson: 'Alex Rivera',
+  engagementPartner: 'R. Chandra',
+  email: 'alex@willowcreekpartners.ca',
+  repository: 'Repository',
+  assignedPartner: 'Cpt',
+  assignedTeam: null,
+  businessPhone: '(604) 555-0271',
+  cellPhone: null,
+  clientCountry: 'ca',
+  industryType: 'Professional Services',
+  engagements: [
+   { id: 'COM-WCP-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+   { id: 'COM-WCP-Dec312023', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 12, 2024 09:00 AM' },
+   { id: 'REV-WCP-Dec312024', type: 'Review (REV)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+   { id: 'T5013-WCP-Dec312024', type: 'T5013 (Partnerships)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+  ],
+ },
+ {
+  id: 'DEMO-BFT',
+  entityName: 'Birchwood Family Trust',
+  legalEntityName: 'Birchwood Family Trust',
+  entityType: 'Trust',
+  status: 'Accepted',
+  integration: 'none',
+  contactName: 'Taylor Novak',
+  contactPerson: 'Taylor Novak',
+  engagementPartner: 'R. Chandra',
+  email: 'taylor@birchwoodtrust.ca',
+  repository: 'Repository',
+  assignedPartner: 'Cpt',
+  assignedTeam: null,
+  businessPhone: '(416) 555-0319',
+  cellPhone: null,
+  clientCountry: 'ca',
+  industryType: 'Trust/Estate',
+  engagements: [
+   { id: 'COM-BFT-Dec312024', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+   { id: 'COM-BFT-Dec312023', type: 'Compilation (COM)', periodEnd: 'Dec 31, 2023', status: 'Completed', dateCreated: 'Jan 12, 2024 09:00 AM' },
+   { id: 'REV-BFT-Dec312024', type: 'Review (REV)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+   { id: 'T3-BFT-Dec312024', type: 'T3 (Trusts)', periodEnd: 'Dec 31, 2024', status: 'In Progress', dateCreated: 'Jan 15, 2025 09:00 AM' },
+  ],
+ },
 ];
 
 export const CLIENT_GROUPS_KEY = 'cds_client_groups_v1';
@@ -563,7 +634,10 @@ export function saveClientGroups(groups: string[]): void {
 export function loadClients(): Client[] {
  try {
   const raw = localStorage.getItem(CLIENTS_KEY);
-  if (raw) return JSON.parse(raw);
+  if (raw) {
+   const parsed: Client[] = JSON.parse(raw);
+   return parsed.map(c => ({ ...c, entityType: c.entityType || 'Corporation' }));
+  }
  } catch {}
  return clientsData;
 }

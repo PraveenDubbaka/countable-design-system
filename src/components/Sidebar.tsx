@@ -25,7 +25,9 @@ const DEFAULT_CA_SO_HIDDEN: Record<string, string[]> = {
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, ChevronLeft, Search, Plus, Expand, Trash2, Folder, Check, FileText, FileBarChart, NotebookPen, Table, Copy, Pencil, FolderInput, MoreVertical, GripVertical, X, Save, Files, Send, AlertCircle, MessageSquare, FilePlus2, FolderPlus, ArrowUpDown, Upload, Image, Download, Move, Eye } from "lucide-react";
-import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { templateTree, allTemplateViews, type TreeItem, TEMPLATE_CONFIG, TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
+import { loadEngagements } from "@/store/engagementsStore";
+import { loadClients } from "@/data/clientsData";
 import { FolderSolidIcon, FolderPlusIcon, FolderMinusIcon } from "@/components/icons/FolderIcons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -65,6 +67,7 @@ import signoffUncheckAllIcon from "@/assets/signoff-uncheck-all.png";
 import { useSecondaryPanel } from "@/hooks/useSecondaryPanel";
 import { FinancialStatementsPanelContent } from "@/components/FinancialStatementsPanelContent";
 import { FinancialStatementsIcon } from "@/components/icons/FinancialStatementsIcon";
+import { getEntityLabels } from "@/lib/entityLabels";
 
 interface FirmProfile {
  id: string;
@@ -729,7 +732,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
 
  // Engagement Templates tree state
  const [engTemplateExpandedFolders, setEngTemplateExpandedFolders] = useState<Set<string>>(
- () => new Set(["compilation", "review", "audit"])
+ () => new Set(["corporation", "corp-ca"])
  );
  const engTemplateSelectedId = searchParams.get("template") || "comp4200";
  const [engTemplateSearchQuery, setEngTemplateSearchQuery] = useState("");
@@ -995,16 +998,34 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Load saved checklists on mount and listen for new saves
  useEffect(() => {
  const seedDefaultCompilationChecklists = (): SavedChecklist[] => {
- const items: { id: string; generator: () => any }[] = [
+ // Resolved the same way as clientEntityType in the engagement-tree render below — this
+ // runs in its own effect scope (mount-only), so it can't close over that one.
+ const engId = location.pathname.split("/engagements/")[1]?.split("/")[0];
+ const clientEntityType = (() => {
+ const client = engId ? loadEngagements().find(e => e.id === engId)?.client : undefined;
+ const match = client ? loadClients().find(c => c.legalEntityName === client || c.entityName === client) : undefined;
+ return match?.entityType ?? "Corporation";
+ })();
+ const isUS = (() => {
+ const client = engId ? loadEngagements().find(e => e.id === engId)?.client : undefined;
+ const match = client ? loadClients().find(c => c.legalEntityName === client || c.entityName === client) : undefined;
+ return match?.clientCountry === "us";
+ })();
+ const trustVariant: "unit" | "other" = (() => {
+ const client = engId ? loadEngagements().find(e => e.id === engId)?.client : undefined;
+ const match = client ? loadClients().find(c => c.legalEntityName === client || c.entityName === client) : undefined;
+ return match?.trustVariant ?? "other";
+ })();
+ const items: { id: string; generator: (entityType?: string) => any }[] = [
  { id: "default-compilation-cac", generator: generateClientAcceptanceContinuanceChecklist },
  { id: "default-compilation-independence", generator: generateIndependenceChecklist },
  { id: "default-compilation-kcb", generator: generateKnowledgeOfClientBusinessChecklist },
  { id: "default-compilation-planning", generator: generatePlanningChecklist },
- { id: "default-compilation-el", generator: generateEngagementLetterChecklist },
- { id: "default-compilation-mr", generator: generateManagementResponsibilityChecklist },
+ { id: "default-compilation-el", generator: (entityType?: string) => generateEngagementLetterChecklist(entityType, isUS) },
+ { id: "default-compilation-mr", generator: (entityType?: string) => generateManagementResponsibilityChecklist(entityType, trustVariant) },
  ];
  const seeded: SavedChecklist[] = items.map(({ id, generator }) => {
- const data = generator();
+ const data = generator(clientEntityType);
  return {
  id,
  name: data.title,
@@ -1070,8 +1091,8 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  // Already on the page — just update the search param to select first item.
  setSearchParams({ template: firstTemplate }, { replace: true });
  }
- // Expand the compilation folder so the selected item is visible in the tree.
- setEngTemplateExpandedFolders(prev => new Set([...prev, "compilation"]));
+ // Expand Corporation · Canada so the selected item is visible in the tree.
+ setEngTemplateExpandedFolders(prev => new Set([...prev, "corporation", "corp-ca"]));
  } else if (itemId === "checklists") {
  navigate("/create", { state: { contentType: "checklists" } });
  } else {
@@ -2192,6 +2213,29 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  const isUSAuditEngagement = sidebarType === 'audit-us';
  const isAuditEngagement = sidebarType === 'audit-ca' || sidebarType === 'audit-us';
  const engFirstYear = engMeta?.firstYearAudit === true;
+ // P4: the Financial Statements tree/pages are entity-type aware (Partnership/Trust get a
+ // Statement of Partners'/Trust Capital page instead of Retained Earnings). Resolve the real
+ // client record behind this engagement the same way EngagementDetail does.
+ const clientEntityType = (() => {
+ const client = engId ? loadEngagements().find(e => e.id === engId)?.client : undefined;
+ const match = client ? loadClients().find(c => c.legalEntityName === client || c.entityName === client) : undefined;
+ return match?.entityType ?? "Corporation";
+ })();
+ // Only meaningful when clientEntityType === "Trust" — see entityLabels.ts.
+ const clientTrustVariant: "unit" | "other" = (() => {
+ const client = engId ? loadEngagements().find(e => e.id === engId)?.client : undefined;
+ const match = client ? loadClients().find(c => c.legalEntityName === client || c.entityName === client) : undefined;
+ return match?.trustVariant ?? "other";
+ })();
+ const capitalLabels = clientEntityType === "Partnership" || clientEntityType === "Trust" ? getEntityLabels(clientEntityType, clientTrustVariant) : null;
+ // Compilation/Review/Tax share this one tree's "co-el"/"co-mr" nodes (see EngagementDetail.tsx's
+ // matching resolveChecklistId) — only the "co-mr" label differs enough to be worth branching here.
+ const engagementKind: "Compilation" | "Review" | "Tax" = (() => {
+ const type = engId ? loadEngagements().find(e => e.id === engId)?.type : undefined;
+ if (type && TAX_ENGAGEMENT_TYPE_LABELS.has(type)) return "Tax";
+ if (type === "Review (REV)") return "Review";
+ return "Compilation";
+ })();
 
  // Find a node by ID within a GlobalTemplate tree (used for building procedure children)
  const findInGlobalTemplates = (nodes: GlobalTemplate[], id: string): GlobalTemplate | null => {
@@ -2705,14 +2749,26 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "co-ind", code: "IND", label: "Independence", icon: "checklist", route: "checklist/co-ind" },
  { id: "co-kcb", code: "KCB", label: "Knowledge of client business", icon: "checklist", route: "checklist/co-kcb" },
  { id: "co-pl", code: "PL", label: "Planning", icon: "checklist", route: "checklist/co-pl" },
+ ...(capitalLabels ? [{
+ id: "co-pw",
+ code: capitalLabels.worksheetCode,
+ label: capitalLabels.worksheetName,
+ icon: "worksheet" as const,
+ route: "checklist/pw-worksheet",
+ }] : []),
  { id: "co-el", code: "AL1.1", label: "Engagement Letter", icon: "letter", route: "checklist/co-el" },
- { id: "co-mr", code: "MR", label: "Management responsibility and acknowledgement", icon: "letter", route: "checklist/co-mr" },
+ { id: "co-mr", code: "MR", label: engagementKind === "Review" ? "Management representation letter" : "Management responsibility and acknowledgement", icon: "letter", route: "checklist/co-mr" },
  ]
  },
  {
  id: "do", code: "DO", label: "Documents", icon: "folder", hasPlus: true,
  children: [
- { id: "do-sha", code: "SHA", label: "Shareholders Agreements", icon: "folder" },
+ {
+ id: "do-sha",
+ code: clientEntityType === "Partnership" ? "PA" : clientEntityType === "Trust" ? "TD" : "SHA",
+ label: clientEntityType === "Partnership" ? "Partnership Agreement" : clientEntityType === "Trust" ? "Trust Deed" : "Shareholders Agreements",
+ icon: "folder",
+ },
  { id: "do-ren", code: "REN", label: "Rental/Lease Agreements", icon: "folder" },
  { id: "do-inc", code: "INC", label: "Incorporation Documents", icon: "folder" },
  { id: "do-ban", code: "BAN", label: "Banking Agreements", icon: "folder" },
@@ -2721,6 +2777,9 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  {
  id: "tb", code: "TB", label: "Trial Balance & Adj. Entries", icon: "folder", route: "trial-balance"
  },
+ ...(capitalLabels ? [{
+ id: "pc", code: "PC", label: capitalLabels.capitalLabel, icon: "worksheet" as const, route: "checklist/pc-worksheet",
+ }] : []),
  {
  id: "pr", code: "PR", label: "Procedures", icon: "folder",
  children: [
@@ -2810,7 +2869,13 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  { id: "fs-toc", label: "Table of Contents", icon: "doc", route: "checklist/fs-toc" },
  { id: "fs-comp", label: "Compilation report", icon: "doc", route: "checklist/fs-comp" },
  { id: "fs-bs", label: "Balance Sheet", icon: "doc", route: "checklist/fs-bs" },
- { id: "fs-is", label: "Statement of Income and Retained Earnings", icon: "doc", route: "checklist/fs-is" },
+ {
+ id: "fs-is",
+ label: clientEntityType === "Partnership" || clientEntityType === "Trust" ? "Statement of Income" : "Statement of Income and Retained Earnings",
+ icon: "doc", route: "checklist/fs-is",
+ },
+ ...(capitalLabels ? [{ id: "fs-pc", label: capitalLabels.statementTitle, icon: "doc" as const, route: "checklist/fs-pc" }]
+ : []),
  { id: "fs-cf", label: "Statement of Cash Flows", icon: "doc", route: "checklist/fs-cf" },
  { id: "fs-notes", label: "Notes to Financial Information", icon: "doc", route: "checklist/fs-notes" },
  ]

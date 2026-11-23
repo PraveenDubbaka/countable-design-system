@@ -14,15 +14,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
-import { format as formatDateFns } from "date-fns";
+import { DateField } from "@/components/DateField";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
-import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { TEMPLATE_CONFIG, TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
+import { getAccountingStandardsOptions } from "@/lib/accountingStandards";
+import { ParticipantsSection, validateParticipants } from "@/components/ParticipantsSection";
+import { type Participant, type OwnershipMode, saveParticipants, findPriorEngagementParticipants } from "@/store/participantsStore";
 import { getClientConnectionState, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
 import { accountingProviders } from "@/lib/accountingProviders";
 import { savedYearSources } from "@/lib/yearSourceSave";
+import { loadClients } from "@/data/clientsData";
 
 // Mirror of CLIENT_DATA in CreateEngagement.tsx — keep in sync if client data changes
 const CLIENT_DATA: Record<string, {
@@ -93,15 +95,11 @@ const ENGAGEMENT_TYPES = [
   { value: "Compilation (COM)", label: "Compilation (COM)" },
   { value: "Review (REV)", label: "Review (REV)" },
   { value: "T2 (Corporations)", label: "T2 (Corporations)" },
-];
-
-const ACCOUNTING_FRAMEWORKS = [
-  "ASPE — Canadian Accounting Standards for Private Enterprises",
-  "IFRS — International Financial Reporting Standards",
-  "US GAAP — Generally Accepted Accounting Principles (United States)",
-  "Tax Basis",
-  "Cash Basis",
-  "Modified Cash Basis",
+  { value: "1120 (US C-Corporation)", label: "1120 (US C-Corporation)" },
+  { value: "T5013 (Partnerships)", label: "T5013 (Partnerships)" },
+  { value: "1065 (Partnerships)", label: "1065 (Partnerships)" },
+  { value: "T3 (Trusts)", label: "T3 (Trusts)" },
+  { value: "1041 (Trusts)", label: "1041 (Trusts)" },
 ];
 
 const AUDIT_ROLES = [
@@ -432,56 +430,6 @@ const SourceIdentityRow = ({ provider, connected, entityName }: { provider: Sour
   </span>
 );
 
-// Calendar date field styled to match the form inputs (h-9, 10px radius, double-border focus); same as TB
-const DateField = ({
-  label, value, onChange, required = false, disabled = false,
-}: {
-  label?: string;
-  value: string; // MM/dd/yyyy
-  onChange: (value: string) => void;
-  required?: boolean;
-  disabled?: boolean;
-}) => {
-  const m = value ? value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) : null;
-  const parsed = m ? new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])) : undefined;
-  const selected = parsed && !isNaN(parsed.getTime()) ? parsed : undefined;
-  return (
-    <div className="flex flex-col gap-1">
-      {label && (
-        <label className="text-xs font-medium text-foreground">
-          {label}
-          {required && <span className="text-destructive ml-0.5">*</span>}
-        </label>
-      )}
-      <Popover>
-        <PopoverTrigger asChild disabled={disabled}>
-          <button
-            type="button"
-            disabled={disabled}
-            className={`input-double-border w-full h-9 px-3 py-2 text-sm rounded-[10px] outline-none transition-all duration-200 flex items-center text-left ${
-              disabled
-                ? "bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed"
-                : "bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]"
-            } ${selected ? "text-foreground" : "text-muted-foreground"}`}
-          >
-            <span className="flex-1 truncate">{selected ? formatDateFns(selected, "MM/dd/yyyy") : "MM/DD/YYYY"}</span>
-            <Calendar className="h-4 w-4 ml-auto shrink-0 text-muted-foreground" />
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <DatePickerCalendar
-            mode="single"
-            selected={selected}
-            onSelect={d => onChange(d ? formatDateFns(d, "MM/dd/yyyy") : "")}
-            initialFocus
-            className="p-3 pointer-events-auto"
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-};
-
 export default function CreateNewEngagement() {
   const navigate = useNavigate();
   const { engagements, addEngagement } = useEngagements();
@@ -490,8 +438,37 @@ export default function CreateNewEngagement() {
   const [clientName, setClientName] = useState("");
   const [engagementType, setEngagementType] = useState("");
 
-  const clientInfo = CLIENT_DATA[clientName] ?? null;
+  const realClient = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+  // Prefer the real client record over the static demo table — see CreateEngagement.tsx for
+  // why (CLIENT_DATA only seeds a handful of demo names; a newly created Partnership/Trust
+  // client previously fell through to null and silently lost its entity type).
+  const clientInfo = realClient
+    ? {
+        entityLegalName: realClient.legalEntityName || realClient.entityName,
+        entityType: realClient.entityType,
+        contactPerson: realClient.contactPerson || realClient.contactName || "",
+        engagementPartner: realClient.engagementPartner || realClient.assignedPartner || "",
+        integrations: realClient.integration ? [realClient.integration] : [],
+        businessPhone: realClient.businessPhone || "-",
+        cellPhone: realClient.cellPhone || "-",
+        industryType: realClient.industryType || "",
+        clientCountry: realClient.clientCountry || "ca",
+        hasQuebecPersonalInfo: realClient.hasQuebecPersonalInfo ?? false,
+        isUsTaxpayer: realClient.isUsTaxpayer ?? false,
+      }
+    : CLIENT_DATA[clientName] ?? null;
   const isAudit = engagementType === "Audit (AUD)";
+  const isTax = TAX_ENGAGEMENT_TYPE_LABELS.has(engagementType);
+  const isPartnershipOrTrust = clientInfo?.entityType === "Partnership" || clientInfo?.entityType === "Trust";
+
+  // Participants (P5) — shown only for Partnership/Trust clients.
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [ownershipMode, setOwnershipMode] = useState<OwnershipMode>("percentage");
+  const [capitalPresentation, setCapitalPresentation] = useState<"itemised" | "totalOnly">("totalOnly");
+  const [capitalVisibility, setCapitalVisibility] = useState<"open" | "restricted" | "partnerOnly">("open");
+  const priorParticipants = isPartnershipOrTrust
+    ? findPriorEngagementParticipants(engagements.filter(e => e.client === clientName).map(e => e.id), "")
+    : null;
 
   // Section 2: Engagement Details
   const [engagementId, setEngagementId] = useState("");
@@ -631,20 +608,12 @@ export default function CreateNewEngagement() {
     }
   };
 
-  const accountingStandardsOptions = (() => {
-    const frameworks = isAudit ? ACCOUNTING_FRAMEWORKS : [
-      "ASPE — Canadian Accounting Standards for Private Enterprises",
-      "IFRS — International Financial Reporting Standards",
-      "US GAAP — Generally Accepted Accounting Principles (United States)",
-      "Tax Basis", "Cash Basis", "Modified Cash Basis",
-    ];
-    if (clientInfo?.clientCountry === "us") {
-      const usFirst = frameworks.filter(fw => fw.includes("US GAAP") || fw.includes("PCAOB"));
-      const rest = frameworks.filter(fw => !fw.includes("US GAAP") && !fw.includes("PCAOB"));
-      return [...usFirst, ...rest].map(fw => ({ value: fw, label: fw }));
-    }
-    return frameworks.map(fw => ({ value: fw, label: fw }));
-  })();
+  const accountingStandardsOptions = getAccountingStandardsOptions({
+    isAudit,
+    isTax,
+    clientCountry: clientInfo?.clientCountry,
+    entityType: clientInfo?.entityType,
+  });
 
   const disclosureOptions = [
     { value: "Statement of cash flows", label: "Statement of cash flows" },
@@ -686,6 +655,8 @@ export default function CreateNewEngagement() {
     engagementType !== "" &&
     accountingStandards !== "";
 
+  const participantsValidation = isPartnershipOrTrust ? validateParticipants(participants, ownershipMode, clientInfo?.entityType ?? "") : null;
+
   const isFormValid =
     clientName.trim() !== "" &&
     engagementType !== "" &&
@@ -696,7 +667,8 @@ export default function CreateNewEngagement() {
     additionalDisclosures !== "" &&
     currentYearStart.trim() !== "" &&
     currentYearEnd.trim() !== "" &&
-    teamMembers.length > 0;
+    teamMembers.length > 0 &&
+    (!participantsValidation || participantsValidation.errors.length === 0);
 
   // Team handlers
   const getRecommendedCategory = () => {
@@ -801,7 +773,13 @@ export default function CreateNewEngagement() {
       yearSourceProviders: yearFields.yearSourceProviders,
       sourceYears: savedDataSource === "source" ? Math.max(1, sourceRows.length) : undefined,
       sourceProvider: savedDataSource === "source" ? rowProvider(sourceRows[0]) : undefined,
+      ownershipMode: isPartnershipOrTrust ? ownershipMode : undefined,
+      capitalPresentation: isPartnershipOrTrust ? capitalPresentation : undefined,
+      capitalVisibility: isPartnershipOrTrust ? capitalVisibility : undefined,
     });
+    if (isPartnershipOrTrust) {
+      saveParticipants(engagementId, participants.map(p => ({ ...p, engagementId })));
+    }
     if (isAudit && firstYearAudit) {
       toast.success("Engagement created — IE checklist and predecessor letter added.");
     } else {
@@ -1112,6 +1090,23 @@ export default function CreateNewEngagement() {
               </SectionCard>
             )}
 
+            {/* Participants — Partnership/Trust only */}
+            {isPartnershipOrTrust && (
+              <ParticipantsSection
+                entityType={clientInfo?.entityType ?? ""}
+                engagementId={engagementId}
+                participants={participants}
+                onChange={setParticipants}
+                ownershipMode={ownershipMode}
+                onOwnershipModeChange={setOwnershipMode}
+                capitalPresentation={capitalPresentation}
+                onCapitalPresentationChange={setCapitalPresentation}
+                capitalVisibility={capitalVisibility}
+                onCapitalVisibilityChange={setCapitalVisibility}
+                priorParticipants={priorParticipants}
+              />
+            )}
+
             {/* SECTION 5: ASSIGNED TEAM — gated on engagementDetailsValid */}
             {engagementDetailsValid && (
               <SectionCard
@@ -1213,6 +1208,7 @@ export default function CreateNewEngagement() {
           <TemplatePickerPanel
             open={showTemplatePicker}
             onClose={() => setShowTemplatePicker(false)}
+            clientEntityType={clientInfo?.entityType}
             suggestedTemplateId={
               isAudit && SHOW_NFP_PCAOB_TEMPLATES && accountingStandards.includes("ASNPO") ? "audit5101" :
               isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :

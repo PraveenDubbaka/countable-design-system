@@ -29,6 +29,22 @@ import { NewAdjEntryModal, type AdjLine, type AdjEntryMeta } from "@/components/
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { getUnresolvedDuplicateCount } from "@/data/mergeAccountsData";
 import { engagementsData } from "@/data/engagementsData";
+import { loadClients } from "@/data/clientsData";
+import { loadParticipants, type Participant } from "@/store/participantsStore";
+import {
+ getGroupingOptions,
+ getSubGroupingOptions,
+ isParticipantScoped,
+ getTaxCodeOptions,
+} from "@/lib/tbGroupings";
+import {
+ matchParticipantByName,
+ isPartnerLoanMiswired,
+ suggestFromAccountSequence,
+ suggestFromPriorMapping,
+ savePriorMapping,
+} from "@/lib/tbMappingSuggestions";
+import { loadTBMappingOverrides, saveTBMappingOverrides, type TBRowOverride } from "@/store/tbMappingStore";
 import MergeAccounts from "@/pages/MergeAccounts";
 import {
  ChevronDown,
@@ -108,8 +124,33 @@ const toolsMenuActions = [
 ];
 
 
+export interface TBRow {
+ id: string;
+ accNo: string;
+ description: string;
+ original: number;
+ adj: number;
+ final: number;
+ py1: number;
+ changePct: string;
+ py2: string;
+ mapNo: number | string;
+ ls: string;
+ grouping: string;
+ subGrouping: string;
+ cfCategory: string;
+ taxCode: number | string;
+ fxRate: number;
+ // Set only for rows whose Sub Grouping is participant-scoped (Partners' capital /
+ // Drawings-Distributions / Contributions) — see src/lib/tbGroupings.ts.
+ participantId?: string;
+ // True while the current grouping/subGrouping/participant is an unconfirmed suggestion
+ // from the auto-mapping engine, rather than something the preparer picked or confirmed.
+ autoAssigned?: boolean;
+}
+
 // Harbor Freight Logistics LLC — Trial Balance (USD) — Dec 31, 2025
-const baseTrialBalanceData = [
+export const baseTrialBalanceData: TBRow[] = [
  // Assets — debit balances (positive)
  { id: "1", accNo: "1010", description: "Cash & Bank", original: 1240000, adj: 0, final: 1240000, py1: 1085000, changePct: "14.29%", py2: "975,000.00", mapNo: 1010, ls: "BB", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1010, fxRate: 1.00 },
  { id: "2", accNo: "1100", description: "Accounts Receivable", original: 2100000, adj: 0, final: 2100000, py1: 1920000, changePct: "9.38%", py2: "1,750,000.00", mapNo: 1100, ls: "BB", grouping: "Assets", subGrouping: "Current assets", cfCategory: "CFO", taxCode: 1100, fxRate: 1.00 },
@@ -138,13 +179,13 @@ const baseTrialBalanceData = [
  { id: "21", accNo: "4000", description: "Service Revenue", original: -18400000, adj: 0, final: -18400000, py1: -16820000, changePct: "9.39%", py2: "(15,440,000.00)", mapNo: 4000, ls: "I", grouping: "Revenue", subGrouping: "Operating revenue", cfCategory: "CFO", taxCode: 4000, fxRate: 1.00 },
  { id: "22", accNo: "4900", description: "Other Income", original: -47000, adj: 0, final: -47000, py1: -38000, changePct: "23.68%", py2: "(31,000.00)", mapNo: 4900, ls: "I", grouping: "Revenue", subGrouping: "Other income", cfCategory: "CFO", taxCode: 4900, fxRate: 1.00 },
  // Expenses — debit balances (positive)
- { id: "23", accNo: "5000", description: "Cost of Services", original: 12144000, adj: 0, final: 12144000, py1: 11116000, changePct: "9.25%", py2: "10,208,000.00", mapNo: 5000, ls: "I", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "CFO", taxCode: 5000, fxRate: 1.00 },
- { id: "24", accNo: "6100", description: "Salaries & Benefits", original: 2160000, adj: 0, final: 2160000, py1: 2040000, changePct: "5.88%", py2: "1,920,000.00", mapNo: 6100, ls: "I", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "CFO", taxCode: 6100, fxRate: 1.00 },
- { id: "25", accNo: "6200", description: "Fuel & Vehicle", original: 980000, adj: 0, final: 980000, py1: 876000, changePct: "11.87%", py2: "798,000.00", mapNo: 6200, ls: "I", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "CFO", taxCode: 6200, fxRate: 1.00 },
+ { id: "23", accNo: "5000", description: "Cost of Services", original: 12144000, adj: 0, final: 12144000, py1: 11116000, changePct: "9.25%", py2: "10,208,000.00", mapNo: 5000, ls: "I", grouping: "Expenses", subGrouping: "Operating expenses", cfCategory: "CFO", taxCode: 5000, fxRate: 1.00 },
+ { id: "24", accNo: "6100", description: "Salaries & Benefits", original: 2160000, adj: 0, final: 2160000, py1: 2040000, changePct: "5.88%", py2: "1,920,000.00", mapNo: 6100, ls: "I", grouping: "Expenses", subGrouping: "Operating expenses", cfCategory: "CFO", taxCode: 6100, fxRate: 1.00 },
+ { id: "25", accNo: "6200", description: "Fuel & Vehicle", original: 980000, adj: 0, final: 980000, py1: 876000, changePct: "11.87%", py2: "798,000.00", mapNo: 6200, ls: "I", grouping: "Expenses", subGrouping: "Operating expenses", cfCategory: "CFO", taxCode: 6200, fxRate: 1.00 },
  { id: "26", accNo: "6300", description: "Rent & Occupancy", original: 440000, adj: 0, final: 440000, py1: 420000, changePct: "4.76%", py2: "400,000.00", mapNo: 6300, ls: "I", grouping: "Expenses", subGrouping: "Admin expenses", cfCategory: "CFO", taxCode: 6300, fxRate: 1.00 },
  { id: "27", accNo: "6400", description: "Depreciation & Amortization", original: 480000, adj: 0, final: 480000, py1: 440000, changePct: "9.09%", py2: "400,000.00", mapNo: 6400, ls: "I", grouping: "Expenses", subGrouping: "Admin expenses", cfCategory: "Excl", taxCode: 6400, fxRate: 1.00 },
  { id: "28", accNo: "6500", description: "Interest Expense", original: 384000, adj: 0, final: 384000, py1: 412000, changePct: "(6.80)%", py2: "440,000.00", mapNo: 6500, ls: "I", grouping: "Expenses", subGrouping: "Finance costs", cfCategory: "CFF", taxCode: 6500, fxRate: 1.00 },
- { id: "29", accNo: "6900", description: "Other Operating Expenses", original: 856000, adj: 0, final: 856000, py1: 794000, changePct: "7.81%", py2: "728,000.00", mapNo: 6900, ls: "I", grouping: "Expenses", subGrouping: "Operating expe...", cfCategory: "CFO", taxCode: 6900, fxRate: 1.00 },
+ { id: "29", accNo: "6900", description: "Other Operating Expenses", original: 856000, adj: 0, final: 856000, py1: 794000, changePct: "7.81%", py2: "728,000.00", mapNo: 6900, ls: "I", grouping: "Expenses", subGrouping: "Operating expenses", cfCategory: "CFO", taxCode: 6900, fxRate: 1.00 },
  { id: "30", accNo: "7000", description: "Income Tax Expense", original: 249000, adj: 0, final: 249000, py1: 213000, changePct: "16.90%", py2: "183,000.00", mapNo: 7000, ls: "I", grouping: "Expenses", subGrouping: "Finance costs", cfCategory: "CFO", taxCode: 7000, fxRate: 1.00 },
 ];
 
@@ -159,12 +200,12 @@ const formatNumber = (val: number | string) => {
 // trialBalanceData is managed as state inside the TrialBalance component
 
 const totals = { original: 0.00, adj: 0.00, final: 0.00, py1: 0.00, py2: 0.00 };
-const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
+export const netIncome = { original: 847000, adj: 0.00, final: 847000, py1: 740000, py2: "589,000.00" };
 
 
 const TB_LOADED_KEY = (id: string) => `tb-loaded-${id}`;
 
-function computeAdjFromStorage(engId: string): Record<string, number> {
+export function computeAdjFromStorage(engId: string): Record<string, number> {
   const prefix = `adj-entry-${engId}-`;
   const accAdj: Record<string, number> = {};
   Object.keys(localStorage).filter(k => k.startsWith(prefix)).forEach(key => {
@@ -177,6 +218,48 @@ function computeAdjFromStorage(engId: string): Record<string, number> {
     } catch {}
   });
   return accAdj;
+}
+
+// Partnership/Trust demo seed — one capital account per participant so the entity-aware
+// grouping, participant column and auto-mapping suggestions are actually demonstrable (the
+// Corporation demo data has no per-partner capital accounts). Opening balance comes from the
+// participant's own openingCapital, not an invented figure.
+export function buildParticipantScopedRows(entityType: string, participants: Participant[]): TBRow[] {
+ if (entityType === "Corporation" || participants.length === 0) return [];
+ const nameLabel = entityType === "Trust" ? "Beneficiary" : "Partner";
+ return participants.map((p, i) => {
+ const accNo = String(3101 + i);
+ const opening = p.openingCapital ?? 0;
+ return {
+ id: `pc-${p.id}`,
+ accNo,
+ description: `${nameLabel} Capital - ${p.name || "Unnamed"}`,
+ original: opening,
+ adj: 0,
+ final: opening,
+ py1: opening,
+ changePct: "0.00%",
+ py2: formatNumber(opening),
+ mapNo: "",
+ ls: "BB",
+ grouping: "Equity",
+ subGrouping: "Partners' capital",
+ cfCategory: "NA",
+ taxCode: "",
+ fxRate: 1.00,
+ // Intentionally left unassigned — the auto-mapping effect below suggests a participant
+ // from the description (demonstrating the suggestion engine) rather than pre-wiring it.
+ } satisfies TBRow;
+ });
+}
+
+function getRowFilterCategory(row: TBRow, override?: TBRowOverride): FilterId {
+ if (row.final === 0) return "zeroBal";
+ if (!row.grouping) return "unmapped";
+ if (row.autoAssigned && !override?.confirmed) return "autoMapped";
+ if (override?.confirmed) return "changeRow";
+ if (row.id.startsWith("pc-")) return "newRow";
+ return "addedRow";
 }
 
 export default function TrialBalance() {
@@ -261,6 +344,140 @@ export default function TrialBalance() {
  const duplicateCount = getUnresolvedDuplicateCount(engagementId);
  const duplicatesPending = duplicateCount > 0;
 
+ const clientEntityType = (() => {
+ try {
+ return loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName)?.entityType ?? "Corporation";
+ } catch {
+ return "Corporation";
+ }
+ })();
+ const clientCountry = (() => {
+ try {
+ return loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName)?.clientCountry ?? "ca";
+ } catch {
+ return "ca";
+ }
+ })();
+ const participants = engagementId ? loadParticipants(engagementId) : [];
+
+ const [mappingOverrides, setMappingOverrides] = useState<Record<string, TBRowOverride>>(() =>
+ engagementId ? loadTBMappingOverrides(engagementId) : {}
+ );
+
+ // Apply any previously-confirmed row edits (grouping/sub grouping/participant/tax code/map no)
+ // on mount — these previously had NO persistence at all and reset on every reload.
+ useEffect(() => {
+ if (!engagementId) return;
+ setTrialBalanceData(prev => {
+ let changed = false;
+ const next = prev.map(row => {
+ const override = mappingOverrides[row.id];
+ if (!override?.confirmed) return row;
+ changed = true;
+ return {
+ ...row,
+ grouping: override.grouping ?? row.grouping,
+ subGrouping: override.subGrouping ?? row.subGrouping,
+ participantId: override.participantId ?? row.participantId,
+ taxCode: override.taxCode ?? row.taxCode,
+ mapNo: override.mapNo ?? row.mapNo,
+ autoAssigned: false,
+ };
+ });
+ return changed ? next : prev;
+ });
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [engagementId]);
+
+ // Partnership/Trust: seed participant capital rows, remap the two legacy corporation-shaped
+ // equity rows to a valid entity-aware sub grouping, and run the auto-mapping suggestion
+ // engine for any participant-scoped row still missing a participant. Every suggestion here
+ // is unconfirmed (autoAssigned: true) and can be overridden in the row's own Select.
+ useEffect(() => {
+ if (!engagementId || clientEntityType === "Corporation") return;
+ setTrialBalanceData(prev => {
+ let changed = false;
+ const withSeedRows = [...prev];
+ const existingIds = new Set(prev.map(r => r.id));
+ buildParticipantScopedRows(clientEntityType, participants).forEach(r => {
+ if (!existingIds.has(r.id)) { withSeedRows.push(r); changed = true; }
+ });
+
+ const mappedForSequence = withSeedRows
+ .filter(r => r.subGrouping)
+ .map(r => ({ accNo: r.accNo, subGrouping: r.subGrouping, participantId: r.participantId }));
+
+ const next = withSeedRows.map(row => {
+ if (mappingOverrides[row.id]?.confirmed) return row;
+
+ // Legacy corp-shaped seed rows (Common Stock / Retained Earnings) aren't valid sub
+ // groupings for Partnership/Trust — suggest the closest entity-aware analog.
+ if (row.accNo === "3100" && row.subGrouping === "Share capital") {
+ changed = true;
+ return { ...row, subGrouping: "Contributions", autoAssigned: true };
+ }
+ if (row.accNo === "3200" && row.subGrouping === "Retained earnings") {
+ changed = true;
+ return { ...row, subGrouping: clientEntityType === "Trust" ? "Accumulated income" : "Partners' capital", autoAssigned: true };
+ }
+
+ if (!isParticipantScoped(row.subGrouping) || row.participantId) return row;
+
+ const byName = matchParticipantByName(row.description, participants);
+ if (byName && "participantId" in byName) {
+ changed = true;
+ return { ...row, participantId: byName.participantId, autoAssigned: true };
+ }
+ const bySequence = suggestFromAccountSequence(row.accNo, mappedForSequence);
+ if (bySequence?.participantId) {
+ changed = true;
+ return { ...row, participantId: bySequence.participantId, autoAssigned: true };
+ }
+ const byPrior = suggestFromPriorMapping(clientName, row.accNo);
+ if (byPrior?.participantId) {
+ changed = true;
+ return { ...row, participantId: byPrior.participantId, autoAssigned: true };
+ }
+ return row;
+ });
+ return changed ? next : prev;
+ });
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [engagementId, clientEntityType, participants.length]);
+
+ function updateRowMapping(rowId: string, patch: Partial<Pick<TBRow, "grouping" | "subGrouping" | "participantId" | "taxCode" | "mapNo">>) {
+ const row = trialBalanceData.find(r => r.id === rowId);
+ setTrialBalanceData(prev => prev.map(r => {
+ if (r.id !== rowId) return r;
+ const updated: TBRow = { ...r, ...patch, autoAssigned: false };
+ if (patch.grouping) {
+ const validSubGroupings = getSubGroupingOptions(clientEntityType, patch.grouping);
+ if (!validSubGroupings.includes(updated.subGrouping)) {
+ updated.subGrouping = validSubGroupings[0] ?? "";
+ }
+ }
+ return updated;
+ }));
+ if (engagementId) {
+ setMappingOverrides(prev => {
+ const next: Record<string, TBRowOverride> = {
+ ...prev,
+ [rowId]: { ...prev[rowId], ...patch, confirmed: true, autoAssigned: false },
+ };
+ saveTBMappingOverrides(engagementId, next);
+ return next;
+ });
+ }
+ if (row) {
+ savePriorMapping(clientName, row.accNo, {
+ grouping: patch.grouping ?? row.grouping,
+ subGrouping: patch.subGrouping ?? row.subGrouping,
+ participantId: patch.participantId ?? row.participantId,
+ taxCode: String(patch.taxCode ?? row.taxCode ?? ""),
+ });
+ }
+ }
+
  const trialBalanceBreadcrumb = (
  <div className="flex items-center gap-1 whitespace-nowrap flex-shrink-0 text-sidebar-foreground">
  {/* Client Name (read-only) */}
@@ -309,6 +526,12 @@ export default function TrialBalance() {
  className="ml-1 whitespace-nowrap"
  >
  {status}
+ </Badge>
+
+ {/* Entity Type Badge — Corporation/Partnership/Trust, so the entity-aware TB behaviour
+ (grouping options, Participant column, tax code stubs) is visible wherever this engagement is. */}
+ <Badge variant="outline" className="ml-1 whitespace-nowrap">
+ {clientEntityType}
  </Badge>
 
  {/* Xero Integration Badge */}
@@ -768,6 +991,7 @@ export default function TrialBalance() {
  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">LS</th>
  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Grouping</th>
  <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Sub Grouping</th>
+ <th className="text-left px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Participant</th>
  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">CF Category</th>
  <th className="text-center px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">Tax Code</th>
  <th className="text-right px-6 py-3 text-xs font-semibold text-foreground whitespace-nowrap">
@@ -776,11 +1000,15 @@ export default function TrialBalance() {
  </tr>
  </thead>
  <tbody>
- {trialBalanceData.map((row, idx) => {
- // Demo: assign each row a filter category cyclically so badges are visible
- const cat = FILTER_CATEGORIES[idx % FILTER_CATEGORIES.length];
+ {trialBalanceData.map((row) => {
+ const override = mappingOverrides[row.id];
+ const cat = FILTER_CATEGORIES.find(c => c.id === getRowFilterCategory(row, override))!;
  const visible = activeFilters.size === 0 || activeFilters.has(cat.id);
  if (!visible) return null;
+ const subGroupingOptions = getSubGroupingOptions(clientEntityType, row.grouping);
+ const participantScoped = isParticipantScoped(row.subGrouping);
+ const loanWarning = isPartnerLoanMiswired(row.description, row.grouping);
+ const taxCodeOptions = getTaxCodeOptions(clientEntityType, clientCountry);
  return (
  <tr
  key={row.id}
@@ -802,7 +1030,19 @@ export default function TrialBalance() {
  </td>
  <td className="px-2 py-2"><Checkbox /></td>
  <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.accNo}</td>
- <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.description}</td>
+ <td className="px-6 py-2 text-foreground whitespace-nowrap">
+ <div className="flex items-center gap-1.5">
+ <span>{row.description}</span>
+ {loanWarning && (
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <span><Badge variant="warning" className="gap-1"><AlertTriangle className="h-3 w-3" />Loan in Equity</Badge></span>
+ </TooltipTrigger>
+ <TooltipContent side="top">A "loan" account is usually Assets or Liabilities, not Equity — please confirm this mapping</TooltipContent>
+ </Tooltip>
+ )}
+ </div>
+ </td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{formatNumber(row.original)}</td>
  <td className="px-6 py-2 text-right whitespace-nowrap">
  <button onClick={() => { setSelectedAdjRow({ accNo: row.accNo, description: row.description }); setAdjModalOpen(true); }} className="text-link font-medium hover:underline focus:outline-none">
@@ -814,18 +1054,71 @@ export default function TrialBalance() {
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.changePct}</td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.py2}</td>
  <td className="px-6 py-2 text-right whitespace-nowrap">
- <span className="text-link font-medium">{formatNumber(row.mapNo)}</span>
+ <Input
+ type="number"
+ value={row.mapNo === "" ? "" : row.mapNo}
+ onChange={e => updateRowMapping(row.id, { mapNo: e.target.value === "" ? "" : Number(e.target.value) })}
+ className="h-7 w-20 text-xs text-right ml-auto"
+ />
  </td>
  <td className="px-6 py-2 text-center whitespace-nowrap">
  <span className="text-link font-medium">{row.ls}</span>
  </td>
- <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.grouping}</td>
- <td className="px-6 py-2 text-foreground whitespace-nowrap">{row.subGrouping}</td>
+ <td className="px-6 py-2 whitespace-nowrap">
+ <Select value={row.grouping} onValueChange={v => updateRowMapping(row.id, { grouping: v })}>
+ <SelectTrigger className="h-7 w-32 text-xs"><SelectValue /></SelectTrigger>
+ <SelectContent>
+ {Object.keys(getGroupingOptions(clientEntityType)).map(g => (
+ <SelectItem key={g} value={g}>{g}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ </td>
+ <td className="px-6 py-2 whitespace-nowrap">
+ <Select value={row.subGrouping} onValueChange={v => updateRowMapping(row.id, { subGrouping: v })}>
+ <SelectTrigger className="h-7 w-40 text-xs"><SelectValue /></SelectTrigger>
+ <SelectContent>
+ {subGroupingOptions.map(sg => (
+ <SelectItem key={sg} value={sg}>{sg}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ </td>
+ <td className="px-6 py-2 whitespace-nowrap">
+ {participantScoped ? (
+ <Select value={row.participantId ?? ""} onValueChange={v => updateRowMapping(row.id, { participantId: v })}>
+ <SelectTrigger className="h-7 w-36 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectContent>
+ {participants.map(p => (
+ <SelectItem key={p.id} value={p.id}>{p.name || "Unnamed"}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ ) : (
+ <span className="text-muted-foreground">—</span>
+ )}
+ </td>
  <td className="px-6 py-2 text-center whitespace-nowrap">
  <span className="text-link font-medium">{row.cfCategory}</span>
  </td>
  <td className="px-6 py-2 text-center whitespace-nowrap">
- <span className="text-link font-medium">{row.taxCode}</span>
+ {clientEntityType === "Corporation" ? (
+ <Input
+ type="number"
+ value={row.taxCode === "" ? "" : row.taxCode}
+ onChange={e => updateRowMapping(row.id, { taxCode: e.target.value })}
+ className="h-7 w-20 text-xs text-center mx-auto"
+ />
+ ) : (
+ <Select value={typeof row.taxCode === "string" && row.taxCode ? row.taxCode : ""} onValueChange={v => updateRowMapping(row.id, { taxCode: v })}>
+ <SelectTrigger className="h-7 w-44 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectContent>
+ {taxCodeOptions.map(tc => (
+ <SelectItem key={tc} value={tc}>{tc}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ )}
  </td>
  <td className="px-6 py-2 text-right text-foreground whitespace-nowrap">{row.fxRate.toFixed(2)}</td>
  </tr>
@@ -843,7 +1136,7 @@ export default function TrialBalance() {
  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py1)}</td>
  <td className="px-6 py-2"></td>
  <td className="px-6 py-2 text-right font-semibold text-foreground whitespace-nowrap">{formatNumber(totals.py2)}</td>
- <td colSpan={7}></td>
+ <td colSpan={8}></td>
  </tr>
 
  {/* Net Income row */}
@@ -856,7 +1149,7 @@ export default function TrialBalance() {
  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{formatNumber(netIncome.py1)}</td>
  <td className="px-6 py-2"></td>
  <td className="px-6 py-2 text-right font-bold text-foreground whitespace-nowrap">{netIncome.py2}</td>
- <td colSpan={7}></td>
+ <td colSpan={8}></td>
  </tr>
  </tfoot>
  </table>
@@ -872,8 +1165,15 @@ export default function TrialBalance() {
      const entryId = meta.entryNo.replace(/[^a-zA-Z0-9]/g, "-");
      const engId = engagementId ?? "default";
 
+     // An AJE line touching a participant-scoped account carries that account's participant
+     // automatically — no separate picker in the modal, since the mapping is already known.
+     const linesWithParticipant = savedLines.map(l => {
+       const tbRow = trialBalanceData.find(r => r.accNo === l.accNo);
+       return tbRow?.participantId ? { ...l, participantId: tbRow.participantId } : l;
+     });
+
      // 1. Persist the adj entry
-     writeJsonToLocalStorage(`adj-entry-${engId}-${entryId}`, { lines: savedLines, meta, clientName, engId: engagementId });
+     writeJsonToLocalStorage(`adj-entry-${engId}-${entryId}`, { lines: linesWithParticipant, meta, clientName, engId: engagementId });
 
      // 2. Recompute ALL adj from storage (avoids double-counting on re-save)
      const accAdj = computeAdjFromStorage(engId);
@@ -889,7 +1189,7 @@ export default function TrialBalance() {
      const existing = readJsonFromLocalStorage<{ sectionA?: unknown[]; sectionB?: unknown[] }>(aimKey, { sectionA: [], sectionB: [] });
      let assets = 0, liabilities = 0, pretaxIncome = 0, equity = 0;
      savedLines.forEach(l => {
-       const tbRow = baseTrialBalanceData.find(r => r.accNo === l.accNo);
+       const tbRow = trialBalanceData.find(r => r.accNo === l.accNo);
        const net = (parseFloat(l.debit) || 0) - (parseFloat(l.credit) || 0);
        const g = (tbRow?.grouping ?? "").toLowerCase();
        if (g.includes("asset")) assets += net;
@@ -897,6 +1197,13 @@ export default function TrialBalance() {
        else if (g.includes("equity")) equity += -net;
        else pretaxIncome += -net;
      });
+
+     // An AJE that changes net income invalidates any already-posted capital allocation for
+     // Partnership/Trust engagements — mark it stale. Displaying/consuming this flag (a banner
+     // prompting a re-run, blocking before export) is P8 scope; P7 only sets it.
+     if (pretaxIncome !== 0 && clientEntityType !== "Corporation" && engagementId) {
+       localStorage.setItem(`cds_allocation_stale_${engagementId}`, "true");
+     }
      const fallbackDesc = savedLines.filter(l => l.description).map(l => l.description).join("; ") || savedLines.filter(l => l.accNo).map(l => l.accNo).join("; ");
      const newRow = {
        id: `tb-${entryId}-${Date.now()}`,

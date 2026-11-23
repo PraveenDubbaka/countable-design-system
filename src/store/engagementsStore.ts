@@ -28,6 +28,20 @@ export const SEED_ENGAGEMENTS: EngagementRecord[] = [
  { id: "COM-CAS-Dec312024", client: "cash flow ls", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 13, 2026 09:21 AM", firstYearAudit: false },
  { id: "COM-QB-Jan142026", client: "qb 40.1", type: "Compilation (COM)", yearEnd: "Jan 14, 2026", team: "R. Chandra", status: "New", statusVariant: "new", hasRF: false, dateCreated: "Jan 13, 2026 04:36 AM", firstYearAudit: false },
  { id: "COM-SHR-Dec302023", client: "ShRoll Forward", type: "Compilation (COM)", yearEnd: "Dec 30, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: true, dateCreated: "Jan 13, 2026 03:51 AM", firstYearAudit: false },
+ // Committed Partnership/Trust demo fixtures — see matching Client entries in clientsData.ts
+ // and SEED_PARTICIPANTS in participantsStore.ts.
+ { id: "COM-WCP-Dec312024", client: "Willow Creek Partners LLP", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "COM-WCP-Dec312023", client: "Willow Creek Partners LLP", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 12, 2024 09:00 AM", firstYearAudit: false },
+ { id: "COM-BFT-Dec312024", client: "Birchwood Family Trust", type: "Compilation (COM)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "COM-BFT-Dec312023", client: "Birchwood Family Trust", type: "Compilation (COM)", yearEnd: "Dec 31, 2023", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 12, 2024 09:00 AM", firstYearAudit: false },
+ // Review/Tax demo fixtures for the same two Partnership/Trust clients — give the dashboard
+ // and engagements list shortcuts a real Review and Tax engagement to jump into, not just
+ // Compilation. Type strings match TEMPLATE_CONFIG's engagementTypeLabel in
+ // engagementTemplatesData.ts so EngagementDetail.tsx resolves the right engagementKind.
+ { id: "REV-WCP-Dec312024", client: "Willow Creek Partners LLP", type: "Review (REV)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "T5013-WCP-Dec312024", client: "Willow Creek Partners LLP", type: "T5013 (Partnerships)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "REV-BFT-Dec312024", client: "Birchwood Family Trust", type: "Review (REV)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
+ { id: "T3-BFT-Dec312024", client: "Birchwood Family Trust", type: "T3 (Trusts)", yearEnd: "Dec 31, 2024", team: "R. Chandra", status: "In Progress", statusVariant: "inProgress", hasRF: false, dateCreated: "Jan 15, 2025 09:00 AM", firstYearAudit: false },
 ];
 
 function seedDemoEngagementMeta() {
@@ -97,6 +111,10 @@ export type EngagementMeta = {
   *  py2 is "nodata" when last year was the entity's First Year of Operations (no year before it). */
  priorYearSources?: { py1: YearSourceKind; py2: YearSourceKind | "nodata" };
  sourceProvider?: "xero" | "quickbooks" | "sage"; // which accounting source the engagement is linked to
+ // Partnership/Trust (P5) — asked at Create Engagement, not discovered at export.
+ ownershipMode?: "percentage" | "units"; // chosen once per engagement, applies to every participant
+ capitalPresentation?: "itemised" | "totalOnly"; // balance sheet face; defaults to totalOnly (P9)
+ capitalVisibility?: "open" | "restricted" | "partnerOnly";
 };
 
 export function getEngagementMeta(id: string): EngagementMeta {
