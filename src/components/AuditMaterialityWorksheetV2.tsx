@@ -106,6 +106,9 @@ const ALL_BASIS_OPTIONS: BasisOption[] = [...BASIS_OPTIONS_BY_TYPE.profit, ...BA
 const findBasis = (v: string) => ALL_BASIS_OPTIONS.find(o => o.value === v);
 const defaultPctFor = (basis: string) => (basis === "profitBeforeTax" ? "5.00" : "1.00");
 
+// Selected-row tint drawn over the opaque card background so sticky cells stay continuous with the row tint
+const STICKY_TINT = "bg-[linear-gradient(hsl(var(--primary)/0.04),hsl(var(--primary)/0.04))]";
+
 const fmtInt = (n: number) => Math.round(n).toLocaleString("en-US");
 
 // Months from a to b (fractional, by calendar months)
@@ -176,15 +179,18 @@ function TdSelect({
  onChange,
  options,
  placeholder = "Select…",
+ wrap = false,
 }: {
  value: string;
  onChange: (v: string) => void;
  options: { value: string; label: string }[];
  placeholder?: string;
+ /** Let the selected label wrap onto a second line instead of truncating */
+ wrap?: boolean;
 }) {
  return (
  <Select value={value} onValueChange={onChange}>
- <SelectTrigger className="h-8 w-full min-w-0 text-sm">
+ <SelectTrigger className={wrap ? "h-auto min-h-8 w-full min-w-0 gap-1 px-2 text-left text-xs leading-4 whitespace-normal [&>span]:whitespace-normal [&>span]:overflow-visible [&>span]:text-clip" : "h-8 w-full min-w-0 text-sm"}>
  <SelectValue placeholder={placeholder} />
  </SelectTrigger>
  <SelectContent>
@@ -646,8 +652,8 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
- <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
+ <th className="sticky left-0 z-20 bg-muted px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-[77px] min-w-[77px] max-w-[77px]">Primary</th>
+ <th className="sticky left-[77px] z-20 bg-muted px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[220px] min-w-[220px] max-w-[220px] shadow-[inset_-1px_0_0_hsl(var(--border)),4px_0_6px_-4px_rgba(0,0,0,0.18)]">Basis for Calculations</th>
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Period to date ($)</th>
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">This period anticipated ($)</th>
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Previous period ($)</th>
@@ -674,7 +680,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
      : ''
  }`}
  >
- <td className="px-3 py-2.5 align-top text-center">
+ <td className={`sticky left-0 z-[5] bg-card px-3 py-2.5 align-top text-center w-[77px] min-w-[77px] max-w-[77px] ${isSelected ? STICKY_TINT : ""}`}>
  <div className="flex h-8 items-center justify-center">
  <input
  type="radio"
@@ -685,8 +691,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  />
  </div>
  </td>
- <td className="px-2 py-2.5 align-top w-[220px] min-w-[220px] max-w-[220px]">
+ <td className={`sticky left-[77px] z-[5] bg-card px-2 py-2.5 align-top w-[220px] min-w-[220px] max-w-[220px] shadow-[inset_-1px_0_0_hsl(var(--border)),4px_0_6px_-4px_rgba(0,0,0,0.18)] ${isSelected ? STICKY_TINT : ""}`}>
  <TdSelect
+ wrap
  value={row.basis}
  onChange={(v) => handleBasisChange(row.id, v)}
  options={BASIS_OPTIONS_BY_TYPE[entityType]}
