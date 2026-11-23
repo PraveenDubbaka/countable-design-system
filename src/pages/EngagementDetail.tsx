@@ -27,11 +27,14 @@ import { AuditMaterialityWorksheetV2 } from "@/components/AuditMaterialityWorksh
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
+import { AuditTimeTrackerWorksheetV2 } from "@/components/AuditTimeTrackerWorksheetV2";
 import { AuditMgmtRequestsWorksheet } from "@/components/AuditMgmtRequestsWorksheet";
 import { BulkRequestsWorksheet } from "@/components/BulkRequestsWorksheet";
 import { AuditTeamPlanningWorksheet } from "@/components/AuditTeamPlanningWorksheet";
+import { AuditTeamPlanningWorksheetV2 } from "@/components/AuditTeamPlanningWorksheetV2";
 import { AuditSAEWorksheet } from "@/components/AuditSAEWorksheet";
 import { AuditOASWorksheet } from "@/components/AuditOASWorksheet";
+import { AuditOASWorksheetV2 } from "@/components/AuditOASWorksheetV2";
 import { Audit311Worksheet } from "@/components/Audit311Worksheet";
 import { Audit320Worksheet } from "@/components/Audit320Worksheet";
 import { Audit325Worksheet } from "@/components/Audit325Worksheet";
@@ -1012,17 +1015,20 @@ export default function EngagementDetail() {
  const [checklist, setChecklist] = useState<Checklist | null>(null);
  const [isLoading, setIsLoading] = useState(true);
  const [isCompactMode, setIsCompactMode] = useState(false);
- // Temporary Materiality worksheet version switcher (V1 current / V2 proposed), remembered per engagement
- const [matVersion, setMatVersionState] = useState<'v1' | 'v2'>(() => {
- try { return localStorage.getItem(`materiality-version-${engagementId}`) === 'v2' ? 'v2' : 'v1'; } catch { return 'v1'; }
- });
- const setMatVersion = (v: 'v1' | 'v2') => {
- setMatVersionState(v);
- try { localStorage.setItem(`materiality-version-${engagementId}`, v); } catch {}
+ // Temporary worksheet version switcher (V1 current / V2 proposed) for Materiality (420), OAS (430), Team planning (436) and
+ // Time tracker (450), Canada only. Remembered per engagement; the Materiality key is kept as it was so earlier choices survive.
+ const wsVersionKey = (key: string | undefined) => key === 'aud-mat' ? `materiality-version-${engagementId}` : `worksheet-version-${engagementId}-${key}`;
+ const readWsVersion = (key: string | undefined): 'v1' | 'v2' => {
+ try { return localStorage.getItem(wsVersionKey(key)) === 'v2' ? 'v2' : 'v1'; } catch { return 'v1'; }
+ };
+ const [wsVersion, setWsVersionState] = useState<'v1' | 'v2'>(() => readWsVersion(checklistKey));
+ const setWsVersion = (v: 'v1' | 'v2') => {
+ setWsVersionState(v);
+ try { localStorage.setItem(wsVersionKey(checklistKey), v); } catch {}
  };
  useEffect(() => {
- try { setMatVersionState(localStorage.getItem(`materiality-version-${engagementId}`) === 'v2' ? 'v2' : 'v1'); } catch {}
- }, [engagementId]);
+ setWsVersionState(readWsVersion(checklistKey));
+ }, [engagementId, checklistKey]); // eslint-disable-line react-hooks/exhaustive-deps
  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
  const [objectiveExpanded, setObjectiveExpanded] = useState(false);
  const [isLetterEditing, setIsLetterEditing] = useState(false);
@@ -2680,21 +2686,21 @@ export default function EngagementDetail() {
  </TooltipTrigger>
  <TooltipContent side="bottom"><p>Start a Luka thread for this workpaper</p></TooltipContent>
  </Tooltip>
- {checklistKey === 'aud-mat' && (
+ {(checklistKey === 'aud-mat' || checklistKey === 'aud-asm' || checklistKey === 'aud-plan' || checklistKey === 'aud-tt') && (
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5">
- {matVersion === 'v2' ? 'V2 – Proposed' : 'V1 – Current'}
+ {wsVersion === 'v2' ? 'V2 – Proposed' : 'V1 – Current'}
  <ChevronDown className="h-3.5 w-3.5" />
  </Button>
  </DropdownMenuTrigger>
  <DropdownMenuContent align="end" className="min-w-max">
- <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setMatVersion('v1')}>
- <span className="flex h-4 w-4 shrink-0 items-center justify-center">{matVersion === 'v1' && <Check className="h-4 w-4" />}</span>
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setWsVersion('v1')}>
+ <span className="flex h-4 w-4 shrink-0 items-center justify-center">{wsVersion === 'v1' && <Check className="h-4 w-4" />}</span>
  <span>V1 – Current</span>
  </DropdownMenuItem>
- <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setMatVersion('v2')}>
- <span className="flex h-4 w-4 shrink-0 items-center justify-center">{matVersion === 'v2' && <Check className="h-4 w-4" />}</span>
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setWsVersion('v2')}>
+ <span className="flex h-4 w-4 shrink-0 items-center justify-center">{wsVersion === 'v2' && <Check className="h-4 w-4" />}</span>
  <span>V2 – Proposed</span>
  </DropdownMenuItem>
  </DropdownMenuContent>
@@ -3194,17 +3200,17 @@ export default function EngagementDetail() {
  </div>
  );
  })() : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
- (matVersion === 'v2' && checklistKey === 'aud-mat')
+ (wsVersion === 'v2' && checklistKey === 'aud-mat')
  ? <AuditMaterialityWorksheetV2 isUS={false} engagementId={engagementId} />
  : <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
  ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
- <AuditTimeTrackerWorksheet />
+ (wsVersion === 'v2' && checklistKey === 'aud-tt') ? <AuditTimeTrackerWorksheetV2 /> : <AuditTimeTrackerWorksheet />
  ) : (checklistKey === 'aud-iar' || checklistKey === 'aud-us-iar') ? (
  <AuditMgmtRequestsWorksheet isUS={checklistKey === 'aud-us-iar'} />
  ) : (checklistKey === 'aud-form-440' || checklistKey === 'aud-us-form-440') ? (
  <BulkRequestsWorksheet isUS={checklistKey === 'aud-us-form-440'} />
  ) : (checklistKey === 'aud-plan' || checklistKey === 'aud-us-plan') ? (
- <AuditTeamPlanningWorksheet isUS={checklistKey === 'aud-us-plan'} connectedApps={connectedApps} onOpenConnectors={(id) => { setScrollToConnectorId(id); setConnectorsOpen(true); }} />
+ (wsVersion === 'v2' && checklistKey === 'aud-plan') ? <AuditTeamPlanningWorksheetV2 isUS={false} connectedApps={connectedApps} onOpenConnectors={(id) => { setScrollToConnectorId(id); setConnectorsOpen(true); }} /> : <AuditTeamPlanningWorksheet isUS={checklistKey === 'aud-us-plan'} connectedApps={connectedApps} onOpenConnectors={(id) => { setScrollToConnectorId(id); setConnectorsOpen(true); }} />
  ) : (checklistKey === 'aud-scope' || checklistKey === 'aud-us-scope') ? (
  <AuditScopeWorksheet isUS={checklistKey === 'aud-us-scope'} />
  ) : (checklistKey === 'aud-pap' || checklistKey === 'aud-us-pap') ? (
@@ -3212,7 +3218,7 @@ export default function EngagementDetail() {
  ) : (checklistKey === 'aud-sae' || checklistKey === 'aud-us-sae') ? (
  <AuditSAEWorksheet isUS={checklistKey === 'aud-us-sae'} />
  ) : (checklistKey === 'aud-asm' || checklistKey === 'aud-us-asm') ? (
- <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
+ (wsVersion === 'v2' && checklistKey === 'aud-asm') ? <AuditOASWorksheetV2 isUS={false} /> : <AuditOASWorksheet isUS={checklistKey === 'aud-us-asm'} />
  ) : (checklistKey === 'aud-ra-pap501bc' || checklistKey === 'aud-ra-pap501') ? (
  <AuditPAP501Worksheet />
 
