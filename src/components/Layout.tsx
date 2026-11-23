@@ -14,7 +14,7 @@ interface LayoutProps {
 
 export function Layout({ children, title, headerContent, showActions = false, showBackButton = false, onBack, hideSidebar = false }: LayoutProps) {
  return (
- <div className="flex h-screen" style={{ backgroundImage: 'url(/portal-bg.svg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+ <div className="flex h-screen" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}portal-bg.svg)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
  {!hideSidebar && (
  <Sidebar
  pageTitle={title}
