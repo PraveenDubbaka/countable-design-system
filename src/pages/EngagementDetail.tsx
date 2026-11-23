@@ -30,6 +30,7 @@ import { PartnershipAgreementWorksheet } from "@/components/PartnershipAgreement
 import { getEntityLabels } from "@/lib/entityLabels";
 import { TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
 import { generatePartnerPackages } from "@/lib/partnerPackagePdf";
+import { AuditMaterialityWorksheetV2 } from "@/components/AuditMaterialityWorksheetV2";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
@@ -1083,6 +1084,17 @@ export default function EngagementDetail() {
  const [checklist, setChecklist] = useState<Checklist | null>(null);
  const [isLoading, setIsLoading] = useState(true);
  const [isCompactMode, setIsCompactMode] = useState(false);
+ // Temporary Materiality worksheet version switcher (V1 current / V2 proposed), remembered per engagement
+ const [matVersion, setMatVersionState] = useState<'v1' | 'v2'>(() => {
+ try { return localStorage.getItem(`materiality-version-${engagementId}`) === 'v2' ? 'v2' : 'v1'; } catch { return 'v1'; }
+ });
+ const setMatVersion = (v: 'v1' | 'v2') => {
+ setMatVersionState(v);
+ try { localStorage.setItem(`materiality-version-${engagementId}`, v); } catch {}
+ };
+ useEffect(() => {
+ try { setMatVersionState(localStorage.getItem(`materiality-version-${engagementId}`) === 'v2' ? 'v2' : 'v1'); } catch {}
+ }, [engagementId]);
  const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
  const [objectiveExpanded, setObjectiveExpanded] = useState(false);
  const [isLetterEditing, setIsLetterEditing] = useState(false);
@@ -2805,6 +2817,26 @@ export default function EngagementDetail() {
  </TooltipTrigger>
  <TooltipContent side="bottom"><p>Start a Luka thread for this workpaper</p></TooltipContent>
  </Tooltip>
+ {(checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') && (
+ <DropdownMenu>
+ <DropdownMenuTrigger asChild>
+ <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5">
+ {matVersion === 'v2' ? 'V2 – Proposed' : 'V1 – Current'}
+ <ChevronDown className="h-3.5 w-3.5" />
+ </Button>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent align="end" className="min-w-max">
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setMatVersion('v1')}>
+ <span className="flex h-4 w-4 shrink-0 items-center justify-center">{matVersion === 'v1' && <Check className="h-4 w-4" />}</span>
+ <span>V1 – Current</span>
+ </DropdownMenuItem>
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setMatVersion('v2')}>
+ <span className="flex h-4 w-4 shrink-0 items-center justify-center">{matVersion === 'v2' && <Check className="h-4 w-4" />}</span>
+ <span>V2 – Proposed</span>
+ </DropdownMenuItem>
+ </DropdownMenuContent>
+ </DropdownMenu>
+ )}
 
  <div className="w-px h-4 bg-border mx-0.5" />
  </>
@@ -3324,7 +3356,9 @@ export default function EngagementDetail() {
  clientName={clientName}
  />
  ) : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
- <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
+ matVersion === 'v2'
+ ? <AuditMaterialityWorksheetV2 isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
+ : <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
  ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
  <AuditTimeTrackerWorksheet />
  ) : (checklistKey === 'aud-iar' || checklistKey === 'aud-us-iar') ? (
