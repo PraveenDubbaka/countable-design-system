@@ -26,6 +26,9 @@ export interface AdjLine {
   description: string;
   debit: string;
   credit: string;
+  // Carried over automatically at save time from the TB row's participant mapping (P7) —
+  // no manual picker here; see TrialBalance.tsx's onSave handler.
+  participantId?: string;
 }
 
 export interface AdjEntryMeta {

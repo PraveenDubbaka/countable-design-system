@@ -16,7 +16,7 @@ import { Layout } from "@/components/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DateField } from "@/components/DateField";
 import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
-import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { TEMPLATE_CONFIG, TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 import { getAccountingStandardsOptions } from "@/lib/accountingStandards";
 import { ParticipantsSection, validateParticipants } from "@/components/ParticipantsSection";
@@ -95,6 +95,11 @@ const ENGAGEMENT_TYPES = [
   { value: "Compilation (COM)", label: "Compilation (COM)" },
   { value: "Review (REV)", label: "Review (REV)" },
   { value: "T2 (Corporations)", label: "T2 (Corporations)" },
+  { value: "1120 (US C-Corporation)", label: "1120 (US C-Corporation)" },
+  { value: "T5013 (Partnerships)", label: "T5013 (Partnerships)" },
+  { value: "1065 (Partnerships)", label: "1065 (Partnerships)" },
+  { value: "T3 (Trusts)", label: "T3 (Trusts)" },
+  { value: "1041 (Trusts)", label: "1041 (Trusts)" },
 ];
 
 const AUDIT_ROLES = [
@@ -434,10 +439,26 @@ export default function CreateNewEngagement() {
   const [engagementType, setEngagementType] = useState("");
 
   const realClient = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
-  const clientInfo = CLIENT_DATA[clientName]
-    ? { ...CLIENT_DATA[clientName], entityType: realClient?.entityType ?? CLIENT_DATA[clientName].entityType }
-    : null;
+  // Prefer the real client record over the static demo table — see CreateEngagement.tsx for
+  // why (CLIENT_DATA only seeds a handful of demo names; a newly created Partnership/Trust
+  // client previously fell through to null and silently lost its entity type).
+  const clientInfo = realClient
+    ? {
+        entityLegalName: realClient.legalEntityName || realClient.entityName,
+        entityType: realClient.entityType,
+        contactPerson: realClient.contactPerson || realClient.contactName || "",
+        engagementPartner: realClient.engagementPartner || realClient.assignedPartner || "",
+        integrations: realClient.integration ? [realClient.integration] : [],
+        businessPhone: realClient.businessPhone || "-",
+        cellPhone: realClient.cellPhone || "-",
+        industryType: realClient.industryType || "",
+        clientCountry: realClient.clientCountry || "ca",
+        hasQuebecPersonalInfo: realClient.hasQuebecPersonalInfo ?? false,
+        isUsTaxpayer: realClient.isUsTaxpayer ?? false,
+      }
+    : CLIENT_DATA[clientName] ?? null;
   const isAudit = engagementType === "Audit (AUD)";
+  const isTax = TAX_ENGAGEMENT_TYPE_LABELS.has(engagementType);
   const isPartnershipOrTrust = clientInfo?.entityType === "Partnership" || clientInfo?.entityType === "Trust";
 
   // Participants (P5) — shown only for Partnership/Trust clients.
@@ -589,6 +610,7 @@ export default function CreateNewEngagement() {
 
   const accountingStandardsOptions = getAccountingStandardsOptions({
     isAudit,
+    isTax,
     clientCountry: clientInfo?.clientCountry,
     entityType: clientInfo?.entityType,
   });

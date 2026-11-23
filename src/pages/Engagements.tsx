@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import React from "react";
 
 function Highlight({ text, query }: { text: string; query: string }) {
@@ -35,6 +35,7 @@ import { Layout } from "@/components/Layout";
 import { StyledCard } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
+import { loadClients } from "@/data/clientsData";
 
 function getActiveFirm() {
   try {
@@ -156,12 +157,42 @@ export default function Engagements() {
   return () => window.removeEventListener("firmSwitched", handler);
  }, []);
 
+ // Client name -> entity type, so the list can show entity type per engagement without
+ // threading it onto EngagementRecord itself (same cross-reference pattern used in
+ // EngagementDetail.tsx / TrialBalance.tsx).
+ const clientEntityTypeByName = useMemo(() => {
+  const map = new Map<string, string>();
+  loadClients().forEach(c => {
+   map.set(c.legalEntityName, c.entityType);
+   map.set(c.entityName, c.entityType);
+  });
+  return map;
+ }, []);
+ // Same cross-reference, for clientCountry — replaces a literal "is this client named Harbor
+ // Freight Logistics LLC" check that defaulted every other client (including any new
+ // Partnership client) to "ca" regardless of their actual clientCountry.
+ const clientCountryByName = useMemo(() => {
+  const map = new Map<string, string>();
+  loadClients().forEach(c => {
+   map.set(c.legalEntityName, c.clientCountry);
+   map.set(c.entityName, c.clientCountry);
+  });
+  return map;
+ }, []);
+
  // Create Engagement modal
  const [createModalOpen, setCreateModalOpen] = useState(false);
  const [selectedClient, setSelectedClient] = useState("");
  const [selectedEngType, setSelectedEngType] = useState("");
 
- const uniqueClients = Array.from(new Set(engagementList.map(e => e.client))).sort();
+ // Every real client, not just ones that already have an engagement — otherwise a brand-new
+ // client (e.g. one just onboarded as a Partnership) has no way to get its first engagement
+ // started from this quick-create modal. Names from existing engagements are kept too, for
+ // the handful of old demo engagements whose client isn't in the real client store.
+ const uniqueClients = Array.from(new Set([
+ ...loadClients().map(c => c.legalEntityName || c.entityName),
+ ...engagementList.map(e => e.client),
+ ])).sort();
 
  const handleProceed = () => {
  setCreateModalOpen(false);
@@ -173,10 +204,7 @@ export default function Engagements() {
  const filteredEngagements = (() => {
   const base = engagementList
    .filter(e => e.client?.toLowerCase().includes(searchQuery.toLowerCase()) || e.id?.toLowerCase().includes(searchQuery.toLowerCase()))
-   .filter(e => {
-    const region = e.client === "Harbor Freight Logistics LLC" ? "us" : "ca";
-    return region === activeFirm.region;
-   });
+   .filter(e => (clientCountryByName.get(e.client) ?? "ca") === activeFirm.region);
   const demo = base.filter(e => e.id === 'AUD-NPM-Dec312025');
   const rest = base.filter(e => e.id !== 'AUD-NPM-Dec312025');
   return [...demo, ...rest];
@@ -219,13 +247,16 @@ export default function Engagements() {
     </div>
    </td>
   ) },
+  { id: "entityType", label: "Entity Type", cell: engagement => (
+   <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{clientEntityTypeByName.get(engagement.client) ?? "Corporation"}</td>
+  ) },
   { id: "type", label: "Type", cell: engagement => (
    <td className="px-6 py-2 text-sm text-foreground whitespace-nowrap">{engagement.type}</td>
   ) },
   { id: "cell", label: "Cell", headerClassName: "px-4", cell: engagement => (
    <td className="px-4 py-3 whitespace-nowrap">
     {(() => {
-     const region = engagement.client === "Harbor Freight Logistics LLC" ? "us" : "ca";
+     const region = clientCountryByName.get(engagement.client) ?? "ca";
      return (
       <span className={cn(
        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
@@ -570,9 +601,14 @@ export default function Engagements() {
  <SelectValue placeholder="Select" />
  </SelectTrigger>
  <SelectContent>
- {uniqueClients.map(client => (
- <SelectItem key={client} value={client}>{client}</SelectItem>
- ))}
+ {uniqueClients.map(client => {
+ const entityType = clientEntityTypeByName.get(client);
+ return (
+ <SelectItem key={client} value={client}>
+ {client}{entityType && entityType !== "Corporation" ? ` (${entityType})` : ""}
+ </SelectItem>
+ );
+ })}
  </SelectContent>
  </Select>
  </div>

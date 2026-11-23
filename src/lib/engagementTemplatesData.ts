@@ -2055,7 +2055,14 @@ interface StatementSet {
  framework: string; // e.g. "ASPE" | "US GAAP"
 }
 
-function buildCompilationView(id: string, s: StatementSet): TemplateView {
+// The Documents folder's governing-document row varies by entity type, matching the live
+// Sidebar's own Documents folder (Sidebar.tsx) so this preview tree doesn't show "Shareholders
+// Agreements" to Partnership/Trust engagements.
+function governingDocumentLabel(entityType: "Corporation" | "Partnership" | "Trust"): string {
+ return entityType === "Partnership" ? "Partnership Agreement" : entityType === "Trust" ? "Trust Deed" : "Shareholders Agreements";
+}
+
+function buildCompilationView(id: string, s: StatementSet, entityType: "Corporation" | "Partnership" | "Trust" = "Corporation"): TemplateView {
  return {
  id,
  title: `Compilation ${s.compilationStandard}`,
@@ -2076,7 +2083,7 @@ function buildCompilationView(id: string, s: StatementSet): TemplateView {
  { section: "Management responsibility and acknowledgement", category: "letter", mappedTemplate: `Management responsibility & acknowledgement ${s.compilationStandard}` },
  ]},
  { name: "Documents", rows: [
- { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: governingDocumentLabel(entityType), category: "folder", mappedTemplate: "No Selection required" },
  { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
@@ -2105,7 +2112,7 @@ function buildCompilationView(id: string, s: StatementSet): TemplateView {
  };
 }
 
-function buildReviewView(id: string, s: StatementSet): TemplateView {
+function buildReviewView(id: string, s: StatementSet, entityType: "Corporation" | "Partnership" | "Trust" = "Corporation"): TemplateView {
  return {
  id,
  title: `Review ${s.reviewStandard}`,
@@ -2123,7 +2130,7 @@ function buildReviewView(id: string, s: StatementSet): TemplateView {
  { section: "Engagement Planning", category: "checklist", mappedTemplate: `Engagement Planning ${s.reviewStandard}` },
  ]},
  { name: "Documents", rows: [
- { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: governingDocumentLabel(entityType), category: "folder", mappedTemplate: "No Selection required" },
  { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
@@ -2157,7 +2164,7 @@ function buildReviewView(id: string, s: StatementSet): TemplateView {
  };
 }
 
-function buildTaxView(id: string, s: StatementSet): TemplateView {
+function buildTaxView(id: string, s: StatementSet, entityType: "Corporation" | "Partnership" | "Trust" = "Corporation"): TemplateView {
  return {
  id,
  title: s.taxCode,
@@ -2166,7 +2173,7 @@ function buildTaxView(id: string, s: StatementSet): TemplateView {
  { section: "Engagement Letter", category: "letter", mappedTemplate: "Engagement Letter" },
  ]},
  { name: "Documents", rows: [
- { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: governingDocumentLabel(entityType), category: "folder", mappedTemplate: "No Selection required" },
  { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
@@ -2204,21 +2211,21 @@ const corpUsComp = buildCompilationView("corp-us-comp", CORP_US_SET);
 const corpUsReview = buildReviewView("corp-us-review", CORP_US_SET);
 const corpUsTax = buildTaxView("corp-us-tax", CORP_US_SET);
 
-const partnershipCaComp = buildCompilationView("partnership-ca-comp", PARTNERSHIP_CA_SET);
-const partnershipCaReview = buildReviewView("partnership-ca-review", PARTNERSHIP_CA_SET);
-const partnershipCaTax = buildTaxView("partnership-ca-tax", PARTNERSHIP_CA_SET);
+const partnershipCaComp = buildCompilationView("partnership-ca-comp", PARTNERSHIP_CA_SET, "Partnership");
+const partnershipCaReview = buildReviewView("partnership-ca-review", PARTNERSHIP_CA_SET, "Partnership");
+const partnershipCaTax = buildTaxView("partnership-ca-tax", PARTNERSHIP_CA_SET, "Partnership");
 
-const partnershipUsComp = buildCompilationView("partnership-us-comp", PARTNERSHIP_US_SET);
-const partnershipUsReview = buildReviewView("partnership-us-review", PARTNERSHIP_US_SET);
-const partnershipUsTax = buildTaxView("partnership-us-tax", PARTNERSHIP_US_SET);
+const partnershipUsComp = buildCompilationView("partnership-us-comp", PARTNERSHIP_US_SET, "Partnership");
+const partnershipUsReview = buildReviewView("partnership-us-review", PARTNERSHIP_US_SET, "Partnership");
+const partnershipUsTax = buildTaxView("partnership-us-tax", PARTNERSHIP_US_SET, "Partnership");
 
-const trustCaComp = buildCompilationView("trust-ca-comp", TRUST_CA_SET);
-const trustCaReview = buildReviewView("trust-ca-review", TRUST_CA_SET);
-const trustCaTax = buildTaxView("trust-ca-tax", TRUST_CA_SET);
+const trustCaComp = buildCompilationView("trust-ca-comp", TRUST_CA_SET, "Trust");
+const trustCaReview = buildReviewView("trust-ca-review", TRUST_CA_SET, "Trust");
+const trustCaTax = buildTaxView("trust-ca-tax", TRUST_CA_SET, "Trust");
 
-const trustUsComp = buildCompilationView("trust-us-comp", TRUST_US_SET);
-const trustUsReview = buildReviewView("trust-us-review", TRUST_US_SET);
-const trustUsTax = buildTaxView("trust-us-tax", TRUST_US_SET);
+const trustUsComp = buildCompilationView("trust-us-comp", TRUST_US_SET, "Trust");
+const trustUsReview = buildReviewView("trust-us-review", TRUST_US_SET, "Trust");
+const trustUsTax = buildTaxView("trust-us-tax", TRUST_US_SET, "Trust");
 
 export const allTemplateViews: Record<string, TemplateView> = {
  comp4200,
@@ -2383,4 +2390,22 @@ export const TEMPLATE_CONFIG: Record<string, {
  'trust-ca-review': { sidebarType: 'review-comp', defaultFramework: 'Section 2400 Review standards', engagementTypeLabel: 'Review (REV)' },
  'trust-us-comp': { sidebarType: 'review-comp', defaultFramework: 'AR-C 80 - Compilation standards', engagementTypeLabel: 'Compilation (COM)' },
  'trust-us-review': { sidebarType: 'review-comp', defaultFramework: 'AR-C 90 Review standards', engagementTypeLabel: 'Review (REV)' },
+ // Tax templates previously had no TEMPLATE_CONFIG entry at all (for any entity type,
+ // including Corporation), so picking one never updated Engagement Type or Accounting
+ // Framework — it silently kept whatever the form defaulted to. Labels follow the actual tax
+ // return form per entity + country, matching the existing "T2 (Corporations)" convention.
+ 'tax-t2': { sidebarType: 'review-comp', defaultFramework: 'Tax Basis', engagementTypeLabel: 'T2 (Corporations)' },
+ 'corp-us-tax': { sidebarType: 'review-comp', defaultFramework: 'Tax Basis', engagementTypeLabel: '1120 (US C-Corporation)' },
+ 'partnership-ca-tax': { sidebarType: 'review-comp', defaultFramework: 'Tax Basis', engagementTypeLabel: 'T5013 (Partnerships)' },
+ 'partnership-us-tax': { sidebarType: 'review-comp', defaultFramework: 'Tax Basis', engagementTypeLabel: '1065 (Partnerships)' },
+ 'trust-ca-tax': { sidebarType: 'review-comp', defaultFramework: 'Tax Basis', engagementTypeLabel: 'T3 (Trusts)' },
+ 'trust-us-tax': { sidebarType: 'review-comp', defaultFramework: 'Tax Basis', engagementTypeLabel: '1041 (Trusts)' },
 };
+
+// Every Engagement Type label a Tax template can set — used to recognize "this is a tax
+// engagement" without fragile substring matching (e.g. "T2 (Corporations)" vs "T2000 Something").
+export const TAX_ENGAGEMENT_TYPE_LABELS = new Set(
+ Object.values(TEMPLATE_CONFIG)
+ .map(c => c.engagementTypeLabel)
+ .filter(label => /^(T2|T3|T5013|1120|1065|1041)\b/.test(label))
+);

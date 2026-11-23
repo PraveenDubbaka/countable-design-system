@@ -7,6 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateField } from "@/components/DateField";
 import type { Participant, ParticipantType, OwnershipMode } from "@/store/participantsStore";
+import { loadPWWorksheet } from "@/store/partnershipWorksheetStore";
+import { buildCapitalStatement } from "@/lib/capitalStatement";
+import type { EntityKind } from "@/lib/entityLabels";
 
 let _participantUid = 0;
 const participantUid = () => `participant-${Date.now()}-${++_participantUid}`;
@@ -152,13 +155,25 @@ export function ParticipantsSection({
  const addRow = () => {
  onChange([...participants, newParticipant(engagementId, participants.length, ownershipMode)]);
  };
+ // Year-over-year roll-forward: the prior engagement's per-holder CLOSING capital becomes this
+ // year's OPENING capital — never a flat copy of last year's own opening balance, and never left
+ // blank for manual re-entry. Matched by name since carried-forward rows get fresh ids. Flows that
+ // are specific to the year just closed (contributions/drawings/adjustments, admission/retirement
+ // dates) reset to blank; identity, allocation %, signing authority and tax id carry forward as-is.
  const carryForward = () => {
- if (!priorParticipants) return;
+ if (!priorParticipants || priorParticipants.length === 0) return;
+ const priorEngagementId = priorParticipants[0].engagementId;
+ const priorWorksheet = loadPWWorksheet(priorEngagementId);
+ const priorStatement = buildCapitalStatement(priorEngagementId, entityType as EntityKind, priorParticipants, priorWorksheet);
+ const closingByName = new Map(priorStatement.rows.map(r => [r.participant.name, r.closing]));
  onChange(priorParticipants.map((p, i) => ({
  ...p,
  id: participantUid(),
  engagementId,
- openingCapital: undefined, // first-engagement-only field; a real carried-forward closing balance isn't computed yet
+ openingCapital: closingByName.get(p.name) ?? 0,
+ priorYearOwnershipValue: p.ownershipValue,
+ admissionDate: null,
+ retirementDate: null,
  displayOrder: i,
  })));
  };
