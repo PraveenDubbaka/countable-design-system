@@ -1,4 +1,5 @@
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
+import { getEntityLabels, type EntityKind } from "@/lib/entityLabels";
 // ── Engagement Templates Data ──
 // All template views for the Engagement Templates page
 
@@ -2055,14 +2056,67 @@ interface StatementSet {
  framework: string; // e.g. "ASPE" | "US GAAP"
 }
 
-// The Documents folder's governing-document row varies by entity type, matching the live
-// Sidebar's own Documents folder (Sidebar.tsx) so this preview tree doesn't show "Shareholders
-// Agreements" to Partnership/Trust engagements.
-function governingDocumentLabel(entityType: "Corporation" | "Partnership" | "Trust"): string {
- return entityType === "Partnership" ? "Partnership Agreement" : entityType === "Trust" ? "Trust Deed" : "Shareholders Agreements";
+// Mirrors the prototype's structureFor() — a Partnership/Trust template isn't the Corporation
+// template with one label swapped, it has its own Documents rows, an added Partners'/Unitholders'
+// Capital worksheet row, and an added capital-statement FS row, with letter/FS mapped-template
+// names suffixed " – Partnership"/" – Trust" so a firm can tell which variant a row maps to.
+function entitySuffix(entityType: EntityKind | "Corporation"): string {
+ return entityType === "Partnership" ? " – Partnership" : entityType === "Trust" ? " – Trust" : "";
+}
+
+// The Documents folder varies by entity type, matching the live Sidebar's own Documents folder
+// (Sidebar.tsx): Partnership/Trust replace "Incorporation Documents" with two entity-specific
+// rows rather than just relabeling "Shareholders Agreements".
+function entityDocumentsRows(entityType: "Corporation" | "Partnership" | "Trust"): TemplateRow[] {
+ if (entityType === "Partnership") {
+ return [
+ { section: "Partnership Agreement & Amendments", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Registration / Declaration Documents", category: "folder", mappedTemplate: "No Selection required" },
+ ];
+ }
+ if (entityType === "Trust") {
+ return [
+ { section: "Trust Deed / Declaration & Amendments", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Trustee Resolutions", category: "folder", mappedTemplate: "No Selection required" },
+ ];
+ }
+ return [
+ { section: "Shareholders Agreements", category: "folder", mappedTemplate: "No Selection required" },
+ { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
+ ];
+}
+
+// The Partners'/Unitholders' Capital worksheet — one new Client Onboarding row for Partnership/
+// Trust, right where the prototype inserts it (after Planning, before the Engagement Letter).
+function pwWorksheetRows(entityType: "Corporation" | "Partnership" | "Trust"): TemplateRow[] {
+ if (entityType !== "Partnership" && entityType !== "Trust") return [];
+ const labels = getEntityLabels(entityType);
+ return [{ section: labels.worksheetName, category: "worksheet", mappedTemplate: "Partners' / Unitholders' Capital" }];
+}
+
+// The entity-aware Statement of Income label (Partnership/Trust drop "and Retained Earnings
+// (Deficit)" — that roll-forward moves to its own capital statement row below) and the new
+// capital-statement FS row itself.
+function incomeStatementLabel(entityType: "Corporation" | "Partnership" | "Trust"): string {
+ return entityType === "Partnership" || entityType === "Trust"
+ ? "Statement of Income (Loss)"
+ : "Statement of Income (Loss) and Retained Earnings (Deficit)";
+}
+function capitalStatementRows(entityType: "Corporation" | "Partnership" | "Trust", mappedTemplate: string): TemplateRow[] {
+ if (entityType !== "Partnership" && entityType !== "Trust") return [];
+ const labels = getEntityLabels(entityType);
+ return [{ section: labels.statementTitle, category: "financial-statement", mappedTemplate }];
+}
+
+// Trust's "Management responsibility and acknowledgement" row/letter is really acknowledged by
+// trustees, not "management" — matches the live letter's title fix (globalTemplates.ts).
+function managementResponsibilityLabel(entityType: "Corporation" | "Partnership" | "Trust"): string {
+ return entityType === "Trust" ? "Trustee responsibility and acknowledgement" : "Management responsibility and acknowledgement";
 }
 
 function buildCompilationView(id: string, s: StatementSet, entityType: "Corporation" | "Partnership" | "Trust" = "Corporation"): TemplateView {
+ const sfx = entitySuffix(entityType);
+ const fsTemplate = `Compilation template${sfx}`;
  return {
  id,
  title: `Compilation ${s.compilationStandard}`,
@@ -2079,13 +2133,13 @@ function buildCompilationView(id: string, s: StatementSet, entityType: "Corporat
  { section: "Independence", category: "checklist", mappedTemplate: `Independence ${s.compilationStandard}` },
  { section: "Knowledge of client business", category: "checklist", mappedTemplate: `Knowledge of client business ${s.compilationStandard}` },
  { section: "Planning", category: "checklist", mappedTemplate: `Planning ${s.compilationStandard}` },
- { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement compilation ${s.compilationStandard}` },
- { section: "Management responsibility and acknowledgement", category: "letter", mappedTemplate: `Management responsibility & acknowledgement ${s.compilationStandard}` },
+ ...pwWorksheetRows(entityType),
+ { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement compilation ${s.compilationStandard}${sfx}` },
+ { section: managementResponsibilityLabel(entityType), category: "letter", mappedTemplate: `Management responsibility & acknowledgement ${s.compilationStandard}${sfx}` },
  ]},
  { name: "Documents", rows: [
- { section: governingDocumentLabel(entityType), category: "folder", mappedTemplate: "No Selection required" },
+ ...entityDocumentsRows(entityType),
  { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
- { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
  ]},
  { name: "Trial Balance & Adjusting entries", rows: [
@@ -2095,13 +2149,14 @@ function buildCompilationView(id: string, s: StatementSet, entityType: "Corporat
  { section: "Procedures", category: "module", mappedTemplate: "Automated" },
  ]},
  { name: "Financial Statements", rows: [
- { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "Compilation template" },
- { section: "Cover Page", category: "financial-statement", mappedTemplate: "Compilation template" },
- { section: "Table of Contents", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Cover Page", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Table of Contents", category: "financial-statement", mappedTemplate: fsTemplate },
  { section: "Compilation Report", category: "report", mappedTemplate: `Compilation Report ${s.compilationStandard}` },
- { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "Compilation template" },
- { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "Compilation template" },
- { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: "Compilation template" },
+ { section: "Balance Sheet", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: incomeStatementLabel(entityType), category: "financial-statement", mappedTemplate: fsTemplate },
+ ...capitalStatementRows(entityType, fsTemplate),
+ { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: fsTemplate },
  ]},
  { name: "Completion & Signoffs", rows: [
  { section: "Completion", category: "checklist", mappedTemplate: `Final Completion ${s.compilationStandard}` },
@@ -2113,6 +2168,8 @@ function buildCompilationView(id: string, s: StatementSet, entityType: "Corporat
 }
 
 function buildReviewView(id: string, s: StatementSet, entityType: "Corporation" | "Partnership" | "Trust" = "Corporation"): TemplateView {
+ const sfx = entitySuffix(entityType);
+ const fsTemplate = `Review template${sfx}`;
  return {
  id,
  title: `Review ${s.reviewStandard}`,
@@ -2120,7 +2177,8 @@ function buildReviewView(id: string, s: StatementSet, entityType: "Corporation" 
  { name: "Client Onboarding", rows: [
  { section: "New engagement acceptance", category: "checklist", mappedTemplate: `New engagement acceptance ${s.reviewStandard}` },
  { section: "Existing engagement continuance", category: "checklist", mappedTemplate: `Existing engagement continuance ${s.reviewStandard}` },
- { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement review ${s.reviewStandard}` },
+ ...pwWorksheetRows(entityType),
+ { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement review ${s.reviewStandard}${sfx}` },
  ]},
  { name: "Planning", rows: [
  { section: "Understanding the entity - Basics", category: "checklist", mappedTemplate: `Understanding the entity basics ${s.reviewStandard}` },
@@ -2130,9 +2188,8 @@ function buildReviewView(id: string, s: StatementSet, entityType: "Corporation" 
  { section: "Engagement Planning", category: "checklist", mappedTemplate: `Engagement Planning ${s.reviewStandard}` },
  ]},
  { name: "Documents", rows: [
- { section: governingDocumentLabel(entityType), category: "folder", mappedTemplate: "No Selection required" },
+ ...entityDocumentsRows(entityType),
  { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
- { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
  ]},
  { name: "Trial Balance & Adjusting entries", rows: [
@@ -2142,18 +2199,19 @@ function buildReviewView(id: string, s: StatementSet, entityType: "Corporation" 
  { section: "Procedures", category: "module", mappedTemplate: "Automated" },
  ]},
  { name: "Financial Statements", rows: [
- { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: "Review template" },
- { section: "Cover Page", category: "financial-statement", mappedTemplate: "Review template" },
- { section: "Table of Contents", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Cover Page", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Table of Contents", category: "financial-statement", mappedTemplate: fsTemplate },
  { section: "Review Engagement Report", category: "report", mappedTemplate: `Review Engagement Report ${s.reviewStandard}` },
- { section: "Balance Sheet", category: "financial-statement", mappedTemplate: "Review template" },
- { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: "Review template" },
- { section: "Statement of Cash Flows", category: "financial-statement", mappedTemplate: "Review template" },
- { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: "Review template" },
+ { section: "Balance Sheet", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: incomeStatementLabel(entityType), category: "financial-statement", mappedTemplate: fsTemplate },
+ ...capitalStatementRows(entityType, fsTemplate),
+ { section: "Statement of Cash Flows", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: fsTemplate },
  ]},
  { name: "Completion & Signoffs", rows: [
  { section: "Accumulation of Identified Misstatements (AIM)", category: "worksheet", mappedTemplate: `AIM ${s.reviewStandard}` },
- { section: "Management representation letter", category: "letter", mappedTemplate: `Management representation ${s.reviewStandard}` },
+ { section: managementResponsibilityLabel(entityType) === "Trustee responsibility and acknowledgement" ? "Trustee representation letter" : "Management representation letter", category: "letter", mappedTemplate: `Management representation ${s.reviewStandard}${sfx}` },
  { section: "Completion", category: "checklist", mappedTemplate: `Final Completion ${s.reviewStandard}` },
  { section: "Subsequent events", category: "checklist", mappedTemplate: `Subsequent events ${s.reviewStandard}` },
  { section: "Disclosure", category: "checklist", mappedTemplate: `${s.framework} - General - Disclosure checklist` },
@@ -2165,17 +2223,19 @@ function buildReviewView(id: string, s: StatementSet, entityType: "Corporation" 
 }
 
 function buildTaxView(id: string, s: StatementSet, entityType: "Corporation" | "Partnership" | "Trust" = "Corporation"): TemplateView {
+ const sfx = entitySuffix(entityType);
+ const fsTemplate = `${s.taxCode} template${sfx}`;
  return {
  id,
  title: s.taxCode,
  sections: [
  { name: "Client Onboarding", rows: [
- { section: "Engagement Letter", category: "letter", mappedTemplate: "Engagement Letter" },
+ ...pwWorksheetRows(entityType),
+ { section: "Engagement Letter", category: "letter", mappedTemplate: `Engagement Letter${sfx}` },
  ]},
  { name: "Documents", rows: [
- { section: governingDocumentLabel(entityType), category: "folder", mappedTemplate: "No Selection required" },
+ ...entityDocumentsRows(entityType),
  { section: "Rental/Lease Agreements", category: "folder", mappedTemplate: "No Selection required" },
- { section: "Incorporation Documents", category: "folder", mappedTemplate: "No Selection required" },
  { section: "Banking Agreements", category: "folder", mappedTemplate: "No Selection required" },
  ]},
  { name: "Trial Balance & Adjusting entries", rows: [
@@ -2185,12 +2245,13 @@ function buildTaxView(id: string, s: StatementSet, entityType: "Corporation" | "
  { section: "Procedures", category: "module", mappedTemplate: "Automated" },
  ]},
  { name: "Financial Statements", rows: [
- { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
- { section: "Cover Page", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
- { section: "Table of Contents", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
- { section: "Balance Sheet", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
- { section: "Statement of Income (Loss) and Retained Earnings (Deficit)", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
- { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: `${s.taxCode} template` },
+ { section: "Financial Statement Docs", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Cover Page", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Table of Contents", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: "Balance Sheet", category: "financial-statement", mappedTemplate: fsTemplate },
+ { section: incomeStatementLabel(entityType), category: "financial-statement", mappedTemplate: fsTemplate },
+ ...capitalStatementRows(entityType, fsTemplate),
+ { section: "Notes to Financial Statements", category: "financial-statement", mappedTemplate: fsTemplate },
  ]},
  { name: "Completion & Signoffs", rows: [
  { section: "Completion", category: "checklist", mappedTemplate: "Completion" },
