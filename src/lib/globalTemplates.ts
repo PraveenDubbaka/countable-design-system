@@ -1,4 +1,5 @@
 import { Checklist, Section, Question } from '@/types/checklist';
+import { getEntityLabels } from '@/lib/entityLabels';
 
 // Client Acceptance and Continuance template data
 export const generateClientAcceptanceContinuanceChecklist = (entityType: string = "Corporation"): Checklist => {
@@ -336,8 +337,11 @@ export const generatePlanningChecklist = (entityType: string = "Corporation"): C
 };
 
 // Engagement Letter — rendered by LetterView, single HTML blob
-export const generateEngagementLetterChecklist = (entityType: string = "Corporation"): Checklist => {
+export const generateEngagementLetterChecklist = (entityType: string = "Corporation", isUS: boolean = false): Checklist => {
  void entityType; // signature block wording is handled by LetterView, not this body
+ const compilationStandard = isUS
+ ? "Statements on Standards for Accounting and Review Services (SSARS) issued by the AICPA, specifically AR-C Section 80, Compilation Engagements"
+ : "Canadian Standard on Related Services (CSRS) 4200, Compilation Engagements";
  const html = `
  <p class="text-sm text-foreground">${formatTodayLong()}</p>
  <p class="mt-6 text-sm text-foreground">Entity Name<br/>Complete address</p>
@@ -356,10 +360,9 @@ export const generateEngagementLetterChecklist = (entityType: string = "Corporat
  <strong>Intended Purpose</strong>. The compiled financial information may not be suitable for another purpose.
  </p>
  <p class="mt-4 text-sm text-foreground">
- We will perform the compilation engagement in accordance with <strong>Canadian Standard on Related
- Services (CSRS) 4200, Compilation Engagements</strong>. A compilation engagement is substantially less
- in scope than an audit or review engagement and we will not provide any form of assurance on the
- compiled financial information.
+ We will perform the compilation engagement in accordance with <strong>${compilationStandard}</strong>. A
+ compilation engagement is substantially less in scope than an audit or review engagement and we will not
+ provide any form of assurance on the compiled financial information.
  </p>
  <p class="mt-4 text-sm text-foreground">
  If the contents of this letter are in accordance with your understanding of the terms of the engagement,
@@ -400,14 +403,52 @@ function formatTodayLong(): string {
  return d.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
 }
 
-// Management Responsibility and Acknowledgement template data
-export const generateManagementResponsibilityChecklist = (entityType: string = "Corporation"): Checklist => {
- const responsibleParty = entityType === "Partnership" ? "the partners"
- : entityType === "Trust" ? "the trustee"
+// Who is responsible for/signs a letter on the entity's behalf, sourced from entityLabels.ts (the
+// single source of truth for Partnership/Trust terminology) — shared by every letter generator
+// below instead of each one hand-rolling its own "management"/"the partners"/"the trustees"
+// ternary. "the trustees" (plural, matching entityLabels' whoSigns) fixes a subject/verb
+// agreement bug an earlier hand-rolled singular "the trustee" had.
+function responsibleEntityPhrase(entityType: string, trustVariant: "unit" | "other" = "other"): { subject: string; subjectCaps: string; subjectPossessive: string; subjectPossessiveCaps: string; isSingular: boolean } {
+ const subject = entityType === "Partnership" ? `the ${getEntityLabels("Partnership").holders.toLowerCase()}`
+ : entityType === "Trust" ? `the ${getEntityLabels("Trust", trustVariant).whoSigns.toLowerCase()}`
  : "management";
- const responsiblePartyPossessive = entityType === "Partnership" ? "the partners'"
- : entityType === "Trust" ? "the trustee's"
- : "management's";
+ // Branch on `subject`, not the raw `entityType` string — real client records use entityType
+ // values like "Corporation (CCPC)", not just the literal "Corporation", so a direct
+ // `entityType === "Corporation"` comparison silently fails for them (caught live: it produced
+ // "management'" with no "s" and "Management are" with the wrong verb for a CCPC client).
+ const isSingular = subject === "management";
+ // Plural possessive takes a trailing apostrophe only ("the partners'"), never "'s" — caught live
+ // as "The partners's Responsibilities".
+ const subjectPossessive = isSingular ? "management's" : `${subject}'`;
+ return {
+ subject,
+ subjectCaps: subject.charAt(0).toUpperCase() + subject.slice(1),
+ subjectPossessive,
+ subjectPossessiveCaps: subjectPossessive.charAt(0).toUpperCase() + subjectPossessive.slice(1),
+ isSingular,
+ };
+}
+
+// Tax return the entity files, used in Tax engagement letters (CA defaults — the generators here
+// don't split by country, matching how the rest of this letter wiring stays country-naive).
+function taxReturnLabel(entityType: string, isUS: boolean = false): string {
+ if (isUS) {
+ return entityType === "Partnership" ? "partnership tax return (Form 1065)"
+ : entityType === "Trust" ? "trust income tax return (Form 1041)"
+ : "corporate income tax return (Form 1120)";
+ }
+ return entityType === "Partnership" ? "partnership information return (T5013)"
+ : entityType === "Trust" ? "trust income tax return (T3)"
+ : "corporate income tax return (T2)";
+}
+
+// Management Responsibility and Acknowledgement template data
+export const generateManagementResponsibilityChecklist = (entityType: string = "Corporation", trustVariant: "unit" | "other" = "other"): Checklist => {
+ const { subject: responsibleParty, subjectPossessive: responsiblePartyPossessive } = responsibleEntityPhrase(entityType, trustVariant);
+ // Trust gets its own document title ("Trustee responsibility…") since trustees — not
+ // "management" — are who's acknowledging; Partnership keeps the same title as Corporation
+ // (the body text is already entity-aware either way).
+ const mrTitle = entityType === "Trust" ? "Trustee responsibility and acknowledgement" : "Management responsibility and acknowledgement";
  const html = `
  <p class="text-sm text-foreground">${formatTodayLong()}</p>
  <p class="mt-6 text-sm text-foreground">Entity Name<br/>Complete address</p>
@@ -442,13 +483,13 @@ export const generateManagementResponsibilityChecklist = (entityType: string = "
 
  return {
  id: 'global-template-management-responsibility',
- title: 'Management responsibility and acknowledgement',
- description: 'Management acknowledgement of responsibilities for the compilation engagement.',
+ title: mrTitle,
+ description: `${mrTitle} for the compilation engagement.`,
  objective: '',
  sections: [
  {
  id: 'section-mr-letter',
- title: 'Management responsibility and acknowledgement',
+ title: mrTitle,
  isExpanded: true,
  questions: [
  {
@@ -7489,8 +7530,13 @@ function makeLetterChecklist(id: string, title: string, description: string, htm
 
 // ── Review Letters ─────────────────────────────────────────────────────────────
 
-export const generateReviewEngagementLetterMaster = (): Checklist =>
- makeLetterChecklist('glt-2-1', 'Engagement Letter Review — Master (Corp)', 'CSRE 2400 Review Engagement Letter — Master Corporate', `
+export const generateReviewEngagementLetterMaster = (entityType: string = "Corporation", isUS: boolean = false, trustVariant: "unit" | "other" = "other"): Checklist => {
+ const { subject, subjectCaps, subjectPossessiveCaps, isSingular } = responsibleEntityPhrase(entityType, trustVariant);
+ const reviewStandard = isUS
+ ? "Statements on Standards for Accounting and Review Services (SSARS) issued by the AICPA, specifically AR-C Section 90, Review Engagements"
+ : "Canadian Standard on Review Engagements (CSRE) 2400, Engagements to Review Historical Financial Statements";
+ const auditingStandard = isUS ? "Generally Accepted Auditing Standards" : "Canadian Auditing Standards";
+ return makeLetterChecklist('glt-2-1', 'Engagement Letter Review — Master', isUS ? 'AR-C 90 Review Engagement Letter — Master' : 'CSRE 2400 Review Engagement Letter — Master', `
  <p class="text-sm text-foreground">${chip('Date')}</p>
  <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
  <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
@@ -7503,19 +7549,18 @@ export const generateReviewEngagementLetterMaster = (): Checklist =>
  The objective of our review engagement is to enable us to express a conclusion on whether anything has
  come to our attention that causes us to believe that the financial statements are not prepared, in all
  material respects, in accordance with <strong>${chip('Applicable Financial Reporting Framework')}</strong>. Our
- review will be conducted in accordance with <strong>Canadian Standard on Review Engagements (CSRE) 2400,
- Engagements to Review Historical Financial Statements</strong>.
+ review will be conducted in accordance with <strong>${reviewStandard}</strong>.
  </p>
  <p class="mt-4 text-sm text-foreground">
- A review engagement is substantially less in scope than an audit conducted in accordance with Canadian
- Auditing Standards and, consequently, does not enable us to obtain assurance that we would become aware
- of all significant matters that might be identified in an audit.
+ A review engagement is substantially less in scope than an audit conducted in accordance with ${auditingStandard}
+ and, consequently, does not enable us to obtain assurance that we would become aware of all significant
+ matters that might be identified in an audit.
  </p>
- <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+ <p class="mt-4 text-sm text-foreground font-semibold">${subjectPossessiveCaps} Responsibilities</p>
  <p class="mt-2 text-sm text-foreground">
- Management is responsible for the preparation and fair presentation of these financial statements in
+ ${subjectCaps} ${isSingular ? "is" : "are"} responsible for the preparation and fair presentation of these financial statements in
  accordance with ${chip('Applicable Financial Reporting Framework')}, and for such internal control as
- management determines is necessary to enable the preparation of financial statements that are free from
+ ${subject} determine${isSingular ? "s" : ""} is necessary to enable the preparation of financial statements that are free from
  material misstatement, whether due to fraud or error.
  </p>
  <p class="mt-4 text-sm text-foreground font-semibold">Our Fees</p>
@@ -7530,9 +7575,13 @@ export const generateReviewEngagementLetterMaster = (): Checklist =>
  <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
  <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
  `);
+};
 
-export const generateReviewManagementRepresentationLetter = (): Checklist =>
- makeLetterChecklist('glt-2-2', 'Management Representation Letter Review (Corp)', 'CSRE 2400 Management Representation Letter — Corporate Review', `
+export const generateReviewManagementRepresentationLetter = (entityType: string = "Corporation", isUS: boolean = false): Checklist => {
+ // Body is already entity-neutral (first-person "we", no "management" literal) — only the title
+ // varies, same as generateManagementResponsibilityChecklist's mrTitle.
+ const repTitle = entityType === "Trust" ? "Trustee Representation Letter Review" : "Management Representation Letter Review";
+ return makeLetterChecklist('glt-2-2', repTitle, isUS ? `AR-C 90 ${repTitle}` : `CSRE 2400 ${repTitle}`, `
  <p class="text-sm text-foreground">${chip('Date')}</p>
  <p class="mt-6 text-sm text-foreground">${chip('Firm Name')}<br/>${chip('Firm Address')}</p>
  <p class="mt-6 text-sm text-foreground">Dear ${chip('Engagement Partner')},</p>
@@ -7569,6 +7618,7 @@ export const generateReviewManagementRepresentationLetter = (): Checklist =>
  <p class="mt-6 text-sm text-foreground">Yours truly,</p>
  <p class="mt-4 text-sm text-foreground">${chip('Authorized Signatory')}<br/>${chip('Title')}<br/>${chip('Entity Name')}</p>
  `);
+};
 
 export const generateReviewFindingsLetter = (): Checklist =>
  makeLetterChecklist('glt-2-3', 'Review Findings Letter (Corp)', 'CSRE 2400 Review Findings Communication — Corporate', `
@@ -7687,8 +7737,9 @@ export const generateRequestForManagementAssistance = (): Checklist =>
 
 // ── Tax Letters ────────────────────────────────────────────────────────────────
 
-export const generateTaxEngagementLetter = (): Checklist =>
- makeLetterChecklist('glt-3-1', 'Tax Engagement Letter', 'Tax Engagement Letter — Corporate', `
+export const generateTaxEngagementLetter = (entityType: string = "Corporation", isUS: boolean = false, trustVariant: "unit" | "other" = "other"): Checklist => {
+ const { subjectCaps, subjectPossessiveCaps, isSingular } = responsibleEntityPhrase(entityType, trustVariant);
+ return makeLetterChecklist('glt-3-1', 'Tax Engagement Letter', 'Tax Engagement Letter', `
  <p class="text-sm text-foreground">${chip('Date')}</p>
  <p class="mt-6 text-sm text-foreground">${chip('Contact Name')}<br/>${chip('Entity Name')}<br/>${chip('Address')}</p>
  <p class="mt-6 text-sm text-foreground">Dear ${chip('Contact Name')},</p>
@@ -7700,12 +7751,12 @@ export const generateTaxEngagementLetter = (): Checklist =>
  <p class="mt-2 text-sm text-foreground">
  The services to be provided include:
  </p>
- <p class="mt-2 text-sm text-foreground">• Preparation of the corporate income tax return (T2) for the year ended ${chip('Taxation Year End')};</p>
+ <p class="mt-2 text-sm text-foreground">• Preparation of the ${taxReturnLabel(entityType, isUS)} for the year ended ${chip('Taxation Year End')};</p>
  <p class="mt-2 text-sm text-foreground">• ${chip('Additional Tax Services, if any')}.</p>
- <p class="mt-4 text-sm text-foreground font-semibold">Management's Responsibilities</p>
+ <p class="mt-4 text-sm text-foreground font-semibold">${subjectPossessiveCaps} Responsibilities</p>
  <p class="mt-2 text-sm text-foreground">
- Management is responsible for providing us with complete and accurate information, maintaining adequate
- records, making all management decisions, and ensuring compliance with all applicable tax legislation.
+ ${subjectCaps} ${isSingular ? "is" : "are"} responsible for providing us with complete and accurate information, maintaining adequate
+ records, making all decisions, and ensuring compliance with all applicable tax legislation.
  </p>
  <p class="mt-4 text-sm text-foreground font-semibold">Our Fees</p>
  <p class="mt-2 text-sm text-foreground">
@@ -7719,6 +7770,7 @@ export const generateTaxEngagementLetter = (): Checklist =>
  <p class="mt-4 text-sm text-foreground">${chip('Firm Name')}</p>
  <p class="mt-1 text-sm text-foreground">${chip('City, Province')}</p>
  `);
+};
 
 // ── Additional Letters ─────────────────────────────────────────────────────────
 

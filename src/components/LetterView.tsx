@@ -7,6 +7,7 @@ import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
 import signatureImg from "@/assets/letter-signature.png";
 import receivedStamp from "@/assets/letter-received-stamp.png";
 import { LETTER_MARGIN_PX, type LetterMargin } from "@/lib/letterMargins";
+import { getEntityLabels } from "@/lib/entityLabels";
 
 interface LetterViewProps {
  checklist: Checklist;
@@ -27,6 +28,8 @@ interface LetterViewProps {
  margin?: LetterMargin;
  /** The engagement client's entity type — changes the signature block's acknowledgement wording. */
  entityType?: string;
+ /** Only meaningful when entityType === "Trust" — see entityLabels.ts. */
+ trustVariant?: "unit" | "other";
 }
 
 /**
@@ -37,11 +40,13 @@ interface LetterViewProps {
  * (existing schema, no migration needed). Edit mode toggles a
  * contentEditable surface; Save persists the new HTML back to the checklist.
  */
-export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName, margin, entityType = "Corporation" }: LetterViewProps) {
+export function LetterView({ checklist, onUpdate, variant = "letter", isEditing: isEditingProp, onEditStart, onSaveEdits, onCancelEdits, saveRef, clientName, margin, entityType = "Corporation", trustVariant = "other" }: LetterViewProps) {
  const isReport = variant === "report";
+ // Sourced from entityLabels.ts so the signature block always matches the Partnership/Trust
+ // worksheets' terminology (e.g. "Trustees", not a hand-rolled "the trustee").
  const acknowledgedOnBehalfOf =
- entityType === "Partnership" ? "the partners of"
- : entityType === "Trust" ? "the trustee of"
+ entityType === "Partnership" ? `the ${getEntityLabels("Partnership").holders.toLowerCase()} of`
+ : entityType === "Trust" ? `the ${getEntityLabels("Trust", trustVariant).whoSigns.toLowerCase()} of`
  : "the management of";
  const [showAddDialog, setShowAddDialog] = useState(false);
  const [isEditingLocal, setIsEditingLocal] = useState(false);
