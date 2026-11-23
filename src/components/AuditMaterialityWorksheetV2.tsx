@@ -184,7 +184,7 @@ function TdSelect({
 }) {
  return (
  <Select value={value} onValueChange={onChange}>
- <SelectTrigger className="h-8 text-sm">
+ <SelectTrigger className="h-8 w-full min-w-0 text-sm">
  <SelectValue placeholder={placeholder} />
  </SelectTrigger>
  <SelectContent>
@@ -259,6 +259,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  const [pmPrevAmount, setPmPrevAmount] = useState("");
  const [pmPrevReasoning, setPmPrevReasoning] = useState("");
 
+ // Preliminary materiality levels sign-off (F)
+ const [signOff, setSignOff] = useState({ preparedBy: "", preparedDate: "", reviewedBy: "", reviewedDate: "" });
+
  // Clearly trivial
  const [ctThresholdPct, setCtThresholdPct] = useState("5.00");
 
@@ -284,7 +287,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  );
 
  // Section C adjusted — Performance materiality for specific F/S areas
- interface AdjPMRow { id: string; area: string; amount: string; reasoning: string; pyAmount: string; }
+ interface AdjPMRow { id: string; area: string; amount: string; reasoning: string; pyAmount: string; pyReasoning?: string; }
  const initAdjPM: AdjPMRow[] = isUS ? [
  { id: uid(), area: "Revenue (ASC 606 — contract estimates)", amount: "92000", reasoning: "Higher risk of misstatement due to percentage-of-completion estimates. PM set at 50% of overall.", pyAmount: "" },
  { id: uid(), area: "ROU Assets & Lease Liabilities (ASC 842)", amount: "64000", reasoning: "First-year adoption — increased inherent risk. PM set at 35% of overall.", pyAmount: "" },
@@ -295,7 +298,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  const [adjWPRef, setAdjWPRef] = useState<RefDoc[]>([]);
 
  // Section D — Materiality for specific circumstances
- interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: RefDoc[]; pyAmount: string; }
+ interface SpecMatRow { id: string; description: string; amount: string; reasoning: string; wpRef: RefDoc[]; pyAmount: string; pyReasoning?: string; }
  const initSpecMat: SpecMatRow[] = isUS ? [
  { id: uid(), description: "Related party transactions (ASC 850) — Board member loans and management compensation", amount: "10000", reasoning: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", wpRef: [{ name: "WP-RPT-01" }], pyAmount: "" },
  { id: uid(), description: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", amount: "0", reasoning: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount.", wpRef: [{ name: "WP-GC-01" }], pyAmount: "" },
@@ -312,6 +315,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  : "Performance materiality for RPTs set at 70% of specific materiality ($5,000 × 70% = $3,500)."
  );
  const [specPMPY, setSpecPMPY] = useState("");
+ const [specPMPYReasoning, setSpecPMPYReasoning] = useState("");
  const [specPMWPRef, setSpecPMWPRef] = useState<RefDoc[]>([{ name: "WP-RPT-PM" }]);
 
  // Additional comments & conclusion
@@ -600,12 +604,6 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">A. Overall Materiality</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Use professional judgment to set the highest amount of misstatement that could exist without affecting the decisions of the users identified above.</TooltipContent>
- </Tooltip>
  <Input
  type="date"
  value={periodStart}
@@ -634,6 +632,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  Refresh
  </Button>
  </div>
+ <p className="px-6 pt-3 pb-1 text-sm text-muted-foreground">Use professional judgment to set the highest amount of misstatement that could be included in the F/S without affecting the economic decisions of the users identified above.</p>
  <div className="px-6 py-3 border-b border-border flex items-center gap-3">
  <span className="text-sm text-muted-foreground">Entity type</span>
  <Tabs value={entityType} onValueChange={(v) => handleEntityTypeChange(v as EntityType)}>
@@ -648,13 +647,13 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
  <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-10">Primary</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[170px]">Period to date ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[170px]">This period anticipated ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[170px]">Previous period ($)</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap w-32">Benchmark % applied</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider whitespace-nowrap min-w-[185px]">Possible materiality ($)</th>
- <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Comments</th>
+ <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Basis for Calculations</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Period to date ($)</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">This period anticipated ($)</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Previous period ($)</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">Benchmark % applied</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Possible materiality ($)</th>
+ <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-full">Comments</th>
  <th className="px-2 py-3 w-8" />
  </tr>
  </thead>
@@ -686,7 +685,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  />
  </div>
  </td>
- <td className="px-4 py-2.5 align-top min-w-[200px]">
+ <td className="px-2 py-2.5 align-top w-[220px] min-w-[220px] max-w-[220px]">
  <TdSelect
  value={row.basis}
  onChange={(v) => handleBasisChange(row.id, v)}
@@ -702,18 +701,18 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  />
  )}
  </td>
- <td className="px-4 py-2.5 align-top min-w-[170px] text-right">
+ <td className="px-2 py-2.5 align-top min-w-[140px] text-right">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-amount')}>
  <TdInput
  value={row.periodAmount ? formatDisplay(row.periodAmount) : ""}
  onChange={(v) => { markEdited(`ptd-${row.id}`); updateEntityRow(row.id, "periodAmount", v.replace(/[^0-9.]/g, "")); }}
  placeholder="0.00"
- className="w-full tabular-nums text-right"
+ className="w-full px-2 tabular-nums text-right"
  luka={isDemoEngagement && !lukaEditedFields.has(`ptd-${row.id}`) && (row.basis === 'grossRevenue' || (rowIdx === 0 && lukaFilledFields.has('mat-row-0-amount')))}
  />
  </LukaTypingRow>
  </td>
- <td className="px-4 py-2.5 align-top min-w-[170px] text-right">
+ <td className="px-2 py-2.5 align-top min-w-[140px] text-right">
  <TdInput
  value={row.anticipated ? formatDisplay(row.anticipated) : ""}
  onChange={(v) => {
@@ -721,22 +720,22 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
    patchRow(row.id, cleaned ? { extrapolatedPeriod: cleaned, extrapManual: true } : { extrapolatedPeriod: "", extrapManual: false });
  }}
  placeholder="0.00"
- className="w-full tabular-nums text-right"
+ className="w-full px-2 tabular-nums text-right"
  />
   {row.anticipatedNote && <p className="mt-1 text-xs text-muted-foreground text-right">{row.anticipatedNote}</p>}
  </td>
- <td className="px-4 py-2.5 align-top min-w-[170px] text-right">
+ <td className="px-2 py-2.5 align-top min-w-[140px] text-right">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
  <TdInput
  value={row.prevAmount ? formatDisplay(row.prevAmount) : ""}
  onChange={(v) => { markEdited(`prev-${row.id}`); updateEntityRow(row.id, "prevAmount", v.replace(/[^0-9.]/g, "")); }}
  placeholder="0.00"
- className="w-full tabular-nums text-right"
+ className="w-full px-2 tabular-nums text-right"
  luka={isDemoEngagement && !lukaEditedFields.has(`prev-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-py')}
  />
  </LukaTypingRow>
  </td>
- <td className="px-4 py-2.5 align-top w-32 text-right">
+ <td className="px-2 py-2.5 align-top w-28 text-right">
  {showPctInput ? (
  <TdInput
  value={row.benchmarkPct}
@@ -755,14 +754,14 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  {range ? <>Range {range[0]}–{range[range.length - 1]}%{showPctInput && <> · <button type="button" className="underline hover:text-foreground" onClick={() => patchRow(row.id, { benchmarkPct: range.includes(pctNum) ? row.benchmarkPct : defaultPctFor(row.basis), pctManual: false })}>Use range</button></>}</> : "Manual entry"}
  </p>
  </td>
- <td className="px-4 py-2.5 align-top min-w-[185px] text-right">
+ <td className="px-2 py-2.5 align-top min-w-[140px] text-right">
  <TdInput
  value={formatDisplay(row.possible)}
  readOnly
- className={`tabular-nums text-right${isSelected ? " font-semibold" : ""}`}
+ className={`px-2 tabular-nums text-right${isSelected ? " font-semibold" : ""}`}
  />
  </td>
- <td className="px-4 py-2.5 align-top min-w-[160px]">
+ <td className="px-2 py-2.5 align-top ">
  <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-comments')}>
  <TdInput
  value={row.comments}
@@ -831,15 +830,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">B. Possible Misstatements in Qualitative Disclosures</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Identify any possible misstatements in qualitative F/S disclosures that could be material to intended users. Consider significant transactions, applicable framework, and nature of entity.</TooltipContent>
- </Tooltip>
  </div>
+ <p className="px-6 pt-3 pb-1 text-sm text-muted-foreground">Identify possible misstatements in qualitative disclosures that could be material to the intended users. Consider the entity's circumstances (such as a significant business combination), the applicable financial reporting framework and disclosures related to the nature of the entity.</p>
  <div className="px-6 py-5">
- <p className="text-sm text-muted-foreground mb-2">Describe the nature of any qualitative disclosures that could be material to F/S users.</p>
  <AttributedComment value={qualDisclosures} onChange={v => setQualDisclosures(v)} storageKey={`materiality-qualDisc-v2-${isUS ? "us" : "ca"}`} placeholder="Describe qualitative disclosures that could be material…" className="min-h-[80px] text-sm resize-none" />
  </div>
  </div>
@@ -904,13 +897,8 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
  <span className="text-sm font-semibold text-foreground">Adjusted performance materiality levels</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Set adjusted performance materiality for specific F/S areas with higher risk. Set at an amount lower than overall performance materiality.</TooltipContent>
- </Tooltip>
  </div>
+ <p className="px-6 pt-3 pb-1 text-sm text-muted-foreground">Where considered necessary to address particular risks of misstatement in a class of transactions, account balance or F/S disclosure.</p>
  <div className="overflow-x-auto">
  <table className="w-full">
  <thead className="sticky top-0 z-10">
@@ -919,6 +907,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">PY Reasoning</th>
  <th className="px-4 py-3 w-10" />
  </tr>
  </thead>
@@ -929,6 +918,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <td className="px-4 py-2.5 align-top min-w-[130px]"><TdInput value={row.amount ? formatDisplay(row.amount) : ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, amount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="0.00" className="text-right tabular-nums" /></td>
  <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
  <td className="px-4 py-2.5 align-top min-w-[120px]"><TdInput value={row.pyAmount ? formatDisplay(row.pyAmount) : ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
+ <td className="px-4 py-2.5 align-top"><TdInput value={row.pyReasoning ?? ""} onChange={(v) => setAdjPMRows(p => p.map(r => r.id === row.id ? {...r, pyReasoning: v} : r))} placeholder="PY reasoning…" /></td>
  <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setAdjPMRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={adjPMRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
  </tr>
  ))}
@@ -950,23 +940,19 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  {/* ── Section D: Materiality for specific circumstances ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">D. Materiality for Specific Circumstances</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Set lower materiality for specific classes of transactions, balances or disclosures where users are particularly sensitive. Consider the views and expectations of management and TCWG.</TooltipContent>
- </Tooltip>
+ <span className="text-sm font-semibold text-foreground">D. Materiality for Specific Circumstances (CAS 320.10, .A11–A12)</span>
  </div>
+ <p className="px-6 pt-3 pb-1 text-sm text-muted-foreground">Where misstatements of lesser amounts than overall materiality could reasonably influence users' decisions for particular transactions, balances or disclosures. Consider the views and expectations of management and TCWG, then set a level lower than overall materiality (Step A).</p>
  <div className="overflow-x-auto">
  <table className="w-full">
  <thead className="sticky top-0 z-10">
  <tr className="bg-muted border-b border-border">
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Description / User Expectation</th>
- <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Amount ($)</th>
+ <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[130px]">Materiality ($)</th>
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
  <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-24">PY ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">PY Reasoning</th>
  <th className="px-4 py-3 w-10" />
  </tr>
  </thead>
@@ -978,6 +964,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <td className="px-4 py-2.5 align-top"><TdInput value={row.reasoning} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, reasoning: v} : r))} placeholder="Reasoning…" /></td>
  <td className="px-4 py-2.5 align-top"><RefButton reference={row.wpRef} onAttach={(doc) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: [...r.wpRef, doc]} : r))} onRemove={(idx) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, wpRef: r.wpRef.filter((_,j) => j !== idx)} : r))} /></td>
  <td className="px-4 py-2.5 align-top"><TdInput value={row.pyAmount ? formatDisplay(row.pyAmount) : ""} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, pyAmount: v.replace(/[^0-9.]/g,"")} : r))} placeholder="—" className="text-right tabular-nums" /></td>
+ <td className="px-4 py-2.5 align-top"><TdInput value={row.pyReasoning ?? ""} onChange={(v) => setSpecMatRows(p => p.map(r => r.id === row.id ? {...r, pyReasoning: v} : r))} placeholder="PY reasoning…" /></td>
  <td className="px-2 py-2.5 align-top text-center"><button onClick={() => setSpecMatRows(p => p.filter(r => r.id !== row.id))} className="text-muted-foreground hover:text-destructive transition-colors" disabled={specMatRows.length === 1}><Trash2 className="h-3.5 w-3.5" /></button></td>
  </tr>
  ))}
@@ -992,14 +979,9 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  {/* ── Section E: Performance materiality for specific circumstances ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">E. Performance Materiality for Specific Circumstances</span>
- <Tooltip>
- <TooltipTrigger asChild>
- <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
- </TooltipTrigger>
- <TooltipContent>Performance materiality applied to the specific circumstances identified in Step D.</TooltipContent>
- </Tooltip>
+ <span className="text-sm font-semibold text-foreground">E. Performance Materiality for Specific Circumstances (CAS 320.10–11, .A13)</span>
  </div>
+ <p className="px-6 pt-3 pb-1 text-sm text-muted-foreground">Performance materiality for the specific circumstances in Step D.</p>
  <div className="overflow-x-auto">
  <table className="w-full">
  <thead className="sticky top-0 z-10">
@@ -1008,6 +990,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">Reasoning</th>
  <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[120px]">PY Amount ($)</th>
+ <th className="px-4 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider">PY Reasoning</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-border">
@@ -1016,6 +999,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <td className="px-4 py-2.5 align-top"><TdInput value={specPMReasoning} onChange={setSpecPMReasoning} placeholder="Reasoning…" /></td>
  <td className="px-4 py-2.5 align-top"><RefButton reference={specPMWPRef} onAttach={(doc) => setSpecPMWPRef(p => [...p, doc])} onRemove={(idx) => setSpecPMWPRef(p => p.filter((_,j) => j !== idx))} /></td>
  <td className="px-4 py-2.5 align-top min-w-[120px]"><TdInput value={specPMPY ? formatDisplay(specPMPY) : ""} onChange={(v) => setSpecPMPY(v.replace(/[^0-9.]/g, ""))} placeholder="—" className="text-right tabular-nums" /></td>
+ <td className="px-4 py-2.5 align-top"><TdInput value={specPMPYReasoning} onChange={setSpecPMPYReasoning} placeholder="PY reasoning…" /></td>
  </tr>
  </tbody>
  </table>
@@ -1025,7 +1009,7 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  {/* ── Section F: Trivial misstatements ── */}
  <div className="bg-card text-card-foreground border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-3">
- <span className="text-sm font-semibold text-foreground">F. Trivial Misstatements</span>
+ <span className="text-sm font-semibold text-foreground">F. Trivial Misstatements (CAS 450.A2)</span>
  <Tooltip>
  <TooltipTrigger asChild>
  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
@@ -1033,28 +1017,25 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <TooltipContent>Threshold below which misstatements are clearly trivial and need not be accumulated (CAS 450.A2).</TooltipContent>
  </Tooltip>
  </div>
- <div className="border-t border-border px-4 py-3">
- <div className="flex items-center">
- <span className="text-sm text-foreground flex-1">Clearly trivial misstatements</span>
- <div className="flex items-center gap-8 mr-8">
- <div className="flex flex-col items-end gap-1">
- <span className="text-sm text-muted-foreground">Threshold (%)</span>
- <TdInput
- value={ctThresholdPct}
- onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))}
- placeholder="0.00"
- className="w-24 tabular-nums text-right"
- />
- </div>
+ <div className="border-t border-border px-6 py-4 flex items-center gap-4">
+ <span className="text-sm text-foreground flex-1">Amount below which misstatements would be clearly trivial and not recorded on Form 335</span>
  <div className="flex flex-col items-end gap-1">
  <span className="text-sm text-muted-foreground">Amount ($)</span>
- <TdInput
- value={ctAmount ? formatDisplay(ctAmount) : ""}
- readOnly
- className="w-32 tabular-nums text-right"
- />
+ <TdInput value={ctAmount ? formatDisplay(ctAmount) : ""} readOnly className="w-40 tabular-nums text-right" />
+ </div>
+ <div className="flex items-center gap-1.5 self-end pb-1.5 text-xs text-muted-foreground">
+ <span>calc. at</span>
+ <TdInput value={ctThresholdPct} onChange={(v) => setCtThresholdPct(v.replace(/[^0-9.]/g, ""))} placeholder="0.00" className="h-7 w-16 px-2 text-xs tabular-nums text-right" />
+ <span>% of overall</span>
  </div>
  </div>
+ <div className="border-t border-border px-6 py-4">
+ <p className="mb-2 text-sm font-semibold text-foreground">Preliminary materiality levels</p>
+ <div className="grid grid-cols-4 gap-4">
+ <div className="flex flex-col gap-1"><span className="text-xs text-muted-foreground">Prepared by</span><TdInput value={signOff.preparedBy} onChange={(v) => setSignOff(p => ({...p, preparedBy: v}))} placeholder="Name" /></div>
+ <div className="flex flex-col gap-1"><span className="text-xs text-muted-foreground">Date</span><TdInput type="date" value={signOff.preparedDate} onChange={(v) => setSignOff(p => ({...p, preparedDate: v}))} /></div>
+ <div className="flex flex-col gap-1"><span className="text-xs text-muted-foreground">Reviewed by</span><TdInput value={signOff.reviewedBy} onChange={(v) => setSignOff(p => ({...p, reviewedBy: v}))} placeholder="Name" /></div>
+ <div className="flex flex-col gap-1"><span className="text-xs text-muted-foreground">Date</span><TdInput type="date" value={signOff.reviewedDate} onChange={(v) => setSignOff(p => ({...p, reviewedDate: v}))} /></div>
  </div>
  </div>
  </div>
@@ -1158,7 +1139,6 @@ export function AuditMaterialityWorksheetV2({ isUS = false, engagementId }: Audi
  <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
  <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-2">
  <span className="text-sm font-semibold text-foreground">Conclusion</span>
- <span className="text-sm text-muted-foreground">— Document any changes in the materiality assessments and the final materiality</span>
  </div>
  <div className="px-6 py-5">
  <Textarea
