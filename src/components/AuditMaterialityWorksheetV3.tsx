@@ -71,6 +71,7 @@ interface LevelRow {
  py: string;
  comments: string;
  wpRef: RefDoc[];
+ areaManual?: boolean; // specific performance only: area overridden instead of mirroring the Specific row
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -432,7 +433,6 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  newLevel("specPerformance", { comments: "70% of specific materiality.", wpRef: [{ name: "WP-RPT-PM" }] }),
  newLevel("trivial"),
  ]));
- const [levelsWPRef, setLevelsWPRef] = useState<RefDoc[]>(saved?.levelsWPRef ?? []);
 
  const [qualitative, setQualitative] = useState<QualitativeItem[]>(saved?.qualitative ?? [{ id: uid(), nature: "", impact: "" }]);
 
@@ -540,6 +540,8 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  // Overall = the selected criteria line's possible materiality (not a sum)
  const selectedRow = rows.find(r => r.id === selectedRowId) ?? rows[0];
  const criteriaOverall = selectedRow?.possible ?? "";
+ const selectedRange = selectedRow ? findBasis(selectedRow.basis)?.range : undefined;
+ const selectedRangeTip = selectedRange ? `Range ${selectedRange[0]}–${selectedRange[selectedRange.length - 1]}%` : "Manual entry";
 
  // ── Levels derivation: Overall -> Performance / Trivial; Specific -> Specific performance ──
 
@@ -578,6 +580,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const performanceNum = currentOf(levelOf("performance") ?? newLevel("performance", { method: "manual" }));
  const trivialNum = currentOf(levelOf("trivial") ?? newLevel("trivial", { method: "manual" }));
  const specPerfNum = levelOf("specPerformance") ? currentOf(levelOf("specPerformance")!) : null;
+ const specificRows = levels.filter(l => l.kind === "specific");
  const adjCount = levels.filter(l => l.kind === "adjPerformance").length;
  const specCount = levels.filter(l => l.kind === "specific").length;
 
@@ -597,9 +600,9 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  useEffect(() => {
  writeJsonToLocalStorage(stateKey, {
  concluded, periodStart, periodEnd, selectedRowId, entityRows, entityType, intendedUsers,
- qualDisclosures, levels, levelsWPRef, qualitative, additionalComments, conclusion,
+ qualDisclosures, levels, qualitative, additionalComments, conclusion,
  });
- }, [stateKey, concluded, periodStart, periodEnd, selectedRowId, entityRows, entityType, intendedUsers, qualDisclosures, levels, levelsWPRef, qualitative, additionalComments, conclusion]);
+ }, [stateKey, concluded, periodStart, periodEnd, selectedRowId, entityRows, entityType, intendedUsers, qualDisclosures, levels, qualitative, additionalComments, conclusion]);
 
  const addLevel = (kind: LevelKind) => {
  if (kind === "adjPerformance" && adjCount >= MAX_ADJUSTED) return;
@@ -623,7 +626,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const tiles: { key: string; label: string; hint: string; value: string; luka?: boolean }[] = [
  { key: "overall", label: "Overall", hint: overallRow?.method === "manual" ? "Manual" : overallBasisLabel, value: overallStr, luka: isDemoEngagement && !!overallStr },
  { key: "perf", label: "Performance", hint: `${pctText(perfRow)} · ${adjCount} adjusted`, value: performanceStr },
- { key: "spec", label: "Specific", hint: `${specCount} ${specCount === 1 ? "item" : "items"} · specific performance`, value: specPerfNum === null ? "" : formatNum(specPerfNum) },
+ { key: "spec", label: "Specific", hint: `${specCount} ${specCount === 1 ? "item" : "items"} · specific PM ${specPerfNum === null ? "—" : fmtInt(specPerfNum)}`, value: isNaN(specificBase) ? "" : formatNum(specificBase) },
  { key: "trivial", label: "Trivial", hint: pctText(trivialRow), value: trivialStr },
  ];
 
@@ -753,11 +756,11 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <InfoTip text="Use professional judgment to set the highest amount of misstatement that could be included in the F/S without affecting the economic decisions of the users identified above. The selected line drives overall materiality." />
  <Input type="date" aria-label="Period start" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} className="h-8 text-sm w-44 pr-2" />
  <Input type="date" aria-label="Period end" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} className="h-8 text-sm w-44 pr-2" />
+ <div className="flex-1" />
  <Button variant="outline" size="sm" onClick={handleRefresh} className="h-8 text-sm">
  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
- Refresh from TB
+ Refresh
  </Button>
- <div className="flex-1" />
  <Tabs value={entityType} onValueChange={(v) => handleEntityTypeChange(v as EntityType)}>
  <TabsList className="h-8">
  <TabsTrigger value="profit" className="text-xs px-3">Profit-oriented</TabsTrigger>
@@ -774,7 +777,9 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Period to date</th>
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Anticipated</th>
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Previous period</th>
- <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-28">%</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-36">
+ <span className="inline-flex items-center justify-end gap-1.5">Benchmark % applied<InfoTip text={selectedRangeTip} /></span>
+ </th>
  <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Possible materiality</th>
  <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[200px] w-full">Comments</th>
  <th className="px-2 py-3 w-10" />
@@ -787,7 +792,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const range = basisOpt?.range;
  const pctNum = parseFloat(row.benchmarkPct);
  const showPctInput = !range || row.pctManual || !range.includes(pctNum);
- const rangeTip = range ? `Form range ${range[0]}–${range[range.length - 1]}%` : "Manual entry";
+ const rangeTip = range ? `Range ${range[0]}–${range[range.length - 1]}%` : "Manual entry";
  return (
  <tr
  key={row.id}
@@ -842,7 +847,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  />
  </LukaTypingRow>
  </td>
- <td className="px-2 py-2.5 align-top w-28">
+ <td className="px-2 py-2.5 align-top w-36">
  <Tip text={rangeTip}>
  {showPctInput ? (
  <TdInput
@@ -986,7 +991,16 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  </div>
  </td>
  <td className="px-4 py-2.5 align-top">
- <TdInput value={l.area} onChange={(v) => patchLevel(l.id, { area: v })} placeholder="F/S area or disclosure" />
+ {l.kind === "specPerformance" && !l.areaManual ? (
+ <TdInput
+ value={specificRows.length === 1 ? specificRows[0].area : l.area}
+ onChange={(v) => patchLevel(l.id, { area: v, areaManual: true })}
+ placeholder="F/S area or disclosure"
+ className={specificRows.length === 1 ? "bg-muted/50" : ""}
+ />
+ ) : (
+ <TdInput value={l.area} onChange={(v) => patchLevel(l.id, l.kind === "specPerformance" ? { area: v, areaManual: true } : { area: v })} placeholder="F/S area or disclosure" />
+ )}
  </td>
  <td className="px-4 py-2.5 align-top">
  <TdSelect value={l.method} onChange={(v) => patchLevel(l.id, v === "manual" && cur !== null && l.manual === "" ? { method: v, manual: numStr(cur) } : { method: v })} options={METHOD_OPTIONS[l.kind]} />
@@ -1040,7 +1054,6 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
  Maximum of two adjusted performance levels. For more, provide details on a supplementary work paper that cross-references to this form.
  </p>
- <RefButton reference={levelsWPRef} onAttach={(doc) => setLevelsWPRef(p => [...p, doc])} onRemove={(idx) => setLevelsWPRef(p => p.filter((_, j) => j !== idx))} />
  </div>
  <div className="border-t border-border px-6 py-3 bg-muted/20">
  <p className="text-sm text-muted-foreground">
