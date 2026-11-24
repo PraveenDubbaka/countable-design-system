@@ -30,6 +30,24 @@ export interface Client {
  isUsTaxpayer?: boolean;
  groupName?: string;
  incorporationDate?: string;
+ // Add New Client V3 fields
+ dbaName?: string;
+ dbaDisplay?: string;
+ subType?: string;
+ jurisdiction?: string;
+ fiscalYearEnd?: string;
+ naics?: string;
+ engagementManager?: string;
+ reportingFramework?: string;
+ accountingSoftware?: string;
+ businessNumber?: string;
+ gstRegistered?: string;
+ craAccounts?: { number: string; label: string }[];
+ address?: { line1: string; line2: string; city: string; region: string; postal: string };
+ mailingSame?: boolean;
+ mailingAddress?: { line1: string; line2: string; city: string; region: string; postal: string };
+ website?: string;
+ people?: { id: string; name: string; title: string; roles: string[]; email: string; phone: string; portalAccess: boolean }[];
 }
 
 export const clientsData: Client[] = [

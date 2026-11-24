@@ -31,6 +31,7 @@ import { StyledCard } from "@/components/ui/card";
 import { ClientRightPanel } from "@/components/ClientRightPanel";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import { clientsData, loadClients, Client } from "@/data/clientsData";
@@ -526,20 +527,19 @@ export default function Clients() {
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
  <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 w-44 h-9 text-sm" />
  </div>
- <Button variant="outline" className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted" onClick={() => navigate("/clients/add-new")}>
- Add New Client
- </Button>
- <Popover>
- <PopoverTrigger asChild>
+ <DropdownMenu>
+ <DropdownMenuTrigger asChild>
  <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
- Add Client <ChevronDown className="h-4 w-4 ml-1.5" />
+ Add Client
  </Button>
- </PopoverTrigger>
- <PopoverContent className="w-56 p-1 bg-card" align="end">
- <button onClick={() => navigate("/clients/new")} className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors">Add New Client</button>
- <button onClick={() => toast.info("Upload Existing Client")} className="w-full text-left px-3 py-2 text-sm rounded hover:bg-muted transition-colors">Upload Existing Client</button>
- </PopoverContent>
- </Popover>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent align="end" className="min-w-max">
+ <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/clients/new")}>Old</DropdownMenuItem>
+ <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/clients/add-new")}>Version 1</DropdownMenuItem>
+ <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/clients/add-new-v3")}>Version 2</DropdownMenuItem>
+ <DropdownMenuItem className="cursor-pointer" onClick={() => toast.info("Upload Existing Client")}>Upload Existing Client</DropdownMenuItem>
+ </DropdownMenuContent>
+ </DropdownMenu>
  </div>
  </div>
 

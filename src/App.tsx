@@ -13,6 +13,7 @@ import EngagementDetail from "./pages/EngagementDetail";
 import CreateEngagement from "./pages/CreateEngagement";
 import CreateNewEngagement from "./pages/CreateNewEngagement";
 import CreateNewEngagementV3 from "./pages/CreateNewEngagementV3";
+import AddNewClientV3 from "./pages/AddNewClientV3";
 import AddNewClientV2 from "./pages/AddNewClientV2";
 import Clients from "./pages/Clients";
 import AddNewClient from "./pages/AddNewClient";
@@ -46,6 +47,7 @@ const App = () => (
  <Route path="/dashboard" element={<Dashboard />} />
  <Route path="/clients" element={<Clients />} />
  <Route path="/clients/add-new" element={<AddNewClientV2 />} />
+ <Route path="/clients/add-new-v3" element={<AddNewClientV3 />} />
  <Route path="/clients/new" element={<AddNewClient />} />
  <Route path="/clients/:clientId" element={<ClientDetail />} />
  <Route path="/teams" element={<Teams />} />
