@@ -122,11 +122,18 @@ const MultiSelectDropdown = ({
   const [custom, setCustom] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    // Capture phase, so it still fires when a Radix Select/Popover swallows the event. Also closes on focus moving elsewhere.
+    const handler = (e: Event) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("pointerdown", handler, true);
+    document.addEventListener("mousedown", handler, true);
+    document.addEventListener("focusin", handler);
+    return () => {
+      document.removeEventListener("pointerdown", handler, true);
+      document.removeEventListener("mousedown", handler, true);
+      document.removeEventListener("focusin", handler);
+    };
   }, []);
   const toggle = (u: string) => onChange(selected.includes(u) ? selected.filter(x => x !== u) : [...selected, u]);
   const all = [...options, ...selected.filter(u => !options.includes(u))];
