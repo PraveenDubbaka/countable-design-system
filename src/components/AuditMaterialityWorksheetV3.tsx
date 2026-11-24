@@ -1106,7 +1106,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  {/* ── Qualitative considerations ── */}
  <div className={CARD}>
  <div className={CARD_HEAD}>
- <span className="text-sm font-semibold text-foreground">Qualitative considerations · pending Atin</span>
+ <span className="text-sm font-semibold text-foreground">Qualitative considerations</span>
  <InfoTip text="Document any qualitative factors that influenced the materiality determination." />
  </div>
  <div className="overflow-x-auto">
