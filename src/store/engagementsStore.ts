@@ -78,6 +78,10 @@ export type EngagementMeta = {
  industry?: string;
  accountingStandards?: string;
  budget?: string;
+ purpose?: string; // Create Engagement V3
+ intendedUsers?: string[];
+ deliverableName?: string;
+ usingExpert?: boolean;
  periodStart?: string;
  periodEnd?: string;
  auditPeriodType?: string; // "Full Year" | "Interim (6-month)" | "Stub Period" | "Other"

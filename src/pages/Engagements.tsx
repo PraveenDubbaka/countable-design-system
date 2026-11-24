@@ -423,6 +423,13 @@ export default function Engagements() {
           Create New Engagement
         </Button>
         <Button
+          variant="outline"
+          className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
+          onClick={() => navigate("/engagements/create-new-v3")}
+        >
+          Create Engagement V3
+        </Button>
+        <Button
           onClick={() => { setSelectedClient(""); setSelectedEngType(""); setCreateModalOpen(true); }}
           className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium"
         >

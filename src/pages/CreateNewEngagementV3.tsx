@@ -1,0 +1,1397 @@
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEngagements } from "@/store/EngagementsContext";
+import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
+import { toast } from "sonner";
+import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
+import xeroLogoFull from "@/assets/xero-logo-full.svg";
+import {
+  ArrowLeft, Briefcase, Calendar, Users, Plus, Pencil, Trash2,
+  Search, ExternalLink, X, Settings2, Check, UserPlus, User, AlertTriangle, Info,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Layout } from "@/components/Layout";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
+import { format as formatDateFns } from "date-fns";
+import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
+import { TEMPLATE_CONFIG } from "@/lib/engagementTemplatesData";
+import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
+import { getClientConnectionState, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
+import { accountingProviders } from "@/lib/accountingProviders";
+import { savedYearSources } from "@/lib/yearSourceSave";
+import { loadClients } from "@/data/clientsData";
+
+// Mirror of CLIENT_DATA in CreateEngagement.tsx — keep in sync if client data changes
+const CLIENT_DATA: Record<string, {
+  entityLegalName: string;
+  entityType: string;
+  contactPerson: string;
+  engagementPartner: string;
+  integrations: string[];
+  businessPhone: string;
+  cellPhone: string;
+  industryType: string;
+  clientCountry: string;
+  hasQuebecPersonalInfo: boolean;
+  isUsTaxpayer: boolean;
+}> = {
+  "Harbor Freight Logistics LLC": {
+    entityLegalName: "Harbor Freight Logistics LLC",
+    entityType: "Corporation",
+    contactPerson: "Michael Torres",
+    engagementPartner: "Atin Gupta",
+    integrations: ["quickbooks"],
+    businessPhone: "+1 (604) 555-0192",
+    cellPhone: "-",
+    industryType: "Transportation & Logistics",
+    clientCountry: "ca",
+    hasQuebecPersonalInfo: false,
+    isUsTaxpayer: false,
+  },
+  "Shipping Line Inc.": {
+    entityLegalName: "Shipping Line Inc.",
+    entityType: "Corporation",
+    contactPerson: "Sarah Chen",
+    engagementPartner: "Atin Gupta",
+    integrations: ["quickbooks"],
+    businessPhone: "+1 (604) 555-0134",
+    cellPhone: "+1 (778) 555-0221",
+    industryType: "Transportation & Logistics",
+    clientCountry: "ca",
+    hasQuebecPersonalInfo: false,
+    isUsTaxpayer: false,
+  },
+  "John Doe Inc.": {
+    entityLegalName: "John Doe Inc.",
+    entityType: "Corporation",
+    contactPerson: "John Doe",
+    engagementPartner: "Atin Gupta",
+    integrations: ["quickbooks"],
+    businessPhone: "-",
+    cellPhone: "-",
+    industryType: "Professional Services",
+    clientCountry: "us",
+    hasQuebecPersonalInfo: false,
+    isUsTaxpayer: true,
+  },
+};
+
+// Source Data (follows the TB import flow). `label` is the full name (logo alt text); `shortName` is what
+// the Data Source dropdown and its tooltip show. Sage is here because a client can be connected to it from the Clients page.
+type SourceProvider = AccountingProvider;
+const SOURCE_PROVIDERS: Record<SourceProvider, { label: string; shortName: string; badgeLogo: string }> = {
+  quickbooks: { label: "QuickBooks Online", shortName: "QuickBooks", badgeLogo: intuitQuickbooksLogo },
+  xero: { label: "Xero", shortName: "Xero", badgeLogo: xeroLogoFull },
+  sage: { label: "Sage", shortName: "Sage", badgeLogo: accountingProviders.sage.badgeLogo },
+};
+
+const ENGAGEMENT_TYPES = [
+  { value: "Audit (AUD)", label: "Audit (AUD)" },
+  { value: "Compilation (COM)", label: "Compilation (COM)" },
+  { value: "Review (REV)", label: "Review (REV)" },
+  { value: "T2 (Corporations)", label: "T2 (Corporations)" },
+];
+
+const ENGAGEMENT_TYPE_CARDS = [
+  { value: "Audit (AUD)", title: "Audit", code: "AUD" },
+  { value: "Review (REV)", title: "Review", code: "REV" },
+  { value: "Compilation (COM)", title: "Compilation", code: "COM" },
+  { value: "T2 (Corporations)", title: "T2", code: "Corporations" },
+];
+const INTENDED_USER_OPTIONS = ["Shareholders", "Lender", "CRA", "Funder"];
+const DELIVERABLE_NAME_OPTIONS = ["Both — from client default", "Legal name", "Operating name"];
+
+const FieldCol = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-xs font-medium text-foreground">{label}{required && <span className="text-destructive ml-0.5">*</span>}</label>
+    {children}
+  </div>
+);
+
+const ACCOUNTING_FRAMEWORKS = [
+  "ASPE — Canadian Accounting Standards for Private Enterprises",
+  "IFRS — International Financial Reporting Standards",
+  "US GAAP — Generally Accepted Accounting Principles (United States)",
+  "Tax Basis",
+  "Cash Basis",
+  "Modified Cash Basis",
+];
+
+const AUDIT_ROLES = [
+  "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
+  "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer",
+];
+
+type RecommendedRole = { role: string; hourlyRate: string; timeAllocation: string };
+const RECOMMENDED_TEAM: Record<string, RecommendedRole[]> = {
+  audit: [
+    { role: "Engagement Partner", hourlyRate: "400.00", timeAllocation: "15" },
+    { role: "Manager", hourlyRate: "275.00", timeAllocation: "25" },
+    { role: "Senior Auditor", hourlyRate: "200.00", timeAllocation: "35" },
+    { role: "Staff Auditor / Assistant", hourlyRate: "150.00", timeAllocation: "25" },
+  ],
+  review: [
+    { role: "Partner", hourlyRate: "400.00", timeAllocation: "20" },
+    { role: "Manager", hourlyRate: "275.00", timeAllocation: "30" },
+    { role: "Senior", hourlyRate: "200.00", timeAllocation: "35" },
+    { role: "Staff / Assistant", hourlyRate: "150.00", timeAllocation: "15" },
+  ],
+  compilation: [
+    { role: "Partner", hourlyRate: "400.00", timeAllocation: "15" },
+    { role: "Senior", hourlyRate: "200.00", timeAllocation: "45" },
+    { role: "Preparer", hourlyRate: "125.00", timeAllocation: "40" },
+  ],
+  tax: [
+    { role: "Partner", hourlyRate: "400.00", timeAllocation: "20" },
+    { role: "Manager", hourlyRate: "275.00", timeAllocation: "30" },
+    { role: "Tax Reviewer", hourlyRate: "300.00", timeAllocation: "35" },
+    { role: "Preparer", hourlyRate: "125.00", timeAllocation: "15" },
+  ],
+};
+
+const MOCK_TEAM_MEMBERS = [
+  { name: "Kaushal Bhagat", email: "kaushalb@countable.co", title: "Manager", hourlyRate: "100.00" },
+  { name: "Atin Gupta", email: "atin@countable.co", title: "Partner", hourlyRate: "200.00" },
+  { name: "Michael Torres", email: "michaelt@countable.co", title: "Senior Auditor", hourlyRate: "85.00" },
+  { name: "Sarah Chen", email: "sarahc@countable.co", title: "Staff Auditor", hourlyRate: "65.00" },
+  { name: "Jane DEF", email: "John_DEF@email.com", title: "Associate", hourlyRate: "25.00" },
+];
+
+const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const STOP_WORDS = new Set(["LLC","INC","INC.","LTD","LTD.","CO","CO.","CORP","CORP."]);
+
+function engagementIdDatePart(yearEnd: string): string {
+  const parts = yearEnd.split("/");
+  if (parts.length !== 3) return yearEnd.replace(/\//g, "");
+  const m = parseInt(parts[0]) - 1;
+  const d = parseInt(parts[1]);
+  const y = parts[2];
+  if (m < 0 || m > 11 || isNaN(d)) return yearEnd.replace(/\//g, "");
+  return `${MONTHS_SHORT[m]}${d}${y}`;
+}
+
+function shiftYear(mmddyyyy: string, delta: number): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3) return mmddyyyy;
+  return `${p[0]}/${p[1]}/${String(parseInt(p[2]) + delta)}`;
+}
+
+function addDays(mmddyyyy: string, days: number): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3) return mmddyyyy;
+  const d = new Date(parseInt(p[2]), parseInt(p[0]) - 1, parseInt(p[1]));
+  d.setDate(d.getDate() + days);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
+// Copied from TB (src/lib/tbYearData.ts): "MM/dd/yyyy" or a display date such as "Dec 31, 2026" -> local date, time stripped.
+function parseDateOnly(s: string | undefined | null): Date | null {
+  if (!s) return null;
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const d = m ? new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])) : new Date(s);
+  if (isNaN(d.getTime())) return null;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+// Copied from TB (src/lib/tbYearData.ts): the Current Year end is after today (dates only), so the year hasn't finished.
+function isFutureYearEnd(yearEnd: string | undefined | null, today: Date = new Date()): boolean {
+  const d = parseDateOnly(yearEnd);
+  if (!d) return false;
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return d.getTime() > t.getTime();
+}
+
+function deriveEngagementId(type: string, client: string, yearEnd: string): string {
+  const typePrefix = type.match(/\(([^)]+)\)/)?.[1] ?? type.substring(0, 3).toUpperCase();
+  const abbrev = client.split(/\s+/)
+    .filter(w => !STOP_WORDS.has(w.toUpperCase()))
+    .map(w => w[0]?.toUpperCase() ?? "")
+    .join("")
+    .substring(0, 4);
+  return `${typePrefix}-${abbrev}-${engagementIdDatePart(yearEnd)}`;
+}
+
+function formatYearEnd(dateStr: string): string {
+  const parts = dateStr.split("/");
+  if (parts.length !== 3) return dateStr;
+  const d = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function formatDateCreated(): string {
+  const now = new Date();
+  return now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) +
+    " " + now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+}
+
+let _uid = 0;
+const uid = () => String(++_uid);
+
+const ic = "input-double-border w-full h-9 px-3 py-2 text-sm text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]";
+
+const InlineRow = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
+  <div className="flex items-center gap-4 py-2.5">
+    <span className="text-sm text-foreground w-44 shrink-0">
+      {label}{required && <span className="text-destructive ml-0.5">*</span>}
+    </span>
+    <div className="flex-1 min-w-0 max-w-sm">{children}</div>
+  </div>
+);
+
+const BoolToggle = ({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) => (
+  <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium shrink-0 select-none">
+    <button type="button" onClick={() => onChange(true)}
+      className={`px-3.5 py-1.5 transition-colors ${value ? "bg-[#1C63A6] text-white" : "text-muted-foreground hover:bg-muted"}`}>
+      Yes
+    </button>
+    <button type="button" onClick={() => onChange(false)}
+      className={`px-3.5 py-1.5 transition-colors border-l border-border ${!value ? "bg-muted text-foreground font-semibold" : "text-muted-foreground hover:bg-muted"}`}>
+      No
+    </button>
+  </div>
+);
+
+const SectionCard = ({
+  icon, title, children, badge, headerRight,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+  badge?: string;
+  headerRight?: React.ReactNode;
+}) => (
+  <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
+    <div className="flex items-center gap-2 mb-5">
+      <span className="text-primary">{icon}</span>
+      <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      {badge && <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full">{badge}</span>}
+      {headerRight && <div className="ml-auto">{headerRight}</div>}
+    </div>
+    {children}
+  </div>
+);
+
+interface TeamMember {
+  id: string;
+  role: string;
+  name: string;
+  email: string;
+  title: string;
+  hourlyRate: string;
+  timeAllocation: string;
+}
+
+type PendingRow =
+  | { mode: "add"; draft: TeamMember }
+  | { mode: "edit"; originalId: string; draft: TeamMember };
+
+function calcBudgetedCost(hourlyRate: string, timeAllocation: string) {
+  return ((parseFloat(hourlyRate) || 0) * ((parseFloat(timeAllocation) || 0) / 100)).toFixed(2);
+}
+
+function calcBudgetedHours(timeAllocation: string) {
+  return (((parseFloat(timeAllocation) || 0) / 100)).toFixed(2);
+}
+
+const TeamMemberViewRow = ({
+  member, checked, onCheck, onEdit, onDelete,
+}: {
+  member: TeamMember; checked: boolean; onCheck: () => void; onEdit: () => void; onDelete: () => void;
+}) => (
+  <tr className="hover:bg-muted/40 transition-colors border-b border-border/40">
+    <td className="px-4 py-3 w-10"><Checkbox checked={checked} onCheckedChange={onCheck} /></td>
+    <td className="px-4 py-3 text-sm text-foreground whitespace-nowrap">{member.role}</td>
+    <td className="px-4 py-3 text-sm font-medium text-foreground whitespace-nowrap">{member.name}</td>
+    <td className="px-4 py-3 text-sm text-muted-foreground">{member.email}</td>
+    <td className="px-4 py-3 text-sm text-muted-foreground whitespace-nowrap">{member.title}</td>
+    <td className="px-4 py-3 text-sm text-right text-foreground">{parseFloat(member.hourlyRate || "0").toFixed(2)}</td>
+    <td className="px-4 py-3 text-sm text-right text-foreground">{member.timeAllocation}</td>
+    <td className="px-4 py-3 text-sm text-right text-foreground">{calcBudgetedCost(member.hourlyRate, member.timeAllocation)}</td>
+    <td className="px-4 py-3 text-sm text-right text-foreground">{calcBudgetedHours(member.timeAllocation)}</td>
+    <td className="px-4 py-3">
+      <div className="flex items-center gap-0.5">
+        <button type="button" onClick={onEdit} className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+          <Pencil className="h-4 w-4 text-link" />
+        </button>
+        <button type="button" onClick={onDelete} className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </button>
+      </div>
+    </td>
+  </tr>
+);
+
+const TeamMemberEditRow = ({
+  draft, onChangeDraft, onConfirm, onCancel, roleOptions, onAddRole,
+}: {
+  draft: TeamMember; onChangeDraft: (d: TeamMember) => void;
+  onConfirm: () => void; onCancel: () => void;
+  roleOptions: string[]; onAddRole?: () => void;
+}) => {
+  const handleMemberSelect = (name: string) => {
+    const found = MOCK_TEAM_MEMBERS.find(m => m.name === name);
+    onChangeDraft({ ...draft, name, email: found?.email ?? "", title: found?.title ?? "", hourlyRate: found?.hourlyRate ?? draft.hourlyRate });
+  };
+  const numCls = "input-double-border w-full h-9 px-3 text-sm text-right text-foreground rounded-[10px] outline-none transition-all duration-200 bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]";
+  return (
+    <tr className="bg-primary/[0.03] dark:bg-primary/[0.05] border-b border-border/40">
+      <td className="px-6 py-2 w-10"><Checkbox /></td>
+      <td className="px-6 py-2 min-w-[160px]">
+        <Select value={draft.role} onValueChange={role => {
+          if (role === "__add_new_role__") { onAddRole?.(); return; }
+          onChangeDraft({ ...draft, role });
+        }}>
+          <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {roleOptions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            <SelectItem value="__add_new_role__" className="text-primary font-medium">
+              <span className="flex items-center gap-1.5"><UserPlus className="h-3.5 w-3.5" />Add new role</span>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </td>
+      <td className="px-6 py-2 min-w-[200px]">
+        <Select value={draft.name} onValueChange={handleMemberSelect}>
+          <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select an option" /></SelectTrigger>
+          <SelectContent>
+            {MOCK_TEAM_MEMBERS.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </td>
+      <td className="px-6 py-2 text-sm text-muted-foreground max-w-[160px] truncate">{draft.email}</td>
+      <td className="px-6 py-2 text-sm text-muted-foreground whitespace-nowrap">{draft.title}</td>
+      <td className="px-6 py-2 min-w-[110px]">
+        <input type="number" value={draft.hourlyRate} min="0" step="0.01"
+          onChange={e => onChangeDraft({ ...draft, hourlyRate: e.target.value })}
+          className={numCls} />
+      </td>
+      <td className="px-6 py-2 min-w-[110px]">
+        <input type="number" value={draft.timeAllocation} min="0" max="100"
+          onChange={e => onChangeDraft({ ...draft, timeAllocation: e.target.value })}
+          className={numCls} />
+      </td>
+      <td className="px-6 py-2 text-sm text-right text-muted-foreground min-w-[110px]">
+        {calcBudgetedCost(draft.hourlyRate, draft.timeAllocation)}
+      </td>
+      <td className="px-6 py-2 text-sm text-right text-muted-foreground min-w-[100px]">
+        {calcBudgetedHours(draft.timeAllocation)}
+      </td>
+      <td className="px-6 py-2">
+        <div className="flex items-center gap-0.5">
+          <button type="button" onClick={onConfirm} disabled={!draft.name}
+            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-green-600 dark:text-green-400 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+            <Check className="h-4 w-4" />
+          </button>
+          <button type="button" onClick={onCancel}
+            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-destructive">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+};
+
+// MM/DD/YYYY ↔ YYYY-MM-DD for native date inputs
+function toInputDate(mmddyyyy: string): string {
+  const p = mmddyyyy.split("/");
+  if (p.length !== 3 || !p[2]) return "";
+  return `${p[2]}-${p[0].padStart(2, "0")}-${p[1].padStart(2, "0")}`;
+}
+function fromInputDate(yyyymmdd: string): string {
+  const p = yyyymmdd.split("-");
+  if (p.length !== 3) return yyyymmdd;
+  return `${p[1]}/${p[2]}/${p[0]}`;
+}
+
+const LabeledInput = ({
+  label, value, onChange, required = false, type = "text", disabled = false,
+}: {
+  label: string; value: string; onChange: (v: string) => void; required?: boolean; type?: string; disabled?: boolean;
+}) => {
+  const isDate = type === "date";
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs font-medium text-foreground">
+        {label}{required && <span className="text-destructive ml-0.5">*</span>}
+      </label>
+      <input
+        type={type}
+        value={isDate ? toInputDate(value) : value}
+        onChange={e => onChange(isDate ? fromInputDate(e.target.value) : e.target.value)}
+        disabled={disabled}
+        className={ic + (disabled ? " opacity-50 cursor-not-allowed bg-muted/40" : "")}
+      />
+    </div>
+  );
+};
+
+// Connected / Disconnected pill used by the Source Data row and the Data Source dropdowns (same as TB)
+const SourceStatusPill = ({ connected }: { connected: boolean }) => (
+  <span className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${
+    connected
+      ? "border-connection-success/30 bg-connection-success-surface text-connection-success"
+      : "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
+  }`}>{connected ? "Connected" : "Disconnected"}</span>
+);
+
+// One source row's identity: provider name, connection status, then the client entity name (same as TB)
+const SourceIdentityRow = ({ provider, connected, entityName }: { provider: SourceProvider; connected: boolean; entityName: string }) => (
+  <span className="flex w-full min-w-0 items-center gap-2">
+    <span className="shrink-0">{SOURCE_PROVIDERS[provider].shortName}</span>
+    <SourceStatusPill connected={connected} />
+    <span className="min-w-0 flex-1 truncate text-muted-foreground" title={entityName}>{entityName}</span>
+  </span>
+);
+
+// Calendar date field styled to match the form inputs (h-9, 10px radius, double-border focus); same as TB
+const DateField = ({
+  label, value, onChange, required = false, disabled = false,
+}: {
+  label?: string;
+  value: string; // MM/dd/yyyy
+  onChange: (value: string) => void;
+  required?: boolean;
+  disabled?: boolean;
+}) => {
+  const m = value ? value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) : null;
+  const parsed = m ? new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])) : undefined;
+  const selected = parsed && !isNaN(parsed.getTime()) ? parsed : undefined;
+  return (
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label className="text-xs font-medium text-foreground">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
+      <Popover>
+        <PopoverTrigger asChild disabled={disabled}>
+          <button
+            type="button"
+            disabled={disabled}
+            className={`input-double-border w-full h-9 px-3 py-2 text-sm rounded-[10px] outline-none transition-all duration-200 flex items-center text-left ${
+              disabled
+                ? "bg-muted border border-transparent text-muted-foreground opacity-60 cursor-not-allowed"
+                : "bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)]"
+            } ${selected ? "text-foreground" : "text-muted-foreground"}`}
+          >
+            <span className="flex-1 truncate">{selected ? formatDateFns(selected, "MM/dd/yyyy") : "MM/DD/YYYY"}</span>
+            <Calendar className="h-4 w-4 ml-auto shrink-0 text-muted-foreground" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <DatePickerCalendar
+            mode="single"
+            selected={selected}
+            onSelect={d => onChange(d ? formatDateFns(d, "MM/dd/yyyy") : "")}
+            initialFocus
+            className="p-3 pointer-events-auto"
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
+export default function CreateNewEngagementV3() {
+  const navigate = useNavigate();
+  const { engagements, addEngagement } = useEngagements();
+
+  // Section 1: Client + Type
+  const [clientName, setClientName] = useState("");
+  const [engagementType, setEngagementType] = useState("");
+
+  const clientInfo = CLIENT_DATA[clientName] ?? null;
+  const isAudit = engagementType === "Audit (AUD)";
+
+  // Section 2: Engagement Details
+  const [engagementId, setEngagementId] = useState("");
+  const [engagementTemplate, setEngagementTemplate] = useState("");
+  const [templateId, setTemplateId] = useState("");
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [budget, setBudget] = useState("10000.00");
+  const [accountingStandards, setAccountingStandards] = useState("");
+  const [additionalDisclosures, setAdditionalDisclosures] = useState("");
+  // V3 additions
+  const [purpose, setPurpose] = useState<"General purpose" | "Special purpose">("General purpose");
+  const [intendedUsers, setIntendedUsers] = useState<string[]>([]);
+  const [customUser, setCustomUser] = useState("");
+  const [addingUser, setAddingUser] = useState(false);
+  const [deliverableName, setDeliverableName] = useState("Both — from client default");
+  const [usingExpert, setUsingExpert] = useState(false);
+
+  // Section 3: Audit Configuration
+  const [condensedForms, setCondensedForms] = useState(false);
+  const [firstYearAudit, setFirstYearAudit] = useState(false);
+  const [firstTimeAdoption, setFirstTimeAdoption] = useState(false);
+  const [sevenSixteenConsented, setSevenSixteenConsented] = useState<boolean>(false);
+
+  // Section 4: Engagement Period
+  const [periodType, setPeriodType] = useState("Full year");
+  const [currentYearStart, setCurrentYearStart] = useState("12/01/2022");
+  const [currentYearEnd, setCurrentYearEnd] = useState("11/30/2023");
+  const [priorYear1Start, setPriorYear1Start] = useState("12/01/2021");
+  const [priorYear1End, setPriorYear1End] = useState("11/30/2022");
+  const [priorYear2Start, setPriorYear2Start] = useState("12/01/2020");
+  const [priorYear2End, setPriorYear2End] = useState("11/30/2021");
+  const [priorYear1NoData, setPriorYear1NoData] = useState(false);
+  const [priorYear2NoData, setPriorYear2NoData] = useState(false);
+  // Source Data: the client's connected provider and each year's data source ("csv" | "source:<provider>").
+  // Defaults to the provider for a connected client, CSV otherwise, and resets when the client or its connection changes.
+  // A connection made or removed on the Clients page comes first (same order as TB), then the client's own integrations.
+  // The listener only forces a re-render; the provider itself is read from storage on every render.
+  const [, setConnVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setConnVersion(v => v + 1);
+    window.addEventListener(CLIENT_CONNECTION_EVENT, bump);
+    return () => window.removeEventListener(CLIENT_CONNECTION_EVENT, bump);
+  }, []);
+  const connectionState = getClientConnectionState(clientName, clientInfo?.entityLegalName);
+  const activeProvider: SourceProvider | null =
+    connectionState !== undefined ? connectionState
+      : clientInfo?.integrations.includes("xero") ? "xero" : clientInfo?.integrations.includes("quickbooks") ? "quickbooks" : null;
+  // Shown next to the provider in the Source Data row and the Data Source dropdowns
+  const sourceEntityName = clientInfo?.entityLegalName || clientName;
+  const [yearSources, setYearSources] = useState<string[]>(["csv", "csv", "csv"]);
+  useEffect(() => {
+    setYearSources([0, 1, 2].map(() => (activeProvider ? `source:${activeProvider}` : "csv")));
+  }, [clientName, activeProvider]);
+  // Full year: source years run in order from the Current Year (same cascade as TB)
+  const setYearSource = (i: number, v: string) =>
+    setYearSources(s => s.map((x, j) => {
+      if (j === i) return v;
+      if (!isFullYear) return x;
+      if (v.startsWith("source:") && j < i) return v;
+      if (v === "csv" && j > i) return "csv";
+      return x;
+    }));
+
+  // Section 5: Team
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [recommendedPending, setRecommendedPending] = useState<TeamMember[]>([]);
+  const [pendingRow, setPendingRow] = useState<PendingRow | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [teamSearch, setTeamSearch] = useState("");
+  const [customRoles, setCustomRoles] = useState<string[]>([]);
+  const [showAddRoleModal, setShowAddRoleModal] = useState(false);
+  const [newRoleName, setNewRoleName] = useState("");
+
+  const baseRoles = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
+  const roleOptions = [...baseRoles, ...customRoles];
+
+  // Client options: from existing engagements + CLIENT_DATA keys
+  const clientOptions = Array.from(new Set([
+    ...engagements.map(e => e.client),
+    ...Object.keys(CLIENT_DATA),
+  ])).sort();
+
+  const handleEngagementTypeChange = (newType: string) => {
+    setEngagementType(newType);
+    setEngagementId(deriveEngagementId(newType, clientName, currentYearEnd));
+    const audit = newType === "Audit (AUD)";
+    if (audit) {
+      setEngagementTemplate("CAS Audit");
+      setTemplateId("");
+      setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
+      setPeriodType("Full year");
+      setAdditionalDisclosures("Full financial statements");
+    } else {
+      setEngagementTemplate("Review Section 2400");
+      setTemplateId("");
+      setAccountingStandards("Section 2400 Review standards");
+      setPeriodType("Full year");
+      setAdditionalDisclosures("Statement of cash flows");
+    }
+  };
+
+  const isFullYear = periodType === "Full year";
+  const isPartialYear = periodType === "Partial year"; // every row is locked to CSV, with the stub message below
+  const isFirstYearOps = periodType === "First Year of Operations"; // only the Current Year row is shown
+
+  const applyFullYear = (cyStart: string, cyEnd: string) => {
+    setPriorYear1Start(shiftYear(cyStart, -1));
+    setPriorYear1End(shiftYear(cyEnd, -1));
+    setPriorYear2Start(shiftYear(cyStart, -2));
+    setPriorYear2End(shiftYear(cyEnd, -2));
+  };
+
+  const handleCurrentYearStartChange = (val: string) => {
+    setCurrentYearStart(val);
+    if (isFullYear) {
+      // Auto-derive end = start + 1 year - 1 day
+      const autoEnd = addDays(shiftYear(val, 1), -1);
+      setCurrentYearEnd(autoEnd);
+      if (engagementType && clientName) setEngagementId(deriveEngagementId(engagementType, clientName, autoEnd));
+      applyFullYear(val, autoEnd);
+    }
+  };
+
+  const handleCurrentYearEndChange = (val: string) => {
+    setCurrentYearEnd(val);
+    if (engagementType && clientName) setEngagementId(deriveEngagementId(engagementType, clientName, val));
+    if (isFullYear) {
+      // Auto-derive start = end - 1 year + 1 day
+      const autoStart = addDays(shiftYear(val, -1), 1);
+      setCurrentYearStart(autoStart);
+      applyFullYear(autoStart, val);
+    }
+  };
+
+  const handlePeriodTypeChange = (val: string) => {
+    setPeriodType(val);
+    if (val === "Full year") {
+      // CY End = CY Start + 1 year - 1 day, then the prior years follow from it (same as TB). The Engagement ID is
+      // derived from CY End, so it follows too, as in the two date handlers above (TB does this in an effect).
+      const autoEnd = addDays(shiftYear(currentYearStart, 1), -1);
+      setCurrentYearEnd(autoEnd);
+      if (autoEnd !== currentYearEnd && engagementType && clientName) setEngagementId(deriveEngagementId(engagementType, clientName, autoEnd));
+      applyFullYear(currentYearStart, autoEnd);
+    }
+  };
+
+  const accountingStandardsOptions = (() => {
+    const frameworks = isAudit ? ACCOUNTING_FRAMEWORKS : [
+      "ASPE — Canadian Accounting Standards for Private Enterprises",
+      "IFRS — International Financial Reporting Standards",
+      "US GAAP — Generally Accepted Accounting Principles (United States)",
+      "Tax Basis", "Cash Basis", "Modified Cash Basis",
+    ];
+    if (clientInfo?.clientCountry === "us") {
+      const usFirst = frameworks.filter(fw => fw.includes("US GAAP") || fw.includes("PCAOB"));
+      const rest = frameworks.filter(fw => !fw.includes("US GAAP") && !fw.includes("PCAOB"));
+      return [...usFirst, ...rest].map(fw => ({ value: fw, label: fw }));
+    }
+    return frameworks.map(fw => ({ value: fw, label: fw }));
+  })();
+
+  const disclosureOptions = [
+    { value: "Statement of cash flows", label: "Statement of cash flows" },
+    { value: "Notes to financial statements", label: "Notes to financial statements" },
+  ];
+
+  // One Period Type list for every engagement type. What handleCreate saves for an audit is unchanged:
+  // Full year -> "Full Year", Partial year -> "Stub Period", First Year of Operations -> "First Year of Operations"
+  const periodTypeOptions = [
+    { value: "Full year", label: "Full year" },
+    { value: "Partial year", label: "Partial year" },
+    { value: "First Year of Operations", label: "Partial Year – First Year of Operations" },
+  ];
+  const storedPeriodType: Record<string, string> = {
+    "Full year": "Full Year",
+    "Partial year": "Stub Period",
+    "First Year of Operations": "First Year of Operations",
+  };
+
+  // Engagement Period rows: label | Start Date | End Date | Data Source
+  const periodRows = [
+    { label: "Current Year", required: true, start: currentYearStart, setStart: handleCurrentYearStartChange, end: currentYearEnd, setEnd: handleCurrentYearEndChange, disabled: false, note: "" },
+    { label: "Prior Year 1", required: false, start: priorYear1Start, setStart: setPriorYear1Start, end: priorYear1End, setEnd: setPriorYear1End, disabled: isFullYear, note: isFullYear ? "Auto-derived from Current Year dates" : "" },
+    { label: "Prior Year 2", required: false, start: priorYear2Start, setStart: setPriorYear2Start, end: priorYear2End, setEnd: setPriorYear2End, disabled: isFullYear, note: isFullYear ? "Auto-derived from Current Year dates" : "" },
+  ].filter((_, i) => !(isFirstYearOps && i > 0));
+
+  // Future year-end (CY End after today): info only, never blocks saving. "Source" is the Current Year row as it shows:
+  // Partial year is locked to CSV even though yearSources[0] keeps its value.
+  const cyIsFutureYearEnd = isFutureYearEnd(currentYearEnd);
+  const cyRowIsSource = !isPartialYear && !!activeProvider && !!yearSources[0]?.startsWith("source:");
+
+  // Section 2 gate
+  const showDetails = clientName.trim() !== "";
+
+  // Section 5 gate
+  const engagementDetailsValid =
+    engagementId.trim() !== "" &&
+    engagementTemplate.trim() !== "" &&
+    engagementType !== "" &&
+    accountingStandards !== "";
+
+  const isFormValid =
+    clientName.trim() !== "" &&
+    engagementType !== "" &&
+    engagementId.trim() !== "" &&
+    engagementTemplate.trim() !== "" &&
+    budget.trim() !== "" &&
+    accountingStandards !== "" &&
+    additionalDisclosures !== "" &&
+    currentYearStart.trim() !== "" &&
+    currentYearEnd.trim() !== "" &&
+    teamMembers.length > 0;
+
+  // Team handlers
+  const getRecommendedCategory = () => {
+    if (isAudit) return "audit";
+    if (accountingStandards.toLowerCase().includes("tax")) return "tax";
+    if (engagementType.includes("COM") || engagementType.toLowerCase().includes("compilation")) return "compilation";
+    return "review";
+  };
+
+  const addRecommendedTeam = () => {
+    const recs = RECOMMENDED_TEAM[getRecommendedCategory()] ?? RECOMMENDED_TEAM.review;
+    setRecommendedPending(prev => [
+      ...prev,
+      ...recs.map(r => ({ id: uid(), role: r.role, name: "", email: "", title: "", hourlyRate: r.hourlyRate, timeAllocation: r.timeAllocation })),
+    ]);
+  };
+
+  const confirmRecommendedRow = (id: string) => {
+    const row = recommendedPending.find(r => r.id === id);
+    if (!row) return;
+    setTeamMembers(prev => [...prev, row]);
+    setRecommendedPending(prev => prev.filter(r => r.id !== id));
+  };
+
+  const cancelRecommendedRow = (id: string) => {
+    setRecommendedPending(prev => prev.filter(r => r.id !== id));
+  };
+
+  const startAddMember = () => {
+    if (pendingRow) return;
+    setPendingRow({ mode: "add", draft: { id: uid(), role: roleOptions[0] ?? "", name: "", email: "", title: "", hourlyRate: "", timeAllocation: "" } });
+  };
+  const startEditMember = (member: TeamMember) => {
+    if (pendingRow) return;
+    setPendingRow({ mode: "edit", originalId: member.id, draft: { ...member } });
+  };
+  const confirmPendingRow = () => {
+    if (!pendingRow) return;
+    if (pendingRow.mode === "add") {
+      setTeamMembers(prev => [...prev, pendingRow.draft]);
+    } else {
+      setTeamMembers(prev => prev.map(m => m.id === pendingRow.originalId ? pendingRow.draft : m));
+    }
+    setPendingRow(null);
+  };
+  const cancelPendingRow = () => setPendingRow(null);
+  const deleteMember = (id: string) => {
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
+    setSelectedIds(prev => { const n = new Set(prev); n.delete(id); return n; });
+  };
+  const toggleSelect = (id: string) =>
+    setSelectedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const deleteSelected = () => {
+    setTeamMembers(prev => prev.filter(m => !selectedIds.has(m.id)));
+    setSelectedIds(new Set());
+  };
+
+  const filteredMembers = teamMembers.filter(m =>
+    !teamSearch || m.name.toLowerCase().includes(teamSearch.toLowerCase()) || m.role.toLowerCase().includes(teamSearch.toLowerCase())
+  );
+  const totalAlloc = teamMembers.reduce((s, m) => s + (parseFloat(m.timeAllocation) || 0), 0);
+  const avgRate = teamMembers.length && totalAlloc > 0
+    ? (teamMembers.reduce((s, m) => s + (parseFloat(m.hourlyRate) || 0) * (parseFloat(m.timeAllocation) || 0), 0) / totalAlloc).toFixed(2)
+    : "0.00";
+  const avgAlloc = totalAlloc.toFixed(0);
+  const avgCost = teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedCost(m.hourlyRate, m.timeAllocation)), 0).toFixed(2);
+  const avgHours = teamMembers.reduce((s, m) => s + parseFloat(calcBudgetedHours(m.timeAllocation)), 0).toFixed(2);
+
+  const handleCreate = () => {
+    const record: EngagementRecord = {
+      id: engagementId,
+      client: clientName,
+      type: engagementType,
+      yearEnd: formatYearEnd(currentYearEnd),
+      team: "View Assignees",
+      status: "New",
+      statusVariant: "new",
+      hasRF: false,
+      dateCreated: formatDateCreated(),
+      firstYearAudit,
+    };
+    addEngagement(record);
+    // Data Source per year (the create-mode part of TB's performSave). Partial year is locked to CSV on screen, so it
+    // saves all three years as CSV whatever yearSources holds; any other period type saves each row as shown.
+    const effectiveYearSources = isPartialYear ? ["csv", "csv", "csv"] : yearSources;
+    const isSourceRow = (v?: string) => !!v && v.startsWith("source:") && v !== "source:none";
+    const sourceRows = effectiveYearSources.filter(isSourceRow);
+    const savedDataSource: "csv" | "source" = sourceRows.length > 0 ? "source" : "csv";
+    const yearFields = savedYearSources({ rows: effectiveYearSources, lockedSource: () => "csv", priorToCsv: false });
+    setEngagementMeta(engagementId, {
+      firstYearAudit,
+      templateId: templateId || undefined,
+      accountingFramework: isAudit ? accountingStandards : undefined,
+      accountingStandards,
+      budget,
+      purpose,
+      intendedUsers,
+      deliverableName,
+      usingExpert: isAudit ? usingExpert : undefined,
+      periodStart: currentYearStart,
+      periodEnd: currentYearEnd,
+      auditPeriodType: isAudit ? storedPeriodType[periodType] : undefined,
+      firstTimeAdoption: isAudit ? firstTimeAdoption : undefined,
+      dataSource: savedDataSource,
+      yearDataSources: yearFields.yearDataSources,
+      yearSourceProviders: yearFields.yearSourceProviders,
+      sourceYears: savedDataSource === "source" ? Math.max(1, sourceRows.length) : undefined,
+      sourceProvider: savedDataSource === "source" ? rowProvider(sourceRows[0]) : undefined,
+    });
+    if (isAudit && firstYearAudit) {
+      toast.success("Engagement created — IE checklist and predecessor letter added.");
+    } else {
+      toast.success("Engagement created successfully.");
+    }
+    navigate("/engagements");
+  };
+
+  return (
+    <Layout title="Create Engagement">
+      <div className="flex-1 overflow-y-auto bg-background">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <button
+              onClick={() => navigate("/engagements")}
+              className="flex items-center gap-1 text-link hover:underline text-sm font-medium"
+            >
+              <ArrowLeft className="h-4 w-4 icon-arrow" />
+              Back
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-5">
+
+            {/* SECTION 1: CLIENT — Client Name only, then the client information bar */}
+            <SectionCard icon={<User className="h-5 w-5" />} title="Client">
+              <InlineRow label="Client Name" required>
+                <Select value={clientName} onValueChange={setClientName}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select client" /></SelectTrigger>
+                  <SelectContent>
+                    {clientOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </InlineRow>
+            </SectionCard>
+
+            {clientName && (() => {
+              const dash = "—";
+              const val = (v?: string | null) => (v && v.trim() && v.trim() !== "-" ? v : dash);
+              const countryLabel = clientInfo ? (clientInfo.clientCountry === "ca" ? "Canada" : "United States") : dash;
+              const sub = [clientInfo?.entityType, clientInfo ? countryLabel : undefined, clientInfo?.industryType].filter(Boolean).join(" · ") || dash;
+              const fyeParts = currentYearEnd.split("/");
+              const fye = fyeParts.length === 3 && MONTHS_SHORT[parseInt(fyeParts[0]) - 1] ? `${MONTHS_SHORT[parseInt(fyeParts[0]) - 1]} ${parseInt(fyeParts[1])}` : dash;
+              const dataLabel = activeProvider ? SOURCE_PROVIDERS[activeProvider].shortName : null;
+              const clientRecord = loadClients().find(c => c.entityName === clientName || c.legalEntityName === clientName || c.legalEntityName === clientInfo?.entityLegalName);
+              const Item = ({ label, children }: { label: string; children: React.ReactNode }) => (
+                <div className="min-w-0">
+                  <div className="text-xs text-muted-foreground">{label}</div>
+                  <div className="text-sm text-foreground">{children}</div>
+                </div>
+              );
+              return (
+                <div className="rounded-lg border border-border bg-muted/40 px-5 py-4 flex flex-wrap items-start gap-x-8 gap-y-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-foreground">{clientInfo?.entityLegalName || clientName}</div>
+                    <div className="text-xs text-muted-foreground">{sub}</div>
+                  </div>
+                  <Item label="Fiscal year-end">{fye}</Item>
+                  <Item label="Contact person">{val(clientInfo?.contactPerson)}</Item>
+                  <Item label="Engagement partner">
+                    {clientInfo?.engagementPartner ? <span className="text-link font-medium">{clientInfo.engagementPartner}</span> : dash}
+                  </Item>
+                  <Item label="Data">
+                    {dataLabel ? (
+                      <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" />{dataLabel}</span>
+                    ) : "Not connected"}
+                  </Item>
+                  <Item label="Business phone">{val(clientInfo?.businessPhone)}</Item>
+                  <Item label="Flags">
+                    {clientInfo ? `QC info: ${clientInfo.hasQuebecPersonalInfo ? "Yes" : "No"} · US taxpayer: ${clientInfo.isUsTaxpayer ? "Yes" : "No"}` : dash}
+                  </Item>
+                  <button
+                    type="button"
+                    onClick={() => navigate(clientRecord ? `/clients/${clientRecord.id}` : "/clients")}
+                    className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-link hover:underline"
+                  >
+                    Edit client <ExternalLink className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              );
+            })()}
+
+            {/* SECTION 2: ENGAGEMENT DETAILS — gated on client */}
+            {showDetails && (
+              <SectionCard icon={<Briefcase className="h-5 w-5" />} title="Engagement Details">
+                <div className="flex flex-col gap-1.5 mb-1">
+                  <span className="text-xs font-medium text-foreground">Engagement Type<span className="text-destructive ml-0.5">*</span></span>
+                  <div role="radiogroup" aria-label="Engagement Type" className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {ENGAGEMENT_TYPE_CARDS.map(o => {
+                      const selected = engagementType === o.value;
+                      return (
+                        <button key={o.value} type="button" role="radio" aria-checked={selected}
+                          onClick={() => handleEngagementTypeChange(o.value)}
+                          className={`flex items-center gap-3 rounded-[10px] border px-4 py-3 text-left transition-colors ${selected ? "border-[#1C63A6] bg-[#1C63A6]/5" : "border-border bg-card hover:bg-muted/40"}`}>
+                          <span className={`h-4 w-4 shrink-0 rounded-full border flex items-center justify-center ${selected ? "border-[#1C63A6]" : "border-[#C3CBD6]"}`}>
+                            {selected && <span className="h-2 w-2 rounded-full bg-[#1C63A6]" />}
+                          </span>
+                          <span className="text-sm font-medium text-foreground">{o.title}<span className="text-muted-foreground font-normal"> · {o.code}</span></span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                {engagementType !== "" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mt-4">
+                    <FieldCol label="Engagement ID" required>
+                      <div className="relative">
+                        <input type="text" value={engagementId} onChange={e => setEngagementId(e.target.value)} className={ic + " pr-10"} />
+                        <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </FieldCol>
+                    <FieldCol label="Template" required>
+                      <div className="relative">
+                        <input type="text" value={engagementTemplate} onChange={e => setEngagementTemplate(e.target.value)} className={ic + " pr-10"} />
+                        <button type="button" onClick={() => setShowTemplatePicker(true)} className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded hover:text-primary">
+                          <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </div>
+                    </FieldCol>
+                    <FieldCol label="Budget ($)" required>
+                      <input type="text" value={budget} onChange={e => setBudget(e.target.value)} className={ic} />
+                    </FieldCol>
+                    <FieldCol label="Reporting Framework" required>
+                      <Select value={accountingStandards} onValueChange={setAccountingStandards}>
+                        <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                        <SelectContent>
+                          {accountingStandardsOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </FieldCol>
+                    <FieldCol label="Purpose of the financial statements">
+                      <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium select-none w-fit">
+                        {(["General purpose", "Special purpose"] as const).map((o, i) => (
+                          <button key={o} type="button" onClick={() => setPurpose(o)}
+                            className={`px-3.5 py-2 transition-colors ${i > 0 ? "border-l border-border" : ""} ${purpose === o ? "bg-[#1C63A6] text-white" : "text-muted-foreground hover:bg-muted"}`}>
+                            {o}
+                          </button>
+                        ))}
+                      </div>
+                    </FieldCol>
+                    <FieldCol label="Intended users (optional)">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {[...INTENDED_USER_OPTIONS, ...intendedUsers.filter(u => !INTENDED_USER_OPTIONS.includes(u))].map(u => {
+                          const on = intendedUsers.includes(u);
+                          return (
+                            <button key={u} type="button"
+                              onClick={() => setIntendedUsers(p => on ? p.filter(x => x !== u) : [...p, u])}
+                              className={`h-8 px-3 rounded-full border text-xs font-medium transition-colors ${on ? "border-[#1C63A6] bg-[#1C63A6]/10 text-[#1C63A6]" : "border-border text-muted-foreground hover:bg-muted"}`}>
+                              {u}
+                            </button>
+                          );
+                        })}
+                        {addingUser ? (
+                          <input autoFocus value={customUser} onChange={e => setCustomUser(e.target.value)} placeholder="Add user"
+                            onKeyDown={e => {
+                              if (e.key === "Enter" && customUser.trim()) {
+                                const u = customUser.trim();
+                                setIntendedUsers(p => p.includes(u) ? p : [...p, u]);
+                                setCustomUser(""); setAddingUser(false);
+                              } else if (e.key === "Escape") { setCustomUser(""); setAddingUser(false); }
+                            }}
+                            onBlur={() => { setCustomUser(""); setAddingUser(false); }}
+                            className="h-8 w-32 px-3 text-xs rounded-full border border-border bg-card outline-none" />
+                        ) : (
+                          <button type="button" onClick={() => setAddingUser(true)}
+                            className="h-8 px-3 rounded-full border border-dashed border-border text-xs font-medium text-muted-foreground hover:bg-muted">
+                            + custom
+                          </button>
+                        )}
+                      </div>
+                    </FieldCol>
+                    <FieldCol label="Name on deliverables">
+                      <Select value={deliverableName} onValueChange={setDeliverableName}>
+                        <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {DELIVERABLE_NAME_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </FieldCol>
+                    {!isAudit && (
+                      <FieldCol label="Additional Disclosures" required>
+                        <Select value={additionalDisclosures} onValueChange={setAdditionalDisclosures}>
+                          <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                          <SelectContent>
+                            {disclosureOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </FieldCol>
+                    )}
+                  </div>
+                )}
+              </SectionCard>
+            )}
+
+            {/* SECTION 3: AUDIT CONFIGURATION — gated on isAudit + showDetails + type selected */}
+            {isAudit && showDetails && (
+              <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-border bg-muted/30">
+                  <div className="flex items-center gap-2">
+                    <Settings2 className="h-4 w-4 text-primary" />
+                    <h3 className="text-sm font-semibold text-foreground">Audit Configuration</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">Answer each question to configure your engagement.</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Forms can still be added, removed or switched at any time in the engagement.</p>
+                </div>
+                {engagementDetailsValid ? (
+                  <div>
+                    <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Form Preferences</p>
+                      <div className="flex items-start justify-between gap-3 max-w-sm">
+                        <div>
+                          <p className="text-sm text-foreground leading-snug">Condensed audit forms?</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Shortened checklists for simpler engagements.</p>
+                        </div>
+                        <BoolToggle value={condensedForms} onChange={setCondensedForms} />
+                      </div>
+                      <div className="flex items-start justify-between gap-3 max-w-sm">
+                        <div>
+                          <p className="text-sm text-foreground leading-snug">First-time adoption of standard?</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Adds opening balance testing procedures.</p>
+                        </div>
+                        <BoolToggle value={firstTimeAdoption} onChange={setFirstTimeAdoption} />
+                      </div>
+                      <div className="flex items-start justify-between gap-3 max-w-sm">
+                        <div>
+                          <p className="text-sm text-foreground leading-snug">Using an expert?</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">e.g. valuator or actuary · adds expert letters and checklists</p>
+                        </div>
+                        <BoolToggle value={usingExpert} onChange={setUsingExpert} />
+                      </div>
+                      {firstTimeAdoption && (
+                        <div className="flex items-start gap-2 px-3 py-2.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/30">
+                          <span className="text-amber-500 text-xs mt-0.5">⚠</span>
+                          <p className="text-xs text-amber-700 dark:text-amber-400">Opening balance testing will be added to this engagement.</p>
+                        </div>
+                      )}
+                    </div>
+                    {(clientInfo?.isUsTaxpayer || clientInfo?.hasQuebecPersonalInfo) && (
+                      <div className="px-5 pt-4 pb-3 border-b border-border/30 space-y-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Compliance Requirements</p>
+                        {clientInfo?.isUsTaxpayer && (
+                          <div className={`rounded-md border p-3 space-y-2 ${sevenSixteenConsented ? "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/30" : "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/30"}`}>
+                            <div className="flex items-start gap-2">
+                              <span className={`text-xs mt-0.5 ${sevenSixteenConsented ? "text-green-500" : "text-amber-500"}`}>
+                                {sevenSixteenConsented ? "✓" : "⚠"}
+                              </span>
+                              <div className="flex-1">
+                                <p className={`text-xs font-medium ${sevenSixteenConsented ? "text-green-700 dark:text-green-400" : "text-amber-700 dark:text-amber-400"}`}>
+                                  IRC §7216 Consent Required
+                                </p>
+                                <p className={`text-xs mt-0.5 ${sevenSixteenConsented ? "text-green-600 dark:text-green-500" : "text-amber-600 dark:text-amber-500"}`}>
+                                  This client is a US taxpayer. The firm must obtain IRC §7216 consent before disclosing tax return information to any third party, including this platform. Confirm the consent form has been issued and signed before proceeding.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 pt-1">
+                              <input
+                                type="checkbox"
+                                id="seven-sixteen-consent"
+                                checked={sevenSixteenConsented}
+                                onChange={e => setSevenSixteenConsented(e.target.checked)}
+                                className="accent-primary"
+                              />
+                              <label htmlFor="seven-sixteen-consent" className="text-xs text-foreground cursor-pointer">
+                                I confirm the §7216 consent form has been issued to and signed by this client
+                              </label>
+                            </div>
+                          </div>
+                        )}
+                        {clientInfo?.hasQuebecPersonalInfo && (
+                          <div className="rounded-md border bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/30 p-3 space-y-1 mt-2">
+                            <div className="flex items-start gap-2">
+                              <span className="text-blue-500 text-xs mt-0.5">ℹ</span>
+                              <div>
+                                <p className="text-xs font-medium text-blue-700 dark:text-blue-400">Quebec Law 25 — Transfer Impact Assessment</p>
+                                <p className="text-xs mt-0.5 text-blue-600 dark:text-blue-500">
+                                  This client involves personal information of Quebec residents. The firm is required to complete a Privacy Impact Assessment (PIA) and Transfer Impact Assessment (TIA) before transferring this data outside Quebec. A TIA template will be available in the engagement documents section.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="px-5 py-8 text-center">
+                    <p className="text-xs text-muted-foreground italic">Complete the engagement details to unlock configuration options.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* SECTION 4: ENGAGEMENT PERIOD — gated on showDetails + type selected */}
+            {showDetails && engagementType !== "" && (
+              <SectionCard icon={<Calendar className="h-5 w-5" />} title="Engagement Period">
+                {/* Source Data status (TB also shows a "Previous · Disconnected" badge here; intentionally skipped) */}
+                <div className="mt-3 pb-4 mb-2 border-b border-border/50 flex items-center gap-4">
+                  <span className="text-sm text-foreground w-[160px] shrink-0">Source Data</span>
+                  <div className="flex flex-wrap items-center gap-x-[200px] gap-y-2">
+                    <span className="inline-flex flex-nowrap items-center gap-3">
+                      {!activeProvider ? (
+                        <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-[11px] font-medium text-foreground">Not Connected</span>
+                      ) : (<>
+                        <span className="inline-flex items-center rounded-[10px] border border-border px-2 py-1"><img src={SOURCE_PROVIDERS[activeProvider].badgeLogo} alt={SOURCE_PROVIDERS[activeProvider].label} className="h-4 object-contain" /></span>
+                        <SourceStatusPill connected />
+                        <span className="whitespace-nowrap text-sm text-foreground" title={sourceEntityName}>{sourceEntityName}</span>
+                      </>)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Period Type */}
+                <div className="flex items-center gap-4 py-2.5">
+                  <span className="text-sm text-foreground w-44 shrink-0 whitespace-nowrap">Period Type<span className="text-destructive ml-0.5">*</span></span>
+                  <div className="flex-1 min-w-0 max-w-sm">
+                    <Select value={periodType} onValueChange={handlePeriodTypeChange}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select..." /></SelectTrigger>
+                      <SelectContent>
+                        {periodTypeOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Year rows */}
+                {periodRows.map((row, i) => {
+                  const val = isPartialYear ? "csv" : (yearSources[i] ?? "csv");
+                  return (
+                    <div key={row.label} className="py-2">
+                      <div className={`grid grid-cols-[176px_minmax(0,176px)_minmax(0,176px)_minmax(200px,320px)] gap-4 items-start ${i === 0 ? "mt-4" : ""}`}>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs font-medium text-foreground opacity-0" aria-hidden="true">Period</span>
+                          <span className="flex h-9 items-center text-sm text-foreground whitespace-nowrap">{row.label}{row.required && <span className="text-destructive ml-0.5">*</span>}</span>
+                        </div>
+                        <div className={row.disabled ? "opacity-60" : ""}>
+                          <DateField label="Start Date" value={row.start} onChange={row.setStart} disabled={row.disabled} />
+                        </div>
+                        <div className={row.disabled ? "opacity-60" : ""}>
+                          <DateField label="End Date" value={row.end} onChange={row.setEnd} disabled={row.disabled} />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs font-medium text-foreground">Data Source</span>
+                          <Select value={val} disabled={isPartialYear} onValueChange={v => setYearSource(i, v)}>
+                            <SelectTrigger className="h-9 text-sm" title={val.startsWith("source:") && activeProvider ? SOURCE_PROVIDERS[activeProvider].shortName : "CSV / Excel / PDF"}>
+                              <SelectValue>
+                                {val.startsWith("source:") && activeProvider
+                                  ? <SourceIdentityRow provider={activeProvider} connected entityName={sourceEntityName} />
+                                  : "CSV / Excel / PDF"}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {activeProvider && (
+                                <SelectItem value={`source:${activeProvider}`}>
+                                  <SourceIdentityRow provider={activeProvider} connected entityName={sourceEntityName} />
+                                </SelectItem>
+                              )}
+                              <SelectItem value="csv">CSV / Excel / PDF</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {row.note && (
+                        <div className="grid grid-cols-[176px_minmax(0,176px)_minmax(0,176px)_minmax(200px,320px)] gap-4 mt-1">
+                          <span />
+                          <span className="col-span-2 text-xs text-muted-foreground">{row.note}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Contextual messages below year rows */}
+                {isPartialYear ? (
+                  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <span className="text-sm text-amber-800 dark:text-amber-200">Data will not be pulled from source for stub periods.</span>
+                  </div>
+                ) : activeProvider && !isFirstYearOps && yearSources.includes("csv") && (
+                  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-amber-300 bg-amber-50 dark:bg-amber-950/30 px-3 py-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <span className="text-sm text-amber-800 dark:text-amber-200">Data for each year will come from the data source selected.</span>
+                  </div>
+                )}
+                {cyIsFutureYearEnd && (
+                  <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-blue-200 bg-blue-50 dark:bg-blue-950/30 px-3 py-2">
+                    <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                    <span className="text-sm text-blue-800 dark:text-blue-200">
+                      {`You're creating a future year-end engagement. ${cyRowIsSource ? "Data will be pulled as of each refresh until the year ends." : "Data will show what you import."}`}
+                    </span>
+                  </div>
+                )}
+              </SectionCard>
+            )}
+
+            {/* SECTION 5: ASSIGNED TEAM — gated on engagementDetailsValid */}
+            {engagementDetailsValid && (
+              <SectionCard
+                icon={<Users className="h-5 w-5" />}
+                title="Assigned team"
+                badge={`${teamMembers.length + recommendedPending.length} User`}
+                headerRight={
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={addRecommendedTeam} className="h-9 px-3 gap-1.5 text-sm">
+                      Add Recommended
+                    </Button>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <input type="text" placeholder="Search" value={teamSearch} onChange={e => setTeamSearch(e.target.value)}
+                        className="input-double-border pl-9 pr-3 h-9 text-sm bg-card border border-border rounded-[10px] outline-none w-40 text-foreground placeholder:text-muted-foreground" />
+                    </div>
+                    <Button variant="outline" onClick={deleteSelected} disabled={selectedIds.size === 0} className="h-9 px-3 gap-1.5 text-sm">
+                      <Trash2 className="h-4 w-4" />Delete
+                    </Button>
+                  </div>
+                }
+              >
+                <div className="overflow-x-auto rounded-lg border border-border">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-muted/60 border-b border-border">
+                        <th className="text-left px-4 py-3 w-10">
+                          <Checkbox
+                            checked={teamMembers.length > 0 && selectedIds.size === teamMembers.length}
+                            onCheckedChange={v => setSelectedIds(v ? new Set(teamMembers.map(m => m.id)) : new Set())}
+                          />
+                        </th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Role<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Team Member<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Email</th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Title</th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Hourly Rate ($)</th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Time Allocation (%)<span className="text-destructive ml-0.5">*</span></th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Cost ($)</th>
+                        <th className="text-right px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Budgeted Hours (H)</th>
+                        <th className="text-left px-4 py-3 text-sm font-semibold text-foreground">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredMembers.map(member =>
+                        pendingRow?.mode === "edit" && pendingRow.originalId === member.id ? (
+                          <TeamMemberEditRow key={member.id} draft={pendingRow.draft}
+                            onChangeDraft={d => setPendingRow({ mode: "edit", originalId: member.id, draft: d })}
+                            onConfirm={confirmPendingRow} onCancel={cancelPendingRow}
+                            roleOptions={roleOptions} onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }} />
+                        ) : (
+                          <TeamMemberViewRow key={member.id} member={member}
+                            checked={selectedIds.has(member.id)} onCheck={() => toggleSelect(member.id)}
+                            onEdit={() => startEditMember(member)} onDelete={() => deleteMember(member.id)} />
+                        )
+                      )}
+                      {recommendedPending.map(rec => (
+                        <TeamMemberEditRow
+                          key={rec.id}
+                          draft={rec}
+                          onChangeDraft={d => setRecommendedPending(prev => prev.map(r => r.id === d.id ? d : r))}
+                          onConfirm={() => confirmRecommendedRow(rec.id)}
+                          onCancel={() => cancelRecommendedRow(rec.id)}
+                          roleOptions={roleOptions}
+                          onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }}
+                        />
+                      ))}
+                      {pendingRow?.mode === "add" && (
+                        <TeamMemberEditRow draft={pendingRow.draft}
+                          onChangeDraft={d => setPendingRow({ mode: "add", draft: d })}
+                          onConfirm={confirmPendingRow} onCancel={cancelPendingRow}
+                          roleOptions={roleOptions} onAddRole={() => { setNewRoleName(""); setShowAddRoleModal(true); }} />
+                      )}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-muted/30 border-t border-border/40">
+                        <td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" /><td className="px-4 py-3" />
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground whitespace-nowrap">Avg Engagement Rate</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgRate}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgAlloc}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgCost}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground text-right">{avgHours}</td>
+                        <td />
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <div className="mt-4">
+                  <button type="button" onClick={startAddMember} disabled={!!pendingRow}
+                    className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#1C63A6] text-white hover:bg-[#1a5a9e] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    <Plus className="h-4 w-4" />Add Member
+                  </button>
+                </div>
+              </SectionCard>
+            )}
+
+          </div>
+
+          <TemplatePickerPanel
+            open={showTemplatePicker}
+            onClose={() => setShowTemplatePicker(false)}
+            suggestedTemplateId={
+              isAudit && SHOW_NFP_PCAOB_TEMPLATES && accountingStandards.includes("ASNPO") ? "audit5101" :
+              isAudit && accountingStandards.includes("US GAAP") ? "audit6100" :
+              isAudit ? "audit5100" :
+              engagementType.includes("Compilation") ? "comp4200" :
+              engagementType.includes("Review") ? "rev2400" :
+              undefined
+            }
+            onSelect={(id, name) => {
+              setTemplateId(id);
+              setEngagementTemplate(name);
+              if (id && TEMPLATE_CONFIG[id]) {
+                const cfg = TEMPLATE_CONFIG[id];
+                setEngagementType(cfg.engagementTypeLabel);
+                setAccountingStandards(cfg.defaultFramework);
+              }
+            }}
+          />
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 mt-6 pb-6">
+            <Button variant="outline" onClick={() => navigate("/engagements")}>
+              <X className="h-4 w-4" />
+              Cancel
+            </Button>
+            <Button disabled={!isFormValid} onClick={handleCreate}>
+              <Plus className="h-4 w-4" />
+              Create Engagement
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <Dialog open={showAddRoleModal} onOpenChange={setShowAddRoleModal}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Add new role</DialogTitle></DialogHeader>
+          <div className="py-2">
+            <input
+              autoFocus
+              value={newRoleName}
+              onChange={e => setNewRoleName(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && newRoleName.trim()) {
+                  const role = newRoleName.trim();
+                  setCustomRoles(prev => prev.includes(role) ? prev : [...prev, role]);
+                  setPendingRow(prev => prev ? { ...prev, draft: { ...prev.draft, role } } : prev);
+                  setShowAddRoleModal(false);
+                }
+              }}
+              placeholder="e.g. IT Specialist"
+              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setShowAddRoleModal(false)}>Cancel</Button>
+            <Button size="sm" disabled={!newRoleName.trim()} onClick={() => {
+              const role = newRoleName.trim();
+              setCustomRoles(prev => prev.includes(role) ? prev : [...prev, role]);
+              setPendingRow(prev => prev ? { ...prev, draft: { ...prev.draft, role } } : prev);
+              setShowAddRoleModal(false);
+            }}>
+              Add role
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Layout>
+  );
+}
