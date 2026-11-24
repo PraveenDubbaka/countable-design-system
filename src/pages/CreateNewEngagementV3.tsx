@@ -951,7 +951,6 @@ export default function CreateNewEngagementV3() {
               const sub = [clientInfo?.entityType, clientInfo ? countryLabel : undefined, clientInfo?.industryType].filter(Boolean).join(" · ") || dash;
               const fyeParts = currentYearEnd.split("/");
               const fye = fyeParts.length === 3 && MONTHS_SHORT[parseInt(fyeParts[0]) - 1] ? `${MONTHS_SHORT[parseInt(fyeParts[0]) - 1]} ${parseInt(fyeParts[1])}` : dash;
-              const dataLabel = activeProvider ? SOURCE_PROVIDERS[activeProvider].shortName : null;
               const clientRecord = loadClients().find(c => c.entityName === clientName || c.legalEntityName === clientName || c.legalEntityName === clientInfo?.entityLegalName);
               const Item = ({ label, children }: { label: string; children: React.ReactNode }) => (
                 <div className="min-w-0">
@@ -971,9 +970,9 @@ export default function CreateNewEngagementV3() {
                     {clientInfo?.engagementPartner ? <span className="text-link font-medium">{clientInfo.engagementPartner}</span> : dash}
                   </Item>
                   <Item label="Data">
-                    {dataLabel ? (
-                      <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" />{dataLabel}</span>
-                    ) : "Not connected"}
+                    {clientInfo?.integrations.includes("quickbooks")
+                      ? <img src={intuitQuickbooksLogo} alt="QuickBooks" className="h-5 object-contain" />
+                      : "Not connected"}
                   </Item>
                   <Item label="Business phone">{val(clientInfo?.businessPhone)}</Item>
                   <Item label="Flags">
