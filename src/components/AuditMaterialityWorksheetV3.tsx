@@ -10,7 +10,7 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Info, RefreshCw, Trash2, Plus, Lock, Sparkles, AlertTriangle } from "lucide-react";
+import { Info, RefreshCw, Trash2, Plus, Sparkles, AlertTriangle } from "lucide-react";
 import { DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
@@ -274,7 +274,7 @@ function MoneyInput({
  className?: string;
  luka?: boolean;
  readOnly?: boolean;
- /** Automated value: read-only, muted, small Lock icon at the left, tooltip explains how to edit */
+ /** Automated value: read-only, muted grey, tooltip on hover explains how to edit */
  locked?: boolean;
  lockTip?: React.ReactNode;
 }) {
@@ -286,7 +286,7 @@ function MoneyInput({
  readOnly={readOnly || locked}
  placeholder={placeholder}
  luka={luka}
- className={`w-full ${locked ? "pl-7 pr-2" : "px-2"} tabular-nums text-right ${className}`}
+ className={`w-full px-2 tabular-nums text-right ${className}`}
  onChange={(v) => {
  const cleaned = v.replace(/[^0-9.]/g, "");
  setDraft(cleaned);
@@ -349,16 +349,9 @@ function Tip({ text, children }: { text?: React.ReactNode; children: React.React
 
 const LOCK_TIP = "Automated · switch Method to Custom % or Manual to edit";
 
-/** Small Lock icon at the left of an automated (read-only) input, with the standard tooltip */
+/** Tooltip on hover of an automated (read-only) input */
 function LockWrap({ tip = LOCK_TIP, children }: { tip?: React.ReactNode; children: React.ReactNode }) {
- return (
- <Tip text={tip}>
- <div className="relative">
- <Lock aria-hidden className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none" />
- {children}
- </div>
- </Tip>
- );
+ return <Tip text={tip}>{children}</Tip>;
 }
 
 /** Same comment input as the checklists (AITextarea with mic/dictation), with the "Last updated by…" line under it */
@@ -823,7 +816,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
  {tiles.map((t) => {
  const shown = t.value ? formatDisplay(t.value) : "—";
- const tileInput = <TdInput value={shown} readOnly placeholder="0.00" luka={t.luka} className={`h-10 text-lg font-semibold tabular-nums text-right ${t.locked ? "pl-7 pr-2" : ""}`} />;
+ const tileInput = <TdInput value={shown} readOnly placeholder="0.00" luka={t.luka} className="h-10 text-lg font-semibold tabular-nums text-right" />;
  return (
  <div key={t.key} className={`${CARD} px-4 py-3 flex flex-col gap-1.5`}>
  <span className="text-sm font-semibold text-foreground">{t.label}</span>
@@ -972,7 +965,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  </div>
  <div className="border-t border-border px-6 py-3 bg-muted/20">
  <p className="text-sm text-muted-foreground">
- If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances. Document any changes in the materiality assessments and the final materiality on Form 335.
+ If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances. Document any changes in the materiality assessments and the final materiality on Form 335. Grey values are automated. Switch Method to Custom % or Manual to change them.
  </p>
  </div>
  </div>
