@@ -415,26 +415,19 @@ export default function Engagements() {
  <Download className="mr-2 h-4 w-4 icon-download" />
  Export
  </Button>
- <Button
-          variant="outline"
-          className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
-          onClick={() => navigate("/engagements/create-new")}
-        >
-          Create New Engagement
-        </Button>
-        <Button
-          variant="outline"
-          className="h-9 px-4 text-sm font-medium bg-card border-border hover:bg-muted"
-          onClick={() => navigate("/engagements/create-new-v3")}
-        >
-          Create Engagement V3
-        </Button>
-        <Button
-          onClick={() => { setSelectedClient(""); setSelectedEngType(""); setCreateModalOpen(true); }}
-          className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium"
-        >
-          Create Engagement
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
+              Create Engagement
+              <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => { setSelectedClient(""); setSelectedEngType(""); setCreateModalOpen(true); }}>Old</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/engagements/create-new")}>Version 1</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/engagements/create-new-v3")}>Version 2</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
  </div>
  </div>
 
