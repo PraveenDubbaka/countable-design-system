@@ -16,6 +16,9 @@ import type { Participant } from "@/store/participantsStore";
 export interface ParticipantTBCapital {
  openingFromTB: number;
  closingFromTB: number;
+ // Positive = amount drawn/distributed, from the Drawings / Distributions-mapped TB row(s) only
+ // (sign-flipped from the row's own negative/contra-equity balance) — 0 when nothing is mapped.
+ drawingsFromTB: number;
 }
 
 function reconstructRows(engagementId: string, entityType: string, participants: Participant[]): TBRow[] {
@@ -48,8 +51,12 @@ export function getParticipantCapitalFromTB(
  participants.forEach(p => {
  const linked = rows.filter(r => r.participantId === p.id && isParticipantScoped(r.subGrouping));
  result[p.id] = {
- openingFromTB: linked.reduce((s, r) => s + r.original, 0),
+ // Opening ties to the worksheet's own opening capital — only the capital account itself,
+ // not a Drawings/Contributions row, which has no balance until the year's activity is
+ // recorded (and shouldn't retroactively change what "opening" means).
+ openingFromTB: linked.filter(r => r.subGrouping === "Partners' capital").reduce((s, r) => s + r.original, 0),
  closingFromTB: linked.reduce((s, r) => s + r.final, 0),
+ drawingsFromTB: -linked.filter(r => r.subGrouping === "Drawings / Distributions").reduce((s, r) => s + r.final, 0),
  };
  });
  return result;

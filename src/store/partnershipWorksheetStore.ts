@@ -64,12 +64,34 @@ export function blankWorksheetState(): PWWorksheetState {
 
 const PW_KEY = (engagementId: string) => `cds_pw_worksheet_${engagementId}`;
 
+// Same mock drawings figures as src/pages/TrialBalance.tsx's MOCK_PARTICIPANT_DRAWINGS, seeded
+// here too so the capital statement's own "Drawings" line (sourced from this worksheet, not the
+// TB) shows the same number — demonstrating drawings flowing TB → mapping → worksheet →
+// capital statement, not just sitting inert on the TB screen.
+const WCP_DRAWINGS_OVERRIDES: PWWorksheetState["overridesByParticipantId"] = {
+ "WCP-ALEX": { contributions: 0, drawings: 120000, adjustments: 0 },
+ "WCP-MORGAN": { contributions: 0, drawings: 75000, adjustments: 0 },
+ "WCP-PRIYA": { contributions: 0, drawings: 15000, adjustments: 0 },
+};
+const BFT_DRAWINGS_OVERRIDES: PWWorksheetState["overridesByParticipantId"] = {
+ "BFT-TAYLOR": { contributions: 0, drawings: 150000, adjustments: 0 },
+ "BFT-JORDAN": { contributions: 0, drawings: 95000, adjustments: 0 },
+};
+const SEED_PW_WORKSHEETS: Record<string, PWWorksheetState> = {
+ "COM-WCP-Dec312024": { ...blankWorksheetState(), overridesByParticipantId: WCP_DRAWINGS_OVERRIDES },
+ "REV-WCP-Dec312024": { ...blankWorksheetState(), overridesByParticipantId: WCP_DRAWINGS_OVERRIDES },
+ "T5013-WCP-Dec312024": { ...blankWorksheetState(), overridesByParticipantId: WCP_DRAWINGS_OVERRIDES },
+ "COM-BFT-Dec312024": { ...blankWorksheetState(), overridesByParticipantId: BFT_DRAWINGS_OVERRIDES },
+ "REV-BFT-Dec312024": { ...blankWorksheetState(), overridesByParticipantId: BFT_DRAWINGS_OVERRIDES },
+ "T3-BFT-Dec312024": { ...blankWorksheetState(), overridesByParticipantId: BFT_DRAWINGS_OVERRIDES },
+};
+
 export function loadPWWorksheet(engagementId: string): PWWorksheetState {
  try {
  const raw = localStorage.getItem(PW_KEY(engagementId));
  if (raw) return { ...blankWorksheetState(), ...JSON.parse(raw) };
  } catch { /* fall through */ }
- return blankWorksheetState();
+ return SEED_PW_WORKSHEETS[engagementId] ?? blankWorksheetState();
 }
 
 export function savePWWorksheet(engagementId: string, state: PWWorksheetState): void {

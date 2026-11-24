@@ -220,19 +220,54 @@ export function computeAdjFromStorage(engId: string): Record<string, number> {
   return accAdj;
 }
 
-// Partnership/Trust demo seed — one capital account per participant so the entity-aware
-// grouping, participant column and auto-mapping suggestions are actually demonstrable (the
-// Corporation demo data has no per-partner capital accounts). Opening balance comes from the
-// participant's own openingCapital, not an invented figure.
+// GIFI map numbers (per the mapping sheet received from Amar, Nov 2026 — Prod_mapping_Nov2026.csv)
+// for the partner/trust capital roll-forward lines. Leadsheet "TT" (Equity) matches every one of
+// these lines in the sheet. Only "capital beginning balance" and "drawings/distributions" are
+// mapped today — Contributions and Net income allocated aren't TB-sourced accounts in this demo
+// (NI is closed into capital via an adjusting entry, which isn't seeded here).
+type PartnerClassKey = "general" | "limited" | "trust";
+const GIFI_LEADSHEET = "TT";
+const GIFI_CAPITAL_MAPNO: Record<PartnerClassKey, string> = {
+ general: "3551.00", // General partners' capital beginning balance
+ limited: "3561.00", // Limited partners' capital beginning balance
+ trust: "3850.01", // Members/beneficiaries equity beginning balance
+};
+const GIFI_DRAWINGS_MAPNO: Record<PartnerClassKey, string> = {
+ general: "3553.00", // General partners' drawings
+ limited: "3563.00", // Limited partners' drawings
+ trust: "3850.03", // Members distributions
+};
+
+// Mock current-year drawings/distributions per participant, keyed by participant id — demo data
+// only, so the flow (TB row → GIFI mapping → participant → capital statement) is actually
+// demonstrable end to end instead of every partner always showing $0 drawings. Matching figures
+// are seeded into the worksheet's own overrides in partnershipWorksheetStore.ts, so the capital
+// statement's "Drawings" line reflects the same number, not just the TB row.
+export const MOCK_PARTICIPANT_DRAWINGS: Record<string, number> = {
+ "WCP-ALEX": 120000,
+ "WCP-MORGAN": 75000,
+ "WCP-PRIYA": 15000,
+ "BFT-TAYLOR": 150000,
+ "BFT-JORDAN": 95000,
+};
+
+// Partnership/Trust demo seed — one capital account (+ one drawings account, where mocked) per
+// participant so the entity-aware grouping, participant column, GIFI mapping and auto-mapping
+// suggestions are actually demonstrable (the Corporation demo data has no per-partner capital
+// accounts). Opening balance comes from the participant's own openingCapital, not an invented
+// figure.
 export function buildParticipantScopedRows(entityType: string, participants: Participant[]): TBRow[] {
  if (entityType === "Corporation" || participants.length === 0) return [];
  const nameLabel = entityType === "Trust" ? "Beneficiary" : "Partner";
- return participants.map((p, i) => {
- const accNo = String(3101 + i);
+ const rows: TBRow[] = [];
+ participants.forEach((p, i) => {
+ const classKey: PartnerClassKey = entityType === "Trust" ? "trust" : (p.participantClass === "limited" ? "limited" : "general");
+ const capitalMapNo = GIFI_CAPITAL_MAPNO[classKey];
+ const drawingsMapNo = GIFI_DRAWINGS_MAPNO[classKey];
  const opening = p.openingCapital ?? 0;
- return {
+ rows.push({
  id: `pc-${p.id}`,
- accNo,
+ accNo: `${capitalMapNo.split(".")[0]}-${i}`,
  description: `${nameLabel} Capital - ${p.name || "Unnamed"}`,
  original: opening,
  adj: 0,
@@ -240,8 +275,8 @@ export function buildParticipantScopedRows(entityType: string, participants: Par
  py1: opening,
  changePct: "0.00%",
  py2: formatNumber(opening),
- mapNo: "",
- ls: "BB",
+ mapNo: capitalMapNo,
+ ls: GIFI_LEADSHEET,
  grouping: "Equity",
  subGrouping: "Partners' capital",
  cfCategory: "NA",
@@ -249,8 +284,32 @@ export function buildParticipantScopedRows(entityType: string, participants: Par
  fxRate: 1.00,
  // Intentionally left unassigned — the auto-mapping effect below suggests a participant
  // from the description (demonstrating the suggestion engine) rather than pre-wiring it.
- } satisfies TBRow;
+ } satisfies TBRow);
+
+ const drawings = MOCK_PARTICIPANT_DRAWINGS[p.id] ?? 0;
+ if (drawings > 0) {
+ rows.push({
+ id: `pd-${p.id}`,
+ accNo: `${drawingsMapNo.split(".")[0]}-${i}`,
+ description: `${nameLabel} Drawings - ${p.name || "Unnamed"}`,
+ original: -drawings,
+ adj: 0,
+ final: -drawings,
+ py1: 0,
+ changePct: "0.00%",
+ py2: "0.00",
+ mapNo: drawingsMapNo,
+ ls: GIFI_LEADSHEET,
+ grouping: "Equity",
+ subGrouping: "Drawings / Distributions",
+ cfCategory: "NA",
+ taxCode: "",
+ fxRate: 1.00,
+ // Same as the capital row above — left for the auto-mapping suggestion engine to assign.
+ } satisfies TBRow);
+ }
  });
+ return rows;
 }
 
 function getRowFilterCategory(row: TBRow, override?: TBRowOverride): FilterId {
@@ -258,7 +317,7 @@ function getRowFilterCategory(row: TBRow, override?: TBRowOverride): FilterId {
  if (!row.grouping) return "unmapped";
  if (row.autoAssigned && !override?.confirmed) return "autoMapped";
  if (override?.confirmed) return "changeRow";
- if (row.id.startsWith("pc-")) return "newRow";
+ if (row.id.startsWith("pc-") || row.id.startsWith("pd-")) return "newRow";
  return "addedRow";
 }
 

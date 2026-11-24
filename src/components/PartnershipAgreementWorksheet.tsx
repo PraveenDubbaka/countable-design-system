@@ -383,8 +383,10 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  </tbody>
  </table>
  <p className="text-[11px] text-muted-foreground">
- Contributions and {labels.drawings.toLowerCase()} reconcile to the worksheet itself in this release — this demo chart of
- accounts has no separate posted accounts for them yet, so there is nothing independent to tie to.
+ Contributions reconcile to the worksheet itself in this release — this demo chart of accounts
+ has no separate posted account for it yet, so there is nothing independent to tie to.
+ {labels.drawings} ties to the Trial Balance's own mapped {labels.drawings.toLowerCase()} accounts
+ where they exist, and will show a real difference if none are mapped for a given {labels.holder.toLowerCase()}.
  </p>
  </StyledCard>
 

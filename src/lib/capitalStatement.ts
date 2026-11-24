@@ -156,20 +156,25 @@ export function buildCapitalStatement(
  const tbOpeningFor = (list: CapitalRow[]) =>
  list.reduce((s, r) => s + (tbCapital[r.participant.id]?.openingFromTB ?? 0), 0);
  const balanceSheetCapital = rows.reduce((s, r) => s + (tbCapital[r.participant.id]?.closingFromTB ?? 0), 0);
+ const drawingsFromTB = rows.reduce((s, r) => s + (tbCapital[r.participant.id]?.drawingsFromTB ?? 0), 0);
+
+ // Trust/other single-class entities have no "general"/"limited" split — isGeneral is
+ // meaningless there (participantClass is "income", never "general"), so generalRows would be
+ // empty and silently show a trivial 0-vs-0 "agrees". Group by the same all-vs-split logic
+ // classTotals above already uses, instead of raw generalRows/limitedRows, so this line always
+ // reflects every participant somewhere.
+ const openingGroups = labels.hasClassSplit
+ ? [{ label: labels.classGeneral, list: generalRows }, { label: labels.classLimited, list: limitedRows }]
+ : [{ label: labels.classGeneral, list: rows }];
 
  const reconciliation: ReconciliationRow[] = [
- {
- label: `Opening – ${labels.classGeneral.toLowerCase()} vs. TB`,
- worksheetVal: sumField(generalRows, r => r.opening),
- tbVal: tbOpeningFor(generalRows),
- },
- ...(labels.hasClassSplit ? [{
- label: `Opening – ${labels.classLimited.toLowerCase()} vs. TB`,
- worksheetVal: sumField(limitedRows, r => r.opening),
- tbVal: tbOpeningFor(limitedRows),
- }] : []),
+ ...openingGroups.map(g => ({
+ label: `Opening – ${g.label.toLowerCase()} vs. TB`,
+ worksheetVal: sumField(g.list, r => r.opening),
+ tbVal: tbOpeningFor(g.list),
+ })),
  { label: `${labels.contributions} vs. TB`, worksheetVal: totals.contributions, tbVal: totals.contributions },
- { label: `${labels.drawings} vs. TB`, worksheetVal: totals.drawings, tbVal: totals.drawings },
+ { label: `${labels.drawings} vs. TB`, worksheetVal: totals.drawings, tbVal: drawingsFromTB },
  { label: "Net income allocated vs. Statement of Income (Loss)", worksheetVal: totals.ni, tbVal: netIncome },
  { label: `Closing vs. ${labels.capitalLabel} on Balance Sheet`, worksheetVal: totals.closing, tbVal: balanceSheetCapital },
  ].map(r => ({ ...r, diff: r.worksheetVal - r.tbVal, agrees: Math.abs(r.worksheetVal - r.tbVal) < 0.005 }));
