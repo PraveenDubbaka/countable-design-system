@@ -419,7 +419,6 @@ export default function Engagements() {
           <DropdownMenuTrigger asChild>
             <Button className="bg-[#1C63A6] hover:bg-[#1a5a9e] text-white h-9 px-4 text-sm font-medium">
               Create Engagement
-              <ChevronDown className="ml-2 h-4 w-4 icon-chevron-down" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
