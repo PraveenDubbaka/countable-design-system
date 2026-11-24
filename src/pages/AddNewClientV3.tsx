@@ -794,7 +794,7 @@ export default function AddNewClientV3() {
       accountingSoftware: accountingSoftware || undefined,
       businessNumber: businessNumber || undefined,
       gstRegistered: gstRegistered || undefined,
-      craAccounts: country === "ca" ? programAccounts.map(a => ({ number: a.removableId ? a.code : accountNumber(a.code), label: a.label })) : undefined,
+      craAccounts: country === "ca" ? programAccounts.filter(a => a.removableId || bnValid).map(a => ({ number: a.removableId ? a.code : accountNumber(a.code), label: a.label })) : undefined,
       address: { line1: addressLine1, line2: addressLine2, city, region: province, postal: postalCode },
       mailingSame,
       mailingAddress: mailingSame ? undefined : { line1: mailLine1, line2: mailLine2, city: mailCity, region: mailProvince, postal: mailPostal },
