@@ -14,9 +14,13 @@ interface SourceConnectionModalProps {
   onComplete?: () => void;
   initialStep?: "select" | "connected";
   initialProvider?: AccountingProvider | null;
+  /** Called when the connected step is finished (modal closed from it), with the chosen provider. */
+  onConnected?: (provider: AccountingProvider) => void;
+  /** Default true. When false, skip the connect/disconnect writes (the client doesn't exist yet). */
+  persist?: boolean;
 }
 
-export function SourceConnectionModal({ open, onOpenChange, clientName, connectionName = clientName, engagementId, onComplete, initialStep, initialProvider }: SourceConnectionModalProps) {
+export function SourceConnectionModal({ open, onOpenChange, clientName, connectionName = clientName, engagementId, onComplete, initialStep, initialProvider, onConnected, persist = true }: SourceConnectionModalProps) {
   const [step, setStep] = useState<"select" | "loading" | "connected">("select");
   const [provider, setProvider] = useState<AccountingProvider>("quickbooks");
   const [justDisconnected, setJustDisconnected] = useState(false);
@@ -34,11 +38,14 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
 
   const close = (nextOpen: boolean) => {
     if (!nextOpen && step === "connected") {
-      connectClientSource(connectionName, provider, engagementId);
-      // Keep the client-level status consistent when entering from either page.
-      connectClientSource(clientName, provider);
-      if (connectionName !== clientName) connectClientSource(connectionName, provider);
+      if (persist) {
+        connectClientSource(connectionName, provider, engagementId);
+        // Keep the client-level status consistent when entering from either page.
+        connectClientSource(clientName, provider);
+        if (connectionName !== clientName) connectClientSource(connectionName, provider);
+      }
       onComplete?.();
+      onConnected?.(provider);
     }
     onOpenChange(nextOpen);
   };
@@ -76,8 +83,10 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
               <span className="font-medium text-sm">{platform.name}</span>
               <span className="text-sm break-words">{clientName}</span>
               <Button variant="link" className="ml-auto px-0 h-auto whitespace-normal text-left" onClick={() => {
-                disconnectClientSource(connectionName, engagementId);
-                disconnectClientSource(clientName);
+                if (persist) {
+                  disconnectClientSource(connectionName, engagementId);
+                  disconnectClientSource(clientName);
+                }
                 setStep("select");
                 setJustDisconnected(true);
                 onComplete?.();
