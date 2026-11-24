@@ -89,7 +89,7 @@ export function TemplatePickerPanel({
  const [tab, setTab] = useState<"global" | "my">("global");
  const [search, setSearch] = useState("");
  const [expanded, setExpanded] = useState<Set<string>>(
- new Set(["audit", "audit-ca", "compilation", "review"])
+ new Set(["corporation", "corp-ca"])
  );
 
  const myTemplates = readJsonFromLocalStorage<MyEngagementTemplate[]>("myEngagementTemplates", []);

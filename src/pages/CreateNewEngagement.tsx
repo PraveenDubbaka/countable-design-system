@@ -23,6 +23,7 @@ import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 import { getClientConnectionState, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
 import { accountingProviders } from "@/lib/accountingProviders";
 import { savedYearSources } from "@/lib/yearSourceSave";
+import { loadClients } from "@/data/clientsData";
 
 // Mirror of CLIENT_DATA in CreateEngagement.tsx — keep in sync if client data changes
 const CLIENT_DATA: Record<string, {
@@ -490,7 +491,10 @@ export default function CreateNewEngagement() {
   const [clientName, setClientName] = useState("");
   const [engagementType, setEngagementType] = useState("");
 
-  const clientInfo = CLIENT_DATA[clientName] ?? null;
+  const realClient = loadClients().find(c => c.legalEntityName === clientName || c.entityName === clientName);
+  const clientInfo = CLIENT_DATA[clientName]
+    ? { ...CLIENT_DATA[clientName], entityType: realClient?.entityType ?? CLIENT_DATA[clientName].entityType }
+    : null;
   const isAudit = engagementType === "Audit (AUD)";
 
   // Section 2: Engagement Details
