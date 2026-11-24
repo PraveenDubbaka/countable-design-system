@@ -24,6 +24,7 @@ import { normalizeLetterMargin, type LetterMargin } from "@/lib/letterMargins";
 import { createLetterTemplate, type LetterTemplateSection } from "@/lib/letterTemplate";
 import { AuditMaterialityWorksheet } from "@/components/AuditMaterialityWorksheet";
 import { AuditMaterialityWorksheetV2 } from "@/components/AuditMaterialityWorksheetV2";
+import { AuditMaterialityWorksheetV3 } from "@/components/AuditMaterialityWorksheetV3";
 import { AuditScopeWorksheet } from "@/components/AuditScopeWorksheet";
 import { AuditPAPWorksheet } from "@/components/AuditPAPWorksheet";
 import { AuditTimeTrackerWorksheet } from "@/components/AuditTimeTrackerWorksheet";
@@ -1018,11 +1019,15 @@ export default function EngagementDetail() {
  // Temporary worksheet version switcher (V1 current / V2 proposed) for Materiality (420), OAS (430), Team planning (436) and
  // Time tracker (450), Canada only. Remembered per engagement; the Materiality key is kept as it was so earlier choices survive.
  const wsVersionKey = (key: string | undefined) => key === 'aud-mat' ? `materiality-version-${engagementId}` : `worksheet-version-${engagementId}-${key}`;
- const readWsVersion = (key: string | undefined): 'v1' | 'v2' => {
- try { return localStorage.getItem(wsVersionKey(key)) === 'v2' ? 'v2' : 'v1'; } catch { return 'v1'; }
+ const readWsVersion = (key: string | undefined): 'v1' | 'v2' | 'v3' => {
+ try {
+ const v = localStorage.getItem(wsVersionKey(key));
+ // V3 exists for Materiality (aud-mat) only
+ return v === 'v3' && key === 'aud-mat' ? 'v3' : v === 'v2' ? 'v2' : 'v1';
+ } catch { return 'v1'; }
  };
- const [wsVersion, setWsVersionState] = useState<'v1' | 'v2'>(() => readWsVersion(checklistKey));
- const setWsVersion = (v: 'v1' | 'v2') => {
+ const [wsVersion, setWsVersionState] = useState<'v1' | 'v2' | 'v3'>(() => readWsVersion(checklistKey));
+ const setWsVersion = (v: 'v1' | 'v2' | 'v3') => {
  setWsVersionState(v);
  try { localStorage.setItem(wsVersionKey(checklistKey), v); } catch {}
  };
@@ -2690,7 +2695,7 @@ export default function EngagementDetail() {
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
  <Button variant="secondary" size="sm" className="h-7 px-2.5 text-xs gap-1.5">
- {wsVersion === 'v2' ? 'V2 – Proposed' : 'V1 – Current'}
+ {wsVersion === 'v3' ? 'V3 – Levels summary' : wsVersion === 'v2' ? 'V2 – Proposed' : 'V1 – Current'}
  <ChevronDown className="h-3.5 w-3.5" />
  </Button>
  </DropdownMenuTrigger>
@@ -2703,6 +2708,12 @@ export default function EngagementDetail() {
  <span className="flex h-4 w-4 shrink-0 items-center justify-center">{wsVersion === 'v2' && <Check className="h-4 w-4" />}</span>
  <span>V2 – Proposed</span>
  </DropdownMenuItem>
+ {checklistKey === 'aud-mat' && (
+ <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap" onClick={() => setWsVersion('v3')}>
+ <span className="flex h-4 w-4 shrink-0 items-center justify-center">{wsVersion === 'v3' && <Check className="h-4 w-4" />}</span>
+ <span>V3 – Levels summary</span>
+ </DropdownMenuItem>
+ )}
  </DropdownMenuContent>
  </DropdownMenu>
  )}
@@ -3200,7 +3211,9 @@ export default function EngagementDetail() {
  </div>
  );
  })() : (checklistKey === 'aud-mat' || checklistKey === 'aud-us-mat') ? (
- (wsVersion === 'v2' && checklistKey === 'aud-mat')
+ (wsVersion === 'v3' && checklistKey === 'aud-mat')
+ ? <AuditMaterialityWorksheetV3 isUS={false} engagementId={engagementId} />
+ : (wsVersion === 'v2' && checklistKey === 'aud-mat')
  ? <AuditMaterialityWorksheetV2 isUS={false} engagementId={engagementId} />
  : <AuditMaterialityWorksheet isUS={checklistKey === 'aud-us-mat'} engagementId={engagementId} />
  ) : (checklistKey === 'aud-tt' || checklistKey === 'aud-us-tt') ? (
