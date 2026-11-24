@@ -978,13 +978,14 @@ export default function CreateNewEngagementV3() {
                   <Item label="Flags">
                     {clientInfo ? `QC info: ${clientInfo.hasQuebecPersonalInfo ? "Yes" : "No"} · US taxpayer: ${clientInfo.isUsTaxpayer ? "Yes" : "No"}` : dash}
                   </Item>
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={() => navigate(clientRecord ? `/clients/${clientRecord.id}` : "/clients")}
-                    className="ml-auto inline-flex items-center gap-1 text-sm font-medium text-link hover:underline"
+                    className="ml-auto self-center h-9 px-3 gap-1.5 text-sm"
                   >
                     Edit client <ExternalLink className="h-3.5 w-3.5" />
-                  </button>
+                  </Button>
                 </div>
               );
             })()}
