@@ -827,149 +827,6 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  })}
  </div>
 
- {/* ── Materiality levels ── */}
- <div className={CARD}>
- <div className={CARD_HEAD}>
- <span className="text-sm font-semibold text-foreground">Materiality levels</span>
- </div>
- <div className="overflow-x-auto">
- <table className="w-full table-fixed min-w-[1280px]">
- <colgroup>
- <col className="w-[190px]" />
- <col className="w-[220px]" />
- <col className="w-[230px]" />
- <col className="w-[150px]" />
- <col className="w-[140px]" />
- <col />
- <col className="w-[48px]" />
- </colgroup>
- <thead>
- <tr className="bg-muted border-b border-border">
- <th className={TH}>Level</th>
- <th className={TH}>Area</th>
- <th className={TH}>Method</th>
- <th className={`${TH} text-right`}>Current</th>
- <th className={`${TH} text-right`}>Prior year</th>
- <th className={TH}>Comments</th>
- <th className="px-4 py-3" />
- </tr>
- </thead>
- <tbody className="divide-y divide-border">
- {orderedLevels.map((l) => {
- const computed = isComputed(l);
- const cur = currentOf(l);
- const repeatable = REPEATABLE.includes(l.kind);
- return (
- <tr key={l.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2.5 align-top">
- <div className="flex h-8 items-center gap-1.5 text-sm font-medium text-foreground">
- <span className="truncate">{LEVEL_LABEL[l.kind]}</span>
- <InfoTip text={LEVEL_GUIDANCE[l.kind]} />
- </div>
- </td>
- <td className="px-4 py-2.5 align-top">
- {l.kind === "specPerformance" && !l.areaManual ? (
- <TdInput
- value={specificRows.find(x => x.id === l.pairId)?.area ?? l.area}
- onChange={(v) => patchLevel(l.id, { area: v, areaManual: true })}
- placeholder="F/S area or disclosure"
- className="bg-muted/50"
- />
- ) : (
- <TdInput value={l.area} onChange={(v) => patchLevel(l.id, l.kind === "specPerformance" ? { area: v, areaManual: true } : { area: v })} placeholder="F/S area or disclosure" />
- )}
- </td>
- <td className="px-4 py-2.5 align-top">
- <div className="flex items-center gap-1.5">
- <div className="flex-1 min-w-0">
- <TdSelect
- value={l.method}
- onChange={(v) => patchLevel(l.id,
- v === "manual" && cur !== null && l.manual === "" ? { method: v, manual: numStr(cur) }
- : v === "custom" ? { method: v, customPct: l.customPct || (pctOfLevel(l) !== null ? String(pctOfLevel(l)) : "") }
- : { method: v })}
- options={METHOD_OPTIONS[l.kind]}
- />
- </div>
- {l.method === "custom" && (
- <div className="relative w-16 shrink-0">
- <Input
- aria-label="Custom percentage"
- inputMode="decimal"
- value={l.customPct}
- onChange={(e) => patchLevel(l.id, { customPct: e.target.value.replace(/[^0-9.]/g, "") })}
- placeholder="62"
- className="h-8 text-sm text-right pl-2 pr-5 tabular-nums"
- />
- <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
- </div>
- )}
- </div>
- </td>
- <td className="px-4 py-2.5 align-top">
- <MoneyField
- value={computed ? numStr(cur) : l.manual}
- locked={computed}
- placeholder={computed ? "—" : "0.00"}
- onChange={(v) => patchLevel(l.id, { manual: v })}
- luka={l.kind === "overall" && isDemoEngagement && computed && !!numStr(cur)}
- />
- </td>
- <td className="px-4 py-2.5 align-top">
- <MoneyField value={l.py} onChange={(v) => patchLevel(l.id, { py: v })} placeholder="—" />
- </td>
- <td className="px-4 py-2.5 align-top">
- <CommentField value={l.comments} onChange={(v) => patchLevel(l.id, { comments: v })} storageKey={`${attrBase}-level-${l.id}`} placeholder="Comments…" />
- </td>
- <td className="px-2 py-2.5 align-top text-center">
- {repeatable && (
- <div className="flex h-8 items-center justify-center">
- <button aria-label={`Delete ${LEVEL_LABEL[l.kind].toLowerCase()} level`} onClick={() => setLevels(p => p.filter(x => x.id !== l.id && x.pairId !== l.id))} className={DEL_BTN}>
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </div>
- )}
- </td>
- </tr>
- );
- })}
- </tbody>
- </table>
- </div>
- <div className="px-6 py-3 border-t border-border flex flex-wrap items-center gap-3">
- <DropdownMenu>
- <DropdownMenuTrigger asChild>
- <Button size="sm" variant="secondary" className="h-7 text-xs gap-1">
- <Plus className="h-3.5 w-3.5" />
- Add level
- </Button>
- </DropdownMenuTrigger>
- <DropdownMenuContent align="start" className="min-w-max">
- {adjCount >= MAX_ADJUSTED ? (
- <Tooltip>
- <TooltipTrigger asChild>
- <div><DropdownMenuItem className="text-sm" disabled>Adjusted performance</DropdownMenuItem></div>
- </TooltipTrigger>
- <TooltipContent side="right">Maximum of two adjusted performance levels</TooltipContent>
- </Tooltip>
- ) : (
- <DropdownMenuItem className="text-sm cursor-pointer" onClick={() => addLevel("adjPerformance")}>Adjusted performance</DropdownMenuItem>
- )}
- <DropdownMenuItem className="text-sm cursor-pointer" onClick={() => addLevel("specific")}>Specific</DropdownMenuItem>
- </DropdownMenuContent>
- </DropdownMenu>
- <p className="flex flex-1 items-start gap-1.5 text-sm text-muted-foreground min-w-[240px]">
- <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
- Maximum of two adjusted performance levels.
- </p>
- </div>
- <div className="border-t border-border px-6 py-3 bg-muted/20">
- <p className="text-sm text-muted-foreground">
- If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances. Document any changes in the materiality assessments and the final materiality on Form 335. Grey values are automated. Switch Method to Custom % or Manual to change them.
- </p>
- </div>
- </div>
-
  {/* ── Criteria ── */}
  <div className={CARD}>
  <div className={`${CARD_HEAD} flex-wrap`}>
@@ -1164,6 +1021,149 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  </Button>
  </div>
  </>)}
+ </div>
+
+ {/* ── Materiality levels ── */}
+ <div className={CARD}>
+ <div className={CARD_HEAD}>
+ <span className="text-sm font-semibold text-foreground">Materiality levels</span>
+ </div>
+ <div className="overflow-x-auto">
+ <table className="w-full table-fixed min-w-[1280px]">
+ <colgroup>
+ <col className="w-[190px]" />
+ <col className="w-[220px]" />
+ <col className="w-[230px]" />
+ <col className="w-[150px]" />
+ <col className="w-[140px]" />
+ <col />
+ <col className="w-[48px]" />
+ </colgroup>
+ <thead>
+ <tr className="bg-muted border-b border-border">
+ <th className={TH}>Level</th>
+ <th className={TH}>Area</th>
+ <th className={TH}>Method</th>
+ <th className={`${TH} text-right`}>Current</th>
+ <th className={`${TH} text-right`}>Prior year</th>
+ <th className={TH}>Comments</th>
+ <th className="px-4 py-3" />
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {orderedLevels.map((l) => {
+ const computed = isComputed(l);
+ const cur = currentOf(l);
+ const repeatable = REPEATABLE.includes(l.kind);
+ return (
+ <tr key={l.id} className="hover:bg-muted/50 transition-colors">
+ <td className="px-4 py-2.5 align-top">
+ <div className="flex h-8 items-center gap-1.5 text-sm font-medium text-foreground">
+ <span className="truncate">{LEVEL_LABEL[l.kind]}</span>
+ <InfoTip text={LEVEL_GUIDANCE[l.kind]} />
+ </div>
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ {l.kind === "specPerformance" && !l.areaManual ? (
+ <TdInput
+ value={specificRows.find(x => x.id === l.pairId)?.area ?? l.area}
+ onChange={(v) => patchLevel(l.id, { area: v, areaManual: true })}
+ placeholder="F/S area or disclosure"
+ className="bg-muted/50"
+ />
+ ) : (
+ <TdInput value={l.area} onChange={(v) => patchLevel(l.id, l.kind === "specPerformance" ? { area: v, areaManual: true } : { area: v })} placeholder="F/S area or disclosure" />
+ )}
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <div className="flex items-center gap-1.5">
+ <div className="flex-1 min-w-0">
+ <TdSelect
+ value={l.method}
+ onChange={(v) => patchLevel(l.id,
+ v === "manual" && cur !== null && l.manual === "" ? { method: v, manual: numStr(cur) }
+ : v === "custom" ? { method: v, customPct: l.customPct || (pctOfLevel(l) !== null ? String(pctOfLevel(l)) : "") }
+ : { method: v })}
+ options={METHOD_OPTIONS[l.kind]}
+ />
+ </div>
+ {l.method === "custom" && (
+ <div className="relative w-16 shrink-0">
+ <Input
+ aria-label="Custom percentage"
+ inputMode="decimal"
+ value={l.customPct}
+ onChange={(e) => patchLevel(l.id, { customPct: e.target.value.replace(/[^0-9.]/g, "") })}
+ placeholder="62"
+ className="h-8 text-sm text-right pl-2 pr-5 tabular-nums"
+ />
+ <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
+ </div>
+ )}
+ </div>
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <MoneyField
+ value={computed ? numStr(cur) : l.manual}
+ locked={computed}
+ placeholder={computed ? "—" : "0.00"}
+ onChange={(v) => patchLevel(l.id, { manual: v })}
+ luka={l.kind === "overall" && isDemoEngagement && computed && !!numStr(cur)}
+ />
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <MoneyField value={l.py} onChange={(v) => patchLevel(l.id, { py: v })} placeholder="—" />
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <CommentField value={l.comments} onChange={(v) => patchLevel(l.id, { comments: v })} storageKey={`${attrBase}-level-${l.id}`} placeholder="Comments…" />
+ </td>
+ <td className="px-2 py-2.5 align-top text-center">
+ {repeatable && (
+ <div className="flex h-8 items-center justify-center">
+ <button aria-label={`Delete ${LEVEL_LABEL[l.kind].toLowerCase()} level`} onClick={() => setLevels(p => p.filter(x => x.id !== l.id && x.pairId !== l.id))} className={DEL_BTN}>
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </div>
+ )}
+ </td>
+ </tr>
+ );
+ })}
+ </tbody>
+ </table>
+ </div>
+ <div className="px-6 py-3 border-t border-border flex flex-wrap items-center gap-3">
+ <DropdownMenu>
+ <DropdownMenuTrigger asChild>
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1">
+ <Plus className="h-3.5 w-3.5" />
+ Add level
+ </Button>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent align="start" className="min-w-max">
+ {adjCount >= MAX_ADJUSTED ? (
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <div><DropdownMenuItem className="text-sm" disabled>Adjusted performance</DropdownMenuItem></div>
+ </TooltipTrigger>
+ <TooltipContent side="right">Maximum of two adjusted performance levels</TooltipContent>
+ </Tooltip>
+ ) : (
+ <DropdownMenuItem className="text-sm cursor-pointer" onClick={() => addLevel("adjPerformance")}>Adjusted performance</DropdownMenuItem>
+ )}
+ <DropdownMenuItem className="text-sm cursor-pointer" onClick={() => addLevel("specific")}>Specific</DropdownMenuItem>
+ </DropdownMenuContent>
+ </DropdownMenu>
+ <p className="flex flex-1 items-start gap-1.5 text-sm text-muted-foreground min-w-[240px]">
+ <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+ Maximum of two adjusted performance levels.
+ </p>
+ </div>
+ <div className="border-t border-border px-6 py-3 bg-muted/20">
+ <p className="text-sm text-muted-foreground">
+ If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances. Document any changes in the materiality assessments and the final materiality on Form 335. Grey values are automated. Switch Method to Custom % or Manual to change them.
+ </p>
+ </div>
  </div>
 
  {/* ── Principal users ── */}
