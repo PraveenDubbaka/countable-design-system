@@ -7,7 +7,7 @@ import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import xeroLogoFull from "@/assets/xero-logo-full.svg";
 import {
   ArrowLeft, Briefcase, Calendar, Users, Plus, Pencil, Trash2,
-  Search, ExternalLink, X, Settings2, Check, UserPlus, User, AlertTriangle, Info,
+  Search, ExternalLink, X, Settings2, ChevronDown, Check, UserPlus, User, AlertTriangle, Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -111,6 +111,79 @@ const FieldCol = ({ label, required, children }: { label: string; required?: boo
     {children}
   </div>
 );
+
+// Copied from CreateEngagement.tsx's MultiSelectDropdown; chips sit inside the trigger and a custom value can be added.
+const MultiSelectDropdown = ({
+  options, selected, onChange, placeholder,
+}: {
+  options: string[]; selected: string[]; onChange: (v: string[]) => void; placeholder: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [custom, setCustom] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+  const toggle = (u: string) => onChange(selected.includes(u) ? selected.filter(x => x !== u) : [...selected, u]);
+  const all = [...options, ...selected.filter(u => !options.includes(u))];
+  const addCustom = () => {
+    const u = custom.trim();
+    if (!u) return;
+    if (!selected.includes(u)) onChange([...selected, u]);
+    setCustom("");
+  };
+  return (
+    <div className="relative" ref={ref}>
+      <div
+        role="button" tabIndex={0} aria-haspopup="listbox" aria-expanded={open}
+        onClick={() => setOpen(o => !o)}
+        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(o => !o); } }}
+        className="input-double-border w-full min-h-9 px-3 py-1 text-sm text-left rounded-[10px] outline-none transition-all bg-white border border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] dark:bg-card hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] flex items-center justify-between gap-2 cursor-pointer"
+      >
+        <span className="flex flex-wrap items-center gap-1 min-w-0">
+          {selected.length === 0 ? (
+            <span className="text-muted-foreground">{placeholder}</span>
+          ) : selected.map(u => (
+            <span key={u} className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
+              {u}
+              <button type="button" aria-label={`Remove ${u}`}
+                onClick={e => { e.stopPropagation(); toggle(u); }}
+                className="hover:text-destructive transition-colors">
+                <X className="h-2.5 w-2.5" />
+              </button>
+            </span>
+          ))}
+        </span>
+        <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+      </div>
+      {open && (
+        <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white dark:bg-card border border-border rounded-lg shadow-lg py-1 max-h-60 overflow-y-auto">
+          {all.map(u => (
+            <button key={u} type="button" onClick={() => toggle(u)}
+              className="w-full px-3 py-2 text-sm text-left flex items-center gap-2.5 hover:bg-muted transition-colors">
+              <div className={`h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-colors ${selected.includes(u) ? "bg-primary border-primary" : "border-border"}`}>
+                {selected.includes(u) && <Check className="h-2.5 w-2.5 text-white" />}
+              </div>
+              <span className={selected.includes(u) ? "text-foreground" : "text-muted-foreground"}>{u}</span>
+            </button>
+          ))}
+          <div className="border-t border-border/60 mt-1 pt-1 px-2 pb-1">
+            <input
+              value={custom} onChange={e => setCustom(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
+              placeholder="Add custom…"
+              className="w-full h-8 px-2 text-sm rounded-md border border-input bg-background outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ACCOUNTING_FRAMEWORKS = [
   "ASPE — Canadian Accounting Standards for Private Enterprises",
@@ -521,8 +594,6 @@ export default function CreateNewEngagementV3() {
   // V3 additions
   const [purpose, setPurpose] = useState<"General purpose" | "Special purpose">("General purpose");
   const [intendedUsers, setIntendedUsers] = useState<string[]>([]);
-  const [customUser, setCustomUser] = useState("");
-  const [addingUser, setAddingUser] = useState(false);
   const [deliverableName, setDeliverableName] = useState("Both — from client default");
   const [usingExpert, setUsingExpert] = useState(false);
 
@@ -961,45 +1032,21 @@ export default function CreateNewEngagementV3() {
                       </Select>
                     </FieldCol>
                     <FieldCol label="Purpose of the financial statements">
-                      <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium select-none w-fit">
-                        {(["General purpose", "Special purpose"] as const).map((o, i) => (
-                          <button key={o} type="button" onClick={() => setPurpose(o)}
-                            className={`px-3.5 py-2 transition-colors ${i > 0 ? "border-l border-border" : ""} ${purpose === o ? "bg-[#1C63A6] text-white" : "text-muted-foreground hover:bg-muted"}`}>
-                            {o}
-                          </button>
-                        ))}
-                      </div>
+                      <Select value={purpose} onValueChange={v => setPurpose(v as "General purpose" | "Special purpose")}>
+                        <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="General purpose">General purpose</SelectItem>
+                          <SelectItem value="Special purpose">Special purpose</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FieldCol>
                     <FieldCol label="Intended users (optional)">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {[...INTENDED_USER_OPTIONS, ...intendedUsers.filter(u => !INTENDED_USER_OPTIONS.includes(u))].map(u => {
-                          const on = intendedUsers.includes(u);
-                          return (
-                            <button key={u} type="button"
-                              onClick={() => setIntendedUsers(p => on ? p.filter(x => x !== u) : [...p, u])}
-                              className={`h-8 px-3 rounded-full border text-xs font-medium transition-colors ${on ? "border-[#1C63A6] bg-[#1C63A6]/10 text-[#1C63A6]" : "border-border text-muted-foreground hover:bg-muted"}`}>
-                              {u}
-                            </button>
-                          );
-                        })}
-                        {addingUser ? (
-                          <input autoFocus value={customUser} onChange={e => setCustomUser(e.target.value)} placeholder="Add user"
-                            onKeyDown={e => {
-                              if (e.key === "Enter" && customUser.trim()) {
-                                const u = customUser.trim();
-                                setIntendedUsers(p => p.includes(u) ? p : [...p, u]);
-                                setCustomUser(""); setAddingUser(false);
-                              } else if (e.key === "Escape") { setCustomUser(""); setAddingUser(false); }
-                            }}
-                            onBlur={() => { setCustomUser(""); setAddingUser(false); }}
-                            className="h-8 w-32 px-3 text-xs rounded-full border border-border bg-card outline-none" />
-                        ) : (
-                          <button type="button" onClick={() => setAddingUser(true)}
-                            className="h-8 px-3 rounded-full border border-dashed border-border text-xs font-medium text-muted-foreground hover:bg-muted">
-                            + custom
-                          </button>
-                        )}
-                      </div>
+                      <MultiSelectDropdown
+                        options={INTENDED_USER_OPTIONS}
+                        selected={intendedUsers}
+                        onChange={setIntendedUsers}
+                        placeholder="Select users"
+                      />
                     </FieldCol>
                     <FieldCol label="Name on deliverables">
                       <Select value={deliverableName} onValueChange={setDeliverableName}>
