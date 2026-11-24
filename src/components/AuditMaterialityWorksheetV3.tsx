@@ -599,8 +599,10 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const performanceNum = currentOf(levelOf("performance") ?? newLevel("performance", { method: "manual" }));
  const trivialNum = currentOf(levelOf("trivial") ?? newLevel("trivial", { method: "manual" }));
  const specificRows = levels.filter(l => l.kind === "specific");
- const specPerfValues = levels.filter(l => l.kind === "specPerformance").map(currentOf).filter((n): n is number => n !== null);
- const specPerfSum: number | null = specPerfValues.length ? specPerfValues.reduce((a, b) => a + b, 0) : null;
+ // PM of the Specific row with the lowest non-zero amount (the row the tile value comes from); never summed
+ const lowestSpecific = specificRows.filter(l => toNum(l.manual) > 0).sort((x, y) => toNum(x.manual) - toNum(y.manual))[0];
+ const lowestPair = lowestSpecific ? levels.find(l => l.kind === "specPerformance" && l.pairId === lowestSpecific.id) : undefined;
+ const lowestPM: number | null = lowestPair ? currentOf(lowestPair) : null;
  const adjCount = levels.filter(l => l.kind === "adjPerformance").length;
  const specCount = levels.filter(l => l.kind === "specific").length;
 
@@ -656,7 +658,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const tiles: { key: string; label: string; hint: string; value: string; luka?: boolean }[] = [
  { key: "overall", label: "Overall", hint: overallRow?.method === "manual" ? "Manual" : overallBasisLabel, value: overallStr, luka: isDemoEngagement && !!overallStr },
  { key: "perf", label: "Performance", hint: `${pctText(perfRow)} · ${adjCount} adjusted`, value: performanceStr },
- { key: "spec", label: "Specific", hint: `${specCount} ${specCount === 1 ? "item" : "items"} · specific PM ${specPerfSum === null ? "—" : fmtInt(specPerfSum)}`, value: isNaN(specificBase) ? "" : formatNum(specificBase) },
+ { key: "spec", label: "Specific", hint: `${specCount === 1 ? "1 item" : `${specCount > 1 ? "Lowest of " : ""}${specCount} items`} · specific PM ${lowestPM === null ? "—" : fmtInt(lowestPM)}`, value: isNaN(specificBase) ? "" : formatNum(specificBase) },
  { key: "trivial", label: "Trivial", hint: pctText(trivialRow), value: trivialStr },
  ];
 
