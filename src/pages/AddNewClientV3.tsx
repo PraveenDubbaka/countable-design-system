@@ -1201,7 +1201,7 @@ export default function AddNewClientV3() {
 
                     {country === "ca" && (
                       <FieldCol label="CRA program accounts" hint="Built from the BN; GST/HST appears when registered" className="col-span-2">
-                        {businessNumber.trim() === "" ? (
+                        {!bnValid ? (
                           <p className="text-sm text-muted-foreground flex items-center h-8">Enter a Business Number to add program accounts</p>
                         ) : (
                           <div className="flex flex-col gap-2">
