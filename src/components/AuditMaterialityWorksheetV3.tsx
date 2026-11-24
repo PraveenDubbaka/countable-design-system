@@ -71,6 +71,7 @@ interface LevelRow {
  py: string;
  comments: string;
  wpRef: RefDoc[];
+ pairId?: string; // specific performance only: id of the Specific row it belongs to
  areaManual?: boolean; // specific performance only: area overridden instead of mirroring the Specific row
 }
 
@@ -153,7 +154,22 @@ const formatDisplay = (v: string) => {
 
 // ── Levels configuration ───────────────────────────────────────────────────────
 
-const KIND_ORDER: LevelKind[] = ["overall", "performance", "adjPerformance", "specific", "specPerformance", "trivial"];
+// Every Specific row owns one Specific performance row (pairId). Saved data from earlier builds is migrated here:
+// the single specific performance row attaches to the first Specific row; any Specific row still without a pair gets one.
+function normalizeLevels(list: LevelRow[]): LevelRow[] {
+ const specifics = list.filter(l => l.kind === "specific");
+ const ids = new Set(specifics.map(l => l.id));
+ const loose = list.filter(l => l.kind === "specPerformance" && (!l.pairId || !ids.has(l.pairId)));
+ const used = new Set(list.filter(l => l.kind === "specPerformance" && l.pairId && ids.has(l.pairId)).map(l => l.pairId));
+ const out = list.filter(l => l.kind !== "specPerformance" || (l.pairId && ids.has(l.pairId)));
+ for (const sp of specifics) {
+ if (used.has(sp.id)) continue;
+ const orphan = loose.shift();
+ out.push(orphan ? { ...orphan, pairId: sp.id } : newLevel("specPerformance", { pairId: sp.id }));
+ }
+ return out;
+}
+
 
 const LEVEL_LABEL: Record<LevelKind, string> = {
  overall: "Overall",
@@ -169,7 +185,7 @@ const LEVEL_GUIDANCE: Record<LevelKind, string> = {
  performance: "Set below overall materiality, typically 60%–75%, to reduce the risk that aggregate uncorrected and undetected misstatements exceed overall materiality (CAS 320.11).",
  adjPerformance: "Lower performance materiality for a class of transactions, account balance or disclosure with a particular risk of misstatement. Maximum of two; use a supplementary work paper for more.",
  specific: "Lower amount for particular transactions, balances or disclosures where users' decisions could be influenced by lesser misstatements (CAS 320.10, .A11–A12).",
- specPerformance: "Performance materiality for the specific materiality levels (CAS 320.10–11, .A13). Based on the lowest specific amount.",
+ specPerformance: "Performance materiality for the specific materiality levels (CAS 320.10–11, .A13). Calculated from the amount of the Specific row above it.",
  trivial: "Threshold below which misstatements are clearly trivial and need not be accumulated (CAS 450.A2).",
 };
 
@@ -416,7 +432,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  }]);
 
  // Materiality levels — one flat list; fixed kinds appear once, adjusted/specific are repeatable
- const [levels, setLevels] = useState<LevelRow[]>(saved?.levels ?? (isUS ? [
+ const [levels, setLevels] = useState<LevelRow[]>(() => normalizeLevels(saved?.levels ?? (isUS ? [
  newLevel("overall"),
  newLevel("performance"),
  newLevel("adjPerformance", { area: "Revenue (ASC 606 — contract estimates)", manual: "92000", comments: "Higher risk of misstatement due to percentage-of-completion estimates. Set at 50% of overall." }),
@@ -432,7 +448,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  newLevel("specific", { area: "Related party transactions — shareholder loans and management fees", manual: "5000", comments: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness.", wpRef: [{ name: "WP-RPT-01" }] }),
  newLevel("specPerformance", { comments: "70% of specific materiality.", wpRef: [{ name: "WP-RPT-PM" }] }),
  newLevel("trivial"),
- ]));
+ ])));
 
  const [qualitative, setQualitative] = useState<QualitativeItem[]>(saved?.qualitative ?? [{ id: uid(), nature: "", impact: "" }]);
 
@@ -563,14 +579,17 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
 
  // Lowest non-zero specific amount is the base for specific performance
  const specificAmounts = levels.filter(l => l.kind === "specific").map(l => toNum(l.manual)).filter(n => !isNaN(n) && n > 0);
- const specificBase = specificAmounts.length ? Math.min(...specificAmounts) : NaN;
+ const specificBase = specificAmounts.length ? Math.min(...specificAmounts) : NaN; // tile value only
 
  const currentOf = (l: LevelRow): number | null => {
  switch (l.kind) {
  case "overall": return overallNum;
  case "performance":
  case "trivial": return calcFrom(l, overallBase);
- case "specPerformance": return calcFrom(l, specificBase);
+ case "specPerformance": {
+ const owner = levels.find(x => x.id === l.pairId);
+ return calcFrom(l, owner ? toNum(owner.manual) : NaN);
+ }
  default: return calcFrom(l, NaN);
  }
  };
@@ -579,8 +598,9 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
 
  const performanceNum = currentOf(levelOf("performance") ?? newLevel("performance", { method: "manual" }));
  const trivialNum = currentOf(levelOf("trivial") ?? newLevel("trivial", { method: "manual" }));
- const specPerfNum = levelOf("specPerformance") ? currentOf(levelOf("specPerformance")!) : null;
  const specificRows = levels.filter(l => l.kind === "specific");
+ const specPerfValues = levels.filter(l => l.kind === "specPerformance").map(currentOf).filter((n): n is number => n !== null);
+ const specPerfSum: number | null = specPerfValues.length ? specPerfValues.reduce((a, b) => a + b, 0) : null;
  const adjCount = levels.filter(l => l.kind === "adjPerformance").length;
  const specCount = levels.filter(l => l.kind === "specific").length;
 
@@ -606,10 +626,20 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
 
  const addLevel = (kind: LevelKind) => {
  if (kind === "adjPerformance" && adjCount >= MAX_ADJUSTED) return;
+ if (kind === "specific") {
+ const sp = newLevel("specific");
+ setLevels(prev => [...prev, sp, newLevel("specPerformance", { pairId: sp.id })]);
+ return;
+ }
  setLevels(prev => [...prev, newLevel(kind)]);
  };
 
- const orderedLevels = [...levels].sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind));
+ // Fixed rows first, then the repeatable ones: adjusted performance, then each Specific row followed by its own pair
+ const orderedLevels: LevelRow[] = [
+ ...(["overall", "performance", "trivial"] as LevelKind[]).flatMap(k => levels.filter(l => l.kind === k)),
+ ...levels.filter(l => l.kind === "adjPerformance"),
+ ...levels.filter(l => l.kind === "specific").flatMap(sp => [sp, ...levels.filter(l => l.kind === "specPerformance" && l.pairId === sp.id)]),
+ ];
  const title = "Materiality";
  const overallBasisLabel = (() => {
  const b = selectedRow ? findBasis(selectedRow.basis) : undefined;
@@ -626,7 +656,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const tiles: { key: string; label: string; hint: string; value: string; luka?: boolean }[] = [
  { key: "overall", label: "Overall", hint: overallRow?.method === "manual" ? "Manual" : overallBasisLabel, value: overallStr, luka: isDemoEngagement && !!overallStr },
  { key: "perf", label: "Performance", hint: `${pctText(perfRow)} · ${adjCount} adjusted`, value: performanceStr },
- { key: "spec", label: "Specific", hint: `${specCount} ${specCount === 1 ? "item" : "items"} · specific PM ${specPerfNum === null ? "—" : fmtInt(specPerfNum)}`, value: isNaN(specificBase) ? "" : formatNum(specificBase) },
+ { key: "spec", label: "Specific", hint: `${specCount} ${specCount === 1 ? "item" : "items"} · specific PM ${specPerfSum === null ? "—" : fmtInt(specPerfSum)}`, value: isNaN(specificBase) ? "" : formatNum(specificBase) },
  { key: "trivial", label: "Trivial", hint: pctText(trivialRow), value: trivialStr },
  ];
 
@@ -993,10 +1023,10 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <td className="px-4 py-2.5 align-top">
  {l.kind === "specPerformance" && !l.areaManual ? (
  <TdInput
- value={specificRows.length === 1 ? specificRows[0].area : l.area}
+ value={specificRows.find(x => x.id === l.pairId)?.area ?? l.area}
  onChange={(v) => patchLevel(l.id, { area: v, areaManual: true })}
  placeholder="F/S area or disclosure"
- className={specificRows.length === 1 ? "bg-muted/50" : ""}
+ className="bg-muted/50"
  />
  ) : (
  <TdInput value={l.area} onChange={(v) => patchLevel(l.id, l.kind === "specPerformance" ? { area: v, areaManual: true } : { area: v })} placeholder="F/S area or disclosure" />
@@ -1025,7 +1055,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <td className="px-2 py-2.5 align-top text-center">
  {repeatable && (
  <div className="flex h-8 items-center justify-center">
- <button aria-label={`Delete ${LEVEL_LABEL[l.kind].toLowerCase()} level`} onClick={() => setLevels(p => p.filter(x => x.id !== l.id))} className={DEL_BTN}>
+ <button aria-label={`Delete ${LEVEL_LABEL[l.kind].toLowerCase()} level`} onClick={() => setLevels(p => p.filter(x => x.id !== l.id && x.pairId !== l.id))} className={DEL_BTN}>
  <Trash2 className="h-3.5 w-3.5" />
  </button>
  </div>
@@ -1046,7 +1076,16 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  </Button>
  </DropdownMenuTrigger>
  <DropdownMenuContent align="start" className="min-w-max">
- <DropdownMenuItem className="text-sm cursor-pointer" disabled={adjCount >= MAX_ADJUSTED} onClick={() => addLevel("adjPerformance")}>Adjusted performance</DropdownMenuItem>
+ {adjCount >= MAX_ADJUSTED ? (
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <div><DropdownMenuItem className="text-sm" disabled>Adjusted performance</DropdownMenuItem></div>
+ </TooltipTrigger>
+ <TooltipContent side="right">Maximum of two adjusted performance levels</TooltipContent>
+ </Tooltip>
+ ) : (
+ <DropdownMenuItem className="text-sm cursor-pointer" onClick={() => addLevel("adjPerformance")}>Adjusted performance</DropdownMenuItem>
+ )}
  <DropdownMenuItem className="text-sm cursor-pointer" onClick={() => addLevel("specific")}>Specific</DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>
