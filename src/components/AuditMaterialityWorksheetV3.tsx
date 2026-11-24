@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { readJsonFromLocalStorage, writeJsonToLocalStorage } from "@/lib/safeJson";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
  Select,
  SelectContent,
@@ -11,16 +10,16 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Info, RefreshCw, Trash2, Plus } from "lucide-react";
+import { Info, RefreshCw, Trash2, Plus, Lock, Sparkles, AlertTriangle } from "lucide-react";
 import { DEMO_LUKA_ACTIONS } from "@/components/demo/demoFixtureData";
 import { LukaStatusBar } from "@/components/demo/LukaStatusBar";
 import { LukaTypingRow } from '@/components/demo/LukaTypingRow';
-import { RefButton, RefDoc } from "@/components/RefButton";
 import { AddToMyTemplatesDialog } from "@/components/AddToMyTemplatesDialog";
-import { AttributedComment } from "@/components/ui/AttributedComment";
+import { AITextarea } from "@/components/AITextarea";
+import { useAttribution, AttributionLine } from "@/components/ui/AttributedComment";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lukaSequentialFill } from "@/lib/lukaInlineFill";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -40,8 +39,6 @@ interface EntityRow {
  comments: string;
 }
 
-type EntityType = "profit" | "nfp";
-
 interface IntendedUser {
  id: string;
  user: string;
@@ -57,7 +54,6 @@ interface QualitativeItem {
 interface QualDisclosure {
  id: string;
  text: string;
- wpRef: RefDoc[];
 }
 
 type LevelKind = "overall" | "performance" | "adjPerformance" | "specific" | "specPerformance" | "trivial";
@@ -68,9 +64,9 @@ interface LevelRow {
  area: string;
  method: string;
  manual: string; // amount entered when method is "manual"
+ customPct: string; // percentage typed when method is "custom"
  py: string;
  comments: string;
- wpRef: RefDoc[];
  pairId?: string; // specific performance only: id of the Specific row it belongs to
  areaManual?: boolean; // specific performance only: area overridden instead of mirroring the Specific row
 }
@@ -104,20 +100,12 @@ type TBKey = keyof typeof TB_CA;
 
 type BasisOption = { value: string; label: string; tbKey?: TBKey; range?: number[] };
 
-const BASIS_OPTIONS_BY_TYPE: Record<EntityType, BasisOption[]> = {
- profit: [
+const BASIS_OPTIONS: BasisOption[] = [
  { value: "profitBeforeTax", label: "Income before tax (continuing ops, adjusted)", tbKey: "profitBeforeTax", range: [3, 4, 5, 6, 7] },
  { value: "grossRevenue", label: "Gross revenues", tbKey: "grossRevenue", range: [1, 2, 3] },
  { value: "other", label: "Other (describe)" },
- ],
- nfp: [
- { value: "nfpRevenues", label: "Total revenues", tbKey: "grossRevenue", range: [1, 2, 3] },
- { value: "nfpExpenses", label: "Total expenses", tbKey: "totalExpenses", range: [1, 2, 3] },
- { value: "other", label: "Other (describe)" },
- ],
-};
-const ALL_BASIS_OPTIONS: BasisOption[] = [...BASIS_OPTIONS_BY_TYPE.profit, ...BASIS_OPTIONS_BY_TYPE.nfp];
-const findBasis = (v: string) => ALL_BASIS_OPTIONS.find(o => o.value === v);
+];
+const findBasis = (v: string) => BASIS_OPTIONS.find(o => o.value === v);
 const defaultPctFor = (basis: string) => (basis === "profitBeforeTax" ? "5.00" : "1.00");
 
 const fmtInt = (n: number) => Math.round(n).toLocaleString("en-US");
@@ -190,13 +178,14 @@ const LEVEL_GUIDANCE: Record<LevelKind, string> = {
 };
 
 const MANUAL = { value: "manual", label: "Manual" };
+const CUSTOM = { value: "custom", label: "Custom %…" };
 const METHOD_OPTIONS: Record<LevelKind, { value: string; label: string }[]> = {
  overall: [{ value: "criteria", label: "From criteria" }, MANUAL],
- performance: [60, 65, 70, 75].map(n => ({ value: `p${n}`, label: `${n}% of overall` })).concat(MANUAL),
+ performance: [60, 65, 70, 75].map(n => ({ value: `p${n}`, label: `${n}% of overall` })).concat(CUSTOM, MANUAL),
  adjPerformance: [MANUAL],
  specific: [MANUAL],
- specPerformance: [{ value: "s70", label: "70% of specific" }, MANUAL],
- trivial: [{ value: "t5", label: "5% of overall" }, MANUAL],
+ specPerformance: [{ value: "s70", label: "70% of specific" }, CUSTOM, MANUAL],
+ trivial: [{ value: "t5", label: "5% of overall" }, CUSTOM, MANUAL],
 };
 
 const DEFAULT_METHOD: Record<LevelKind, string> = {
@@ -217,15 +206,20 @@ const newLevel = (kind: LevelKind, patch: Partial<LevelRow> = {}): LevelRow => (
  area: kind === "overall" || kind === "performance" || kind === "trivial" ? "F/S as a whole" : "",
  method: DEFAULT_METHOD[kind],
  manual: "",
+ customPct: "",
  py: "",
  comments: "",
- wpRef: [],
  ...patch,
 });
 
 const pctOfMethod = (method: string): number | null => {
  const m = /^[pst](\d+)$/.exec(method);
  return m ? parseInt(m[1], 10) : null;
+};
+// Percentage a level is calculated with: the preset (p70, t5, …) or the typed Custom %
+const pctOfLevel = (l: LevelRow): number | null => {
+ if (l.method === "custom") { const v = toNum(l.customPct); return isNaN(v) ? null : v; }
+ return pctOfMethod(l.method);
 };
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -271,6 +265,8 @@ function MoneyInput({
  className = "",
  luka,
  readOnly,
+ locked,
+ lockTip,
 }: {
  value: string;
  onChange?: (raw: string) => void;
@@ -278,16 +274,19 @@ function MoneyInput({
  className?: string;
  luka?: boolean;
  readOnly?: boolean;
+ /** Automated value: read-only, muted, small Lock icon at the left, tooltip explains how to edit */
+ locked?: boolean;
+ lockTip?: React.ReactNode;
 }) {
  const [draft, setDraft] = useState<string | null>(null);
  const shown = draft !== null ? draft : (value ? formatDisplay(value) : "");
- return (
+ const input = (
  <TdInput
  value={shown}
- readOnly={readOnly}
+ readOnly={readOnly || locked}
  placeholder={placeholder}
  luka={luka}
- className={`w-full px-2 tabular-nums text-right ${className}`}
+ className={`w-full ${locked ? "pl-7 pr-2" : "px-2"} tabular-nums text-right ${className}`}
  onChange={(v) => {
  const cleaned = v.replace(/[^0-9.]/g, "");
  setDraft(cleaned);
@@ -296,6 +295,7 @@ function MoneyInput({
  // draft clears on blur via the wrapper below
  />
  );
+ return locked ? <LockWrap tip={lockTip}>{input}</LockWrap> : input;
 }
 
 function MoneyField(props: React.ComponentProps<typeof MoneyInput>) {
@@ -337,13 +337,56 @@ function TdSelect({
 }
 
 /** Wraps a control with a hover tooltip; renders the control alone when there is no text */
-function Tip({ text, children }: { text?: string; children: React.ReactNode }) {
+function Tip({ text, children }: { text?: React.ReactNode; children: React.ReactNode }) {
  if (!text) return <>{children}</>;
  return (
  <Tooltip>
  <TooltipTrigger asChild><div>{children}</div></TooltipTrigger>
  <TooltipContent>{text}</TooltipContent>
  </Tooltip>
+ );
+}
+
+const LOCK_TIP = "Automated · switch Method to Custom % or Manual to edit";
+
+/** Small Lock icon at the left of an automated (read-only) input, with the standard tooltip */
+function LockWrap({ tip = LOCK_TIP, children }: { tip?: React.ReactNode; children: React.ReactNode }) {
+ return (
+ <Tip text={tip}>
+ <div className="relative">
+ <Lock aria-hidden className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none" />
+ {children}
+ </div>
+ </Tip>
+ );
+}
+
+/** Same comment input as the checklists (AITextarea with mic/dictation), with the "Last updated by…" line under it */
+function CommentField({ value, onChange, storageKey, placeholder, luka }: {
+ value: string;
+ onChange: (v: string) => void;
+ storageKey: string;
+ placeholder?: string;
+ luka?: boolean;
+}) {
+ const attr = useAttribution(storageKey);
+ const dirty = useRef(false);
+ const latest = useRef(value);
+ latest.current = value;
+ return (
+ <div className="flex flex-col gap-1">
+ <div className={`rounded-md border bg-background ${luka ? "border-[#8649F1]" : "border-input"}`}>
+ <AITextarea
+ value={value}
+ onChange={(v) => { dirty.current = true; onChange(v); }}
+ placeholder={placeholder}
+ maxLength={2000}
+ onAIGenerate={() => attr.stamp("LUKA")}
+ onEditEnd={() => { if (dirty.current && latest.current) { attr.stamp(); } dirty.current = false; }}
+ />
+ </div>
+ {value && attr.attr && <AttributionLine attr={attr.attr} />}
+ </div>
  );
 }
 
@@ -374,12 +417,32 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const isDemoEngagement = engagementId === 'AUD-NPM-Dec312025';
  const [showAddDialog, setShowAddDialog] = useState(false);
 
- const TB = isDemoEngagement ? TB_NPM : (isUS ? TB_US : TB_CA);
- const entityLabel = isDemoEngagement ? "Northline Precision Manufacturing Inc." : (isUS ? "Harbor Freight LLC" : "Shipping Line Inc.");
  const region = isUS ? "us" : "ca";
+ const scope = engagementId ?? region;
 
+ // TB values: the engagement's trial balance (demo data), plus an optional V3-only override so a changed trial balance can be shown.
+ // Re-read on every render; a change is announced with the "audit-materiality-tb-changed" event (or storage/focus).
+ const [, setTbTick] = useState(0);
+ useEffect(() => {
+ const bump = () => setTbTick(t => t + 1);
+ window.addEventListener("audit-materiality-tb-changed", bump);
+ window.addEventListener("storage", bump);
+ window.addEventListener("focus", bump);
+ return () => {
+ window.removeEventListener("audit-materiality-tb-changed", bump);
+ window.removeEventListener("storage", bump);
+ window.removeEventListener("focus", bump);
+ };
+ }, []);
+ const TB_BASE = isDemoEngagement ? TB_NPM : (isUS ? TB_US : TB_CA);
+ const TB: typeof TB_CA = { ...TB_BASE, ...(readJsonFromLocalStorage<Partial<typeof TB_CA> | null>(`audit-materiality-tb-v3-${scope}`, null) ?? {}) };
+ const tbSig = JSON.stringify(TB);
+ // A trial balance exists once it was imported for the engagement (same flag the Trial Balance page sets); the demo engagement always has one
+ const tbAvailable = isDemoEngagement || !engagementId || !!localStorage.getItem(`tb-loaded-${engagementId}`);
+ const entityLabel = isDemoEngagement ? "Northline Precision Manufacturing Inc." : (isUS ? "Harbor Freight LLC" : "Shipping Line Inc.");
  // Saved state (V3 keys only) — read once
- const stateKey = `audit-materiality-state-v3-${engagementId ?? region}`;
+ const stateKey = `audit-materiality-state-v3-${scope}`;
+ const attrBase = `mat-v3-${scope}`;
  const saved = useRef<Record<string, any> | null>(readJsonFromLocalStorage<Record<string, any> | null>(stateKey, null)).current;
 
  const [concluded, setConcluded] = useState<boolean>(saved?.concluded ?? false);
@@ -389,7 +452,10 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
 
  // Criteria — two benchmark lines seeded from Trial Balance
  const [selectedRowId, setSelectedRowId] = useState<string>(saved?.selectedRowId ?? SEED_ROW_A);
- const [entityRows, setEntityRows] = useState<EntityRow[]>(saved?.entityRows ?? [
+ const [entityRows, setEntityRows] = useState<EntityRow[]>(() => (saved?.entityRows as EntityRow[] | undefined)?.map(r => (
+ // earlier builds had not-for-profit bases; Profit-oriented only now
+ r.basis === "nfpRevenues" ? { ...r, basis: "grossRevenue" } : r.basis === "nfpExpenses" ? { ...r, basis: "other" } : r
+ )) ?? [
  {
  id: SEED_ROW_A,
  entityName: entityLabel,
@@ -419,7 +485,6 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  comments: "",
  },
  ]);
- const [entityType, setEntityType] = useState<EntityType>(saved?.entityType ?? "profit");
 
  const [intendedUsers, setIntendedUsers] = useState<IntendedUser[]>(saved?.intendedUsers ?? [{ id: uid(), user: "", factors: "" }]);
 
@@ -428,31 +493,37 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  text: isUS
  ? "ASC 842 first-year lease adoption — nature and extent of leases, ROU asset measurement, discount rate policy, and transition adjustments require complete disclosure. Goodwill impairment testing methodology and assumptions also require qualitative disclosure per ASC 350."
  : "Vessel impairment indicators — nature of impairment assessment and key assumptions (charter rate forecasts, useful lives) require qualitative disclosure. Foreign currency risk management policy disclosure under ASPE s.3856.",
- wpRef: [],
  }]);
 
  // Materiality levels — one flat list; fixed kinds appear once, adjusted/specific are repeatable
- const [levels, setLevels] = useState<LevelRow[]>(() => normalizeLevels(saved?.levels ?? (isUS ? [
+ const [levels, setLevels] = useState<LevelRow[]>(() => normalizeLevels(((saved?.levels as LevelRow[] | undefined)?.map(l => ({ customPct: "", ...l }))) ?? (isUS ? [
  newLevel("overall"),
  newLevel("performance"),
  newLevel("adjPerformance", { area: "Revenue (ASC 606 — contract estimates)", manual: "92000", comments: "Higher risk of misstatement due to percentage-of-completion estimates. Set at 50% of overall." }),
  newLevel("adjPerformance", { area: "ROU Assets & Lease Liabilities (ASC 842)", manual: "64000", comments: "First-year adoption — increased inherent risk. Set at 35% of overall." }),
- newLevel("specific", { area: "Related party transactions (ASC 850) — Board member loans and management compensation", manual: "10000", comments: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", wpRef: [{ name: "WP-RPT-01" }] }),
- newLevel("specific", { area: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", manual: "0", comments: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount.", wpRef: [{ name: "WP-GC-01" }] }),
- newLevel("specPerformance", { comments: "70% of specific materiality. Ensures detection of individually insignificant RPTs that aggregate to material amounts.", wpRef: [{ name: "WP-RPT-PM" }] }),
+ newLevel("specific", { area: "Related party transactions (ASC 850) — Board member loans and management compensation", manual: "10000", comments: "Users (lenders) particularly sensitive to RPTs. Lower materiality applied to ensure completeness of disclosure.", }),
+ newLevel("specific", { area: "Going concern disclosures — elevated D/E ratio (2.71x) and covenant compliance", manual: "0", comments: "Qualitative — any indication of substantial doubt requires disclosure regardless of dollar amount." }),
+ newLevel("specPerformance", { comments: "70% of specific materiality. Ensures detection of individually insignificant RPTs that aggregate to material amounts." }),
  newLevel("trivial"),
  ] : [
  newLevel("overall"),
  newLevel("performance"),
  newLevel("adjPerformance", { area: "Vessel PP&E (impairment)", manual: "62000", comments: "Significant judgment in impairment assessment. Set at 50% of performance materiality." }),
- newLevel("specific", { area: "Related party transactions — shareholder loans and management fees", manual: "5000", comments: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness.", wpRef: [{ name: "WP-RPT-01" }] }),
- newLevel("specPerformance", { comments: "70% of specific materiality.", wpRef: [{ name: "WP-RPT-PM" }] }),
+ newLevel("specific", { area: "Related party transactions — shareholder loans and management fees", manual: "5000", comments: "Bank covenant requires disclosure of all RPTs. Lower threshold applied for completeness." }),
+ newLevel("specPerformance", { comments: "70% of specific materiality." }),
  newLevel("trivial"),
  ])));
 
  const [qualitative, setQualitative] = useState<QualitativeItem[]>(saved?.qualitative ?? [{ id: uid(), nature: "", impact: "" }]);
 
- const [additionalComments, setAdditionalComments] = useState<string>(saved?.additionalComments ?? "");
+ // Trial balance state: blank until a trial balance exists (or last year's materiality is used); Refresh pulls it in
+ const [tbReady, setTbReady] = useState<boolean>(() => tbAvailable || !!saved?.tbReady);
+ const [prefilled, setPrefilled] = useState<boolean>(saved?.prefilled ?? false);
+ // Signature of the TB values the benchmarks were last pulled from; a different current TB means Refresh is required
+ const [usedTbSig, setUsedTbSig] = useState<string>(saved?.usedTbSig ?? tbSig);
+ const [showLastYear, setShowLastYear] = useState(false);
+ const [lastYearDragging, setLastYearDragging] = useState(false);
+ const lastYearFileRef = useRef<HTMLInputElement>(null);
  const [conclusion, setConclusion] = useState<string>(
  saved?.conclusion ?? "I am satisfied that the engagement planning adequately addresses the areas in the financial statements where material misstatements are likely to arise"
  );
@@ -494,28 +565,41 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  setEntityRows((prev) => prev.map((row) => (row.id === id ? {...row,...pullBasis(row, basis) } : row)));
  };
 
- // Switching entity type swaps the basis lists; rows whose basis no longer exists take the next unused option of the new list
- const handleEntityTypeChange = (next: EntityType) => {
- if (next === entityType) return;
- setEntityType(next);
- setEntityRows((prev) => {
- const valid = BASIS_OPTIONS_BY_TYPE[next];
- const free = valid.filter(o => o.value !== "other" && !prev.some(r => r.basis === o.value));
- return prev.map((row) => {
- if (!row.basis || valid.some(o => o.value === row.basis)) return row;
- const target = free.shift();
- return target ? {...row,...pullBasis(row, target.value) } : {...row, basis: "", periodAmount: "", extrapManual: false };
- });
- });
- };
-
  const handleRefresh = () => {
+ if (!tbAvailable && !tbReady) {
+ toast.info("No trial balance data yet — import a trial balance first");
+ return;
+ }
+ setTbReady(true);
  setEntityRows(prev => prev.map(row => {
  const opt = findBasis(row.basis);
  if (!opt?.tbKey) return {...row, extrapManual: false };
  return {...row, periodAmount: String(TB[opt.tbKey]), extrapManual: false };
  }));
+ setUsedTbSig(tbSig);
  toast.success("Benchmarks refreshed from Trial Balance");
+ };
+
+ // Demo: dropping last year's materiality file prefills benchmarks, principal users and last year's comments (no real parsing)
+ const applyLastYear = () => {
+ setEntityRows(prev => prev.map(row => ({
+ ...row,
+ // no trial balance yet: there are no amounts to benchmark against, only last year's percentages
+ ...(tbReady ? {} : { periodAmount: "", extrapolatedPeriod: "", materialityCY: "" }),
+ benchmarkPct: row.basis === "grossRevenue" ? "2.00" : row.basis === "profitBeforeTax" ? "6.00" : row.benchmarkPct,
+ pctManual: row.basis === "other" ? row.pctManual : false,
+ comments: row.comments || (row.basis === "grossRevenue" ? "Last year: revenue benchmark at 2% — stable revenue base; users focus on top-line trends." : row.basis === "profitBeforeTax" ? "Last year: income before tax at 6% — earnings are the key measure for the lender and shareholders." : ""),
+ })));
+ setIntendedUsers([
+ { id: uid(), user: "Lender", factors: "Covenant compliance (DSCR, current ratio) and quarterly reporting drive the lender's decisions." },
+ { id: uid(), user: "Shareholders", factors: "Profitability, dividend capacity and the valuation of their investment." },
+ ]);
+ setLevels(prev => prev.map(l => (l.kind === "overall" || l.kind === "performance" || l.kind === "trivial") && !l.comments
+ ? { ...l, comments: `Carried over from last year's materiality (${LEVEL_LABEL[l.kind].toLowerCase()}).` }
+ : l));
+ setPrefilled(true);
+ setShowLastYear(false);
+ toast.success("Prefilled from last year's materiality");
  };
 
  const addEntityRow = () => {
@@ -548,10 +632,19 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
 
  // Derived per-row values: anticipated amount (extrapolated while the period runs) and possible materiality
  const now = new Date();
+ const showBlank = !tbReady && !prefilled; // no trial balance data yet
  const rows = entityRows.map((r) => {
+ if (showBlank) return {...r, anticipated: "", anticipatedNote: "", possible: "" };
  const ant = anticipatedFor(r, periodStart, periodEnd, now);
  return {...r, anticipated: ant.value, anticipatedNote: ant.note, possible: calcMatCY(ant.value || r.periodAmount, r.benchmarkPct) };
  });
+ const refreshStale = !showBlank && usedTbSig !== tbSig;
+ // Partial-data note: only while the period end is after today
+ const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+ const periodEndDate = new Date(periodEnd + "T00:00:00");
+ const partialData = !showBlank && !isNaN(periodEndDate.getTime()) && periodEndDate > startOfToday;
+ // Latest source data date: end of the last closed month in the source
+ const latestDataDate = new Date(now.getFullYear(), now.getMonth(), 0).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
  // Overall = the selected criteria line's possible materiality (not a sum)
  const selectedRow = rows.find(r => r.id === selectedRowId) ?? rows[0];
@@ -567,7 +660,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const calcFrom = (l: LevelRow | undefined, base: number): number | null => {
  if (!l) return null;
  if (l.method === "manual") { const v = toNum(l.manual); return isNaN(v) ? null : v; }
- const p = pctOfMethod(l.method);
+ const p = pctOfLevel(l);
  return p === null || isNaN(base) ? null : base * p / 100;
  };
 
@@ -621,10 +714,10 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  // Persist the worksheet itself (V3 key only)
  useEffect(() => {
  writeJsonToLocalStorage(stateKey, {
- concluded, periodStart, periodEnd, selectedRowId, entityRows, entityType, intendedUsers,
- qualDisclosures, levels, qualitative, additionalComments, conclusion,
+ concluded, periodStart, periodEnd, selectedRowId, entityRows, intendedUsers,
+ qualDisclosures, levels, qualitative, conclusion, tbReady, prefilled, usedTbSig,
  });
- }, [stateKey, concluded, periodStart, periodEnd, selectedRowId, entityRows, entityType, intendedUsers, qualDisclosures, levels, qualitative, additionalComments, conclusion]);
+ }, [stateKey, concluded, periodStart, periodEnd, selectedRowId, entityRows, intendedUsers, qualDisclosures, levels, qualitative, conclusion, tbReady, prefilled, usedTbSig]);
 
  const addLevel = (kind: LevelKind) => {
  if (kind === "adjPerformance" && adjCount >= MAX_ADJUSTED) return;
@@ -651,15 +744,15 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  const perfRow = levelOf("performance");
  const trivialRow = levelOf("trivial");
  const pctText = (l?: LevelRow, fallback = "Manual") => {
- const p = l ? pctOfMethod(l.method) : null;
- return p === null ? fallback : `${p}% of overall`;
+ const p = l ? pctOfLevel(l) : null;
+ return p === null || !l ? fallback : `${l.method === "custom" ? "Custom " : ""}${p}% of overall`;
  };
 
- const tiles: { key: string; label: string; hint: string; value: string; luka?: boolean }[] = [
- { key: "overall", label: "Overall", hint: overallRow?.method === "manual" ? "Manual" : overallBasisLabel, value: overallStr, luka: isDemoEngagement && !!overallStr },
- { key: "perf", label: "Performance", hint: `${pctText(perfRow)} · ${adjCount} adjusted`, value: performanceStr },
- { key: "spec", label: "Specific", hint: `${specCount === 1 ? "1 item" : `${specCount > 1 ? "Lowest of " : ""}${specCount} items`} · specific PM ${lowestPM === null ? "—" : fmtInt(lowestPM)}`, value: isNaN(specificBase) ? "" : formatNum(specificBase) },
- { key: "trivial", label: "Trivial", hint: pctText(trivialRow), value: trivialStr },
+ const tiles: { key: string; label: string; hint: string; value: string; luka?: boolean; locked?: boolean }[] = [
+ { key: "overall", label: "Overall", hint: overallRow?.method === "manual" ? "Manual" : overallBasisLabel, value: overallStr, luka: isDemoEngagement && !!overallStr, locked: overallRow?.method !== "manual" },
+ { key: "perf", label: "Performance", hint: `${pctText(perfRow)} · ${adjCount} adjusted`, value: performanceStr, locked: perfRow?.method !== "manual" },
+ { key: "spec", label: "Specific", hint: `${specCount === 1 ? "1 item" : `${specCount > 1 ? "Lowest of " : ""}${specCount} items`} · specific PM ${lowestPM === null ? "—" : fmtInt(lowestPM)}`, value: showBlank || isNaN(specificBase) ? "" : formatNum(specificBase) },
+ { key: "trivial", label: "Trivial", hint: pctText(trivialRow), value: trivialStr, locked: trivialRow?.method !== "manual" },
  ];
 
  return (
@@ -728,256 +821,17 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
 
  {/* ── Level tiles ── */}
  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
- {tiles.map((t) => (
+ {tiles.map((t) => {
+ const shown = t.value ? formatDisplay(t.value) : "—";
+ const tileInput = <TdInput value={shown} readOnly placeholder="0.00" luka={t.luka} className={`h-10 text-lg font-semibold tabular-nums text-right ${t.locked ? "pl-7 pr-2" : ""}`} />;
+ return (
  <div key={t.key} className={`${CARD} px-4 py-3 flex flex-col gap-1.5`}>
  <span className="text-sm font-semibold text-foreground">{t.label}</span>
  <span className="text-xs leading-4 text-muted-foreground min-h-[16px]">{t.hint}</span>
- <TdInput value={t.value ? formatDisplay(t.value) : ""} readOnly placeholder="0.00" luka={t.luka} className="h-10 text-lg font-semibold tabular-nums text-right" />
+ {t.locked ? <LockWrap>{tileInput}</LockWrap> : tileInput}
  </div>
- ))}
- </div>
-
- {/* ── Principal users ── */}
- <div className={CARD}>
- <div className={CARD_HEAD}>
- <span className="text-sm font-semibold text-foreground">Principal users</span>
- <InfoTip text="Identify the primary users of the financial statements and the factors affecting their decision making." />
- </div>
- <div className="overflow-x-auto">
- <table className="w-full">
- <thead>
- <tr className="bg-muted border-b border-border">
- <th className={`${TH} w-1/3`}>User</th>
- <th className={TH}>Factors that would influence users' decision-making</th>
- <th className="px-4 py-3 w-12" />
- </tr>
- </thead>
- <tbody className="divide-y divide-border">
- {intendedUsers.map((u) => (
- <tr key={u.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2.5 align-top">
- <TdInput value={u.user} onChange={(v) => setIntendedUsers((prev) => prev.map((x) => (x.id === u.id ? {...x, user: v } : x)))} placeholder="Define user" />
- </td>
- <td className="px-4 py-2.5 align-top">
- <TdInput value={u.factors} onChange={(v) => setIntendedUsers((prev) => prev.map((x) => (x.id === u.id ? {...x, factors: v } : x)))} placeholder="Describe factors" />
- </td>
- <td className="px-2 py-2.5 align-top text-center">
- <div className="flex h-8 items-center justify-center">
- <button aria-label="Delete user" onClick={() => setIntendedUsers((prev) => prev.filter((x) => x.id !== u.id))} className={DEL_BTN} disabled={intendedUsers.length === 1}>
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </div>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])}>
- <Plus className="h-3.5 w-3.5" />
- Add user
- </Button>
- </div>
- </div>
-
- {/* ── Criteria ── */}
- <div className={CARD}>
- <div className={`${CARD_HEAD} flex-wrap`}>
- <span className="text-sm font-semibold text-foreground">Criteria</span>
- <InfoTip text="Use professional judgment to set the highest amount of misstatement that could be included in the F/S without affecting the economic decisions of the users identified above. The selected line drives overall materiality." />
- <Input type="date" aria-label="Period start" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} className="h-8 text-sm w-44 pr-2" />
- <Input type="date" aria-label="Period end" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} className="h-8 text-sm w-44 pr-2" />
- <div className="flex-1" />
- <Button variant="outline" size="sm" onClick={handleRefresh} className="h-8 text-sm">
- <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
- Refresh
- </Button>
- <Tabs value={entityType} onValueChange={(v) => handleEntityTypeChange(v as EntityType)}>
- <TabsList className="h-8">
- <TabsTrigger value="profit" className="text-xs px-3">Profit-oriented</TabsTrigger>
- <TabsTrigger value="nfp" className="text-xs px-3">Not-for-profit</TabsTrigger>
- </TabsList>
- </Tabs>
- </div>
- <div className="overflow-x-auto">
- <table className="w-full">
- <thead>
- <tr className="bg-muted border-b border-border">
- <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-[64px]">Use</th>
- <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[220px] min-w-[220px]">Basis</th>
- <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Period to date</th>
- <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Anticipated</th>
- <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Previous period</th>
- <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-36">
- <span className="inline-flex items-center justify-end gap-1.5">Benchmark % applied<InfoTip text={selectedRangeTip} /></span>
- </th>
- <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Possible materiality</th>
- <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[200px] w-full">Comments</th>
- <th className="px-2 py-3 w-10" />
- </tr>
- </thead>
- <tbody className="divide-y divide-border">
- {rows.map((row, rowIdx) => {
- const isSelected = row.id === selectedRowId;
- const basisOpt = findBasis(row.basis);
- const range = basisOpt?.range;
- const pctNum = parseFloat(row.benchmarkPct);
- const showPctInput = !range || row.pctManual || !range.includes(pctNum);
- const rangeTip = range ? `Range ${range[0]}–${range[range.length - 1]}%` : "Manual entry";
- return (
- <tr
- key={row.id}
- ref={rowIdx === 0 ? matFillRef : undefined}
- className={`transition-colors ${isSelected ? "bg-primary/[0.04]" : "hover:bg-muted/50"}${
- isDemoEngagement && rowIdx === 0 && lukaHighlightFields.has('mat-row-0-amount')
- ? ' border-l-2 border-violet-400 bg-violet-50/40'
- : ''
- }`}
- >
- <td className="px-3 py-2.5 align-top text-center">
- <div className="flex h-8 items-center justify-center">
- <input
- type="radio"
- name="primary-benchmark-v3"
- aria-label="Use this criteria line"
- checked={isSelected}
- onChange={() => setSelectedRowId(row.id)}
- className="h-4 w-4 accent-primary cursor-pointer"
- />
- </div>
- </td>
- <td className="px-2 py-2.5 align-top w-[220px] min-w-[220px]">
- <TdSelect wrap value={row.basis} onChange={(v) => handleBasisChange(row.id, v)} options={BASIS_OPTIONS_BY_TYPE[entityType]} placeholder="Select basis…" />
- {row.basis === "other" && (
- <TdInput value={row.basisOther} onChange={(v) => patchRow(row.id, { basisOther: v })} placeholder="Describe basis…" className="mt-1.5" />
- )}
- </td>
- <td className="px-2 py-2.5 align-top min-w-[140px]">
- <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-amount')}>
- <MoneyField
- value={row.periodAmount}
- onChange={(v) => { markEdited(`ptd-${row.id}`); patchRow(row.id, { periodAmount: v }); }}
- luka={isDemoEngagement && !lukaEditedFields.has(`ptd-${row.id}`) && (row.basis === 'grossRevenue' || (rowIdx === 0 && lukaFilledFields.has('mat-row-0-amount')))}
- />
- </LukaTypingRow>
- </td>
- <td className="px-2 py-2.5 align-top min-w-[140px]">
- <Tip text={row.anticipatedNote ? `Anticipated: ${row.anticipatedNote}` : undefined}>
- <MoneyField
- value={row.anticipated}
- onChange={(cleaned) => patchRow(row.id, cleaned ? { extrapolatedPeriod: cleaned, extrapManual: true } : { extrapolatedPeriod: "", extrapManual: false })}
- />
- </Tip>
- </td>
- <td className="px-2 py-2.5 align-top min-w-[140px]">
- <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
- <MoneyField
- value={row.prevAmount}
- onChange={(v) => { markEdited(`prev-${row.id}`); patchRow(row.id, { prevAmount: v }); }}
- luka={isDemoEngagement && !lukaEditedFields.has(`prev-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-py')}
- />
- </LukaTypingRow>
- </td>
- <td className="px-2 py-2.5 align-top w-36">
- <Tip text={rangeTip}>
- {showPctInput ? (
- <TdInput
- value={row.benchmarkPct}
- onChange={(v) => patchRow(row.id, { benchmarkPct: v.replace(/[^0-9.]/g, ""), pctManual: true })}
- placeholder="0.00"
- className="tabular-nums text-right"
- />
- ) : (
- <TdSelect
- value={String(pctNum)}
- onChange={(v) => v === "manual" ? patchRow(row.id, { pctManual: true }) : patchRow(row.id, { benchmarkPct: Number(v).toFixed(2), pctManual: false })}
- options={[...range!.map(n => ({ value: String(n), label: `${n}%` })), { value: "manual", label: "Manual…" }]}
- />
- )}
- </Tip>
- </td>
- <td className="px-2 py-2.5 align-top min-w-[140px]">
- <TdInput value={row.possible ? formatDisplay(row.possible) : ""} readOnly placeholder="0.00" className={`px-2 tabular-nums text-right${isSelected ? " font-semibold" : ""}`} />
- </td>
- <td className="px-2 py-2.5 align-top">
- <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-comments')}>
- <TdInput
- value={row.comments}
- onChange={(v) => { markEdited(`comments-${row.id}`); patchRow(row.id, { comments: v }); }}
- placeholder="Comments…"
- luka={isDemoEngagement && !lukaEditedFields.has(`comments-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-comments')}
- />
- </LukaTypingRow>
- </td>
- <td className="px-2 py-2.5 align-top text-center">
- <div className="flex h-8 items-center justify-center">
- <button aria-label="Delete criteria line" onClick={() => removeEntityRow(row.id)} className={DEL_BTN} disabled={entityRows.length === 1}>
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </div>
- </td>
- </tr>
  );
  })}
- </tbody>
- </table>
- </div>
- <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addEntityRow}>
- <Plus className="h-3.5 w-3.5" />
- Add criteria line
- </Button>
- </div>
- </div>
-
- {/* ── Qualitative disclosures ── */}
- <div className={CARD}>
- <div className={CARD_HEAD}>
- <span className="text-sm font-semibold text-foreground">Qualitative disclosures</span>
- <InfoTip text="Identify possible misstatements in qualitative disclosures that could be material to the intended users. Consider the entity's circumstances (such as a significant business combination), the applicable financial reporting framework and disclosures related to the nature of the entity." />
- </div>
- <div className="overflow-x-auto">
- <table className="w-full">
- <thead>
- <tr className="bg-muted border-b border-border">
- <th className={TH}>Possible misstatements</th>
- <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-24">W/P Ref.</th>
- <th className="px-4 py-3 w-12" />
- </tr>
- </thead>
- <tbody className="divide-y divide-border">
- {qualDisclosures.map((q) => (
- <tr key={q.id} className="hover:bg-muted/50 transition-colors">
- <td className="px-4 py-2.5 align-top">
- <Textarea
- value={q.text}
- onChange={(e) => setQualDisclosures(p => p.map(x => x.id === q.id ? {...x, text: e.target.value} : x))}
- placeholder="Describe qualitative disclosures that could be material…"
- className="min-h-[56px] text-sm resize-none bg-background"
- />
- </td>
- <td className="px-4 py-2.5 align-top">
- <RefButton reference={q.wpRef} onAttach={(doc) => setQualDisclosures(p => p.map(x => x.id === q.id ? {...x, wpRef: [...x.wpRef, doc]} : x))} onRemove={(idx) => setQualDisclosures(p => p.map(x => x.id === q.id ? {...x, wpRef: x.wpRef.filter((_, j) => j !== idx)} : x))} />
- </td>
- <td className="px-2 py-2.5 align-top text-center">
- <div className="flex h-8 items-center justify-center">
- <button aria-label="Delete disclosure item" onClick={() => setQualDisclosures(p => p.filter(x => x.id !== q.id))} className={DEL_BTN} disabled={qualDisclosures.length === 1}>
- <Trash2 className="h-3.5 w-3.5" />
- </button>
- </div>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="px-6 py-3 border-t border-border">
- <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setQualDisclosures(p => [...p, { id: uid(), text: "", wpRef: [] }])}>
- <Plus className="h-3.5 w-3.5" />
- Add item
- </Button>
- </div>
  </div>
 
  {/* ── Materiality levels ── */}
@@ -986,15 +840,14 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <span className="text-sm font-semibold text-foreground">Materiality levels</span>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full table-fixed min-w-[1100px]">
+ <table className="w-full table-fixed min-w-[1280px]">
  <colgroup>
  <col className="w-[190px]" />
- <col className="w-[22%]" />
- <col className="w-[170px]" />
+ <col className="w-[220px]" />
+ <col className="w-[230px]" />
  <col className="w-[150px]" />
  <col className="w-[140px]" />
  <col />
- <col className="w-[110px]" />
  <col className="w-[48px]" />
  </colgroup>
  <thead>
@@ -1005,7 +858,6 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <th className={`${TH} text-right`}>Current</th>
  <th className={`${TH} text-right`}>Prior year</th>
  <th className={TH}>Comments</th>
- <th className="px-4 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider">W/P Ref.</th>
  <th className="px-4 py-3" />
  </tr>
  </thead>
@@ -1035,12 +887,37 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  )}
  </td>
  <td className="px-4 py-2.5 align-top">
- <TdSelect value={l.method} onChange={(v) => patchLevel(l.id, v === "manual" && cur !== null && l.manual === "" ? { method: v, manual: numStr(cur) } : { method: v })} options={METHOD_OPTIONS[l.kind]} />
+ <div className="flex items-center gap-1.5">
+ <div className="flex-1 min-w-0">
+ <TdSelect
+ value={l.method}
+ onChange={(v) => patchLevel(l.id,
+ v === "manual" && cur !== null && l.manual === "" ? { method: v, manual: numStr(cur) }
+ : v === "custom" ? { method: v, customPct: l.customPct || (pctOfLevel(l) !== null ? String(pctOfLevel(l)) : "") }
+ : { method: v })}
+ options={METHOD_OPTIONS[l.kind]}
+ />
+ </div>
+ {l.method === "custom" && (
+ <div className="relative w-16 shrink-0">
+ <Input
+ aria-label="Custom percentage"
+ inputMode="decimal"
+ value={l.customPct}
+ onChange={(e) => patchLevel(l.id, { customPct: e.target.value.replace(/[^0-9.]/g, "") })}
+ placeholder="62"
+ className="h-8 text-sm text-right pl-2 pr-5 tabular-nums"
+ />
+ <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
+ </div>
+ )}
+ </div>
  </td>
  <td className="px-4 py-2.5 align-top">
  <MoneyField
  value={computed ? numStr(cur) : l.manual}
- readOnly={computed}
+ locked={computed}
+ placeholder={computed ? "—" : "0.00"}
  onChange={(v) => patchLevel(l.id, { manual: v })}
  luka={l.kind === "overall" && isDemoEngagement && computed && !!numStr(cur)}
  />
@@ -1049,10 +926,7 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  <MoneyField value={l.py} onChange={(v) => patchLevel(l.id, { py: v })} placeholder="—" />
  </td>
  <td className="px-4 py-2.5 align-top">
- <TdInput value={l.comments} onChange={(v) => patchLevel(l.id, { comments: v })} placeholder="Comments…" />
- </td>
- <td className="px-4 py-2.5 align-top">
- <RefButton reference={l.wpRef} onAttach={(doc) => patchLevel(l.id, { wpRef: [...l.wpRef, doc] })} onRemove={(idx) => patchLevel(l.id, { wpRef: l.wpRef.filter((_, j) => j !== idx) })} />
+ <CommentField value={l.comments} onChange={(v) => patchLevel(l.id, { comments: v })} storageKey={`${attrBase}-level-${l.id}`} placeholder="Comments…" />
  </td>
  <td className="px-2 py-2.5 align-top text-center">
  {repeatable && (
@@ -1093,13 +967,298 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  </DropdownMenu>
  <p className="flex flex-1 items-start gap-1.5 text-sm text-muted-foreground min-w-[240px]">
  <Info className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
- Maximum of two adjusted performance levels. For more, provide details on a supplementary work paper that cross-references to this form.
+ Maximum of two adjusted performance levels.
  </p>
  </div>
  <div className="border-t border-border px-6 py-3 bg-muted/20">
  <p className="text-sm text-muted-foreground">
  If overall materiality is lower than in previous audits, consider whether misstatements may exist in the opening balances. Document any changes in the materiality assessments and the final materiality on Form 335.
  </p>
+ </div>
+ </div>
+
+ {/* ── Criteria ── */}
+ <div className={CARD}>
+ <div className={`${CARD_HEAD} flex-wrap`}>
+ <span className="text-sm font-semibold text-foreground">Criteria</span>
+ <InfoTip text="Use professional judgment to set the highest amount of misstatement that could be included in the F/S without affecting the economic decisions of the users identified above. The selected line drives overall materiality." />
+ <Input type="date" aria-label="Period start" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} className="h-8 text-sm w-44 pr-2" />
+ <Input type="date" aria-label="Period end" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} className="h-8 text-sm w-44 pr-2" />
+ {partialData && (
+ <span className="inline-flex items-center h-7 rounded-full border border-amber-300 bg-amber-50 px-2.5 text-xs font-medium text-amber-800 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+ Data to {latestDataDate} — not full year-end
+ </span>
+ )}
+ <div className="flex-1" />
+ {!showBlank && (
+ <>
+ <Button variant="secondary" size="sm" onClick={() => setShowLastYear(true)} className="h-8 text-sm gap-1.5">
+ <Sparkles className="h-3.5 w-3.5 text-[#8649F1]" />
+ Use last year's materiality
+ </Button>
+ <Button size="sm" onClick={handleRefresh} className="h-8 text-sm gap-1.5">
+ {refreshStale ? (
+ <Tooltip>
+ <TooltipTrigger asChild>
+ <span className="inline-flex" aria-label="Refresh required"><AlertTriangle className="h-3.5 w-3.5 text-amber-300" /></span>
+ </TooltipTrigger>
+ <TooltipContent className="max-w-xs">Refresh required: the trial balance data or numbers have changed since materiality was last calculated</TooltipContent>
+ </Tooltip>
+ ) : (
+ <RefreshCw className="h-3.5 w-3.5" />
+ )}
+ Refresh
+ </Button>
+ </>
+ )}
+ </div>
+ {showBlank ? (
+ <div className="flex flex-col items-center justify-center gap-3 px-6 py-12 text-center">
+ <p className="text-sm font-semibold text-foreground">No trial balance data yet</p>
+ <p className="text-sm text-muted-foreground max-w-md">Refresh to pull in the trial balance, or prefill from last year's materiality.</p>
+ <div className="flex items-center gap-2">
+ <Button variant="secondary" size="sm" onClick={() => setShowLastYear(true)} className="h-8 text-sm gap-1.5">
+ <Sparkles className="h-3.5 w-3.5 text-[#8649F1]" />
+ Use last year's materiality
+ </Button>
+ <Button size="sm" onClick={handleRefresh} className="h-8 text-sm gap-1.5">
+ <RefreshCw className="h-3.5 w-3.5" />
+ Refresh
+ </Button>
+ </div>
+ </div>
+ ) : (<>
+ <div className="overflow-x-auto">
+ <table className="w-full">
+ <thead>
+ <tr className="bg-muted border-b border-border">
+ <th className="px-3 py-3 text-center text-sm font-semibold text-foreground uppercase tracking-wider w-[64px]">Use</th>
+ <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider w-[220px] min-w-[220px]">Basis</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Period to date</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Anticipated</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Previous period</th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider w-[190px] min-w-[190px]">
+ <span className="inline-flex items-center justify-end gap-1.5">Benchmark % applied<InfoTip text={selectedRangeTip} /></span>
+ </th>
+ <th className="px-2 py-3 text-right text-sm font-semibold text-foreground uppercase tracking-wider min-w-[140px]">Possible materiality</th>
+ <th className="px-2 py-3 text-left text-sm font-semibold text-foreground uppercase tracking-wider min-w-[200px] w-full">Comments</th>
+ <th className="px-2 py-3 w-10" />
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {rows.map((row, rowIdx) => {
+ const isSelected = row.id === selectedRowId;
+ const basisOpt = findBasis(row.basis);
+ const range = basisOpt?.range;
+ const pctNum = parseFloat(row.benchmarkPct);
+ const customPctShown = !range || row.pctManual || !range.includes(pctNum);
+ const rangeTip = range ? `Range ${range[0]}–${range[range.length - 1]}%` : "Manual entry";
+ const pctInput = (
+ <div className="relative w-16 shrink-0">
+ <Input
+ aria-label="Custom benchmark percentage"
+ inputMode="decimal"
+ value={row.benchmarkPct}
+ onChange={(e) => patchRow(row.id, { benchmarkPct: e.target.value.replace(/[^0-9.]/g, ""), pctManual: true })}
+ placeholder="0.00"
+ className="h-8 text-sm text-right pl-2 pr-5 tabular-nums"
+ />
+ <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">%</span>
+ </div>
+ );
+ return (
+ <tr
+ key={row.id}
+ ref={rowIdx === 0 ? matFillRef : undefined}
+ className={`transition-colors ${isSelected ? "bg-primary/[0.04]" : "hover:bg-muted/50"}${
+ isDemoEngagement && rowIdx === 0 && lukaHighlightFields.has('mat-row-0-amount')
+ ? ' border-l-2 border-violet-400 bg-violet-50/40'
+ : ''
+ }`}
+ >
+ <td className="px-3 py-2.5 align-top text-center">
+ <div className="flex h-8 items-center justify-center">
+ <input
+ type="radio"
+ name="primary-benchmark-v3"
+ aria-label="Use this criteria line"
+ checked={isSelected}
+ onChange={() => setSelectedRowId(row.id)}
+ className="h-4 w-4 accent-primary cursor-pointer"
+ />
+ </div>
+ </td>
+ <td className="px-2 py-2.5 align-top w-[220px] min-w-[220px]">
+ <TdSelect wrap value={row.basis} onChange={(v) => handleBasisChange(row.id, v)} options={BASIS_OPTIONS} placeholder="Select basis…" />
+ {row.basis === "other" && (
+ <TdInput value={row.basisOther} onChange={(v) => patchRow(row.id, { basisOther: v })} placeholder="Describe basis…" className="mt-1.5" />
+ )}
+ </td>
+ <td className="px-2 py-2.5 align-top min-w-[140px]">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-amount')}>
+ <MoneyField
+ value={row.periodAmount}
+ onChange={(v) => { markEdited(`ptd-${row.id}`); patchRow(row.id, { periodAmount: v }); }}
+ luka={isDemoEngagement && !lukaEditedFields.has(`ptd-${row.id}`) && (row.basis === 'grossRevenue' || (rowIdx === 0 && lukaFilledFields.has('mat-row-0-amount')))}
+ />
+ </LukaTypingRow>
+ </td>
+ <td className="px-2 py-2.5 align-top min-w-[140px]">
+ <MoneyField
+ value={row.anticipated}
+ locked
+ lockTip={<><p>{LOCK_TIP}</p>{row.anticipatedNote && <p className="mt-0.5 text-muted-foreground">Anticipated: {row.anticipatedNote}</p>}</>}
+ />
+ </td>
+ <td className="px-2 py-2.5 align-top min-w-[140px]">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-py')}>
+ <MoneyField
+ value={row.prevAmount}
+ onChange={(v) => { markEdited(`prev-${row.id}`); patchRow(row.id, { prevAmount: v }); }}
+ luka={isDemoEngagement && !lukaEditedFields.has(`prev-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-py')}
+ />
+ </LukaTypingRow>
+ </td>
+ <td className="px-2 py-2.5 align-top w-[190px] min-w-[190px]">
+ <Tip text={rangeTip}>
+ {range ? (
+ <div className="flex items-center gap-1.5">
+ <div className="flex-1 min-w-0">
+ <TdSelect
+ value={customPctShown ? "custom" : String(pctNum)}
+ onChange={(v) => v === "custom" ? patchRow(row.id, { pctManual: true }) : patchRow(row.id, { benchmarkPct: Number(v).toFixed(2), pctManual: false })}
+ options={[...range.map(n => ({ value: String(n), label: `${n}%` })), { value: "custom", label: "Custom…" }]}
+ />
+ </div>
+ {customPctShown && pctInput}
+ </div>
+ ) : (
+ <div className="flex justify-end">{pctInput}</div>
+ )}
+ </Tip>
+ </td>
+ <td className="px-2 py-2.5 align-top min-w-[140px]">
+ <MoneyField value={row.possible} locked className={isSelected ? "font-semibold" : ""} />
+ </td>
+ <td className="px-2 py-2.5 align-top">
+ <LukaTypingRow filled={isDemoEngagement && lukaFilledFields.has('mat-row-0-comments')}>
+ <CommentField
+ value={row.comments}
+ onChange={(v) => { markEdited(`comments-${row.id}`); patchRow(row.id, { comments: v }); }}
+ storageKey={`${attrBase}-criteria-${row.id}`}
+ placeholder="Comments…"
+ luka={isDemoEngagement && !lukaEditedFields.has(`comments-${row.id}`) && rowIdx === 0 && lukaFilledFields.has('mat-row-0-comments')}
+ />
+ </LukaTypingRow>
+ </td>
+ <td className="px-2 py-2.5 align-top text-center">
+ <div className="flex h-8 items-center justify-center">
+ <button aria-label="Delete criteria line" onClick={() => removeEntityRow(row.id)} className={DEL_BTN} disabled={entityRows.length === 1}>
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </div>
+ </td>
+ </tr>
+ );
+ })}
+ </tbody>
+ </table>
+ </div>
+ <div className="px-6 py-3 border-t border-border">
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={addEntityRow}>
+ <Plus className="h-3.5 w-3.5" />
+ Add criteria line
+ </Button>
+ </div>
+ </>)}
+ </div>
+
+ {/* ── Principal users ── */}
+ <div className={CARD}>
+ <div className={CARD_HEAD}>
+ <span className="text-sm font-semibold text-foreground">Principal users</span>
+ <InfoTip text="Identify the primary users of the financial statements and the factors affecting their decision making." />
+ </div>
+ <div className="overflow-x-auto">
+ <table className="w-full">
+ <thead>
+ <tr className="bg-muted border-b border-border">
+ <th className={`${TH} w-1/3`}>User</th>
+ <th className={TH}>Factors that would influence users' decision-making</th>
+ <th className="px-4 py-3 w-12" />
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {intendedUsers.map((u) => (
+ <tr key={u.id} className="hover:bg-muted/50 transition-colors">
+ <td className="px-4 py-2.5 align-top">
+ <TdInput value={u.user} onChange={(v) => setIntendedUsers((prev) => prev.map((x) => (x.id === u.id ? {...x, user: v } : x)))} placeholder="Define user" />
+ </td>
+ <td className="px-4 py-2.5 align-top">
+ <CommentField value={u.factors} onChange={(v) => setIntendedUsers((prev) => prev.map((x) => (x.id === u.id ? {...x, factors: v } : x)))} storageKey={`${attrBase}-user-${u.id}`} placeholder="Describe factors" />
+ </td>
+ <td className="px-2 py-2.5 align-top text-center">
+ <div className="flex h-8 items-center justify-center">
+ <button aria-label="Delete user" onClick={() => setIntendedUsers((prev) => prev.filter((x) => x.id !== u.id))} className={DEL_BTN} disabled={intendedUsers.length === 1}>
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </div>
+ </td>
+ </tr>
+ ))}
+ </tbody>
+ </table>
+ </div>
+ <div className="px-6 py-3 border-t border-border">
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setIntendedUsers((prev) => [...prev, { id: uid(), user: "", factors: "" }])}>
+ <Plus className="h-3.5 w-3.5" />
+ Add user
+ </Button>
+ </div>
+ </div>
+
+ {/* ── Qualitative disclosures ── */}
+ <div className={CARD}>
+ <div className={CARD_HEAD}>
+ <span className="text-sm font-semibold text-foreground">Qualitative disclosures</span>
+ <InfoTip text="Identify possible misstatements in qualitative disclosures that could be material to the intended users. Consider the entity's circumstances (such as a significant business combination), the applicable financial reporting framework and disclosures related to the nature of the entity." />
+ </div>
+ <div className="overflow-x-auto">
+ <table className="w-full">
+ <thead>
+ <tr className="bg-muted border-b border-border">
+ <th className={TH}>Possible misstatements</th>
+ <th className="px-4 py-3 w-12" />
+ </tr>
+ </thead>
+ <tbody className="divide-y divide-border">
+ {qualDisclosures.map((q) => (
+ <tr key={q.id} className="hover:bg-muted/50 transition-colors">
+ <td className="px-4 py-2.5 align-top">
+ <CommentField
+ value={q.text}
+ onChange={(v) => setQualDisclosures(p => p.map(x => x.id === q.id ? {...x, text: v} : x))}
+ storageKey={`${attrBase}-disclosure-${q.id}`}
+ placeholder="Describe qualitative disclosures that could be material…"
+ />
+ </td>
+ <td className="px-2 py-2.5 align-top text-center">
+ <div className="flex h-8 items-center justify-center">
+ <button aria-label="Delete disclosure item" onClick={() => setQualDisclosures(p => p.filter(x => x.id !== q.id))} className={DEL_BTN} disabled={qualDisclosures.length === 1}>
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </div>
+ </td>
+ </tr>
+ ))}
+ </tbody>
+ </table>
+ </div>
+ <div className="px-6 py-3 border-t border-border">
+ <Button size="sm" variant="secondary" className="h-7 text-xs gap-1" onClick={() => setQualDisclosures(p => [...p, { id: uid(), text: "" }])}>
+ <Plus className="h-3.5 w-3.5" />
+ Add item
+ </Button>
  </div>
  </div>
 
@@ -1122,10 +1281,10 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  {qualitative.map((item) => (
  <tr key={item.id} className="hover:bg-muted/50 transition-colors">
  <td className="px-4 py-2.5 align-top">
- <TdInput value={item.nature} onChange={(v) => setQualitative((prev) => prev.map((x) => (x.id === item.id ? {...x, nature: v } : x)))} placeholder="Describe Nature" />
+ <CommentField value={item.nature} onChange={(v) => setQualitative((prev) => prev.map((x) => (x.id === item.id ? {...x, nature: v } : x)))} storageKey={`${attrBase}-qnature-${item.id}`} placeholder="Describe Nature" />
  </td>
  <td className="px-4 py-2.5 align-top">
- <TdInput value={item.impact} onChange={(v) => setQualitative((prev) => prev.map((x) => (x.id === item.id ? {...x, impact: v } : x)))} placeholder="Describe impact" />
+ <CommentField value={item.impact} onChange={(v) => setQualitative((prev) => prev.map((x) => (x.id === item.id ? {...x, impact: v } : x)))} storageKey={`${attrBase}-qimpact-${item.id}`} placeholder="Describe impact" />
  </td>
  <td className="px-2 py-2.5 align-top text-center">
  <div className="flex h-8 items-center justify-center">
@@ -1147,38 +1306,15 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  </div>
  </div>
 
- {/* ── Additional Comments ── */}
+ {/* ── Conclusion ── */}
  <div className={CARD}>
  <div className={CARD_HEAD}>
- <span className="text-sm font-semibold text-foreground">Additional Comments</span>
+ <span className="text-sm font-semibold text-foreground">Conclusion</span>
  </div>
  <div className="px-6 py-5">
- <AttributedComment
- value={additionalComments}
- onChange={setAdditionalComments}
- storageKey={`materiality-comments-v3-${region}`}
- placeholder="Add Comments"
- className="min-h-[80px] text-sm resize-none bg-background"
- />
+ <CommentField value={conclusion} onChange={setConclusion} storageKey={`${attrBase}-conclusion`} placeholder="Conclusion" />
  </div>
- </div>
-
- {/* ── Conclusion ── */}
- <div className="bg-card border border-border shadow-[0_2px_8px_hsl(213_40%_20%/0.06)] rounded-md overflow-hidden">
- <div className="px-6 py-3.5 bg-card border-b border-border flex items-center gap-2">
- <span className="text-sm font-semibold text-foreground">Conclusion — Document any changes in the materiality assessments and the final materiality</span>
- </div>
- <div className="px-6 py-5">
- <Textarea
- value={conclusion}
- onChange={(e) => setConclusion(e.target.value)}
- className="min-h-[72px] text-sm resize-none bg-background"
- />
- </div>
- </div>
-
- {/* Conclude button — bottom right */}
- <div className="flex justify-end">
+ <div className="px-6 py-3 border-t border-border flex justify-end">
  <Button
  onClick={() => {
  setConcluded(true);
@@ -1189,9 +1325,30 @@ export function AuditMaterialityWorksheetV3({ isUS = false, engagementId }: Audi
  {concluded ? "Worksheet concluded" : "Conclude worksheet"}
  </Button>
  </div>
+ </div>
 
  </div>
  </div>
+
+ {/* Luka thread: drop last year's materiality (demo, no parsing) */}
+ <Dialog open={showLastYear} onOpenChange={setShowLastYear}>
+ <DialogContent className="max-w-lg">
+ <DialogHeader>
+ <DialogTitle className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#8649F1]" />Luka</DialogTitle>
+ <DialogDescription>Drop last year's materiality worksheet and I'll prefill the benchmark percentages, principal users and last year's comments.</DialogDescription>
+ </DialogHeader>
+ <div
+ onDragOver={(e) => { e.preventDefault(); setLastYearDragging(true); }}
+ onDragLeave={() => setLastYearDragging(false)}
+ onDrop={(e) => { e.preventDefault(); setLastYearDragging(false); applyLastYear(); }}
+ className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors ${lastYearDragging ? "border-[#8649F1] bg-[#8649F1]/10" : "border-[#8649F1]/50 bg-[#8649F1]/[0.03]"}`}
+ >
+ <p className="text-sm font-medium text-foreground">Drop last year's materiality file here</p>
+ <Button type="button" variant="outline" size="sm" onClick={() => lastYearFileRef.current?.click()}>Choose file</Button>
+ <input ref={lastYearFileRef} type="file" className="hidden" onChange={(e) => { if (e.target.files?.length) applyLastYear(); e.target.value = ""; }} />
+ </div>
+ </DialogContent>
+ </Dialog>
 
  <AddToMyTemplatesDialog
  open={showAddDialog}
