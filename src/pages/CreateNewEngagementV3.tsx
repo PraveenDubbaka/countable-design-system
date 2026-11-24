@@ -674,7 +674,7 @@ export default function CreateNewEngagementV3() {
     setEngagementId(deriveEngagementId(newType, clientName, currentYearEnd));
     const audit = newType === "Audit (AUD)";
     if (audit) {
-      setEngagementTemplate("CAS Audit");
+      setEngagementTemplate("Audit · ASPE");
       setTemplateId("");
       setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
       setPeriodType("Full year");

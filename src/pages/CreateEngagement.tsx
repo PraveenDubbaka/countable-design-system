@@ -647,7 +647,7 @@ export default function CreateEngagement() {
  const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
  const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
  const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
- const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "CAS Audit" : "Review · ASPE");
+ const [engagementTemplate, setEngagementTemplate] = useState(prefillIsAudit ? "Audit · ASPE" : "Review · ASPE");
  const [templateId, setTemplateId] = useState(prefillIsAudit ? "audit5100" : "");
  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
  const [budget, setBudget] = useState("10000.00");
@@ -675,7 +675,7 @@ export default function CreateEngagement() {
  if (isAudit) {
  setEngagementId("AUD-HFL-Mar312024");
  if (!templateId) {
- setEngagementTemplate("CAS Audit");
+ setEngagementTemplate("Audit · ASPE");
  setAccountingStandards("ASPE — Canadian Accounting Standards for Private Enterprises");
  }
  setPeriodType("Full Year");
