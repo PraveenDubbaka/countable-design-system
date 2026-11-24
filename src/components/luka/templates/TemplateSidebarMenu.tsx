@@ -20,7 +20,7 @@ const engagementTemplatesDefault: MenuItem[] = [
  label: "Compilations",
  type: "folder",
  children: [
- { code: "CSRS1", label: "Compilation CSRS 4200 1", type: "document" },
+ { code: "CSRS1", label: "Compilation", type: "document" },
  ],
  },
  {
@@ -28,7 +28,7 @@ const engagementTemplatesDefault: MenuItem[] = [
  label: "Review",
  type: "folder",
  children: [
- { code: "RS2400", label: "Review Section 2400", type: "document" },
+ { code: "RS2400", label: "Review · ASPE", type: "document" },
  ],
  },
  {

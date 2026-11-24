@@ -680,7 +680,7 @@ export default function CreateNewEngagementV3() {
       setPeriodType("Full year");
       setAdditionalDisclosures("Full financial statements");
     } else {
-      setEngagementTemplate("Review Section 2400");
+      setEngagementTemplate("Review · ASPE");
       setTemplateId("");
       setAccountingStandards("Section 2400 Review standards");
       setPeriodType("Full year");

@@ -116,7 +116,7 @@ export const templateTree: TreeItem[] = [
  label: "Compilation",
  type: "folder",
  children: [
- { id: "comp4200", label: "Compilation CSRS 4200", type: "file", suggested: true },
+ { id: "comp4200", label: "Compilation", type: "file", suggested: true },
  ],
  },
  {
@@ -124,7 +124,7 @@ export const templateTree: TreeItem[] = [
  label: "Review",
  type: "folder",
  children: [
- { id: "rev2400", label: "Review Section 2400", type: "file", suggested: true },
+ { id: "rev2400", label: "Review · ASPE", type: "file", suggested: true },
  ],
  },
  {
@@ -134,14 +134,14 @@ export const templateTree: TreeItem[] = [
  children: [
  {
  id: "audit-ca", label: "Canada", type: "folder", children: [
- { id: "audit5100", label: "Audit ASPE 5100", type: "file", suggested: true },
- ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit5101", label: "CAS / NFP — ASNPO (5101)", type: "file" as const }] : []),
+ { id: "audit5100", label: "Audit · ASPE", type: "file", suggested: true },
+ ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit5101", label: "Audit · ASNPO", type: "file" as const }] : []),
  ],
  },
  {
  id: "audit-us", label: "United States", type: "folder", children: [
- { id: "audit6100", label: "Audit GAAP 6100", type: "file", suggested: true },
- ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit6200", label: "PCAOB / SOX Public (6200)", type: "file" as const }] : []),
+ { id: "audit6100", label: "Audit · US GAAP", type: "file", suggested: true },
+ ...(SHOW_NFP_PCAOB_TEMPLATES ? [{ id: "audit6200", label: "Audit · PCAOB", type: "file" as const }] : []),
  ],
  },
  ],
@@ -159,7 +159,7 @@ export const templateTree: TreeItem[] = [
 // ── Compilation Section 4200 ──
 const comp4200: TemplateView = {
  id: "comp4200",
- title: "Compilation CSRS 4200",
+ title: "Compilation",
  subtitle: "CSRS 4200 — Compilation Engagement",
  standardsBanner: {
  label: "Standard:",
@@ -226,7 +226,7 @@ const comp4200: TemplateView = {
 // ── Review 2400 ──
 const review2400: TemplateView = {
  id: "rev2400",
- title: "Review Section 2400",
+ title: "Review · ASPE",
  sections: [
  {
  name: "Client Onboarding",
@@ -298,7 +298,7 @@ const review2400: TemplateView = {
 // ── Audit 5100 (Canada CAS/ASPE) ──
 const audit5100: TemplateView = {
  id: "audit5100",
- title: "Audit ASPE 5100",
+ title: "Audit · ASPE",
  subtitle: "CAS — Canadian Auditing Standards · ASPE (Accounting Standards for Private Enterprises)",
  standardsBanner: {
  label: "Standards covered:",
@@ -419,7 +419,7 @@ const audit5100: TemplateView = {
 // ── Audit 5101 (Canada NFP/ASNPO) ──
 const audit5101: TemplateView = {
  id: "audit5101",
- title: "Audit Section 5101",
+ title: "Audit · ASNPO",
  subtitle: "CAS — Canadian Auditing Standards · ASNPO (Accounting Standards for Not-for-Profit Organizations)",
  standardsBanner: {
   label: "Standards covered:",
@@ -543,7 +543,7 @@ const audit5101: TemplateView = {
 // ── Audit 6100 (US GAAS / US GAAP — Private) ──
 const audit6100: TemplateView = {
  id: "audit6100",
- title: "Audit GAAP 6100",
+ title: "Audit · US GAAP",
  subtitle: "United States · GAAS (AU-C Sections) · US GAAP (ASC) · Private Companies",
  standardsBanner: {
   label: "Standards covered:",
@@ -667,7 +667,7 @@ const audit6100: TemplateView = {
 // ── Audit 6200 (US PCAOB / SOX) ──
 const audit6200: TemplateView = {
  id: "audit6200",
- title: "Audit Section 6200",
+ title: "Audit · PCAOB",
  subtitle: "United States · PCAOB Auditing Standards · SOX Compliance · SEC Issuers / Public Companies",
  standardsBanner: {
   label: "Standards covered:",
