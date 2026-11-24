@@ -58,26 +58,35 @@ const SectionCard = ({
 );
 
 // Labels above the control, for the 2-column grids in V3
+// True after the user tries to Add Client; required fields then show their errors
+const ShowErrorsContext = React.createContext(false);
+
+// `invalid` means "required and empty". The error only shows once the field was touched (blurred) or Add Client was attempted.
 const FieldCol = ({
   label, required, invalid, hint, children, className,
 }: {
   label: string; required?: boolean; invalid?: boolean; hint?: string; children: React.ReactNode; className?: string;
-}) => (
-  <div className={`flex flex-col gap-1 ${className ?? ""}`}>
-    <label className="text-xs font-medium text-foreground">
-      {label}{required && <span className="text-destructive ml-0.5">*</span>}
-    </label>
-    <div className={invalid ? "[&_input]:!border-destructive [&_button[role=combobox]]:!border-destructive" : ""}>{children}</div>
-    {invalid && <p className="text-xs text-destructive">Required</p>}
-    {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
-  </div>
-);
+}) => {
+  const attempted = React.useContext(ShowErrorsContext);
+  const [touched, setTouched] = useState(false);
+  const showError = !!invalid && (attempted || touched);
+  return (
+    <div className={`flex flex-col gap-1 ${className ?? ""}`}>
+      <label className="text-xs font-medium text-foreground">
+        {label}{required && <span className="text-destructive ml-0.5">*</span>}
+      </label>
+      <div onBlurCapture={() => setTouched(true)} className={showError ? "[&_input]:!border-destructive [&_button[role=combobox]]:!border-destructive" : ""}>{children}</div>
+      {showError && <p className="text-xs text-destructive">Required</p>}
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+    </div>
+  );
+};
 
-const Segmented = ({ options, value, onChange }: { options: { value: string; label: string }[]; value: string; onChange: (v: string) => void }) => (
-  <div className="inline-flex rounded-[8px] border border-border overflow-hidden text-xs font-medium select-none w-fit">
+const Segmented = ({ options, value, onChange, full }: { options: { value: string; label: string }[]; value: string; onChange: (v: string) => void; full?: boolean }) => (
+  <div className={`rounded-[8px] border border-border overflow-hidden text-xs font-medium select-none ${full ? "flex w-full h-9" : "inline-flex w-fit"}`}>
     {options.map((o, i) => (
       <button key={o.value} type="button" onClick={() => onChange(o.value)}
-        className={`px-3.5 py-2 transition-colors ${i > 0 ? "border-l border-border" : ""} ${value === o.value ? "bg-[#1C63A6] text-white" : "text-muted-foreground hover:bg-muted"}`}>
+        className={`${full ? "flex-1 text-center" : "px-3.5 py-2"} transition-colors ${i > 0 ? "border-l border-border" : ""} ${value === o.value ? "bg-[#1C63A6] text-white" : "text-muted-foreground hover:bg-muted"}`}>
         {o.label}
       </button>
     ))}
@@ -562,6 +571,7 @@ export default function AddNewClientV3() {
   // ── Flow state ──────────────────────────────────────────────────────────────
   const [entryOption, setEntryOption] = useState<"manual" | "integration">("manual");
   const [fetching, setFetching] = useState(false);
+  const [attemptedAdd, setAttemptedAdd] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -703,7 +713,7 @@ export default function AddNewClientV3() {
     setMailLine1(""); setMailLine2(""); setMailCity(""); setMailProvince(""); setMailPostal("");
     setBusinessPhone(""); setCellPhone(""); setWebsite("");
     setPeople([]); setPendingPerson({ mode: "add", draft: blankPerson(["Primary contact"]) }); setSelectedPeople(new Set()); setPeopleSearch("");
-    setShowPrefillBanner(false); setSelectedSource(""); setFetching(false);
+    setShowPrefillBanner(false); setSelectedSource(""); setFetching(false); setAttemptedAdd(false);
     setEntryOption("manual");
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -737,6 +747,7 @@ export default function AddNewClientV3() {
   const primaryContact = people.find(p => p.roles.includes("Primary contact"));
 
   const handleAdd = (mode: "add" | "invite") => {
+    setAttemptedAdd(true);
     if (!hasPrimaryContact) {
       toast.error("Add at least one person with the Primary contact role");
       return;
@@ -832,6 +843,7 @@ export default function AddNewClientV3() {
   );
 
   return (
+    <ShowErrorsContext.Provider value={attemptedAdd}>
     <Layout title="Add New Client">
       <div className="flex flex-col h-full overflow-hidden bg-background">
 
@@ -1168,81 +1180,71 @@ export default function AddNewClientV3() {
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                     {cfg?.hasIncorporation && (
                       <FieldCol label={incLabel[entityType] ?? "Date of Incorporation"} required invalid={!incorporationDate}>
-                        <Input type="date" className="w-44" value={incorporationDate} onChange={e => setIncorporationDate(e.target.value)} />
+                        <Input type="date" className="w-full h-9" value={incorporationDate} onChange={e => setIncorporationDate(e.target.value)} />
                       </FieldCol>
                     )}
-                    <FieldCol label={taxCfg.businessNumberLabel} hint={taxCfg.businessNumberHint}>
+                    <FieldCol label={taxCfg.businessNumberLabel} hint={country === "ca" ? "9-digit CRA Business Number" : taxCfg.businessNumberHint}>
                       <div className="relative">
-                        <Input placeholder={taxCfg.businessNumberPlaceholder} value={businessNumber} onChange={e => setBusinessNumber(e.target.value)} className={bnValid ? "pr-20" : ""} />
+                        <Input className="w-full h-9" placeholder={taxCfg.businessNumberPlaceholder} value={businessNumber} onChange={e => setBusinessNumber(e.target.value)} />
                         {bnValid && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-green-600 dark:text-green-400">✓ Valid</span>}
                       </div>
                     </FieldCol>
-                    <FieldCol label={taxCfg.salesTaxLabel} hint="Informational — helps with sales tax treatment in future engagements.">
-                      <Segmented options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]} value={gstRegistered} onChange={setGstRegistered} />
+                    <FieldCol label={country === "ca" ? "GST/HST registered" : taxCfg.salesTaxLabel}>
+                      <Segmented full options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]} value={gstRegistered} onChange={setGstRegistered} />
+                    </FieldCol>
+                    <FieldCol label="Québec personal information" hint="Triggers Law 25 Transfer Impact Assessment obligations">
+                      <div className="flex items-center gap-3 h-9">
+                        <Switch checked={hasQuebecPersonalInfo} onCheckedChange={setHasQuebecPersonalInfo} />
+                        <span className="text-sm text-foreground">{hasQuebecPersonalInfo ? "Yes" : "No"}</span>
+                      </div>
                     </FieldCol>
 
                     {country === "ca" && (
-                      <div className="col-span-2 flex flex-col gap-2">
-                        <label className="text-xs font-medium text-foreground">CRA program accounts</label>
-                        <div className="flex flex-wrap items-center gap-2">
-                          {programAccounts.map(a => (
-                            <span key={a.key} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-border bg-muted/40 text-xs text-foreground">
-                              {bnValid && !a.removableId && <span className="text-muted-foreground">{bnDigits}</span>}
-                              <span className="font-semibold">{a.code}</span>
-                              <span className="text-muted-foreground">· {a.label}</span>
-                              {a.removableId && (
-                                <button type="button" aria-label={`Remove ${a.label}`} className="hover:text-destructive"
-                                  onClick={() => setExtraAccounts(p => p.filter(x => x.id !== a.removableId))}>
-                                  <X className="h-3 w-3" />
+                      <FieldCol label="CRA program accounts" hint="Built from the BN; GST/HST appears when registered" className="col-span-2">
+                        {businessNumber.trim() === "" ? (
+                          <p className="text-sm text-muted-foreground flex items-center h-8">Enter a Business Number to add program accounts</p>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              {programAccounts.map(a => (
+                                <span key={a.key} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-border bg-muted/40 text-xs text-foreground">
+                                  <span className="font-semibold">{a.code}</span>
+                                  <span className="text-muted-foreground">· {a.label}</span>
+                                  {a.removableId && (
+                                    <button type="button" aria-label={`Remove ${a.label}`} className="hover:text-destructive"
+                                      onClick={() => setExtraAccounts(p => p.filter(x => x.id !== a.removableId))}>
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  )}
+                                </span>
+                              ))}
+                              {!addingAccount && (
+                                <button type="button" onClick={() => setAddingAccount(true)}
+                                  className="inline-flex items-center h-8 px-3 rounded-full border border-dashed border-border text-xs font-medium text-muted-foreground hover:bg-muted">
+                                  + Add
                                 </button>
                               )}
-                            </span>
-                          ))}
-                          {!addingAccount && (
-                            <button type="button" onClick={() => setAddingAccount(true)}
-                              className="h-8 px-3 rounded-full border border-dashed border-border text-xs font-medium text-muted-foreground hover:bg-muted">
-                              + Add
-                            </button>
-                          )}
-                        </div>
-                        {addingAccount && (
-                          <div className="flex items-center gap-2">
-                            <Input className="w-48 h-8 text-sm" placeholder="Number, e.g. PST-123456" value={newAccountNumber} onChange={e => setNewAccountNumber(e.target.value)} />
-                            <Input className="w-48 h-8 text-sm" placeholder="Label, e.g. PST" value={newAccountLabel} onChange={e => setNewAccountLabel(e.target.value)} />
-                            <Button type="button" className="h-8 px-3 text-xs" disabled={!newAccountNumber.trim() || !newAccountLabel.trim()}
-                              onClick={() => {
-                                setExtraAccounts(p => [...p, { id: `X${Date.now()}`, number: newAccountNumber.trim(), label: newAccountLabel.trim() }]);
-                                setNewAccountNumber(""); setNewAccountLabel(""); setAddingAccount(false);
-                              }}>
-                              Add
-                            </Button>
-                            <Button type="button" variant="outline" className="h-8 px-3 text-xs" onClick={() => { setNewAccountNumber(""); setNewAccountLabel(""); setAddingAccount(false); }}>
-                              Cancel
-                            </Button>
+                            </div>
+                            {addingAccount && (
+                              <div className="flex items-center gap-2">
+                                <Input className="w-48 h-9 text-sm" placeholder="Number, e.g. PST-123456" value={newAccountNumber} onChange={e => setNewAccountNumber(e.target.value)} />
+                                <Input className="w-48 h-9 text-sm" placeholder="Label, e.g. PST" value={newAccountLabel} onChange={e => setNewAccountLabel(e.target.value)} />
+                                <Button type="button" className="h-9 px-3 text-sm" disabled={!newAccountNumber.trim() || !newAccountLabel.trim()}
+                                  onClick={() => {
+                                    setExtraAccounts(p => [...p, { id: `X${Date.now()}`, number: newAccountNumber.trim(), label: newAccountLabel.trim() }]);
+                                    setNewAccountNumber(""); setNewAccountLabel(""); setAddingAccount(false);
+                                  }}>
+                                  Add
+                                </Button>
+                                <Button type="button" variant="outline" className="h-9 px-3 text-sm" onClick={() => { setNewAccountNumber(""); setNewAccountLabel(""); setAddingAccount(false); }}>
+                                  Cancel
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         )}
-                        <p className="text-xs text-muted-foreground">Built from the Business Number; the GST/HST account appears when GST/HST registered is Yes.</p>
-                      </div>
+                      </FieldCol>
                     )}
-                  </div>
-                  {/* ── Compliance flags ──────────────────────────────── */}
-                  <div className="mt-5 pt-5 border-t border-border space-y-4">
-                    <div className="flex items-start gap-4">
-                      <span className="text-sm font-medium text-foreground shrink-0 w-52 pt-0.5 leading-snug">
-                        Quebec Personal Info
-                      </span>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <Switch checked={hasQuebecPersonalInfo} onCheckedChange={setHasQuebecPersonalInfo} />
-                          <span className="text-sm text-foreground">
-                            {hasQuebecPersonalInfo ? "Yes" : "No"}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Enable if this client involves personal information of Quebec residents. Triggers Law 25 Transfer Impact Assessment obligations for the firm.
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </SectionCard>
 
@@ -1366,7 +1368,7 @@ export default function AddNewClientV3() {
                       </tbody>
                     </table>
                   </div>
-                  {!hasPrimaryContact && <p className="text-xs text-destructive mt-2">At least one Primary contact is required</p>}
+                  {attemptedAdd && !hasPrimaryContact && <p className="text-xs text-destructive mt-2">At least one Primary contact is required</p>}
                   <div className="mt-4">
                     <button type="button" onClick={startAddPerson} disabled={!!pendingPerson}
                       className="inline-flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-[10px] bg-[#1C63A6] text-white hover:bg-[#1a5a9e] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
@@ -1404,5 +1406,6 @@ export default function AddNewClientV3() {
 
       </div>
     </Layout>
+    </ShowErrorsContext.Provider>
   );
 }
