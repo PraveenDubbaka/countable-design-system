@@ -298,8 +298,8 @@ function BalanceSheetPreview({ bs, client, yearEnd, scheduleByGroupId }: {
  <div key={l.id} className="wb-preview-row wb-indent" style={{ fontStyle: "italic" }}>
  <span>{lineLabel(l)}</span>
  <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
- <span style={{ width: 80, textAlign: "right" }}>{formatAmt(l.cy)}</span>
- <span style={{ width: 80, textAlign: "right", color: "var(--wb-text-2)" }}>{formatAmt(l.py)}</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(l.cy)}</span>
+ <span className="wb-amt-py" style={{ width: 80, textAlign: "right", color: "var(--wb-text-2)" }}>{formatAmt(l.py)}</span>
  </span>
  </div>
  );
@@ -307,8 +307,8 @@ function BalanceSheetPreview({ bs, client, yearEnd, scheduleByGroupId }: {
  <div className={cn("wb-preview-row wb-subtotal", bold && "wb-total")}>
  <span>{label}</span>
  <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
- <span style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
- <span style={{ width: 80, textAlign: "right" }}>{formatAmt(py)}</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
+ <span className="wb-amt-py" style={{ width: 80, textAlign: "right" }}>{formatAmt(py)}</span>
  </span>
  </div>
  );
@@ -379,8 +379,8 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
  <div key={l.id} className="wb-preview-row wb-indent" style={{ fontStyle: "italic" }}>
  <span>{l.label}</span>
  <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
- <span style={{ width: 80, textAlign: "right" }}>{formatAmt(l.cy)}</span>
- <span style={{ width: 80, textAlign: "right", color: "var(--wb-text-2)" }}>{formatAmt(l.py)}</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(l.cy)}</span>
+ <span className="wb-amt-py" style={{ width: 80, textAlign: "right", color: "var(--wb-text-2)" }}>{formatAmt(l.py)}</span>
  </span>
  </div>
  );
@@ -388,8 +388,8 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
  <div className={cn("wb-preview-row wb-subtotal", bold && "wb-total")}>
  <span>{label}</span>
  <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
- <span style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
- <span style={{ width: 80, textAlign: "right" }}>{formatAmt(py)}</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
+ <span className="wb-amt-py" style={{ width: 80, textAlign: "right" }}>{formatAmt(py)}</span>
  </span>
  </div>
  );
@@ -582,7 +582,7 @@ function CapRow({ label, v, bold }: { label: string; v: number; bold?: boolean }
  return (
  <div className={cn("wb-preview-row", bold && "wb-total")} style={!bold ? { fontStyle: "italic" } : undefined}>
  <span>{label}</span>
- <span className="wb-amt" style={{ width: 96, textAlign: "right" }}>{formatAmt(v)}</span>
+ <span className="wb-amt wb-amt-cy" style={{ width: 96, textAlign: "right" }}>{formatAmt(v)}</span>
  </div>
  );
 }
@@ -591,7 +591,7 @@ function CapRow({ label, v, bold }: { label: string; v: number; bold?: boolean }
 // so opening the preview never looks like a different document from what you were just editing.
 function CapitalStatementHeader({ client, title, yearEnd }: { client: string; title: string; yearEnd: string }) {
  return (
- <div className="wb-statement-header" style={{ fontFamily: "var(--wb-font-serif)" }}>
+ <div className="wb-statement-header" style={{ fontFamily: "var(--wb-font-preview)" }}>
  <h2>{client}</h2>
  <h3>{title}</h3>
  <p>For the year ended {yearEnd}</p>
@@ -670,14 +670,14 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  {rowKeys.map(k => (
  <tr key={k}>
  <td style={{ fontStyle: "italic" }}>{rowLabel(k)}</td>
- {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(rowVal(e, k))}</td>)}
- <td className="wb-num" style={{ fontWeight: 500 }}>{formatAmt(rowVal(data.totals, k))}</td>
+ {ents.map(e => <td key={e.name} className="wb-num wb-amt-cy">{formatAmt(rowVal(e, k))}</td>)}
+ <td className="wb-num wb-amt-cy">{formatAmt(rowVal(data.totals, k))}</td>
  </tr>
  ))}
  <tr className="wb-total-row">
  <td>Balance, end of year</td>
- {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.closing)}</td>)}
- <td className="wb-num">{formatAmt(data.totals.closing)}</td>
+ {ents.map(e => <td key={e.name} className="wb-num wb-amt-cy">{formatAmt(e.closing)}</td>)}
+ <td className="wb-num wb-amt-cy">{formatAmt(data.totals.closing)}</td>
  </tr>
  </tbody>
  </table>
@@ -1293,9 +1293,10 @@ export default function Workbook() {
  </div>
  </section>
 
- {/* RHS preview — a direct sibling of the LHS/main panels (same as the prototype's three-
- panel layout), so it always runs the full height of the body top to bottom. Hidden
- entirely (no persistent band) while collapsed; the toggle lives in the main toolbar. */}
+ {/* RHS preview — an absolutely-positioned overlay that floats on top of the main
+ panel's right edge (matching production exactly) rather than a layout sibling, so
+ opening/closing it never resizes the main panel. Not rendered at all while
+ collapsed, so there's no band — the toggle lives in the main toolbar. */}
  {showPreview && !previewCollapsed && (active === "balance-sheet" || active === "income" || active === "capital-statement") && (
  <aside className="wb-panel wb-preview-panel">
  <div className="wb-preview-inner">
