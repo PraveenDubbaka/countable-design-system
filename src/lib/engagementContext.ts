@@ -9,6 +9,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { loadEngagements, getEngagementMeta } from "@/store/engagementsStore";
+import { getActiveRoles, getRoles, engagementTypeKey } from "@/lib/rolesStore";
 
 // ── Trial Balance benchmark figures (mock — would come from QBO connector) ──
 export const TB_CA = {
@@ -137,21 +138,34 @@ const REVENUE_STREAMS_US: RevenueStreamSeed[] = [
 
 // ── Team & governance ─────────────────────────────────────────────────────────
 
-const TEAM_CA = [
- { role: "Engagement Partner", name: "J. Patel, CPA" },
- { role: "Manager", name: "A. Nguyen, CPA" },
- { role: "Senior Auditor", name: "T. Brown" },
- { role: "Staff Auditor", name: "D. Kim" },
- { role: "EQCR (Quality Reviewer)", name: "S. Lavoie, CPA" },
-];
+// Demo people for the firm's titles; the team itself comes from Settings › Roles (active roles that apply to the
+// engagement type, in store order). Roles without a person here (e.g. ones added in Settings) get one from the pool.
+const DEMO_PEOPLE_CA: Record<string, string> = {
+ "partner": "J. Patel, CPA", "manager": "A. Nguyen, CPA", "senior auditor": "T. Brown", "staff auditor": "D. Kim",
+ "engagement quality reviewer": "S. Lavoie, CPA",
+};
+const DEMO_PEOPLE_US: Record<string, string> = {
+ "partner": "M. Thompson, CPA", "manager": "L. Garcia, CPA", "senior auditor": "K. Patel", "staff auditor": "J. Chen",
+ "engagement quality reviewer": "D. Anderson, CPA",
+};
+const EXTRA_PEOPLE_CA = ["R. Singh", "M. Okafor", "L. Tremblay", "E. Haddad", "P. Dubois", "N. Fraser"];
+const EXTRA_PEOPLE_US = ["C. Brooks", "T. Nguyen", "A. Rivera", "S. Hughes", "D. Coleman", "J. Foster"];
+// The four production roles and the other seeded titles are not demo team members.
+const SEEDED_WITHOUT_PERSON = new Set(["role-preparer", "role-1st-reviewer", "role-2nd-reviewer", "role-admin", "role-admin-staff", "role-qc-reviewer"]);
 
-const TEAM_US = [
- { role: "Engagement Partner", name: "M. Thompson, CPA" },
- { role: "Manager", name: "L. Garcia, CPA" },
- { role: "Senior Auditor", name: "K. Patel" },
- { role: "Staff Auditor", name: "J. Chen" },
- { role: "EQCR (Quality Reviewer)", name: "D. Anderson, CPA" },
-];
+function buildTeam(isUS: boolean, engagementId: string): { role: string; name: string }[] {
+ const people = isUS ? DEMO_PEOPLE_US : DEMO_PEOPLE_CA;
+ const extras = isUS ? EXTRA_PEOPLE_US : EXTRA_PEOPLE_CA;
+ const type = engagementTypeKey(loadEngagements().find(e => e.id === engagementId)?.type) ?? "Audit";
+ let extra = 0;
+ const team: { role: string; name: string }[] = [];
+ for (const r of getActiveRoles(getRoles(), type)) {
+  const known = people[r.name.trim().toLowerCase()];
+  if (known) team.push({ role: r.name, name: known });
+  else if (!SEEDED_WITHOUT_PERSON.has(r.id)) team.push({ role: r.name, name: extras[extra++ % extras.length] });
+ }
+ return team;
+}
 
 // ── Profiles (derived per engagement) ─────────────────────────────────────────
 
@@ -248,6 +262,6 @@ export function getEngagementContext(engagementId: string | undefined): Engageme
  clearlyTrivial,
  fsas: isUS ? FSA_US : FSA_CA,
  revenueStreams: isUS ? REVENUE_STREAMS_US : REVENUE_STREAMS_CA,
- team: isUS ? TEAM_US : TEAM_CA,
+ team: buildTeam(isUS, engagementId),
  };
 }

@@ -7,17 +7,25 @@ import { RichTextToolbar } from "@/components/RichTextToolbar";
 import { cn } from "@/lib/utils";
 import type { Checklist } from "@/types/checklist";
 import { useEngagementContext } from "@/hooks/useEngagementContext";
+import { useRoles, findRoleByName } from "@/lib/rolesStore";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const DEFAULT_TITLE = "Conclusion";
 
+// One row per sign-off level; who can sign a row comes from Settings › Roles (each role's sign-off level).
 const ROLES = [
- { id: "preparer", label: "Preparer", teamRoles: ["Staff Auditor", "Senior Auditor", "Junior Auditor"] },
- { id: "partner", label: "Partner", teamRoles: ["Engagement Partner", "Partner"] },
- { id: "quality-reviewer", label: "Quality Reviewer", teamRoles: ["EQCR (Quality Reviewer)", "Quality Reviewer", "EQCR"] },
- { id: "admin-tax-reviewer", label: "Admin / Tax Reviewer", teamRoles: ["Manager", "Tax Manager", "Senior Manager", "Admin"] },
+ { id: "preparer", label: "Preparer", level: "Preparer" },
+ { id: "reviewer-1", label: "1st Reviewer", level: "1st Reviewer" },
+ { id: "reviewer-2", label: "2nd Reviewer", level: "2nd Reviewer" },
+ { id: "admin", label: "Admin", level: "Admin" },
 ] as const;
+
+// Sign-offs saved before levels existed used these row ids.
+const LEGACY_ROLE_IDS: Record<string, string> = {
+ "partner": "reviewer-2", "quality-reviewer": "reviewer-2", "admin-tax-reviewer": "reviewer-1",
+};
+const migrateRoleId = (id: string) => LEGACY_ROLE_IDS[id] ?? id;
 
 type RoleId = typeof ROLES[number]["id"];
 
@@ -77,9 +85,13 @@ function loadData(id: string): SignOffData {
  const raw = localStorage.getItem(storageKey(id));
  if (raw) {
  const parsed = JSON.parse(raw) as Partial<SignOffData>;
+ const seen = new Set<string>();
+ const entries = (parsed.entries ?? [])
+ .map(e => ({ ...e, roleId: migrateRoleId(e.roleId) as RoleId }))
+ .filter(e => (seen.has(e.roleId) ? false : (seen.add(e.roleId), true)));
  return {
- entries: parsed.entries ?? [],
- extraRows: parsed.extraRows ?? [],
+ entries,
+ extraRows: (parsed.extraRows ?? []).map(r => ({ ...r, roleId: migrateRoleId(r.roleId) as RoleId })),
  title: parsed.title,
  };
  }
@@ -168,27 +180,23 @@ export function ChecklistSignOff({
  return () => document.removeEventListener('mousedown', handleClickOutside);
  }, [isEditingTitle, handleClickOutside]);
 
+ const firmRoles = useRoles();
+ const matchFor = useCallback((level: string) =>
+ ctx.team?.find(m => findRoleByName(m.role, firmRoles)?.signoffLevel === level), [ctx.team, firmRoles]);
+
  const assigned = useMemo<Record<RoleId, string>>(() => {
  const result = {} as Record<RoleId, string>;
- for (const role of ROLES) {
- const match = ctx.team?.find(m =>
- role.teamRoles.some(tr => m.role.toLowerCase().includes(tr.toLowerCase()))
- );
- result[role.id] = match?.name ?? "—";
- }
+ for (const role of ROLES) result[role.id] = matchFor(role.level)?.name ?? "—";
  return result;
- }, [ctx.team]);
+ }, [matchFor]);
 
  const assignedTitle = useMemo<Record<RoleId, string>>(() => {
  const result = {} as Record<RoleId, string>;
  for (const role of ROLES) {
- const match = ctx.team?.find(m =>
- role.teamRoles.some(tr => m.role.toLowerCase().includes(tr.toLowerCase()))
- );
- result[role.id] = match?.role ?? "";
+ result[role.id] = matchFor(role.level)?.role ?? "";
  }
  return result;
- }, [ctx.team]);
+ }, [matchFor]);
 
  function commitTitle() {
  const html = editorRef.current?.innerHTML ?? '';

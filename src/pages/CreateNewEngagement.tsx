@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useRoles, getActiveRoles, getRecommendedRoles, formatRate, splitAllocation } from "@/lib/rolesStore";
+import { useRoles, getActiveRoles, getRecommendedRoles, formatRate, splitAllocation, engagementTypeKey } from "@/lib/rolesStore";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
@@ -526,7 +526,7 @@ export default function CreateNewEngagement() {
   const [newRoleName, setNewRoleName] = useState("");
 
   const firmRoles = useRoles();
-  const roleOptions = [...getActiveRoles(firmRoles).map(r => r.name), ...customRoles];
+  const roleOptions = [...getActiveRoles(firmRoles, engagementTypeKey(engagementType)).map(r => r.name), ...customRoles];
 
   // Client options: from existing engagements + CLIENT_DATA keys
   const clientOptions = Array.from(new Set([
@@ -666,7 +666,7 @@ export default function CreateNewEngagement() {
 
   // Team handlers
   const addRecommendedTeam = () => {
-    const recs = getRecommendedRoles(firmRoles);
+    const recs = getRecommendedRoles(firmRoles, engagementTypeKey(engagementType));
     const shares = splitAllocation(recs.length);
     setRecommendedPending(prev => [
       ...prev,

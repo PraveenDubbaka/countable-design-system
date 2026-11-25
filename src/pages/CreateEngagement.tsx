@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useRoles, getActiveRoles, getRecommendedRoles, formatRate, splitAllocation, engagementTypeKey } from "@/lib/rolesStore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
@@ -41,36 +42,6 @@ const ACCOUNTING_FRAMEWORKS = [
  "US GAAP — Generally Accepted Accounting Principles (United States)",
 ];
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
-const AUDIT_ROLES = [
- "Engagement Partner", "Manager", "Senior Auditor", "Staff Auditor / Assistant",
- "EQCR (Quality Reviewer)", "Tax Reviewer", "Subject Matter Expert", "Preparer",
-];
-type RecommendedRole = { role: string; hourlyRate: string; timeAllocation: string };
-const RECOMMENDED_TEAM: Record<string, RecommendedRole[]> = {
- audit: [
- { role: "Engagement Partner", hourlyRate: "400.00", timeAllocation: "15" },
- { role: "Manager", hourlyRate: "275.00", timeAllocation: "25" },
- { role: "Senior Auditor", hourlyRate: "200.00", timeAllocation: "35" },
- { role: "Staff Auditor / Assistant",hourlyRate: "150.00", timeAllocation: "25" },
- ],
- review: [
- { role: "Partner", hourlyRate: "400.00", timeAllocation: "20" },
- { role: "Manager", hourlyRate: "275.00", timeAllocation: "30" },
- { role: "Senior", hourlyRate: "200.00", timeAllocation: "35" },
- { role: "Staff / Assistant", hourlyRate: "150.00", timeAllocation: "15" },
- ],
- compilation: [
- { role: "Partner", hourlyRate: "400.00", timeAllocation: "15" },
- { role: "Senior", hourlyRate: "200.00", timeAllocation: "45" },
- { role: "Preparer", hourlyRate: "125.00", timeAllocation: "40" },
- ],
- tax: [
- { role: "Partner", hourlyRate: "400.00", timeAllocation: "20" },
- { role: "Manager", hourlyRate: "275.00", timeAllocation: "30" },
- { role: "Tax Reviewer", hourlyRate: "300.00", timeAllocation: "35" },
- { role: "Preparer", hourlyRate: "125.00", timeAllocation: "15" },
- ],
-};
 const AUDIT_DISCLOSURE_OPTIONS = [
  { key: "fullFinancials", label: "Full financial statements" },
  { key: "cashFlow", label: "Cash Flow Statement" },
@@ -727,21 +698,15 @@ export default function CreateEngagement() {
  const [showAddRoleModal, setShowAddRoleModal] = useState(false);
  const [newRoleName, setNewRoleName] = useState("");
 
- const baseRoles = isAudit ? AUDIT_ROLES : ["Partner", "Manager", "Senior", "Staff / Assistant", "Preparer"];
- const roleOptions = [...baseRoles,...customRoles];
-
- const getRecommendedCategory = () => {
- if (isAudit) return "audit";
- if (accountingStandards.toLowerCase().includes("tax")) return "tax";
- if (engagementType.includes("COM") || engagementType.toLowerCase().includes("compilation")) return "compilation";
- return "review";
- };
+ const firmRoles = useRoles();
+ const roleOptions = [...getActiveRoles(firmRoles, engagementTypeKey(engagementType)).map(r => r.name),...customRoles];
 
  const addRecommendedTeam = () => {
- const recs = RECOMMENDED_TEAM[getRecommendedCategory()] ?? RECOMMENDED_TEAM.review;
+ const recs = getRecommendedRoles(firmRoles, engagementTypeKey(engagementType));
+ const shares = splitAllocation(recs.length);
  setRecommendedPending(prev => [
 ...prev,
-...recs.map(r => ({ id: uid(), role: r.role, name: "", email: "", title: "", hourlyRate: r.hourlyRate, timeAllocation: r.timeAllocation })),
+...recs.map((r, i) => ({ id: uid(), role: r.name, name: "", email: "", title: "", hourlyRate: formatRate(r.defaultRate), timeAllocation: String(shares[i]) })),
  ]);
  };
 

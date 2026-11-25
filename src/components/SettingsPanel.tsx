@@ -23,7 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { getEngagementMeta } from "@/store/engagementsStore";
-import { useRoles, addRole, updateRole, moveRole, deleteRole, isRoleNameTaken, type Role } from "@/lib/rolesStore";
+import { useRoles, addRole, updateRole, moveRole, deleteRole, isRoleNameTaken, ENGAGEMENT_TYPES, SIGNOFF_LEVELS, type Role, type EngagementType, type SignoffLevel } from "@/lib/rolesStore";
 import { canManageFirmSettings } from "@/lib/permissions";
 import { SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
@@ -1831,7 +1831,10 @@ function TimeTrackingContent() {
 
 // ── Roles ────────────────────────────────────────────────────────────────────
 
-type RoleForm = { id: string | null; name: string; rate: string; position: string; active: boolean };
+type RoleForm = { id: string | null; name: string; rate: string; position: string; active: boolean; signoffLevel: SignoffLevel; appliesTo: EngagementType[]; recommendedFor: EngagementType[] };
+
+// "All" when every type is ticked, "—" when none.
+const typesLabel = (list: EngagementType[]) => list.length === ENGAGEMENT_TYPES.length ? "All" : list.length === 0 ? "—" : list.join(", ");
 
 function RolesContent() {
  const roles = useRoles();
@@ -1847,8 +1850,8 @@ function RolesContent() {
 
  const editing = form?.id ? roles.find(r => r.id === form.id) : undefined;
 
- const openAdd = () => { setShowErrors(false); setForm({ id: null, name: "", rate: "", position: String(roles.length + 1), active: true }); };
- const openEdit = (r: Role) => { setShowErrors(false); setForm({ id: r.id, name: r.name, rate: String(r.defaultRate), position: String(r.order), active: r.active }); };
+ const openAdd = () => { setShowErrors(false); setForm({ id: null, name: "", rate: "", position: String(roles.length + 1), active: true, signoffLevel: "Preparer", appliesTo: [...ENGAGEMENT_TYPES], recommendedFor: [] }); };
+ const openEdit = (r: Role) => { setShowErrors(false); setForm({ id: r.id, name: r.name, rate: String(r.defaultRate), position: String(r.order), active: r.active, signoffLevel: r.signoffLevel, appliesTo: r.appliesTo, recommendedFor: r.recommendedFor }); };
 
  const nameError = !form ? "" : !form.name.trim() ? "Required" : isRoleNameTaken(form.name, form.id ?? undefined) ? "A role with this name already exists" : "";
  const rateNum = form ? Number(form.rate) : NaN;
@@ -1859,8 +1862,8 @@ function RolesContent() {
   setShowErrors(true);
   if (nameError || rateError) return;
   const position = Number(form.position);
-  if (form.id) { updateRole(form.id, { name: form.name, defaultRate: rateNum, active: form.active }, position); toast.success("Role updated"); }
-  else { addRole({ name: form.name, defaultRate: rateNum, position }); toast.success("Role added"); }
+  if (form.id) { updateRole(form.id, { name: form.name, defaultRate: rateNum, active: form.active, signoffLevel: form.signoffLevel, appliesTo: form.appliesTo, recommendedFor: form.recommendedFor }, position); toast.success("Role updated"); }
+  else { addRole({ name: form.name, defaultRate: rateNum, position, signoffLevel: form.signoffLevel, appliesTo: form.appliesTo, recommendedFor: form.recommendedFor }); toast.success("Role added"); }
   setForm(null);
  };
 
@@ -1925,6 +1928,49 @@ function RolesContent() {
        </Select>
       </div>
      </div>
+     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="space-y-1.5">
+       <Label className="text-xs">Sign-off level</Label>
+       <Select value={form.signoffLevel} onValueChange={v => setForm({ ...form, signoffLevel: v as SignoffLevel })}>
+        <SelectTrigger><SelectValue /></SelectTrigger>
+        <SelectContent>
+         {SIGNOFF_LEVELS.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+        </SelectContent>
+       </Select>
+      </div>
+      <div className="space-y-1.5">
+       <Label className="text-xs">Applies to</Label>
+       <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+        {ENGAGEMENT_TYPES.map(t => (
+         <label key={t} className="flex items-center gap-2 text-sm cursor-pointer">
+          <Checkbox checked={form.appliesTo.includes(t)} onCheckedChange={v => setForm({
+           ...form,
+           appliesTo: v === true ? ENGAGEMENT_TYPES.filter(x => x === t || form.appliesTo.includes(x)) : form.appliesTo.filter(x => x !== t),
+           recommendedFor: v === true ? form.recommendedFor : form.recommendedFor.filter(x => x !== t),
+          })} />
+          {t}
+         </label>
+        ))}
+       </div>
+      </div>
+      <div className="space-y-1.5">
+       <Label className="text-xs">Recommended for</Label>
+       <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+        {ENGAGEMENT_TYPES.map(t => {
+         const applies = form.appliesTo.includes(t);
+         return (
+          <label key={t} className={cn("flex items-center gap-2 text-sm", applies ? "cursor-pointer" : "opacity-50 cursor-not-allowed")}>
+           <Checkbox disabled={!applies} checked={applies && form.recommendedFor.includes(t)} onCheckedChange={v => setForm({
+            ...form,
+            recommendedFor: v === true ? ENGAGEMENT_TYPES.filter(x => x === t || form.recommendedFor.includes(x)) : form.recommendedFor.filter(x => x !== t),
+           })} />
+           {t}
+          </label>
+         );
+        })}
+       </div>
+      </div>
+     </div>
      {editing && (
       <label className="flex items-center gap-2 text-sm cursor-pointer w-fit">
        <Checkbox checked={form.active} onCheckedChange={v => setForm({ ...form, active: v === true })} />
@@ -1939,13 +1985,15 @@ function RolesContent() {
    )}
 
    <div className="rounded-lg border border-border overflow-auto">
-    <table className="w-full text-sm min-w-[680px]">
+    <table className="w-full text-sm min-w-[920px]">
      <thead>
       <tr className="bg-muted">
        <th className={cn(thCls, "w-20")}>Order</th>
        <th className={thCls}>Role</th>
+       <th className={thCls}>Sign-off level</th>
        <th className={thCls}>Default hourly rate ($)</th>
-       <th className={cn(thCls, "text-center")}>In Add Recommended</th>
+       <th className={thCls}>Applies to</th>
+       <th className={thCls}>Recommended for</th>
        <th className={thCls}>Status</th>
        {canEdit && <th className={cn(thCls, "text-center w-24")}>Actions</th>}
       </tr>
@@ -1986,10 +2034,10 @@ function RolesContent() {
           </div>
          </td>
          <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{r.name}</td>
+         <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{r.signoffLevel}</td>
          <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{r.defaultRate.toFixed(2)}</td>
-         <td className="px-2.5 py-2.5 text-center">
-          <Checkbox checked={r.inRecommended} disabled={!canEdit} onCheckedChange={v => updateRole(r.id, { inRecommended: v === true })} aria-label={`${r.name} in Add Recommended`} />
-         </td>
+         <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{typesLabel(r.appliesTo)}</td>
+         <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{typesLabel(r.recommendedFor)}</td>
          <td className="px-2.5 py-2.5 whitespace-nowrap">
           <Badge variant={off ? "secondary" : "accepted"}>{off ? "Inactive" : "Active"}</Badge>
          </td>

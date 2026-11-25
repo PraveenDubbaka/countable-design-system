@@ -11,6 +11,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { UserPlus, X, Check } from "lucide-react";
 import { Assignee } from "@/types/checklist";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRoles, getActiveRoles } from "@/lib/rolesStore";
 
 type AssignScope = "all" | "selected";
 
@@ -27,7 +29,7 @@ const TEAM_MEMBERS: Assignee[] = [
  { id: "c2", name: "Sarah Chen", initials: "SC", role: "CFO", type: "client" },
  { id: "c3", name: "David Patel", initials: "DP", role: "Controller", type: "client" },
  { id: "c4", name: "Lisa Nguyen", initials: "LN", role: "VP Finance", type: "client" },
- { id: "s1", name: "Michael Torres", initials: "MT", role: "Engagement Partner", type: "staff" },
+ { id: "s1", name: "Michael Torres", initials: "MT", role: "Partner", type: "staff" },
  { id: "s2", name: "Emma Wilson", initials: "EW", role: "Senior Auditor", type: "staff" },
  { id: "s3", name: "James Kim", initials: "JK", role: "Staff Auditor", type: "staff" },
  { id: "s4", name: "Priya Sharma", initials: "PS", role: "Manager", type: "staff" },
@@ -42,10 +44,15 @@ export function AssignmentDialog({
 }: AssignmentDialogProps) {
  const [scope, setScope] = useState<AssignScope>("all");
  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+ const [roleFilter, setRoleFilter] = useState("all");
+ const firmRoles = useRoles();
+ // Active roles from Settings › Roles, in order.
+ const roleChoices = getActiveRoles(firmRoles);
 
  const reset = () => {
  setScope("all");
  setSelectedMemberId(null);
+ setRoleFilter("all");
  };
 
  useEffect(() => {
@@ -150,8 +157,17 @@ export function AssignmentDialog({
  ))}
 
  {/* Firm staff */}
- <p className="text-xs text-muted-foreground px-1 pb-0.5 pt-2">Firm Staff</p>
- {TEAM_MEMBERS.filter((m) => m.type === "staff").map((member) => (
+ <div className="flex items-center justify-between gap-3 px-1 pb-0.5 pt-2">
+ <p className="text-xs text-muted-foreground">Firm Staff</p>
+ <Select value={roleFilter} onValueChange={setRoleFilter}>
+ <SelectTrigger className="h-7 w-48 text-xs" aria-label="Filter by role"><SelectValue /></SelectTrigger>
+ <SelectContent>
+ <SelectItem value="all">All roles</SelectItem>
+ {roleChoices.map(r => <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>)}
+ </SelectContent>
+ </Select>
+ </div>
+ {TEAM_MEMBERS.filter((m) => m.type === "staff" && (roleFilter === "all" || m.role.toLowerCase() === roleFilter.toLowerCase())).map((member) => (
  <button
  key={member.id}
  type="button"
