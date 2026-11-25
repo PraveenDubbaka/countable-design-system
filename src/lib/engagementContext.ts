@@ -153,7 +153,7 @@ const EXTRA_PEOPLE_US = ["C. Brooks", "T. Nguyen", "A. Rivera", "S. Hughes", "D.
 // The four production roles and the other seeded titles are not demo team members.
 const SEEDED_WITHOUT_PERSON = new Set(["role-preparer", "role-1st-reviewer", "role-2nd-reviewer", "role-admin", "role-admin-staff", "role-qc-reviewer"]);
 
-// Display order: most senior sign-off level first, then senior title first within a level.
+// Display order: most senior sign-off level first, then reverse store order within a level.
 const LEVEL_RANK: Record<string, number> = { "2nd Reviewer": 0, "1st Reviewer": 1, "Preparer": 2, "Admin": 3 };
 
 function buildTeam(isUS: boolean, engagementId: string): { role: string; name: string }[] {
@@ -161,15 +161,14 @@ function buildTeam(isUS: boolean, engagementId: string): { role: string; name: s
  const extras = isUS ? EXTRA_PEOPLE_US : EXTRA_PEOPLE_CA;
  const type = engagementTypeKey(loadEngagements().find(e => e.id === engagementId)?.type) ?? "Audit";
  let extra = 0;
- const team: { role: string; name: string; rank: number; rate: number; order: number }[] = [];
+ const team: { role: string; name: string; rank: number; order: number }[] = [];
  for (const r of getActiveRoles(getRoles(), type)) {
   const known = people[r.name.trim().toLowerCase()];
-  if (known) team.push({ role: r.name, name: known, rank: LEVEL_RANK[r.signoffLevel] ?? 9, rate: r.defaultRate, order: r.order });
-  else if (!SEEDED_WITHOUT_PERSON.has(r.id)) team.push({ role: r.name, name: extras[extra++ % extras.length], rank: LEVEL_RANK[r.signoffLevel] ?? 9, rate: r.defaultRate, order: r.order });
+  if (known) team.push({ role: r.name, name: known, rank: LEVEL_RANK[r.signoffLevel] ?? 9, order: r.order });
+  else if (!SEEDED_WITHOUT_PERSON.has(r.id)) team.push({ role: r.name, name: extras[extra++ % extras.length], rank: LEVEL_RANK[r.signoffLevel] ?? 9, order: r.order });
  }
- // Within a level the more senior title comes first: higher default rate, then reverse store order for ties
- // (Senior Auditor before Staff Auditor, Partner before Engagement Quality Reviewer).
- return team.sort((a, b) => a.rank - b.rank || b.rate - a.rate || b.order - a.order).map(({ role, name }) => ({ role, name }));
+ // Within a level the store order is reversed, so the more senior title comes first.
+ return team.sort((a, b) => a.rank - b.rank || b.order - a.order).map(({ role, name }) => ({ role, name }));
 }
 
 // ── Profiles (derived per engagement) ─────────────────────────────────────────

@@ -32,10 +32,10 @@ const SEED: Role[] = ([
   mk("role-staff-auditor", "Staff Auditor", 150, "Preparer", { recommendedFor: [...ALL] }),
   mk("role-senior-auditor", "Senior Auditor", 200, "Preparer", { recommendedFor: [...ALL] }),
   mk("role-manager", "Manager", 275, "1st Reviewer", { recommendedFor: [...ALL] }),
+  mk("role-eqr", "Engagement Quality Reviewer", 350, "2nd Reviewer", { appliesTo: ["Audit"] }),
   mk("role-partner", "Partner", 400, "2nd Reviewer", { recommendedFor: [...ALL] }),
   mk("role-admin-staff", "Admin Staff", 90, "Admin"),
   mk("role-qc-reviewer", "Quality Control Reviewer", 350, "2nd Reviewer"),
-  mk("role-eqr", "Engagement Quality Reviewer", 350, "2nd Reviewer", { appliesTo: ["Audit"] }),
 ] as Omit<Role, "order">[]).map((r, i) => ({ ...r, order: i + 1 }));
 
 const normalise = (list: Role[]): Role[] =>
@@ -69,15 +69,37 @@ const migrate = (old: Record<string, unknown>[]): Role[] => {
   return out;
 };
 
+// One-time: the seed used to put Engagement Quality Reviewer last. If saved roles still follow that old seed order
+// (the seeded roles in their previous relative order), move it directly above Partner; a user's own order is left alone.
+const PREV_SEED_IDS = ["role-preparer", "role-1st-reviewer", "role-2nd-reviewer", "role-admin", "role-staff-auditor", "role-senior-auditor", "role-manager", "role-partner", "role-admin-staff", "role-qc-reviewer", "role-eqr"];
+const ORDER_MIGRATED_KEY = "firm-roles-eqr-order-v1";
+
+const migrateEqrOrder = (list: Role[]): Role[] => {
+  try {
+    if (localStorage.getItem(ORDER_MIGRATED_KEY)) return list;
+    localStorage.setItem(ORDER_MIGRATED_KEY, "1");
+  } catch { return list; }
+  const seeded = list.filter(r => PREV_SEED_IDS.includes(r.id)).map(r => r.id);
+  const untouched = seeded.length === PREV_SEED_IDS.length && seeded.every((id, i) => id === PREV_SEED_IDS[i]);
+  const eqr = list.find(r => r.id === "role-eqr");
+  const partner = list.find(r => r.id === "role-partner");
+  if (!untouched || !eqr || !partner) return list;
+  const without = list.filter(r => r.id !== "role-eqr");
+  without.splice(without.findIndex(r => r.id === "role-partner"), 0, eqr);
+  const moved = without.map((r, i) => ({ ...r, order: i + 1 }));
+  try { localStorage.setItem(ROLES_KEY, JSON.stringify(moved)); } catch { /* not kept */ }
+  return moved;
+};
+
 const read = (): Role[] => {
   try {
     const raw = localStorage.getItem(ROLES_KEY);
     const parsed: unknown = raw ? JSON.parse(raw) : null;
     if (Array.isArray(parsed) && parsed.length) {
       const ok = parsed.filter((r): r is Record<string, unknown> => !!r && typeof r.id === "string" && typeof r.name === "string");
-      if (ok.length && ok.some(r => !("signoffLevel" in r))) return normalise(migrate(ok));
+      if (ok.length && ok.some(r => !("signoffLevel" in r))) { try { localStorage.setItem(ORDER_MIGRATED_KEY, "1"); } catch { /* ignore */ } return normalise(migrate(ok)); }
       if (ok.length) {
-        return normalise(ok.map((r, i) => {
+        return migrateEqrOrder(normalise(ok.map((r, i) => {
           const applies = types(r.appliesTo);
           return {
             id: String(r.id), name: String(r.name),
@@ -88,10 +110,11 @@ const read = (): Role[] => {
             active: r.active !== false,
             order: Number.isFinite(Number(r.order)) ? Number(r.order) : i + 1,
           };
-        }));
+        })));
       }
     }
   } catch { /* fall through to the seed */ }
+  try { localStorage.setItem(ORDER_MIGRATED_KEY, "1"); } catch { /* ignore */ }
   return normalise(SEED);
 };
 
