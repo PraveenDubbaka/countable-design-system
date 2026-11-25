@@ -790,6 +790,14 @@ export default function AddNewClientV2() {
 
   const addDisabled = fetching;
 
+  const legalPreview = legalEntityName.trim() || "Legal entity name";
+  const dbaPreview = dbaName.trim() || "Operating name";
+  const deliverableCards = [
+    { value: "legal-only", label: "Legal name only", title: legalPreview },
+    { value: "dba-only", label: "Operating name only", title: dbaPreview },
+    { value: "both", label: "Both", title: `${legalPreview} o/a ${dbaPreview}` },
+  ];
+
   return (
     <Layout title="Add New Client">
       <div className="flex flex-col h-full overflow-hidden bg-background">
@@ -948,6 +956,34 @@ export default function AddNewClientV2() {
                     </div>
                   </div>
                 </div>
+                {/* Name on deliverables */}
+                <InlineField label="Name on deliverables" hint="Default for all engagements and deliverables · can be changed per engagement">
+                  <div role="radiogroup" aria-label="Name on deliverables" className={`grid grid-cols-3 gap-2 ${showDba ? "" : "opacity-50"}`}>
+                    {deliverableCards.map(c => {
+                      const selected = dbaDisplay === c.value;
+                      return (
+                        <button key={c.value} type="button" role="radio" aria-checked={selected} disabled={!showDba}
+                          onClick={() => setDbaDisplay(c.value)}
+                          className={`flex min-w-0 flex-col gap-1.5 rounded-[10px] border px-3 py-3 text-left transition-colors disabled:cursor-not-allowed ${selected ? "border-[#1C63A6] bg-[#1C63A6]/5" : "border-border bg-card hover:bg-muted/40"}`}>
+                          <span className="flex items-center gap-2">
+                            <span className={`h-4 w-4 shrink-0 rounded-full border flex items-center justify-center ${selected ? "border-[#1C63A6]" : "border-[#C3CBD6]"}`}>
+                              {selected && <span className="h-2 w-2 rounded-full bg-[#1C63A6]" />}
+                            </span>
+                            <span className="text-sm font-medium text-foreground">{c.label}</span>
+                          </span>
+                          <span className="rounded-md bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
+                            <span className="block font-semibold text-foreground truncate" data-testid="deliverable-preview">{c.title}</span>
+                            <span className="block">Statement of financial position</span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {showDba && dbaDisplay === "dba-only" && (
+                    <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">Assurance reports still need the legal name</p>
+                  )}
+                  {!showDba && <p className="text-xs text-muted-foreground mt-1">Turn on DBA to choose how the name appears</p>}
+                </InlineField>
                 <InlineField label="Group Name" hint="Use to group related clients together.">
                   <div className="flex gap-2 items-center">
                     <Select
@@ -1044,18 +1080,6 @@ export default function AddNewClientV2() {
                         <SelectItem value="Monte Heilig">Monte Heilig</SelectItem>
                         <SelectItem value="Jangaiah Arige">Jangaiah Arige</SelectItem>
                         <SelectItem value="Jude Law">Jude Law</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </InlineField>
-                )}
-                {showDba && dbaName && (
-                  <InlineField label="Balance sheet display" hint="Legal name is always retained in legal documents.">
-                    <Select value={dbaDisplay} onValueChange={setDbaDisplay}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="legal-only">Legal name only</SelectItem>
-                        <SelectItem value="dba-only">DBA only</SelectItem>
-                        <SelectItem value="both">Both — legal name and DBA</SelectItem>
                       </SelectContent>
                     </Select>
                   </InlineField>
