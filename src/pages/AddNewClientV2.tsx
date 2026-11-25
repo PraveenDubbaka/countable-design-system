@@ -632,6 +632,7 @@ const INDUSTRY_TYPES = [
   "Technology",
   "Transportation & Logistics",
 ];
+const INDUSTRY_OTHER = "Other — not listed";
 
 export default function AddNewClientV2() {
   const navigate = useNavigate();
@@ -671,6 +672,7 @@ export default function AddNewClientV2() {
   // ── Business & Tax ──────────────────────────────────────────────────────────
   const [gstRegistered, setGstRegistered] = useState<string>("");
   const [industryType, setIndustryType] = useState<string>("");
+  const [industryOther, setIndustryOther] = useState("");
   const [hasQuebecPersonalInfo, setHasQuebecPersonalInfo] = useState<boolean>(false);
   const [isUsTaxpayer, setIsUsTaxpayer] = useState<boolean>(false);
   const [fiscalYearEnd, setFiscalYearEnd] = useState<string>("");
@@ -734,14 +736,14 @@ export default function AddNewClientV2() {
   const isDirty =
     !!(clientId || legalEntityName || entityType || subCorpType || showDba || dbaName || groupName || engagementPartner ||
       firstName || lastName || email || businessPhone || cellPhone || addressLine1 || city || province || postalCode || website ||
-      gstRegistered || industryType || hasQuebecPersonalInfo || isUsTaxpayer || fiscalYearEnd || incorporationDate || businessNumber ||
+      gstRegistered || industryType || industryOther || hasQuebecPersonalInfo || isUsTaxpayer || fiscalYearEnd || incorporationDate || businessNumber ||
       showPrefillBanner || selectedSource) || country !== "ca";
 
   const resetForm = () => {
     setClientId(""); setCountry("ca"); setEntityType(""); setSubCorpType(""); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only");
     setEngagementPartner(""); setLegalEntityName(""); setFirstName(""); setLastName(""); setEmail("");
     setBusinessPhone(""); setCellPhone(""); setAddressLine1(""); setCity(""); setProvince(""); setPostalCode(""); setWebsite("");
-    setGstRegistered(""); setIndustryType(""); setHasQuebecPersonalInfo(false); setIsUsTaxpayer(false);
+    setGstRegistered(""); setIndustryType(""); setIndustryOther(""); setHasQuebecPersonalInfo(false); setIsUsTaxpayer(false);
     setFiscalYearEnd(""); setIncorporationDate(""); setBusinessNumber(""); setGroupName(""); setNewGroupInput("");
     setShowPrefillBanner(false); setSelectedSource(""); setFetching(false);
     setEntryOption("manual");
@@ -753,6 +755,10 @@ export default function AddNewClientV2() {
   };
 
   const handleAdd = (mode: "add" | "invite") => {
+    if (industryType === INDUSTRY_OTHER && !industryOther.trim()) {
+      toast.error("Describe the industry or choose one from the list");
+      return;
+    }
     const resolvedGroup = groupName === "__new__" ? newGroupInput.trim() : groupName;
     if (resolvedGroup && !clientGroups.includes(resolvedGroup)) {
       const updated = [...clientGroups, resolvedGroup];
@@ -777,7 +783,8 @@ export default function AddNewClientV2() {
       businessPhone: businessPhone || null,
       cellPhone: cellPhone || null,
       clientCountry: country as 'ca' | 'us',
-      industryType: industryType || undefined,
+      industryType: industryType === INDUSTRY_OTHER ? "Other" : (industryType || undefined),
+      industryOther: industryType === INDUSTRY_OTHER ? industryOther.trim() : undefined,
       groupName: resolvedGroup || undefined,
       incorporationDate: cfg?.hasIncorporation && incorporationDate ? incorporationDate : undefined,
       engagements: [],
@@ -1061,14 +1068,20 @@ export default function AddNewClientV2() {
                 )}
                 {entityType && (
                   <InlineField label="Industry Type" hint="Used to filter engagements by sector and seed industry-specific risks in the risk register.">
-                    <Select value={industryType} onValueChange={setIndustryType}>
+                    <Select value={industryType} onValueChange={v => { setIndustryType(v); if (v !== INDUSTRY_OTHER) setIndustryOther(""); }}>
                       <SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger>
                       <SelectContent>
                         {INDUSTRY_TYPES.map(i => (
                           <SelectItem key={i} value={i}>{i}</SelectItem>
                         ))}
+                        <SelectItem value={INDUSTRY_OTHER}>{INDUSTRY_OTHER}</SelectItem>
                       </SelectContent>
                     </Select>
+                  </InlineField>
+                )}
+                {entityType && industryType === INDUSTRY_OTHER && (
+                  <InlineField label="Describe industry" required invalid={!industryOther.trim()}>
+                    <Input placeholder="e.g. Cannabis retail" value={industryOther} onChange={e => setIndustryOther(e.target.value)} />
                   </InlineField>
                 )}
                 {entityType && (

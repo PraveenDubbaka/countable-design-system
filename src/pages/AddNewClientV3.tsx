@@ -130,7 +130,8 @@ const NAICS_OPTIONS = [
   { code: "813", name: "Religious, Grantmaking, Civic and Professional Organizations" },
 ].map(o => ({ ...o, label: `${o.code} — ${o.name}` }));
 
-const NaicsCombobox = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
+const NOT_LISTED = "Not listed — enter industry";
+const NaicsCombobox = ({ value, onChange, notListed, onNotListed }: { value: string; onChange: (v: string) => void; notListed: boolean; onNotListed: (typed: string) => void }) => {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const query = q.trim().toLowerCase();
@@ -139,8 +140,8 @@ const NaicsCombobox = ({ value, onChange }: { value: string; onChange: (v: strin
     <Popover open={open} onOpenChange={o => { setOpen(o); if (!o) setQ(""); }}>
       <PopoverTrigger asChild>
         <button type="button" role="combobox" aria-expanded={open}
-          className={`input-double-border flex items-center justify-between gap-2 h-9 px-3 w-full rounded-[10px] border text-sm text-left transition-all duration-200 bg-white dark:bg-card border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] ${value ? "text-foreground" : "text-muted-foreground/70"}`}>
-          <span className="truncate">{value || "Search by code or name"}</span>
+          className={`input-double-border flex items-center justify-between gap-2 h-9 px-3 w-full rounded-[10px] border text-sm text-left transition-all duration-200 bg-white dark:bg-card border-[#C3CBD6] dark:border-[hsl(220_15%_30%)] hover:border-[hsl(210_25%_75%)] dark:hover:border-[hsl(220_15%_40%)] ${value || notListed ? "text-foreground" : "text-muted-foreground/70"}`}>
+          <span className="truncate">{notListed ? NOT_LISTED : (value || "Search by code or name")}</span>
           <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
         </button>
       </PopoverTrigger>
@@ -150,13 +151,24 @@ const NaicsCombobox = ({ value, onChange }: { value: string; onChange: (v: strin
           <Input autoFocus placeholder="Search code or name" value={q} onChange={e => setQ(e.target.value)} className="pl-8 h-8 text-sm" />
         </div>
         <div className="max-h-56 overflow-y-auto">
-          {results.length === 0 && <p className="px-2 py-2 text-xs text-muted-foreground">No matching industry</p>}
+          {results.length === 0 && (
+            <button type="button" onClick={() => { onNotListed(q.trim()); setOpen(false); setQ(""); }}
+              className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-muted transition-colors text-muted-foreground">
+              No match — add as not listed
+            </button>
+          )}
           {results.map(o => (
             <button key={o.code} type="button" onClick={() => { onChange(o.label); setOpen(false); setQ(""); }}
               className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-muted transition-colors">
               {o.label}
             </button>
           ))}
+        </div>
+        <div className="border-t border-border mt-1 pt-1">
+          <button type="button" onClick={() => { onNotListed(""); setOpen(false); setQ(""); }}
+            className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-muted transition-colors">
+            {NOT_LISTED}
+          </button>
         </div>
       </PopoverContent>
     </Popover>
@@ -590,6 +602,9 @@ export default function AddNewClientV3() {
   const [jurisdiction, setJurisdiction] = useState("");
   const [fiscalYearEnd, setFiscalYearEnd] = useState<string>("");
   const [naics, setNaics] = useState("");
+  const [naicsNotListed, setNaicsNotListed] = useState(false);
+  const [industryDescription, setIndustryDescription] = useState("");
+  const [naicsCode, setNaicsCode] = useState("");
   const [groupName, setGroupName] = useState<string>("");
   const [clientGroups, setClientGroups] = useState<string[]>(() => loadClientGroups());
   const [newGroupInput, setNewGroupInput] = useState<string>("");
@@ -696,7 +711,7 @@ export default function AddNewClientV3() {
   };
 
   const isDirty =
-    !!(clientId || legalEntityName || entityType || subCorpType || showDba || dbaName || jurisdiction || fiscalYearEnd || naics || groupName ||
+    !!(clientId || legalEntityName || entityType || subCorpType || showDba || dbaName || jurisdiction || fiscalYearEnd || naics || naicsNotListed || industryDescription || naicsCode || groupName ||
       engagementPartner || engagementManager || reportingFramework || accountingSoftware || incorporationDate || businessNumber || gstRegistered ||
       extraAccounts.length || hasQuebecPersonalInfo || addressLine1 || addressLine2 || city || province || postalCode || !mailingSame ||
       mailLine1 || mailLine2 || mailCity || mailProvince || mailPostal || businessPhone || cellPhone || website || people.length ||
@@ -705,7 +720,7 @@ export default function AddNewClientV3() {
 
   const resetForm = () => {
     setClientId(""); setCountry("ca"); setEntityType(""); setSubCorpType(""); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only");
-    setLegalEntityName(""); setJurisdiction(""); setFiscalYearEnd(""); setNaics(""); setGroupName(""); setNewGroupInput("");
+    setLegalEntityName(""); setJurisdiction(""); setFiscalYearEnd(""); setNaics(""); setNaicsNotListed(false); setIndustryDescription(""); setNaicsCode(""); setGroupName(""); setNewGroupInput("");
     setEngagementPartner(""); setEngagementManager(""); setReportingFramework(""); setAccountingSoftware("");
     setIncorporationDate(""); setBusinessNumber(""); setGstRegistered(""); setExtraAccounts([]); setAddingAccount(false);
     setNewAccountNumber(""); setNewAccountLabel(""); setHasQuebecPersonalInfo(false);
@@ -748,6 +763,10 @@ export default function AddNewClientV3() {
 
   const handleAdd = (mode: "add" | "invite") => {
     setAttemptedAdd(true);
+    if (naicsNotListed && !industryDescription.trim()) {
+      toast.error("Enter an industry description or choose one from the list");
+      return;
+    }
     if (!hasPrimaryContact) {
       toast.error("Add at least one person with the Primary contact role");
       return;
@@ -788,7 +807,9 @@ export default function AddNewClientV3() {
       subType: subCorpType || undefined,
       jurisdiction: jurisdiction || undefined,
       fiscalYearEnd: fiscalYearEnd || undefined,
-      naics: naics || undefined,
+      naics: naicsNotListed ? undefined : (naics || undefined),
+      industryDescription: naicsNotListed ? industryDescription.trim() : undefined,
+      naicsCode: naicsNotListed && naicsCode.trim() ? naicsCode.trim() : undefined,
       engagementManager: engagementManager || undefined,
       reportingFramework: reportingFramework || undefined,
       accountingSoftware: accountingSoftware || undefined,
@@ -1074,7 +1095,21 @@ export default function AddNewClientV3() {
                 </FieldCol>
 
                 <FieldCol label="Industry (NAICS)" hint="Used to filter engagements by sector and seed industry-specific risks in the risk register.">
-                  <NaicsCombobox value={naics} onChange={setNaics} />
+                  <div className="flex flex-col gap-3">
+                    <NaicsCombobox value={naics} notListed={naicsNotListed}
+                      onChange={v => { setNaics(v); setNaicsNotListed(false); setIndustryDescription(""); setNaicsCode(""); }}
+                      onNotListed={t => { setNaics(""); setNaicsNotListed(true); setIndustryDescription(t); }} />
+                    {naicsNotListed && (
+                      <>
+                        <FieldCol label="Industry description" required invalid={!industryDescription.trim()}>
+                          <Input placeholder="e.g. Cannabis retail" value={industryDescription} onChange={e => setIndustryDescription(e.target.value)} />
+                        </FieldCol>
+                        <FieldCol label="NAICS code">
+                          <Input placeholder="Optional" inputMode="numeric" value={naicsCode} onChange={e => setNaicsCode(e.target.value.replace(/\D/g, "").slice(0, 6))} />
+                        </FieldCol>
+                      </>
+                    )}
+                  </div>
                 </FieldCol>
                 <FieldCol label="Client group" hint="Use to group related clients together.">
                   <div className="flex gap-2 items-center">
