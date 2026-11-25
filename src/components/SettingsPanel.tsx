@@ -24,7 +24,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { getEngagementMeta } from "@/store/engagementsStore";
 import { useRoles, addRole, updateRole, moveRole, deleteRole, isRoleNameTaken, ENGAGEMENT_TYPES, SIGNOFF_LEVELS, type Role, type EngagementType, type SignoffLevel } from "@/lib/rolesStore";
-import { canManageFirmSettings, USER_PERMS_KEY } from "@/lib/permissions";
+import { canManageFirmSettings, isSuperAdmin, USER_PERMS_KEY } from "@/lib/permissions";
 import { SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
 // ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
@@ -772,8 +772,27 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
   </div>
  );
 
- const PRow = ({ id, k, label, disabled = false, extra }: { id: string; k: keyof Perms; label: string; disabled?: boolean; extra?: ReactNode }) => {
+ const PRow = ({ id, k, label, disabled = false, extra, lockedOn }: { id: string; k: keyof Perms; label: string; disabled?: boolean; extra?: ReactNode; lockedOn?: string }) => {
   const p = getPerms(id);
+  if (lockedOn) {
+   // Always on and not editable; the tooltip says why.
+   return (
+    <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/40 last:border-b-0">
+     <div className="flex items-center gap-2 flex-1 min-w-0">
+      <span className="text-sm">{label}</span>
+      {extra}
+     </div>
+     <Tooltip>
+      <TooltipTrigger asChild>
+       <span tabIndex={0} className="inline-flex shrink-0 ml-3">
+        <input type="checkbox" checked disabled readOnly aria-label={`${label} (${lockedOn})`} className="h-4 w-4 accent-primary cursor-not-allowed opacity-60" />
+       </span>
+      </TooltipTrigger>
+      <TooltipContent>{lockedOn}</TooltipContent>
+     </Tooltip>
+    </div>
+   );
+  }
   return (
    <div className={cn("flex items-center justify-between px-4 py-2.5 border-b border-border/40 last:border-b-0", disabled && "opacity-40")}>
     <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -893,7 +912,7 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
 
      <SectionHeader title="Clients" />
      <PRow id={selected.id} k="addClient"    label="Add Client" />
-     <PRow id={selected.id} k="sendInvites"  label="Send client portal invites" disabled={!canManageFirmSettings()} extra={
+     <PRow id={selected.id} k="sendInvites"  label="Send client portal invites" disabled={!canManageFirmSettings()} lockedOn={isSuperAdmin(selected.accessType) ? "Always on for super admins" : undefined} extra={
       <>
        <Tooltip>
         <TooltipTrigger asChild>

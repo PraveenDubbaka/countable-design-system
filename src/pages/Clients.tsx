@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { canSendInvites } from "@/lib/permissions";
 import { useColumnLayout, DraggableTh } from "@/hooks/useColumnLayout";
 import { cn } from "@/lib/utils";
 import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
@@ -461,7 +462,7 @@ export default function Clients() {
  </ScrollArea>
  </PopoverContent>
  </Popover>
- <ExpandableIconButton variant="secondary" icon={<Mail className="h-4 w-4" />} label="Invite All" />
+ {canSendInvites() && <ExpandableIconButton variant="secondary" icon={<Mail className="h-4 w-4" />} label="Invite All" />}
  <ExpandableIconButton variant="secondary" icon={<Download className="h-4 w-4" />} label="Export" />
  <Popover>
  <PopoverTrigger asChild>

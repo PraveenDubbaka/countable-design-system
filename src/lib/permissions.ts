@@ -8,7 +8,10 @@ export const getCurrentUserAccessType = (): string => {
   try { return localStorage.getItem(ACCESS_TYPE_KEY) || "Admin"; } catch { return "Admin"; }
 };
 
-export const canManageFirmSettings = (): boolean => getCurrentUserAccessType() === "Admin";
+// A super admin is a member whose access type is Admin.
+export const isSuperAdmin = (accessType: string): boolean => accessType === "Admin";
+
+export const canManageFirmSettings = (): boolean => isSuperAdmin(getCurrentUserAccessType());
 
 const USER_ID_KEY = "cds_current_user_id_v1";
 export const USER_PERMS_KEY = "user-access-perms-v1";
