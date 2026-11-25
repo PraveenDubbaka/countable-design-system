@@ -5,6 +5,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { accountingProviders } from "@/lib/accountingProviders";
 import { connectClientSource, disconnectClientSource, type AccountingProvider } from "@/lib/clientSource";
 
+// Local widening only: Karbon is offered in the Add Client flows, not part of the shared AccountingProvider type.
+export type ModalProvider = "karbon" | AccountingProvider;
+const KARBON = { name: "Karbon", buttonName: "Karbon", logo: undefined as string | undefined };
+const providerInfo = (id: ModalProvider): { name: string; buttonName: string; logo?: string } => id === "karbon" ? KARBON : accountingProviders[id];
+const DEFAULT_PROVIDERS = Object.keys(accountingProviders) as AccountingProvider[];
+const ProviderMark = ({ id, className, alt = "" }: { id: ModalProvider; className: string; alt?: string }) => {
+  const info = providerInfo(id);
+  return info.logo
+    ? <img src={info.logo} alt={alt} className={className} />
+    : <span className="shrink-0 rounded-md bg-muted px-2 py-1 text-xs font-semibold text-foreground">{info.name}</span>;
+};
+
 interface SourceConnectionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -15,14 +27,16 @@ interface SourceConnectionModalProps {
   initialStep?: "select" | "connected";
   initialProvider?: AccountingProvider | null;
   /** Called when the connected step is finished (modal closed from it), with the chosen provider. */
-  onConnected?: (provider: AccountingProvider) => void;
+  onConnected?: (provider: ModalProvider) => void;
+  /** Providers to offer, in order. Omit for the default list (QuickBooks, Xero, Sage). */
+  providers?: ModalProvider[];
   /** Default true. When false, skip the connect/disconnect writes (the client doesn't exist yet). */
   persist?: boolean;
 }
 
-export function SourceConnectionModal({ open, onOpenChange, clientName, connectionName = clientName, engagementId, onComplete, initialStep, initialProvider, onConnected, persist = true }: SourceConnectionModalProps) {
+export function SourceConnectionModal({ open, onOpenChange, clientName, connectionName = clientName, engagementId, onComplete, initialStep, initialProvider, onConnected, persist = true, providers }: SourceConnectionModalProps) {
   const [step, setStep] = useState<"select" | "loading" | "connected">("select");
-  const [provider, setProvider] = useState<AccountingProvider>("quickbooks");
+  const [provider, setProvider] = useState<ModalProvider>("quickbooks");
   const [justDisconnected, setJustDisconnected] = useState(false);
   useEffect(() => {
     if (!open) return;
@@ -38,7 +52,7 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
 
   const close = (nextOpen: boolean) => {
     if (!nextOpen && step === "connected") {
-      if (persist) {
+      if (persist && provider !== "karbon") {
         connectClientSource(connectionName, provider, engagementId);
         // Keep the client-level status consistent when entering from either page.
         connectClientSource(clientName, provider);
@@ -49,7 +63,8 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
     }
     onOpenChange(nextOpen);
   };
-  const platform = accountingProviders[provider];
+  const platform = providerInfo(provider);
+  const list: ModalProvider[] = providers ?? DEFAULT_PROVIDERS;
   return (
     <Dialog open={open} onOpenChange={close}>
       <DialogContent aria-describedby={undefined} className="max-w-4xl w-[calc(100%-2rem)] min-h-80 p-0 gap-0 rounded-[10px] bg-background">
@@ -59,11 +74,11 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
         <div className="px-6 pb-6">
           {step === "select" && <>
             <h3 className="text-sm font-semibold mb-4">Accounting Software:</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 border border-border rounded-[8px] px-5 py-8">
-              {(Object.keys(accountingProviders) as AccountingProvider[]).map(id => (
+            <div className={`grid grid-cols-1 gap-5 ${list.length > 3 ? "sm:grid-cols-4" : "sm:grid-cols-3"} border border-border rounded-[8px] px-5 py-8`}>
+              {list.map(id => (
                 <Button key={id} variant={id === "quickbooks" ? "accounting" : "outline"} className="h-10 w-full" onClick={() => { setProvider(id); setJustDisconnected(false); setStep("loading"); }}>
-                  <img src={accountingProviders[id].logo} alt="" className="h-6 w-7 object-contain shrink-0" />
-                  Connect to {accountingProviders[id].buttonName}
+                  {id !== "karbon" && <ProviderMark id={id} className="h-6 w-7 object-contain shrink-0" />}
+                  Connect to {providerInfo(id).buttonName}
                 </Button>
               ))}
             </div>
@@ -73,17 +88,17 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
             </div>}
           </>}
           {step === "loading" && <div role="status" className="flex min-h-40 flex-col items-center justify-center gap-4">
-            <img src={platform.logo} alt={platform.name} className="h-12 w-20 object-contain" />
+            <ProviderMark id={provider} alt={platform.name} className="h-12 w-20 object-contain" />
             <span className="flex items-center gap-2 text-sm"><Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" />Connecting to {platform.name}…</span>
           </div>}
           {step === "connected" && <>
             <h3 className="text-sm font-semibold mb-4">Connected to:</h3>
             <div className="flex flex-wrap items-center gap-4 border border-border rounded-[8px] px-5 py-5">
-              <img src={platform.logo} alt={platform.name} className="h-8 w-12 object-contain shrink-0" />
-              <span className="font-medium text-sm">{platform.name}</span>
+              <ProviderMark id={provider} alt={platform.name} className="h-8 w-12 object-contain shrink-0" />
+              {platform.logo && <span className="font-medium text-sm">{platform.name}</span>}
               <span className="text-sm break-words">{clientName}</span>
               <Button variant="link" className="ml-auto px-0 h-auto whitespace-normal text-left" onClick={() => {
-                if (persist) {
+                if (persist && provider !== "karbon") {
                   disconnectClientSource(connectionName, engagementId);
                   disconnectClientSource(clientName);
                 }

@@ -12,8 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { SourceConnectionModal } from "@/components/SourceConnectionModal";
-import type { AccountingProvider } from "@/lib/clientSource";
+import { SourceConnectionModal, type ModalProvider } from "@/components/SourceConnectionModal";
 import { loadClientGroups, saveClientGroups, loadClients, saveClients, SEED_GROUPS } from "@/data/clientsData";
 
 // Shared primitives mirrored from AddNewClient.tsx — keep in sync
@@ -543,6 +542,7 @@ const MonthDayPicker = ({
 // ── Component ────────────────────────────────────────────────────────────────
 
 const SOURCE_CARDS = [
+  { value: "karbon", label: "Karbon" },
   { value: "qbo", label: "QuickBooks Online" },
   { value: "xero", label: "Xero" },
   { value: "sage", label: "Sage" },
@@ -688,8 +688,8 @@ export default function AddNewClientV3() {
     return () => clearTimeout(t);
   }, [fetching]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const PROVIDER_TO_SOURCE: Record<AccountingProvider, string> = { quickbooks: "qbo", xero: "xero", sage: "sage" };
-  const handleConnected = (provider: AccountingProvider) => {
+  const PROVIDER_TO_SOURCE: Record<ModalProvider, string> = { karbon: "karbon", quickbooks: "qbo", xero: "xero", sage: "sage" };
+  const handleConnected = (provider: ModalProvider) => {
     setSelectedSource(PROVIDER_TO_SOURCE[provider]);
     setEntryOption("integration");
     setFetching(true);
@@ -766,7 +766,7 @@ export default function AddNewClientV3() {
       legalEntityName,
       entityType: entityType || 'Corporation',
       status: mode === "invite" ? 'Pending' as const : 'Invite Now' as const,
-      integration: selectedSource ? (selectedSource as 'xero' | 'quickbooks' | 'connect') : 'none' as const,
+      integration: selectedSource && selectedSource !== 'karbon' ? (selectedSource as 'xero' | 'quickbooks' | 'connect') : 'none' as const,
       contactName,
       contactPerson: contactName,
       engagementPartner,
@@ -910,7 +910,7 @@ export default function AddNewClientV3() {
                   </span>
                   <span className="text-sm font-semibold text-foreground">Import via integration</span>
                 </span>
-                <span className="text-xs text-muted-foreground pl-6">QuickBooks Online, Xero or Sage</span>
+                <span className="text-xs text-muted-foreground pl-6">Karbon, QuickBooks Online, Xero or Sage</span>
               </button>
               <div
                 className="flex items-center justify-between gap-3 rounded-[10px] border-2 border-dashed border-[#8649F1]/50 bg-[#8649F1]/[0.03] px-4 py-3"
@@ -932,7 +932,7 @@ export default function AddNewClientV3() {
               <div className="flex items-center justify-center py-16">
                 <div className="text-center">
                   <div className="animate-spin h-8 w-8 text-primary border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-                  <p className="text-base font-semibold text-foreground mb-1">Fetching client information…</p>
+                  <p className="text-base font-semibold text-foreground mb-1">Fetching client information{selectedSource === "karbon" ? " from Karbon" : ""}…</p>
                   <p className="text-sm text-muted-foreground">This will only take a moment.</p>
                 </div>
               </div>
@@ -1389,6 +1389,7 @@ export default function AddNewClientV3() {
           onOpenChange={setShowConnectModal}
           clientName={legalEntityName.trim() || "New client"}
           persist={false}
+          providers={["karbon", "quickbooks", "xero", "sage"]}
           onConnected={handleConnected}
         />
         <AlertDialog open={showClearConfirm} onOpenChange={setShowClearConfirm}>
