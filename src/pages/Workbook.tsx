@@ -105,6 +105,27 @@ const formatAmt = (n: number) => {
  return n < 0 ? `(${abs})` : abs;
 };
 
+const MONTH_FULL: Record<string, string> = {
+ Jan: "January", Feb: "February", Mar: "March", Apr: "April", May: "May", Jun: "June",
+ Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December",
+};
+// "Dec 31, 2023" -> { monthDay: "December 31", year: "2023" } — the printed statement's date
+// columns spell the month out and stack the year on its own line, unlike the app's own
+// abbreviated "Dec 31, 2023" strings used everywhere else (title blocks, filters, etc).
+function splitStatementDate(yearEnd: string): { monthDay: string; year: string } {
+ const m = yearEnd.match(/^(\w{3})\w*\s+(\d{1,2}),\s*(\d{4})$/);
+ if (!m) return { monthDay: yearEnd, year: "" };
+ const [, mon, day, year] = m;
+ return { monthDay: `${MONTH_FULL[mon] ?? mon} ${day}`, year };
+}
+// The prior-year column's date is the same month/day, one year back — there's no separate
+// stored "prior year end" string anywhere, so it's derived rather than invented.
+function priorStatementDate(yearEnd: string): { monthDay: string; year: string } {
+ const { monthDay, year } = splitStatementDate(yearEnd);
+ const y = Number(year);
+ return { monthDay, year: Number.isNaN(y) ? "" : String(y - 1) };
+}
+
 // ── Schedules (foundation: a schedule is just an LS code pinned to a named page) ──────────
 interface ScheduleDef {
  id: string;
@@ -312,6 +333,8 @@ function BalanceSheetPreview({ bs, client, yearEnd, scheduleByGroupId }: {
  </span>
  </div>
  );
+ const cyDate = splitStatementDate(yearEnd);
+ const pyDate = priorStatementDate(yearEnd);
  return (
  <div>
  <div className="wb-statement-header">
@@ -320,9 +343,9 @@ function BalanceSheetPreview({ bs, client, yearEnd, scheduleByGroupId }: {
  <p>As at {yearEnd}</p>
  </div>
  <div className="wb-preview-rule" />
- <div style={{ display: "flex", justifyContent: "flex-end", gap: 24, fontSize: 11, fontWeight: 600, color: "var(--wb-text-2)", marginBottom: 4 }}>
- <span style={{ width: 80, textAlign: "right" }}>{yearEnd}</span>
- <span style={{ width: 80, textAlign: "right" }}>Prior Year</span>
+ <div className="wb-preview-datecols">
+ <span className="wb-amt-cy">{cyDate.monthDay}<br />{cyDate.year}</span>
+ <span className="wb-amt-py">{pyDate.monthDay}<br />{pyDate.year}</span>
  </div>
  <p className="wb-preview-section-title">Assets</p>
  <p style={{ fontWeight: 600, paddingLeft: 8 }}>Current assets</p>
@@ -331,23 +354,31 @@ function BalanceSheetPreview({ bs, client, yearEnd, scheduleByGroupId }: {
  <p style={{ fontWeight: 600, paddingLeft: 8, marginTop: 8 }}>Long-term assets</p>
  {bs.longTermAssets.lines.map(row)}
  {subtotal("Total assets", bs.totalAssetsCy, bs.totalAssetsPy, true)}
- <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Liabilities</p>
+ <div className="wb-preview-dashed" />
+ <p className="wb-preview-section-title">Liabilities</p>
  <p style={{ fontWeight: 600, paddingLeft: 8 }}>Current liabilities</p>
  {bs.currentLiabilities.lines.map(row)}
  {subtotal("Total current liabilities", bs.currentLiabilities.cyTotal, bs.currentLiabilities.pyTotal)}
  <p style={{ fontWeight: 600, paddingLeft: 8, marginTop: 8 }}>Long-term liabilities</p>
  {bs.longTermLiabilities.lines.map(row)}
- {subtotal("Total liabilities", bs.totalLiabilitiesCy, bs.totalLiabilitiesPy, true)}
+ {subtotal("Total long-term liabilities", bs.longTermLiabilities.cyTotal, bs.longTermLiabilities.pyTotal)}
+ {/* Total Liabilities — unlabeled, the same way production leaves this one sub-grand-total
+ bare since it sits right where the Liabilities section visibly ends. */}
+ {subtotal("", bs.totalLiabilitiesCy, bs.totalLiabilitiesPy, true)}
  <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Equity</p>
  {bs.equity.lines.map(row)}
+ {subtotal("", bs.equity.cyTotal, bs.equity.pyTotal, true)}
  {subtotal("Total liabilities and equity", bs.totalLiabEquityCy, bs.totalLiabEquityPy, true)}
- <div style={{ marginTop: 16 }}>
- {bs.balancesCy ? (
- <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}><Check className="h-3.5 w-3.5" /> Balance sheet balances</span>
- ) : (
- <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference: {formatAmt(bs.totalAssetsCy - bs.totalLiabEquityCy)}</span>
- )}
+ {!bs.balancesCy && (
+ <div className="wb-preview-row wb-difference">
+ <span>Difference</span>
+ <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(bs.totalAssetsCy - bs.totalLiabEquityCy)}</span>
+ <span className="wb-amt-py" style={{ width: 80, textAlign: "right" }}>{formatAmt(bs.totalAssetsPy - bs.totalLiabEquityPy)}</span>
+ </span>
  </div>
+ )}
+ <div className="wb-preview-footer">See accompanying notes to financial information</div>
  </div>
  );
 }
@@ -393,6 +424,9 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
  </span>
  </div>
  );
+ const cyDate = splitStatementDate(yearEnd);
+ const pyDate = priorStatementDate(yearEnd);
+ const hasDifference = Math.abs(is.differenceCy) >= 0.005 || Math.abs(is.differencePy) >= 0.005;
  return (
  <div>
  <div className="wb-statement-header">
@@ -401,9 +435,9 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
  <p>For the year ended {yearEnd}</p>
  </div>
  <div className="wb-preview-rule" />
- <div style={{ display: "flex", justifyContent: "flex-end", gap: 24, fontSize: 11, fontWeight: 600, color: "var(--wb-text-2)", marginBottom: 4 }}>
- <span style={{ width: 80, textAlign: "right" }}>{yearEnd}</span>
- <span style={{ width: 80, textAlign: "right" }}>Prior Year</span>
+ <div className="wb-preview-datecols">
+ <span className="wb-amt-cy">{cyDate.monthDay}<br />{cyDate.year}</span>
+ <span className="wb-amt-py">{pyDate.monthDay}<br />{pyDate.year}</span>
  </div>
  <p className="wb-preview-section-title">Revenue</p>
  {is.revenue.lines.map(row)}
@@ -414,13 +448,16 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
  {subtotal("Net income (loss)", is.netIncomeCy, is.netIncomePy, true)}
  {subtotal("Retained earnings (deficit), beginning of year", is.openingRetainedEarningsCy, is.openingRetainedEarningsPy)}
  {subtotal("Retained earnings (deficit), end of year", is.closingRetainedEarningsCy, is.closingRetainedEarningsPy, true)}
- <div style={{ marginTop: 16 }}>
- {Math.abs(is.differenceCy) < 0.005 ? (
- <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}><Check className="h-3.5 w-3.5" /> Agrees with Balance Sheet equity</span>
- ) : (
- <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference vs. Balance Sheet: {formatAmt(is.differenceCy)}</span>
- )}
+ {hasDifference && (
+ <div className="wb-preview-row wb-difference">
+ <span>Difference</span>
+ <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(is.differenceCy)}</span>
+ <span className="wb-amt-py" style={{ width: 80, textAlign: "right" }}>{formatAmt(is.differencePy)}</span>
+ </span>
  </div>
+ )}
+ <div className="wb-preview-footer">See accompanying notes to financial information</div>
  </div>
  );
 }
@@ -823,6 +860,7 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference vs. Balance Sheet: {formatAmt(data.totals.closing - data.balanceSheetCapital)}</span>
  )}
  </div>
+ <div className="wb-preview-footer">See accompanying notes to financial information</div>
  </div>
  );
 }
