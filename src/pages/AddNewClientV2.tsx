@@ -1136,9 +1136,6 @@ export default function AddNewClientV2() {
                     <InlineField label="Cell Phone">
                       <PhoneInput />
                     </InlineField>
-                    <InlineField label="Website">
-                      <Input type="url" placeholder="https://example.com" value={website} onChange={e => setWebsite(e.target.value)} />
-                    </InlineField>
                     <InlineField label="Address Line 1">
                       <Input placeholder="Address Line 1" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} />
                     </InlineField>
@@ -1160,6 +1157,9 @@ export default function AddNewClientV2() {
                     </InlineField>
                     <InlineField label={taxCfg.postalLabel}>
                       <Input placeholder={taxCfg.postalPlaceholder} value={postalCode} onChange={e => setPostalCode(e.target.value)} />
+                    </InlineField>
+                    <InlineField label="Website" hint="Optional">
+                      <Input type="url" placeholder="https://example.com" value={website} onChange={e => setWebsite(e.target.value)} />
                     </InlineField>
                   </div>
                 </SectionCard>
