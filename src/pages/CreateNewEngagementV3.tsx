@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useRoles, getActiveRoles, getRecommendedRoles, formatRate } from "@/lib/rolesStore";
+import { useRoles, getActiveRoles, getRecommendedRoles, formatRate, splitAllocation } from "@/lib/rolesStore";
 import { useNavigate } from "react-router-dom";
 import { useEngagements } from "@/store/EngagementsContext";
 import { EngagementRecord, setEngagementMeta } from "@/store/engagementsStore";
@@ -768,9 +768,11 @@ export default function CreateNewEngagementV3() {
 
   // Team handlers
   const addRecommendedTeam = () => {
+    const recs = getRecommendedRoles(firmRoles);
+    const shares = splitAllocation(recs.length);
     setRecommendedPending(prev => [
       ...prev,
-      ...getRecommendedRoles(firmRoles).map(r => ({ id: uid(), role: r.name, name: "", email: "", title: "", hourlyRate: formatRate(r.defaultRate), timeAllocation: "" })),
+      ...recs.map((r, i) => ({ id: uid(), role: r.name, name: "", email: "", title: "", hourlyRate: formatRate(r.defaultRate), timeAllocation: String(shares[i]) })),
     ]);
   };
 

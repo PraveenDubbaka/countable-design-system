@@ -98,3 +98,18 @@ export const moveRole = (id: string, toPosition: number) => {
 };
 
 export const deleteRole = (id: string) => commit(roles.filter(r => r.id !== id));
+
+// Splits 100% across `count` recommended rows (given in store order, junior first): more for junior roles.
+// The first four get 35/30/20/10, any further rows share the remaining 5, then everything is normalised to a whole-number total of 100.
+export const splitAllocation = (count: number): number[] => {
+  if (count <= 0) return [];
+  const base = [35, 30, 20, 10];
+  const extras = Math.max(0, count - base.length);
+  const weights = Array.from({ length: count }, (_, i) => (i < base.length ? base[i] : 5 / extras));
+  const total = weights.reduce((a, b) => a + b, 0);
+  const exact = weights.map(w => (w / total) * 100);
+  const floors = exact.map(Math.floor);
+  let left = 100 - floors.reduce((a, b) => a + b, 0);
+  exact.map((v, i) => ({ i, frac: v - floors[i] })).sort((a, b) => b.frac - a.frac).forEach(({ i }) => { if (left > 0) { floors[i] += 1; left -= 1; } });
+  return floors;
+};
