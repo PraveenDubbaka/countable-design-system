@@ -471,7 +471,7 @@ export function GlobalHeader({ title, headerContent }: { title?: string; headerC
  <Settings className="h-5 w-5 text-muted-foreground" />
  <span>Settings</span>
  </DropdownMenuItem>
- <DropdownMenuItem className="gap-3 py-3 cursor-pointer">
+ <DropdownMenuItem className="gap-3 py-3 cursor-pointer" onClick={() => navigate("/settings/billing/ai")}>
  <CreditCard className="h-5 w-5 text-muted-foreground" />
  <span>Billing</span>
  </DropdownMenuItem>

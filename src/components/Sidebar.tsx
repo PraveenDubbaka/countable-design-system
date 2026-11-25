@@ -1882,7 +1882,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  
  // Determine if a secondary panel is visible and expanded (for dark mode gradient)
  const isOnEngagementDetail = location.pathname.startsWith("/engagements/") && location.pathname !== "/engagements/create";
- const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && !location.pathname.startsWith("/teams/");
+ const isOnTemplatesPage = location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/engagements" && location.pathname !== "/teams" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && !location.pathname.startsWith("/teams/") && !location.pathname.startsWith("/settings/");
  const hasSecondaryPanelExpanded = (isOnEngagementDetail || isOnTemplatesPage) && !isTemplatesPanelCollapsed;
  
  return <div className={`flex h-screen relative group/sidebar`} style={{ background: 'transparent' }}>
@@ -3455,7 +3455,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  </>, portalTarget)}
 
  {/* Templates panel - portalled below the global header */}
- {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && !location.pathname.startsWith("/teams/") && createPortal(<>
+ {portalTarget && location.pathname !== "/dashboard" && location.pathname !== "/clients" && location.pathname !== "/teams" && location.pathname !== "/engagements" && location.pathname !== "/design-system" && !location.pathname.startsWith("/engagements/") && !location.pathname.startsWith("/clients/") && !location.pathname.startsWith("/teams/") && !location.pathname.startsWith("/settings/") && createPortal(<>
  <div 
  ref={panelRef}
  style={{ width: isTemplatesPanelCollapsed ? 0 : panelWidth }}
