@@ -101,6 +101,7 @@ export type EngagementMeta = {
   *  py2 is "nodata" when last year was the entity's First Year of Operations (no year before it). */
  priorYearSources?: { py1: YearSourceKind; py2: YearSourceKind | "nodata" };
  sourceProvider?: "xero" | "quickbooks" | "sage"; // which accounting source the engagement is linked to
+ teamRoles?: string[]; // roles on the assigned team when it was created (Settings › Roles uses it to block deleting a role in use)
 };
 
 export function getEngagementMeta(id: string): EngagementMeta {

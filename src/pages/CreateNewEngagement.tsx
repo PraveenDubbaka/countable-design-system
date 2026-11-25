@@ -761,6 +761,7 @@ export default function CreateNewEngagement() {
       yearSourceProviders: yearFields.yearSourceProviders,
       sourceYears: savedDataSource === "source" ? Math.max(1, sourceRows.length) : undefined,
       sourceProvider: savedDataSource === "source" ? rowProvider(sourceRows[0]) : undefined,
+      teamRoles: Array.from(new Set(teamMembers.map(m => m.role).filter(Boolean))),
     });
     if (isAudit && firstYearAudit) {
       toast.success("Engagement created — IE checklist and predecessor letter added.");

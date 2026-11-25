@@ -20,6 +20,9 @@ import { applyReassignments, findAssignedWork, type ReassignGroup } from "@/lib/
 import { useEngagements } from "@/store/EngagementsContext";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { getEngagementMeta } from "@/store/engagementsStore";
 import { useRoles, addRole, updateRole, moveRole, deleteRole, isRoleNameTaken, type Role } from "@/lib/rolesStore";
 import { canManageFirmSettings } from "@/lib/permissions";
 import { SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
@@ -1833,18 +1836,16 @@ type RoleForm = { id: string | null; name: string; rate: string; position: strin
 function RolesContent() {
  const roles = useRoles();
  const canEdit = canManageFirmSettings();
- const members = loadMembers();
- const memberCount = (role: Role) => {
-  const n = role.name.trim().toLowerCase();
-  return members.filter(m => m.title.trim().toLowerCase() === n || m.category.trim().toLowerCase() === n).length;
- };
+ const { engagements } = useEngagements();
+ // Roles on saved engagement teams (stored in each engagement's meta when it is created).
+ const rolesInUse = new Set(engagements.flatMap(e => getEngagementMeta(e.id).teamRoles ?? []));
+ const [deleteTarget, setDeleteTarget] = useState<Role | null>(null);
  const [form, setForm] = useState<RoleForm | null>(null);
  const [showErrors, setShowErrors] = useState(false);
  const [dragId, setDragId] = useState<string | null>(null);
  const [dropAt, setDropAt] = useState<{ id: string; side: "above" | "below" } | null>(null);
 
  const editing = form?.id ? roles.find(r => r.id === form.id) : undefined;
- const editingCount = editing ? memberCount(editing) : 0;
 
  const openAdd = () => { setShowErrors(false); setForm({ id: null, name: "", rate: "", position: String(roles.length + 1), active: true }); };
  const openEdit = (r: Role) => { setShowErrors(false); setForm({ id: r.id, name: r.name, rate: String(r.defaultRate), position: String(r.order), active: r.active }); };
@@ -1879,6 +1880,7 @@ function RolesContent() {
  const thCls = "text-left px-2.5 py-2.5 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap";
 
  return (
+  <TooltipProvider>
   <div className="space-y-5">
    <div className="flex items-start justify-between gap-4">
     <div>
@@ -1924,19 +1926,10 @@ function RolesContent() {
       </div>
      </div>
      {editing && (
-      <div className="flex items-center justify-between gap-3">
-       <label className="flex items-center gap-2 text-sm cursor-pointer">
-        <Checkbox checked={form.active} onCheckedChange={v => setForm({ ...form, active: v === true })} />
-        Active
-       </label>
-       {editingCount > 0 ? (
-        <span className="text-xs text-muted-foreground">In use by {editingCount} {editingCount === 1 ? "member" : "members"} — can be deactivated, not deleted.</span>
-       ) : (
-        <Button variant="outline" size="sm" className="gap-1.5 text-destructive" onClick={() => { deleteRole(editing.id); setForm(null); toast.success("Role deleted"); }}>
-         <Trash2 className="h-3.5 w-3.5" /> Delete role
-        </Button>
-       )}
-      </div>
+      <label className="flex items-center gap-2 text-sm cursor-pointer w-fit">
+       <Checkbox checked={form.active} onCheckedChange={v => setForm({ ...form, active: v === true })} />
+       Active
+      </label>
      )}
      <div className="flex justify-end gap-2">
       <Button variant="outline" onClick={() => setForm(null)}>Cancel</Button>
@@ -1946,16 +1939,15 @@ function RolesContent() {
    )}
 
    <div className="rounded-lg border border-border overflow-auto">
-    <table className="w-full text-sm min-w-[760px]">
+    <table className="w-full text-sm min-w-[680px]">
      <thead>
       <tr className="bg-muted">
        <th className={cn(thCls, "w-20")}>Order</th>
        <th className={thCls}>Role</th>
        <th className={thCls}>Default hourly rate ($)</th>
        <th className={cn(thCls, "text-center")}>In Add Recommended</th>
-       <th className={cn(thCls, "text-center")}>Members</th>
        <th className={thCls}>Status</th>
-       {canEdit && <th className={cn(thCls, "text-center w-16")}>Edit</th>}
+       {canEdit && <th className={cn(thCls, "text-center w-24")}>Actions</th>}
       </tr>
      </thead>
      <tbody>
@@ -1998,15 +1990,32 @@ function RolesContent() {
          <td className="px-2.5 py-2.5 text-center">
           <Checkbox checked={r.inRecommended} disabled={!canEdit} onCheckedChange={v => updateRole(r.id, { inRecommended: v === true })} aria-label={`${r.name} in Add Recommended`} />
          </td>
-         <td className={cn("px-2.5 py-2.5 text-center text-foreground", off && "opacity-50")}>{memberCount(r)}</td>
          <td className="px-2.5 py-2.5 whitespace-nowrap">
           <Badge variant={off ? "secondary" : "accepted"}>{off ? "Inactive" : "Active"}</Badge>
          </td>
          {canEdit && (
           <td className="px-2.5 py-2.5 text-center">
-           <button type="button" className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label={`Edit ${r.name}`} onClick={() => openEdit(r)}>
-            <Pencil className="h-4 w-4" />
-           </button>
+           <div className="flex items-center justify-center gap-1">
+            <button type="button" className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label={`Edit ${r.name}`} onClick={() => openEdit(r)}>
+             <Pencil className="h-4 w-4" />
+            </button>
+            {rolesInUse.has(r.name) ? (
+             <Tooltip>
+              <TooltipTrigger asChild>
+               <span tabIndex={0} className="inline-flex">
+                <button type="button" disabled className="p-1 rounded text-muted-foreground opacity-40 cursor-not-allowed" aria-label={`Delete ${r.name}`}>
+                 <Trash2 className="h-4 w-4" />
+                </button>
+               </span>
+              </TooltipTrigger>
+              <TooltipContent>In use on engagements, deactivate instead</TooltipContent>
+             </Tooltip>
+            ) : (
+             <button type="button" className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-muted transition-colors" aria-label={`Delete ${r.name}`} onClick={() => setDeleteTarget(r)}>
+              <Trash2 className="h-4 w-4" />
+             </button>
+            )}
+           </div>
           </td>
          )}
         </tr>
@@ -2016,5 +2025,18 @@ function RolesContent() {
     </table>
    </div>
   </div>
+  <AlertDialog open={!!deleteTarget} onOpenChange={o => { if (!o) setDeleteTarget(null); }}>
+   <AlertDialogContent>
+    <AlertDialogHeader>
+     <AlertDialogTitle>Delete {deleteTarget?.name}?</AlertDialogTitle>
+     <AlertDialogDescription>It will no longer be available for new engagements.</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+     <AlertDialogCancel>Cancel</AlertDialogCancel>
+     <AlertDialogAction onClick={() => { if (deleteTarget) { deleteRole(deleteTarget.id); toast.success("Role deleted"); if (form?.id === deleteTarget.id) setForm(null); } setDeleteTarget(null); }}>Delete</AlertDialogAction>
+    </AlertDialogFooter>
+   </AlertDialogContent>
+  </AlertDialog>
+  </TooltipProvider>
  );
 }
