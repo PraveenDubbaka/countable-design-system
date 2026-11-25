@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Building2, User, FileText, ChevronLeft, ChevronDown, CalendarDays, Plus, CheckCircle2, X } from "lucide-react";
+import { ArrowLeft, Building2, User, FileText, ChevronLeft, ChevronDown, CalendarDays, Plus, CheckCircle2, X, Sparkles } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,9 @@ import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { SourceConnectionModal } from "@/components/SourceConnectionModal";
+import type { AccountingProvider } from "@/lib/clientSource";
 import { loadClientGroups, saveClientGroups, loadClients, saveClients, SEED_GROUPS } from "@/data/clientsData";
 
 // Shared primitives mirrored from AddNewClient.tsx — keep in sync
@@ -609,8 +612,6 @@ const MonthDayPicker = ({
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-type EntryMode = "choose" | "manual" | "source-connecting" | "source-connected";
-
 const SOURCE_CARDS = [
   { value: "qbo", label: "QuickBooks Online" },
   { value: "xero", label: "Xero" },
@@ -632,60 +633,15 @@ const INDUSTRY_TYPES = [
   "Transportation & Logistics",
 ];
 
-// Icon-only marks cropped from the real brand assets (dropping the pre-baked
-// button chrome/wordmark) so all three "Connect to X" buttons can share one
-// consistent button shell instead of three differently-sized graphics.
-const QuickBooksIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
-    <path d="m30.77,61.54c16.99,0,30.77-13.78,30.77-30.77S47.76,0,30.77,0,0,13.78,0,30.77s13.77,30.77,30.77,30.77Z" fill="#2ca01c"/>
-    <path d="m20.51,18.8c-6.61,0-11.97,5.36-11.97,11.97s5.35,11.96,11.97,11.96h1.71v-4.44h-1.71c-4.15,0-7.52-3.37-7.52-7.52,0-4.15,3.37-7.52,7.52-7.52h4.11v23.25c0,2.45,1.99,4.44,4.44,4.44V18.8h-8.55,0Zm20.52,23.93c6.61,0,11.97-5.36,11.97-11.96s-5.35-11.96-11.97-11.96h-1.71v4.44h1.71c4.15,0,7.52,3.37,7.52,7.52s-3.37,7.52-7.52,7.52h-4.11V15.04c0-2.45-1.99-4.44-4.44-4.44v32.13h8.55s0,0,0,0Z" fill="#fff"/>
-  </svg>
-);
-
-const XeroIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="25 7 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
-    <path d="M39.5 34C46.4036 34 52 28.4036 52 21.5C52 14.5964 46.4036 9 39.5 9C32.5964 9 27 14.5964 27 21.5C27 28.4036 32.5964 34 39.5 34Z" fill="#1AB4D7"/>
-    <path d="M32.9835 21.4643L35.1168 19.3258C35.1875 19.2537 35.227 19.1583 35.227 19.0571C35.227 18.8461 35.0555 18.6748 34.8446 18.6748C34.7418 18.6748 34.6455 18.7151 34.5729 18.7886C34.5726 18.7891 32.4415 20.9189 32.4415 20.9189L30.3007 18.7854C30.2284 18.7141 30.1325 18.6748 30.0309 18.6748C29.8202 18.6748 29.6487 18.846 29.6487 19.0568C29.6487 19.1595 29.6897 19.256 29.7634 19.3287L31.8963 21.4613L29.7645 23.5971C29.6895 23.6709 29.6487 23.7676 29.6487 23.8708C29.6487 24.0817 29.8202 24.2528 30.0309 24.2528C30.1327 24.2528 30.2286 24.2133 30.3007 24.1412L32.4382 22.0065L34.5676 24.1334C34.6432 24.2115 34.7406 24.2531 34.8446 24.2531C35.0553 24.2531 35.2267 24.0817 35.2267 23.8708C35.2267 23.7691 35.1873 23.6735 35.1156 23.6014L32.9835 21.4643Z" fill="white"/>
-    <path d="M45.6653 21.4635C45.6653 21.8465 45.9767 22.158 46.3602 22.158C46.7428 22.158 47.0543 21.8465 47.0543 21.4635C47.0543 21.0804 46.7428 20.7689 46.3602 20.7689C45.9767 20.7689 45.6653 21.0804 45.6653 21.4635Z" fill="white"/>
-    <path d="M44.3481 21.464C44.3481 20.3549 45.2503 19.4525 46.3595 19.4525C47.4682 19.4525 48.3707 20.3549 48.3707 21.464C48.3707 22.5728 47.4682 23.4749 46.3595 23.4749C45.2503 23.4749 44.3481 22.5728 44.3481 21.464ZM43.5568 21.464C43.5568 23.0092 44.8141 24.2663 46.3595 24.2663C47.9049 24.2663 49.1629 23.0092 49.1629 21.464C49.1629 19.9186 47.9049 18.6611 46.3595 18.6611C44.8141 18.6611 43.5568 19.9186 43.5568 21.464Z" fill="white"/>
-    <path d="M43.3578 18.709L43.2403 18.7086C42.8872 18.7086 42.5468 18.82 42.2624 19.0391C42.2249 18.8676 42.0717 18.7386 41.8891 18.7386C41.679 18.7386 41.5106 18.907 41.5101 19.1175C41.5101 19.1183 41.5114 23.838 41.5114 23.838C41.5119 24.0482 41.6834 24.219 41.8936 24.219C42.1038 24.219 42.2752 24.0482 42.2758 23.8375C42.2758 23.8366 42.2759 20.935 42.2759 20.935C42.2759 19.9676 42.3644 19.5769 43.1931 19.4734C43.2696 19.4639 43.353 19.4653 43.3533 19.4653C43.5801 19.4576 43.7412 19.3017 43.7412 19.0912C43.7412 18.8804 43.5692 18.709 43.3578 18.709Z" fill="white"/>
-    <path d="M36.0188 21.0025C36.0188 20.9921 36.0196 20.9812 36.0201 20.9704C36.242 20.0932 37.0365 19.4441 37.9826 19.4441C38.9402 19.4441 39.7419 20.1092 39.9524 21.0025H36.0188ZM40.7351 20.9304C40.5704 20.1506 40.1435 19.51 39.4934 19.0987C38.5431 18.4953 37.2882 18.5287 36.3703 19.1815C35.6216 19.7141 35.1894 20.5854 35.1894 21.483C35.1894 21.7081 35.2165 21.9352 35.273 22.1588C35.5557 23.271 36.5118 24.1129 37.6517 24.2524C37.99 24.2934 38.3192 24.2738 38.6601 24.1855C38.9531 24.1142 39.2366 23.9954 39.4978 23.828C39.7689 23.6537 39.9954 23.4239 40.2147 23.1488C40.2192 23.1438 40.2236 23.1393 40.2281 23.134C40.3803 22.9452 40.3521 22.6766 40.1848 22.5485C40.0437 22.4403 39.8068 22.3965 39.6204 22.6352C39.5803 22.6923 39.5356 22.751 39.4864 22.8097C39.3382 22.9735 39.1543 23.1322 38.934 23.2552C38.6536 23.405 38.3341 23.4906 37.9945 23.4925C36.8827 23.4801 36.2878 22.7041 36.0762 22.1502C36.0393 22.0468 36.0108 21.9395 35.9909 21.829C35.9883 21.8083 35.9864 21.7884 35.9856 21.77C36.2155 21.77 39.9752 21.7694 39.9752 21.7694C40.5221 21.7579 40.8165 21.3718 40.7351 20.9304Z" fill="white"/>
-  </svg>
-);
-
-const SageIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
-    <rect width="32" height="32" rx="7" fill="#000000" />
-    <text x="16" y="22.5" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif" fontWeight="700" fontSize="19" fill="#ffffff">S</text>
-  </svg>
-);
-
-function ConnectSourceButton({
-  icon,
-  label,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="h-11 w-full rounded-lg border border-border bg-[#F4F4F4] hover:bg-muted text-sm font-semibold text-foreground transition-colors flex items-center justify-center gap-2"
-    >
-      <span className="w-6 h-6 shrink-0">{icon}</span>
-      {label}
-    </button>
-  );
-}
-
 export default function AddNewClientV2() {
   const navigate = useNavigate();
 
   // ── Flow state ──────────────────────────────────────────────────────────────
-  const [entryMode, setEntryMode] = useState<EntryMode>("choose");
+  const [entryOption, setEntryOption] = useState<"manual" | "integration">("manual");
+  const [fetching, setFetching] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [selectedSource, setSelectedSource] = useState<string>("");
   const [showPrefillBanner, setShowPrefillBanner] = useState(false);
 
@@ -761,12 +717,40 @@ export default function AddNewClientV2() {
     toast.success(`Client information imported from ${sourceName}`);
   };
 
+  // "Fetching client information…" after the connect modal, then the prefill
   useEffect(() => {
-    if (entryMode !== "source-connecting") return;
-    const t1 = setTimeout(() => { applySourcePrefill(); }, 2000);
-    const t2 = setTimeout(() => { setEntryMode("manual"); }, 2500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [entryMode]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!fetching) return;
+    const t = setTimeout(() => { applySourcePrefill(); setFetching(false); }, 2000);
+    return () => clearTimeout(t);
+  }, [fetching]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const PROVIDER_TO_SOURCE: Record<AccountingProvider, string> = { quickbooks: "qbo", xero: "xero", sage: "sage" };
+  const handleConnected = (provider: AccountingProvider) => {
+    setSelectedSource(PROVIDER_TO_SOURCE[provider]);
+    setEntryOption("integration");
+    setFetching(true);
+  };
+
+  const isDirty =
+    !!(clientId || legalEntityName || entityType || subCorpType || showDba || dbaName || groupName || engagementPartner ||
+      firstName || lastName || email || businessPhone || cellPhone || addressLine1 || city || province || postalCode || website ||
+      gstRegistered || industryType || hasQuebecPersonalInfo || isUsTaxpayer || fiscalYearEnd || incorporationDate || businessNumber ||
+      showPrefillBanner || selectedSource) || country !== "ca";
+
+  const resetForm = () => {
+    setClientId(""); setCountry("ca"); setEntityType(""); setSubCorpType(""); setShowDba(false); setDbaName(""); setDbaDisplay("legal-only");
+    setEngagementPartner(""); setLegalEntityName(""); setFirstName(""); setLastName(""); setEmail("");
+    setBusinessPhone(""); setCellPhone(""); setAddressLine1(""); setCity(""); setProvince(""); setPostalCode(""); setWebsite("");
+    setGstRegistered(""); setIndustryType(""); setHasQuebecPersonalInfo(false); setIsUsTaxpayer(false);
+    setFiscalYearEnd(""); setIncorporationDate(""); setBusinessNumber(""); setGroupName(""); setNewGroupInput("");
+    setShowPrefillBanner(false); setSelectedSource(""); setFetching(false);
+    setEntryOption("manual");
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const handleAddManually = () => {
+    if (isDirty) { setShowClearConfirm(true); return; }
+    resetForm();
+  };
 
   const handleAdd = (mode: "add" | "invite") => {
     const resolvedGroup = groupName === "__new__" ? newGroupInput.trim() : groupName;
@@ -804,16 +788,7 @@ export default function AddNewClientV2() {
     navigate("/clients");
   };
 
-  // Header back action varies by screen
-  const handleHeaderBack = () => {
-    if (entryMode === "choose") { navigate("/clients"); return; }
-    if (entryMode === "source-connecting") { setEntryMode("choose"); return; }
-    if (entryMode === "manual") {
-      if (legalEntityName) { setEntryMode("choose"); } else { navigate("/clients"); }
-    }
-  };
-
-  const addDisabled = entryMode === "choose" || entryMode === "source-connecting";
+  const addDisabled = fetching;
 
   return (
     <Layout title="Add New Client">
@@ -822,7 +797,7 @@ export default function AddNewClientV2() {
         {/* Sticky header bar */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 border-b border-border/60">
           <button
-            onClick={handleHeaderBack}
+            onClick={() => navigate("/clients")}
             className="flex items-center gap-2 text-link font-medium text-sm hover:underline"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -860,75 +835,57 @@ export default function AddNewClientV2() {
           </div>
         </div>
 
-        {/* ── SCREEN: choose ─────────────────────────────────────────────────── */}
-        {entryMode === "choose" && (
-          <div className="flex-1 flex items-center justify-center px-6">
-            <div className="max-w-3xl w-full">
-              <h2 className="text-lg font-semibold text-foreground mb-8">Import via integration</h2>
-              <div className="flex gap-10 items-stretch">
-                {/* Connect integration */}
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground mb-1">Select client accounting source</p>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    We'll connect to your client's accounting software and import their information.
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    <ConnectSourceButton
-                      icon={<QuickBooksIcon className="w-full h-full" />}
-                      label="Connect to QuickBooks"
-                      onClick={() => { setSelectedSource("qbo"); setEntryMode("source-connecting"); }}
-                    />
-                    <ConnectSourceButton
-                      icon={<XeroIcon className="w-full h-full" />}
-                      label="Connect to Xero"
-                      onClick={() => { setSelectedSource("xero"); setEntryMode("source-connecting"); }}
-                    />
-                    <ConnectSourceButton
-                      icon={<SageIcon className="w-full h-full" />}
-                      label="Connect to Sage"
-                      onClick={() => { setSelectedSource("sage"); setEntryMode("source-connecting"); }}
-                    />
-                  </div>
-                </div>
+        <div ref={scrollRef} className="flex-1 overflow-auto px-6 pb-8 pt-4 space-y-4">
 
-                {/* Divider */}
-                <div className="w-px bg-border" />
-
-                {/* Manual fallback */}
-                <div className="flex-1 flex flex-col justify-center">
-                  <p className="text-sm font-semibold text-foreground mb-4">
-                    Fill in client details yourself using the form.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setEntryMode("manual")}
-                    className="self-start h-11 px-4 rounded-lg border border-border bg-card hover:bg-muted/40 text-sm font-semibold text-foreground transition-colors flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Manually
-                  </button>
+            {/* How to start */}
+            <div className="grid grid-cols-3 gap-3">
+              <button type="button" role="radio" aria-checked={entryOption === "manual"} onClick={handleAddManually}
+                className={`flex flex-col gap-1 rounded-[10px] border px-4 py-3 text-left transition-colors ${entryOption === "manual" ? "border-[#1C63A6] bg-[#1C63A6]/5" : "border-border bg-card hover:bg-muted/40"}`}>
+                <span className="flex items-center gap-2">
+                  <span className={`h-4 w-4 shrink-0 rounded-full border flex items-center justify-center ${entryOption === "manual" ? "border-[#1C63A6]" : "border-[#C3CBD6]"}`}>
+                    {entryOption === "manual" && <span className="h-2 w-2 rounded-full bg-[#1C63A6]" />}
+                  </span>
+                  <span className="text-sm font-semibold text-foreground">Add manually</span>
+                </span>
+                <span className="text-xs text-muted-foreground pl-6">Fill in the client profile below</span>
+              </button>
+              <button type="button" role="radio" aria-checked={entryOption === "integration"} onClick={() => setShowConnectModal(true)}
+                className={`flex flex-col gap-1 rounded-[10px] border px-4 py-3 text-left transition-colors ${entryOption === "integration" ? "border-[#1C63A6] bg-[#1C63A6]/5" : "border-border bg-card hover:bg-muted/40"}`}>
+                <span className="flex items-center gap-2">
+                  <span className={`h-4 w-4 shrink-0 rounded-full border flex items-center justify-center ${entryOption === "integration" ? "border-[#1C63A6]" : "border-[#C3CBD6]"}`}>
+                    {entryOption === "integration" && <span className="h-2 w-2 rounded-full bg-[#1C63A6]" />}
+                  </span>
+                  <span className="text-sm font-semibold text-foreground">Import via integration</span>
+                </span>
+                <span className="text-xs text-muted-foreground pl-6">QuickBooks Online, Xero or Sage</span>
+              </button>
+              <div
+                className="flex items-center justify-between gap-3 rounded-[10px] border-2 border-dashed border-[#8649F1]/50 bg-[#8649F1]/[0.03] px-4 py-3"
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => { e.preventDefault(); toast.info("Luka will fill the profile from your files"); }}
+              >
+                <div className="min-w-0">
+                  <p className="flex items-center gap-2 text-sm font-semibold text-foreground"><Sparkles className="h-4 w-4 text-[#8649F1]" />Let Luka fill this in</p>
+                  <p className="text-xs text-muted-foreground">Drop last year's financial statements, T2 or articles</p>
                 </div>
+                <button type="button" onClick={() => toast.info("Luka will fill the profile from your files")}
+                  className="shrink-0 h-9 px-3 rounded-lg border border-[#8649F1]/50 bg-card hover:bg-[#8649F1]/5 text-sm font-semibold text-[#8649F1] transition-colors">
+                  Drop files here
+                </button>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* ── SCREEN: source-connecting ───────────────────────────────────────── */}
-        {(entryMode === "source-connecting" || entryMode === "source-connected") && (
-          <div className="flex-1 flex items-center justify-center px-6">
-            <div className="text-center">
-              <div className="animate-spin h-8 w-8 text-primary border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-base font-semibold text-foreground mb-1">
-                Connecting to {SOURCE_CARDS.find(s => s.value === selectedSource)?.label ?? selectedSource}...
-              </p>
-              <p className="text-sm text-muted-foreground">Fetching client information. This will only take a moment.</p>
-            </div>
-          </div>
-        )}
+            {fetching && (
+              <div className="flex items-center justify-center py-16">
+                <div className="text-center">
+                  <div className="animate-spin h-8 w-8 text-primary border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                  <p className="text-base font-semibold text-foreground mb-1">Fetching client information…</p>
+                  <p className="text-sm text-muted-foreground">This will only take a moment.</p>
+                </div>
+              </div>
+            )}
 
-        {/* ── SCREEN: manual (form) ───────────────────────────────────────────── */}
-        {entryMode === "manual" && (
-          <div className="flex-1 overflow-auto px-6 pb-8 pt-4 space-y-4">
+            {!fetching && (<>
 
             {/* Prefill banner */}
             {showPrefillBanner && (
@@ -1261,8 +1218,28 @@ export default function AddNewClientV2() {
               </div>
             )}
 
+            </>)}
           </div>
-        )}
+
+        <SourceConnectionModal
+          open={showConnectModal}
+          onOpenChange={setShowConnectModal}
+          clientName={legalEntityName.trim() || "New client"}
+          persist={false}
+          onConnected={handleConnected}
+        />
+        <AlertDialog open={showClearConfirm} onOpenChange={setShowClearConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Clear the form and start again?</AlertDialogTitle>
+              <AlertDialogDescription>Everything you entered will be removed.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => { setShowClearConfirm(false); resetForm(); }}>Clear form</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
       </div>
     </Layout>
