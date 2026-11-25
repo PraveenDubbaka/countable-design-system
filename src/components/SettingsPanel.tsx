@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { ArrowLeft, X, Zap, Bell, Shield, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2, Search, AlignLeft, AlignCenter, AlignRight, CircleUser, Signature, ShieldCheck, PanelLeft, Layers, UserMinus, UserPlus } from "lucide-react";
+import { ArrowLeft, X, Zap, Bell, Shield, ChevronDown, ChevronUp, Sparkles, CheckSquare, Database, CircleHelp, MessageSquare, FileOutput, RotateCcw, Check, Info, Clock, Pencil, Trash2, Plus, Upload, Building2, Search, AlignLeft, AlignCenter, AlignRight, CircleUser, Signature, ShieldCheck, PanelLeft, Layers, UserMinus, UserPlus, UserCog, GripVertical } from "lucide-react";
 import { getEnabled, setEnabled, subscribeEnabled } from "@/lib/timeTrackerStore";
 import { toast } from "sonner";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
@@ -19,6 +19,9 @@ import { loadMembers, type TeamMemberRow } from "@/data/teamMembersData";
 import { applyReassignments, findAssignedWork, type ReassignGroup } from "@/lib/teamAssignments";
 import { useEngagements } from "@/store/EngagementsContext";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useRoles, addRole, updateRole, moveRole, deleteRole, isRoleNameTaken, type Role } from "@/lib/rolesStore";
+import { canManageFirmSettings } from "@/lib/permissions";
 import { SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
 // ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
@@ -102,6 +105,7 @@ const settingsNavItems = [
  { id: "luka", label: "Luka", icon: Zap },
  { id: "notifications", label: "Notifications", icon: Bell },
  { id: "user-access", label: "User & Access", icon: Shield },
+ { id: "roles", label: "Roles", icon: UserCog },
  { id: "privacy", label: "Privacy & Security", icon: ShieldCheck },
  { id: "export", label: "Export Data", icon: FileOutput },
  { id: "time-tracking", label: "Time Tracking", icon: Clock },
@@ -191,6 +195,7 @@ export function SettingsPanel({ open, onOpenChange, firmNav }: SettingsPanelProp
  {activeSection === "luka" && <LukaContent />}
  {activeSection === "notifications" && <NotificationsContent />}
  {activeSection === "user-access" && <UserAccessContent onClose={() => onOpenChange(false)} />}
+ {activeSection === "roles" && <RolesContent />}
  {activeSection === "privacy" && <PlaceholderContent title="Privacy & Security" />}
  {activeSection === "export" && <PlaceholderContent title="Export Data" />}
  {activeSection === "time-tracking" && <TimeTrackingContent />}
@@ -1817,5 +1822,199 @@ function TimeTrackingContent() {
  ))}
  </div>
  </div>
+ );
+}
+
+
+// ── Roles ────────────────────────────────────────────────────────────────────
+
+type RoleForm = { id: string | null; name: string; rate: string; position: string; active: boolean };
+
+function RolesContent() {
+ const roles = useRoles();
+ const canEdit = canManageFirmSettings();
+ const members = loadMembers();
+ const memberCount = (role: Role) => {
+  const n = role.name.trim().toLowerCase();
+  return members.filter(m => m.title.trim().toLowerCase() === n || m.category.trim().toLowerCase() === n).length;
+ };
+ const [form, setForm] = useState<RoleForm | null>(null);
+ const [showErrors, setShowErrors] = useState(false);
+ const [dragId, setDragId] = useState<string | null>(null);
+ const [dropAt, setDropAt] = useState<{ id: string; side: "above" | "below" } | null>(null);
+
+ const editing = form?.id ? roles.find(r => r.id === form.id) : undefined;
+ const editingCount = editing ? memberCount(editing) : 0;
+
+ const openAdd = () => { setShowErrors(false); setForm({ id: null, name: "", rate: "", position: String(roles.length + 1), active: true }); };
+ const openEdit = (r: Role) => { setShowErrors(false); setForm({ id: r.id, name: r.name, rate: String(r.defaultRate), position: String(r.order), active: r.active }); };
+
+ const nameError = !form ? "" : !form.name.trim() ? "Required" : isRoleNameTaken(form.name, form.id ?? undefined) ? "A role with this name already exists" : "";
+ const rateNum = form ? Number(form.rate) : NaN;
+ const rateError = !form ? "" : form.rate.trim() === "" ? "Required" : !Number.isFinite(rateNum) || rateNum < 0 ? "Enter a valid rate" : "";
+
+ const save = () => {
+  if (!form) return;
+  setShowErrors(true);
+  if (nameError || rateError) return;
+  const position = Number(form.position);
+  if (form.id) { updateRole(form.id, { name: form.name, defaultRate: rateNum, active: form.active }, position); toast.success("Role updated"); }
+  else { addRole({ name: form.name, defaultRate: rateNum, position }); toast.success("Role added"); }
+  setForm(null);
+ };
+
+ const onDropRow = () => {
+  if (dragId && dropAt && dragId !== dropAt.id) {
+   const target = roles.find(r => r.id === dropAt.id);
+   const from = roles.find(r => r.id === dragId);
+   if (target && from) {
+    let pos = dropAt.side === "above" ? target.order : target.order + 1;
+    if (from.order < pos) pos -= 1;
+    moveRole(dragId, pos);
+   }
+  }
+  setDragId(null); setDropAt(null);
+ };
+
+ const thCls = "text-left px-2.5 py-2.5 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap";
+
+ return (
+  <div className="space-y-5">
+   <div className="flex items-start justify-between gap-4">
+    <div>
+     <div className="flex items-center gap-2">
+      <h3 className="font-semibold text-lg">Roles</h3>
+      <Badge variant="secondary">Super admin only</Badge>
+     </div>
+     <p className="text-sm text-muted-foreground mt-1">Roles available when assigning engagement teams. The order here is the order Add Recommended uses.</p>
+    </div>
+    {canEdit && (
+     <Button className="h-9 gap-1.5 shrink-0" onClick={openAdd} disabled={!!form && form.id === null}>
+      <Plus className="h-4 w-4" /> Add role
+     </Button>
+    )}
+   </div>
+
+   {!canEdit && <p className="text-sm text-muted-foreground">Only super admins can change roles.</p>}
+
+   {canEdit && form && (
+    <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-4">
+     <p className="text-sm font-medium text-foreground">{form.id ? "Edit role" : "Add role"}</p>
+     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="space-y-1.5">
+       <Label className="text-xs">Role name</Label>
+       <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. Associate" className={cn(showErrors && nameError && "!border-destructive")} />
+       {showErrors && nameError && <p className="text-xs text-destructive">{nameError}</p>}
+      </div>
+      <div className="space-y-1.5">
+       <Label className="text-xs">Default hourly rate ($)</Label>
+       <Input inputMode="decimal" value={form.rate} onChange={e => setForm({ ...form, rate: e.target.value })} placeholder="0.00" className={cn(showErrors && rateError && "!border-destructive")} />
+       {showErrors && rateError && <p className="text-xs text-destructive">{rateError}</p>}
+      </div>
+      <div className="space-y-1.5">
+       <Label className="text-xs">Position</Label>
+       <Select value={form.position} onValueChange={v => setForm({ ...form, position: v })}>
+        <SelectTrigger><SelectValue /></SelectTrigger>
+        <SelectContent>
+         {Array.from({ length: roles.length + (form.id ? 0 : 1) }, (_, i) => i + 1).map(n => (
+          <SelectItem key={n} value={String(n)}>{n}{!form.id && n === roles.length + 1 ? " (last)" : ""}</SelectItem>
+         ))}
+        </SelectContent>
+       </Select>
+      </div>
+     </div>
+     {editing && (
+      <div className="flex items-center justify-between gap-3">
+       <label className="flex items-center gap-2 text-sm cursor-pointer">
+        <Checkbox checked={form.active} onCheckedChange={v => setForm({ ...form, active: v === true })} />
+        Active
+       </label>
+       {editingCount > 0 ? (
+        <span className="text-xs text-muted-foreground">In use by {editingCount} {editingCount === 1 ? "member" : "members"} — can be deactivated, not deleted.</span>
+       ) : (
+        <Button variant="outline" size="sm" className="gap-1.5 text-destructive" onClick={() => { deleteRole(editing.id); setForm(null); toast.success("Role deleted"); }}>
+         <Trash2 className="h-3.5 w-3.5" /> Delete role
+        </Button>
+       )}
+      </div>
+     )}
+     <div className="flex justify-end gap-2">
+      <Button variant="outline" onClick={() => setForm(null)}>Cancel</Button>
+      <Button onClick={save}>{form.id ? "Save" : "Add role"}</Button>
+     </div>
+    </div>
+   )}
+
+   <div className="rounded-lg border border-border overflow-auto">
+    <table className="w-full text-sm min-w-[760px]">
+     <thead>
+      <tr className="bg-muted">
+       <th className={cn(thCls, "w-20")}>Order</th>
+       <th className={thCls}>Role</th>
+       <th className={thCls}>Default hourly rate ($)</th>
+       <th className={cn(thCls, "text-center")}>In Add Recommended</th>
+       <th className={cn(thCls, "text-center")}>Members</th>
+       <th className={thCls}>Status</th>
+       {canEdit && <th className={cn(thCls, "text-center w-16")}>Edit</th>}
+      </tr>
+     </thead>
+     <tbody>
+      {roles.map(r => {
+       const off = !r.active;
+       const above = dropAt?.id === r.id && dropAt.side === "above" && dragId !== r.id;
+       const below = dropAt?.id === r.id && dropAt.side === "below" && dragId !== r.id;
+       return (
+        <tr
+         key={r.id}
+         onDragOver={e => {
+          if (!dragId) return;
+          e.preventDefault();
+          const rect = e.currentTarget.getBoundingClientRect();
+          const side = e.clientY < rect.top + rect.height / 2 ? "above" : "below";
+          if (dropAt?.id !== r.id || dropAt.side !== side) setDropAt({ id: r.id, side });
+         }}
+         onDrop={e => { e.preventDefault(); onDropRow(); }}
+         className={cn("border-t border-border hover:bg-muted/10 transition-colors", dragId === r.id && "opacity-50")}
+         style={above ? { boxShadow: "inset 0 2px 0 hsl(var(--primary))" } : below ? { boxShadow: "inset 0 -2px 0 hsl(var(--primary))" } : undefined}
+        >
+         <td className="px-2.5 py-2.5 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+           {canEdit ? (
+            <span
+             draggable
+             onDragStart={e => { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", r.id); setDragId(r.id); }}
+             onDragEnd={() => { setDragId(null); setDropAt(null); }}
+             className="cursor-grab active:cursor-grabbing"
+             aria-label={`Drag to reorder ${r.name}`}
+            >
+             <GripVertical className="h-4 w-4" />
+            </span>
+           ) : <span className="w-4" />}
+           <span className="text-foreground">{r.order}</span>
+          </div>
+         </td>
+         <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{r.name}</td>
+         <td className={cn("px-2.5 py-2.5 whitespace-nowrap text-foreground", off && "opacity-50")}>{r.defaultRate.toFixed(2)}</td>
+         <td className="px-2.5 py-2.5 text-center">
+          <Checkbox checked={r.inRecommended} disabled={!canEdit} onCheckedChange={v => updateRole(r.id, { inRecommended: v === true })} aria-label={`${r.name} in Add Recommended`} />
+         </td>
+         <td className={cn("px-2.5 py-2.5 text-center text-foreground", off && "opacity-50")}>{memberCount(r)}</td>
+         <td className="px-2.5 py-2.5 whitespace-nowrap">
+          <Badge variant={off ? "secondary" : "accepted"}>{off ? "Inactive" : "Active"}</Badge>
+         </td>
+         {canEdit && (
+          <td className="px-2.5 py-2.5 text-center">
+           <button type="button" className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label={`Edit ${r.name}`} onClick={() => openEdit(r)}>
+            <Pencil className="h-4 w-4" />
+           </button>
+          </td>
+         )}
+        </tr>
+       );
+      })}
+     </tbody>
+    </table>
+   </div>
+  </div>
  );
 }
