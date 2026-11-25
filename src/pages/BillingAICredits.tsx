@@ -367,6 +367,9 @@ export default function BillingAICredits() {
 
   return (
     <Layout title="Billing">
+      {/* Teams pattern: fixed-height root, inner scroller. `relative` gives sr-only (absolute) descendants a containing block inside the scroller so they cannot extend the window. */}
+      <div className="relative flex h-full overflow-hidden bg-background">
+      <div className="flex-1 min-w-0 overflow-y-auto">
       <div className="flex flex-col gap-5 p-6 text-[14px]">
         {/* Tab pills (static) */}
         <div className="flex items-center gap-1 bg-card rounded-lg border border-border p-1 self-start">
@@ -714,6 +717,8 @@ export default function BillingAICredits() {
             </table>
           </StyledCard>
         </div>
+      </div>
+      </div>
       </div>
 
       <EditLimitsDialog
