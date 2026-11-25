@@ -76,7 +76,7 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
                 </Button>
               ))}
             </div>
-            {justDisconnected && <div className="mt-5 flex items-start gap-2 rounded-[10px] border border-connection-warning/30 bg-connection-warning-surface p-3 text-connection-warning">
+            {persist && justDisconnected && <div className="mt-5 flex items-start gap-2 rounded-[10px] border border-connection-warning/30 bg-connection-warning-surface p-3 text-connection-warning">
               <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
               <p className="text-sm">Please go to Edit Engagement and change the data source for your engagements.</p>
             </div>}
@@ -101,7 +101,7 @@ export function SourceConnectionModal({ open, onOpenChange, clientName, connecti
                 onComplete?.();
               }}>Disconnect from {platform.name}</Button>
             </div>
-            {<div className="mt-5 flex items-start gap-2 rounded-[10px] border border-connection-warning/30 bg-connection-warning-surface p-3 text-connection-warning">
+            {persist && <div className="mt-5 flex items-start gap-2 rounded-[10px] border border-connection-warning/30 bg-connection-warning-surface p-3 text-connection-warning">
               <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
               <p className="text-sm">Please go to Edit Engagement and change the data source for your engagements.</p>
             </div>}
