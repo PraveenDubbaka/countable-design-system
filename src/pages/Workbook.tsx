@@ -17,6 +17,8 @@ import {
  FolderOpen,
  Check,
  X,
+ PanelLeft,
+ PanelRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +53,7 @@ import { loadParticipants, type Participant } from "@/store/participantsStore";
 import { loadPWWorksheet } from "@/store/partnershipWorksheetStore";
 import { getEntityLabels, type EntityKind, type EntityLabels } from "@/lib/entityLabels";
 import { buildCapitalStatement, toPublicEntities, type CapitalStatementData, type PublicCapitalEntity } from "@/lib/capitalStatement";
+import "@/styles/workbook.css";
 
 export type { Row, Group };
 
@@ -163,8 +166,8 @@ function StatementSectionRows({
 }) {
  return (
  <>
- <tr className="bg-muted/40 border-t border-border">
- <td colSpan={6} className="px-3 py-2 font-semibold text-sm text-foreground">{sec.label}</td>
+ <tr className="wb-group-header">
+ <td colSpan={6} style={{ padding: "8px 10px", fontWeight: 600 }}>{sec.label}</td>
  </tr>
  {sec.lines.map(line => {
  const expanded = expandedLines.has(line.id);
@@ -172,61 +175,57 @@ function StatementSectionRows({
  const leafGroup = GROUPS.find(g => g.id === line.id);
  return (
  <Fragment key={line.id}>
- <tr className="border-t border-border/60">
- <td className="px-3 py-2">
- <div className="flex items-center gap-2 font-medium text-foreground">
- <button onClick={() => toggleLine(line.id)} className="flex items-center gap-2" type="button">
- {expanded ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
- <input type="checkbox" className="h-3.5 w-3.5 rounded border-border accent-primary" onClick={e => e.stopPropagation()} />
+ <tr>
+ <td>
+ <div className="wb-row-inner" style={{ fontWeight: 500 }}>
+ <button onClick={() => toggleLine(line.id)} className="wb-row-inner" style={{ border: "none", background: "transparent", cursor: "pointer", padding: 0, color: "inherit", font: "inherit" }} type="button">
+ {expanded ? <ChevronDown className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} /> : <ChevronRight className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />}
+ <input type="checkbox" onClick={e => e.stopPropagation()} />
  {line.label}
  </button>
  {linkedSchedule ? (
- <span className="text-xs font-semibold text-primary">({linkedSchedule.name.replace(/^Schedule (\d+).*/, "Schedule $1")})</span>
+ <span className="wb-badge-schedule">{linkedSchedule.name.replace(/^Schedule (\d+).*/, "Schedule $1")}</span>
  ) : (
- <button
- onClick={() => onAddSchedule(line)}
- className="text-xs font-medium text-primary border border-primary/30 bg-primary/5 rounded-full px-2 py-0.5 hover:bg-primary/10"
- type="button"
- >
+ <button onClick={() => onAddSchedule(line)} className="wb-ghost-schedule" type="button" style={{ border: "1px solid var(--wb-border)" }}>
  + Schedule
  </button>
  )}
  </div>
  </td>
- <td className="px-3 py-2 text-primary font-medium">{line.ls}</td>
- <td className="px-3 py-2 text-muted-foreground">{line.mapNo || "—"}</td>
- <td className="px-3 py-2 text-center">
- <Plus className="h-3.5 w-3.5 text-muted-foreground inline-block" />
+ <td><a className="wb-map-link">{line.ls}</a></td>
+ <td style={{ color: "var(--wb-text-3)" }}>{line.mapNo || "—"}</td>
+ <td style={{ textAlign: "center" }}>
+ <Plus className="h-3.5 w-3.5 inline-block" style={{ color: "var(--wb-text-3)" }} />
  </td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(line.cy)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{formatAmt(line.py)}</td>
+ <td className="wb-num">{formatAmt(line.cy)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-2)" }}>{formatAmt(line.py)}</td>
  </tr>
  {expanded && leafGroup?.rows.map(r => (
- <tr key={r.id} className="border-t border-border/30 text-muted-foreground">
- <td className="px-3 py-1.5 pl-10">{r.description}</td>
- <td className="px-3 py-1.5">{r.ls}</td>
- <td className="px-3 py-1.5">{r.mapNo || "—"}</td>
+ <tr key={r.id} style={{ color: "var(--wb-text-2)" }}>
+ <td className="wb-indent-2">{r.description}</td>
+ <td>{r.ls}</td>
+ <td>{r.mapNo || "—"}</td>
  <td />
- <td className="px-3 py-1.5 text-right tabular-nums">{formatAmt(r.final)}</td>
- <td className="px-3 py-1.5 text-right tabular-nums">{formatAmt(r.py1)}</td>
+ <td className="wb-num">{formatAmt(r.final)}</td>
+ <td className="wb-num">{formatAmt(r.py1)}</td>
  </tr>
  ))}
  {expanded && (
- <tr className="text-foreground font-medium">
- <td className="px-3 py-1.5 pl-10">Total {line.label}</td>
+ <tr style={{ fontWeight: 500 }}>
+ <td className="wb-indent-2">Total {line.label}</td>
  <td colSpan={3} />
- <td className="px-3 py-1.5 text-right tabular-nums">{formatAmt(line.cy)}</td>
- <td className="px-3 py-1.5 text-right tabular-nums">{formatAmt(line.py)}</td>
+ <td className="wb-num">{formatAmt(line.cy)}</td>
+ <td className="wb-num">{formatAmt(line.py)}</td>
  </tr>
  )}
  </Fragment>
  );
  })}
- <tr className="border-t-2 border-border bg-muted/30 font-semibold">
- <td className="px-3 py-2">Total {sec.label}</td>
+ <tr className="wb-total-row">
+ <td>Total {sec.label}</td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(sec.cyTotal)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(sec.pyTotal)}</td>
+ <td className="wb-num">{formatAmt(sec.cyTotal)}</td>
+ <td className="wb-num">{formatAmt(sec.pyTotal)}</td>
  </tr>
  </>
  );
@@ -234,21 +233,19 @@ function StatementSectionRows({
 
 function GroupingTableShell({ children }: { children: React.ReactNode }) {
  return (
- <div className="rounded-lg border border-border bg-card overflow-hidden">
- <table className="w-full text-sm">
+ <table className="wb-data-table">
  <thead>
- <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-muted-foreground">
- <th className="px-3 py-3 text-left">Group Name</th>
- <th className="px-3 py-3 text-left w-16">LS</th>
- <th className="px-3 py-3 text-left w-24">Map No.</th>
- <th className="px-3 py-3 text-center w-28">Notes to FS</th>
- <th className="px-3 py-3 text-right w-32">Current Year</th>
- <th className="px-3 py-3 text-right w-32">Prior Year</th>
+ <tr>
+ <th>Group Name</th>
+ <th style={{ width: 64 }}>LS</th>
+ <th style={{ width: 96 }}>Map No.</th>
+ <th className="wb-num" style={{ width: 112, textAlign: "center" }}>Notes to FS</th>
+ <th className="wb-num" style={{ width: 128 }}>Current Year</th>
+ <th className="wb-num" style={{ width: 128 }}>Prior Year</th>
  </tr>
  </thead>
  <tbody>{children}</tbody>
  </table>
- </div>
  );
 }
 
@@ -263,28 +260,28 @@ function BalanceSheetCentre({ bs, expandedLines, toggleLine, onAddSchedule, sche
  const rowProps = { expandedLines, toggleLine, onAddSchedule, scheduleByGroupId };
  return (
  <GroupingTableShell>
- <tr className="bg-muted/60"><td colSpan={6} className="px-3 py-2 font-bold text-foreground">Assets</td></tr>
+ <tr className="wb-group-header"><td colSpan={6} style={{ fontWeight: 700 }}>Assets</td></tr>
  <StatementSectionRows sec={bs.currentAssets} {...rowProps} />
  <StatementSectionRows sec={bs.longTermAssets} {...rowProps} />
- <tr className="bg-muted/60 font-bold">
- <td className="px-3 py-2">Total Assets</td><td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(bs.totalAssetsCy)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(bs.totalAssetsPy)}</td>
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Total Assets</td><td colSpan={3} />
+ <td className="wb-num">{formatAmt(bs.totalAssetsCy)}</td>
+ <td className="wb-num">{formatAmt(bs.totalAssetsPy)}</td>
  </tr>
- <tr className="bg-muted/60"><td colSpan={6} className="px-3 py-2 font-bold text-foreground">Liabilities</td></tr>
+ <tr className="wb-group-header"><td colSpan={6} style={{ fontWeight: 700 }}>Liabilities</td></tr>
  <StatementSectionRows sec={bs.currentLiabilities} {...rowProps} />
  <StatementSectionRows sec={bs.longTermLiabilities} {...rowProps} />
- <tr className="bg-muted/60 font-bold">
- <td className="px-3 py-2">Total Liabilities</td><td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(bs.totalLiabilitiesCy)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(bs.totalLiabilitiesPy)}</td>
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Total Liabilities</td><td colSpan={3} />
+ <td className="wb-num">{formatAmt(bs.totalLiabilitiesCy)}</td>
+ <td className="wb-num">{formatAmt(bs.totalLiabilitiesPy)}</td>
  </tr>
- <tr className="bg-muted/60"><td colSpan={6} className="px-3 py-2 font-bold text-foreground">Equity</td></tr>
+ <tr className="wb-group-header"><td colSpan={6} style={{ fontWeight: 700 }}>Equity</td></tr>
  <StatementSectionRows sec={bs.equity} {...rowProps} />
- <tr className="bg-muted/60 font-bold">
- <td className="px-3 py-2">Total Liabilities and Equity</td><td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(bs.totalLiabEquityCy)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(bs.totalLiabEquityPy)}</td>
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Total Liabilities and Equity</td><td colSpan={3} />
+ <td className="wb-num">{formatAmt(bs.totalLiabEquityCy)}</td>
+ <td className="wb-num">{formatAmt(bs.totalLiabEquityPy)}</td>
  </tr>
  </GroupingTableShell>
  );
@@ -298,56 +295,57 @@ function BalanceSheetPreview({ bs, client, yearEnd, scheduleByGroupId }: {
  return sch ? `${l.label} (${sch.name.replace(/^Schedule (\d+).*/, "Schedule $1")})` : l.label;
  };
  const row = (l: StatementLine) => (
- <div key={l.id} className="flex justify-between py-0.5 pl-4 text-[13px]">
- <span className="italic text-foreground">{lineLabel(l)}</span>
- <span className="flex gap-10 tabular-nums">
- <span className="w-20 text-right">{formatAmt(l.cy)}</span>
- <span className="w-20 text-right text-muted-foreground">{formatAmt(l.py)}</span>
+ <div key={l.id} className="wb-preview-row wb-indent" style={{ fontStyle: "italic" }}>
+ <span>{lineLabel(l)}</span>
+ <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
+ <span style={{ width: 80, textAlign: "right" }}>{formatAmt(l.cy)}</span>
+ <span style={{ width: 80, textAlign: "right", color: "var(--wb-text-2)" }}>{formatAmt(l.py)}</span>
  </span>
  </div>
  );
  const subtotal = (label: string, cy: number, py: number, bold = false) => (
- <div className={cn("flex justify-between py-1 border-t border-border/50 text-[13px]", bold && "font-bold")}>
+ <div className={cn("wb-preview-row wb-subtotal", bold && "wb-total")}>
  <span>{label}</span>
- <span className="flex gap-10 tabular-nums">
- <span className="w-20 text-right">{formatAmt(cy)}</span>
- <span className="w-20 text-right">{formatAmt(py)}</span>
+ <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
+ <span style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
+ <span style={{ width: 80, textAlign: "right" }}>{formatAmt(py)}</span>
  </span>
  </div>
  );
  return (
- <div className="bg-white text-[#1B2533] p-8 text-sm font-serif">
- <div className="text-center mb-6">
- <h2 className="text-lg font-bold">{client}</h2>
- <h3 className="text-base font-bold">Balance Sheet</h3>
- <p className="text-xs text-muted-foreground mt-1">As at {yearEnd}</p>
+ <div>
+ <div className="wb-statement-header">
+ <h2>{client}</h2>
+ <h3>Balance Sheet</h3>
+ <p>As at {yearEnd}</p>
  </div>
- <div className="flex justify-end gap-10 text-xs font-semibold text-muted-foreground mb-1 pr-0">
- <span className="w-20 text-right">{yearEnd}</span>
- <span className="w-20 text-right">Prior Year</span>
+ <div className="wb-preview-rule" />
+ <div style={{ display: "flex", justifyContent: "flex-end", gap: 24, fontSize: 11, fontWeight: 600, color: "var(--wb-text-2)", marginBottom: 4 }}>
+ <span style={{ width: 80, textAlign: "right" }}>{yearEnd}</span>
+ <span style={{ width: 80, textAlign: "right" }}>Prior Year</span>
  </div>
- <p className="font-bold mt-2">Assets</p>
- <p className="font-semibold pl-2">Current assets</p>
+ <p className="wb-preview-section-title">Assets</p>
+ <p style={{ fontWeight: 600, paddingLeft: 8 }}>Current assets</p>
  {bs.currentAssets.lines.map(row)}
  {subtotal("Total current assets", bs.currentAssets.cyTotal, bs.currentAssets.pyTotal)}
- <p className="font-semibold pl-2 mt-2">Long-term assets</p>
+ <p style={{ fontWeight: 600, paddingLeft: 8, marginTop: 8 }}>Long-term assets</p>
  {bs.longTermAssets.lines.map(row)}
  {subtotal("Total assets", bs.totalAssetsCy, bs.totalAssetsPy, true)}
- <p className="font-bold mt-4">Liabilities</p>
- <p className="font-semibold pl-2">Current liabilities</p>
+ <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Liabilities</p>
+ <p style={{ fontWeight: 600, paddingLeft: 8 }}>Current liabilities</p>
  {bs.currentLiabilities.lines.map(row)}
  {subtotal("Total current liabilities", bs.currentLiabilities.cyTotal, bs.currentLiabilities.pyTotal)}
- <p className="font-semibold pl-2 mt-2">Long-term liabilities</p>
+ <p style={{ fontWeight: 600, paddingLeft: 8, marginTop: 8 }}>Long-term liabilities</p>
  {bs.longTermLiabilities.lines.map(row)}
  {subtotal("Total liabilities", bs.totalLiabilitiesCy, bs.totalLiabilitiesPy, true)}
- <p className="font-bold mt-4">Equity</p>
+ <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Equity</p>
  {bs.equity.lines.map(row)}
  {subtotal("Total liabilities and equity", bs.totalLiabEquityCy, bs.totalLiabEquityPy, true)}
- <div className="mt-4">
+ <div style={{ marginTop: 16 }}>
  {bs.balancesCy ? (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600"><Check className="h-3.5 w-3.5" /> Balance sheet balances</span>
+ <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}><Check className="h-3.5 w-3.5" /> Balance sheet balances</span>
  ) : (
- <span className="text-xs font-semibold text-destructive">Difference: {formatAmt(bs.totalAssetsCy - bs.totalLiabEquityCy)}</span>
+ <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference: {formatAmt(bs.totalAssetsCy - bs.totalLiabEquityCy)}</span>
  )}
  </div>
  </div>
@@ -367,10 +365,10 @@ function IncomeStatementCentre({ is, expandedLines, toggleLine, onAddSchedule, s
  <GroupingTableShell>
  <StatementSectionRows sec={is.revenue} {...rowProps} />
  <StatementSectionRows sec={is.expenses} {...rowProps} />
- <tr className="bg-muted/60 font-bold">
- <td className="px-3 py-2">Net income (loss)</td><td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(is.netIncomeCy)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(is.netIncomePy)}</td>
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Net income (loss)</td><td colSpan={3} />
+ <td className="wb-num">{formatAmt(is.netIncomeCy)}</td>
+ <td className="wb-num">{formatAmt(is.netIncomePy)}</td>
  </tr>
  </GroupingTableShell>
  );
@@ -378,48 +376,49 @@ function IncomeStatementCentre({ is, expandedLines, toggleLine, onAddSchedule, s
 
 function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementData; client: string; yearEnd: string }) {
  const row = (l: StatementLine) => (
- <div key={l.id} className="flex justify-between py-0.5 pl-4 text-[13px]">
- <span className="italic text-foreground">{l.label}</span>
- <span className="flex gap-10 tabular-nums">
- <span className="w-20 text-right">{formatAmt(l.cy)}</span>
- <span className="w-20 text-right text-muted-foreground">{formatAmt(l.py)}</span>
+ <div key={l.id} className="wb-preview-row wb-indent" style={{ fontStyle: "italic" }}>
+ <span>{l.label}</span>
+ <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
+ <span style={{ width: 80, textAlign: "right" }}>{formatAmt(l.cy)}</span>
+ <span style={{ width: 80, textAlign: "right", color: "var(--wb-text-2)" }}>{formatAmt(l.py)}</span>
  </span>
  </div>
  );
  const subtotal = (label: string, cy: number, py: number, bold = false) => (
- <div className={cn("flex justify-between py-1 border-t border-border/50 text-[13px]", bold && "font-bold")}>
+ <div className={cn("wb-preview-row wb-subtotal", bold && "wb-total")}>
  <span>{label}</span>
- <span className="flex gap-10 tabular-nums">
- <span className="w-20 text-right">{formatAmt(cy)}</span>
- <span className="w-20 text-right">{formatAmt(py)}</span>
+ <span className="wb-amt" style={{ display: "flex", gap: 24 }}>
+ <span style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
+ <span style={{ width: 80, textAlign: "right" }}>{formatAmt(py)}</span>
  </span>
  </div>
  );
  return (
- <div className="bg-white text-[#1B2533] p-8 text-sm font-serif">
- <div className="text-center mb-6">
- <h2 className="text-lg font-bold">{client}</h2>
- <h3 className="text-base font-bold">Statement of Income (Loss) and Retained Earnings (Deficit)</h3>
- <p className="text-xs text-muted-foreground mt-1">For the year ended {yearEnd}</p>
+ <div>
+ <div className="wb-statement-header">
+ <h2>{client}</h2>
+ <h3>Statement of Income (Loss) and Retained Earnings (Deficit)</h3>
+ <p>For the year ended {yearEnd}</p>
  </div>
- <div className="flex justify-end gap-10 text-xs font-semibold text-muted-foreground mb-1">
- <span className="w-20 text-right">{yearEnd}</span>
- <span className="w-20 text-right">Prior Year</span>
+ <div className="wb-preview-rule" />
+ <div style={{ display: "flex", justifyContent: "flex-end", gap: 24, fontSize: 11, fontWeight: 600, color: "var(--wb-text-2)", marginBottom: 4 }}>
+ <span style={{ width: 80, textAlign: "right" }}>{yearEnd}</span>
+ <span style={{ width: 80, textAlign: "right" }}>Prior Year</span>
  </div>
- <p className="font-bold mt-2">Revenue</p>
+ <p className="wb-preview-section-title">Revenue</p>
  {is.revenue.lines.map(row)}
  {subtotal("Total revenue", is.revenue.cyTotal, is.revenue.pyTotal)}
- <p className="font-bold mt-4">Expenses</p>
+ <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Expenses</p>
  {is.expenses.lines.map(row)}
  {subtotal("Total expenses", is.expenses.cyTotal, is.expenses.pyTotal)}
  {subtotal("Net income (loss)", is.netIncomeCy, is.netIncomePy, true)}
  {subtotal("Retained earnings (deficit), beginning of year", is.openingRetainedEarningsCy, is.openingRetainedEarningsPy)}
  {subtotal("Retained earnings (deficit), end of year", is.closingRetainedEarningsCy, is.closingRetainedEarningsPy, true)}
- <div className="mt-4">
+ <div style={{ marginTop: 16 }}>
  {Math.abs(is.differenceCy) < 0.005 ? (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600"><Check className="h-3.5 w-3.5" /> Agrees with Balance Sheet equity</span>
+ <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}><Check className="h-3.5 w-3.5" /> Agrees with Balance Sheet equity</span>
  ) : (
- <span className="text-xs font-semibold text-destructive">Difference vs. Balance Sheet: {formatAmt(is.differenceCy)}</span>
+ <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference vs. Balance Sheet: {formatAmt(is.differenceCy)}</span>
  )}
  </div>
  </div>
@@ -446,10 +445,10 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  {(manyHolders && detail === "individual") || visibilityRestricted ? (
  <div className="flex flex-col gap-1">
  {manyHolders && detail === "individual" && (
- <p className="text-[11px] text-muted-foreground">{data.rows.length} {labels.holders.toLowerCase()}: too many to show individually — grouped by class.</p>
+ <p style={{ fontSize: 11, color: "var(--wb-text-3)" }}>{data.rows.length} {labels.holders.toLowerCase()}: too many to show individually — grouped by class.</p>
  )}
  {visibilityRestricted && (
- <p className="text-[11px] text-muted-foreground">
+ <p style={{ fontSize: 11, color: "var(--wb-text-3)" }}>
  Capital visibility is set to {capitalVisibility === "partnerOnly" ? "Partner-only" : "Restricted"} for this engagement — each {labels.holder.toLowerCase()}'s individual figures are hidden here; use the Partner package export to share one {labels.holder.toLowerCase()}'s own account.
  </p>
  )}
@@ -457,101 +456,101 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  ) : null}
 
  <GroupingTableShell>
- <tr className="border-t border-border/60">
- <td className="px-3 py-2 font-medium text-foreground">Balance, beginning of year</td>
+ <tr>
+ <td style={{ fontWeight: 500 }}>Balance, beginning of year</td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.opening)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">—</td>
+ <td className="wb-num">{formatAmt(data.totals.opening)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
  </tr>
- <tr className="border-t border-border/60">
- <td className="px-3 py-2 font-medium text-foreground">{labels.contributions}</td>
+ <tr>
+ <td style={{ fontWeight: 500 }}>{labels.contributions}</td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.contributions)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">—</td>
+ <td className="wb-num">{formatAmt(data.totals.contributions)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
  </tr>
- <tr className="border-t border-border/60">
- <td className="px-3 py-2">
- <button type="button" onClick={onGoToIncome} className="font-medium text-primary hover:underline">
- Net income allocated <span className="text-muted-foreground font-normal">(from Statement of Income (Loss))</span>
+ <tr>
+ <td>
+ <button type="button" onClick={onGoToIncome} style={{ border: "none", background: "transparent", cursor: "pointer", padding: 0, fontWeight: 500, color: "var(--wb-link)", font: "inherit" }}>
+ Net income allocated <span style={{ color: "var(--wb-text-3)", fontWeight: 400 }}>(from Statement of Income (Loss))</span>
  </button>
  </td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.ni)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">—</td>
+ <td className="wb-num">{formatAmt(data.totals.ni)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
  </tr>
- <tr className="border-t border-border/60">
- <td className="px-3 py-2 font-medium text-foreground">{labels.drawings}</td>
+ <tr>
+ <td style={{ fontWeight: 500 }}>{labels.drawings}</td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(-data.totals.drawings)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">—</td>
+ <td className="wb-num">{formatAmt(-data.totals.drawings)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
  </tr>
  {hasAdj && (
- <tr className="border-t border-border/60">
- <td className="px-3 py-2 font-medium text-foreground">Adjustments</td>
+ <tr>
+ <td style={{ fontWeight: 500 }}>Adjustments</td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.adjustments)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">—</td>
+ <td className="wb-num">{formatAmt(data.totals.adjustments)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
  </tr>
  )}
- <tr className="border-t-2 border-border bg-muted/30 font-bold">
- <td className="px-3 py-2">Balance, end of year</td>
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Balance, end of year</td>
  <td colSpan={3} />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.closing)}</td>
- <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">—</td>
+ <td className="wb-num">{formatAmt(data.totals.closing)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
  </tr>
  </GroupingTableShell>
 
- <div className="rounded-lg border border-border bg-card p-4">
- <h3 className="text-sm font-semibold text-foreground mb-3">Allocation by {labels.holder.toLowerCase()} (from worksheet {labels.worksheetCode})</h3>
+ <div className="wb-card" style={{ padding: 16 }}>
+ <h3 style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 12 }}>Allocation by {labels.holder.toLowerCase()} (from worksheet {labels.worksheetCode})</h3>
  {data.rows.length === 0 ? (
- <div className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground border border-dashed border-border rounded-xl">
+ <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "40px 0", color: "var(--wb-text-3)", border: "1px dashed var(--wb-border)", borderRadius: "var(--wb-radius-md)" }}>
  <FolderOpen className="h-8 w-8" />
- <p className="text-sm">No {labels.holders.toLowerCase()} recorded in the {labels.worksheetName} worksheet yet.</p>
+ <p style={{ fontSize: 13.5 }}>No {labels.holders.toLowerCase()} recorded in the {labels.worksheetName} worksheet yet.</p>
  </div>
  ) : (
  <>
- <table className="w-full text-sm">
+ <table className="wb-data-table">
  <thead>
- <tr className="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-left">
- <th className="px-3 py-2">Class</th>
- <th className="px-3 py-2 text-right">{labels.holders}</th>
- <th className="px-3 py-2 text-right">{labels.allocationHeader}</th>
- <th className="px-3 py-2 text-right">Opening</th>
- <th className="px-3 py-2 text-right">Net income</th>
- <th className="px-3 py-2 text-right">{labels.drawings}</th>
- <th className="px-3 py-2 text-right">Closing</th>
+ <tr>
+ <th>Class</th>
+ <th className="wb-num">{labels.holders}</th>
+ <th className="wb-num">{labels.allocationHeader}</th>
+ <th className="wb-num">Opening</th>
+ <th className="wb-num">Net income</th>
+ <th className="wb-num">{labels.drawings}</th>
+ <th className="wb-num">Closing</th>
  </tr>
  </thead>
  <tbody>
  {data.classTotals.map(c => (
- <tr key={c.key} className="border-t border-border/60">
- <td className="px-3 py-2">{c.label}</td>
- <td className="px-3 py-2 text-right tabular-nums">{c.count}</td>
- <td className="px-3 py-2 text-right tabular-nums">{c.pctTotal.toFixed(2)}%</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(c.opening)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(c.ni)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(-c.drawings)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(c.closing)}</td>
+ <tr key={c.key}>
+ <td>{c.label}</td>
+ <td className="wb-num">{c.count}</td>
+ <td className="wb-num">{c.pctTotal.toFixed(2)}%</td>
+ <td className="wb-num">{formatAmt(c.opening)}</td>
+ <td className="wb-num">{formatAmt(c.ni)}</td>
+ <td className="wb-num">{formatAmt(-c.drawings)}</td>
+ <td className="wb-num">{formatAmt(c.closing)}</td>
  </tr>
  ))}
- <tr className="border-t-2 border-border font-semibold">
- <td className="px-3 py-2">Total</td>
- <td className="px-3 py-2 text-right tabular-nums">{data.rows.length}</td>
- <td className="px-3 py-2 text-right tabular-nums">{data.pctTotal.toFixed(2)}%</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.opening)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.ni)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(-data.totals.drawings)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(data.totals.closing)}</td>
+ <tr className="wb-total-row">
+ <td>Total</td>
+ <td className="wb-num">{data.rows.length}</td>
+ <td className="wb-num">{data.pctTotal.toFixed(2)}%</td>
+ <td className="wb-num">{formatAmt(data.totals.opening)}</td>
+ <td className="wb-num">{formatAmt(data.totals.ni)}</td>
+ <td className="wb-num">{formatAmt(-data.totals.drawings)}</td>
+ <td className="wb-num">{formatAmt(data.totals.closing)}</td>
  </tr>
  </tbody>
  </table>
- <div className="flex items-center gap-2 mt-3 flex-wrap">
+ <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
  {Math.abs(data.totals.closing - data.balanceSheetCapital) < 0.005 ? (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+ <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}>
  <Check className="h-3.5 w-3.5" />Worksheet closing agrees to balance sheet {formatAmt(data.balanceSheetCapital)}
  </span>
  ) : (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-destructive">
+ <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-danger)" }}>
  <X className="h-3.5 w-3.5" />Worksheet closing does not agree to balance sheet {formatAmt(data.balanceSheetCapital)} (difference {formatAmt(data.totals.closing - data.balanceSheetCapital)})
  </span>
  )}
@@ -581,9 +580,9 @@ function capitalEntities(data: CapitalStatementData, detail: CapDetail): CapEnti
 
 function CapRow({ label, v, bold }: { label: string; v: number; bold?: boolean }) {
  return (
- <div className={cn("flex justify-between py-0.5 text-[13px]", bold && "font-bold border-t border-border/50 pt-1 mt-0.5")}>
- <span className={cn(!bold && "italic text-foreground")}>{label}</span>
- <span className="w-24 text-right tabular-nums">{formatAmt(v)}</span>
+ <div className={cn("wb-preview-row", bold && "wb-total")} style={!bold ? { fontStyle: "italic" } : undefined}>
+ <span>{label}</span>
+ <span className="wb-amt" style={{ width: 96, textAlign: "right" }}>{formatAmt(v)}</span>
  </div>
  );
 }
@@ -592,10 +591,10 @@ function CapRow({ label, v, bold }: { label: string; v: number; bold?: boolean }
 // so opening the preview never looks like a different document from what you were just editing.
 function CapitalStatementHeader({ client, title, yearEnd }: { client: string; title: string; yearEnd: string }) {
  return (
- <div className="text-center font-serif">
- <h2 className="text-lg font-bold">{client}</h2>
- <h3 className="text-base font-bold">{title}</h3>
- <p className="text-xs text-muted-foreground mt-1">For the year ended {yearEnd}</p>
+ <div className="wb-statement-header" style={{ fontFamily: "var(--wb-font-serif)" }}>
+ <h2>{client}</h2>
+ <h3>{title}</h3>
+ <p>For the year ended {yearEnd}</p>
  </div>
  );
 }
@@ -609,16 +608,24 @@ function CapControlDropdown({ label, value, options, onChange }: { label: string
  return (
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="outline" className="h-9 gap-1.5 text-xs bg-card border-border hover:bg-muted">
- <span className="text-muted-foreground font-medium">{label}:</span>
- <span className="font-semibold text-foreground">{current?.label}</span>
- <ChevronDown className="h-3.5 w-3.5 opacity-60" />
- </Button>
+ <button
+ type="button"
+ className="wb-dropdown-trigger"
+ style={{
+ display: "inline-flex", alignItems: "center", gap: 6, height: 36, padding: "0 12px",
+ border: "1px solid var(--wb-border)", borderRadius: "var(--wb-radius-sm)",
+ background: "var(--wb-panel-alt)", color: "var(--wb-text)", fontSize: 13.5, cursor: "pointer",
+ }}
+ >
+ <span style={{ color: "var(--wb-text-2)", fontWeight: 500 }}>{label}:</span>
+ <span style={{ fontWeight: 600 }}>{current?.label}</span>
+ <ChevronDown className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />
+ </button>
  </DropdownMenuTrigger>
  <DropdownMenuContent align="start">
  {options.map(o => (
  <DropdownMenuItem key={o.value} disabled={o.disabled} onClick={() => onChange(o.value)} className="gap-2">
- <Check className={cn("h-3.5 w-3.5", value === o.value ? "opacity-100 text-primary" : "opacity-0")} />
+ <Check className={cn("h-3.5 w-3.5", value === o.value ? "opacity-100" : "opacity-0")} style={{ color: "var(--wb-primary)" }} />
  {o.label}
  </DropdownMenuItem>
  ))}
@@ -645,33 +652,32 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  const totalEntity: CapEntity = { name: "Total", opening: data.totals.opening, contributions: data.totals.contributions, ni: data.totals.ni, drawings: data.totals.drawings, adjustments: data.totals.adjustments, closing: data.totals.closing };
 
  return (
- <div className="bg-white text-[#1B2533] text-sm">
- <div className="p-8 font-serif">
- <div className="mb-6">
+ <div>
+ <div style={{ marginBottom: 24 }}>
  <CapitalStatementHeader client={client} title={labels.statementTitle} yearEnd={yearEnd} />
  </div>
  {layout === "horizontal" ? (
- <div className="overflow-x-auto">
- <table className="w-full text-[13px]">
+ <div style={{ overflowX: "auto" }}>
+ <table className="wb-data-table" style={{ fontSize: 13 }}>
  <thead>
  <tr>
  <th></th>
- {ents.map(e => <th key={e.name} className="text-right font-semibold px-2 py-1 whitespace-nowrap">{e.name}</th>)}
- <th className="text-right font-semibold px-2 py-1">Total</th>
+ {ents.map(e => <th key={e.name} className="wb-num" style={{ whiteSpace: "nowrap" }}>{e.name}</th>)}
+ <th className="wb-num">Total</th>
  </tr>
  </thead>
  <tbody>
  {rowKeys.map(k => (
- <tr key={k} className="border-t border-border/40">
- <td className="py-1 italic">{rowLabel(k)}</td>
- {ents.map(e => <td key={e.name} className="text-right tabular-nums px-2 py-1">{formatAmt(rowVal(e, k))}</td>)}
- <td className="text-right tabular-nums px-2 py-1 font-medium">{formatAmt(rowVal(data.totals, k))}</td>
+ <tr key={k}>
+ <td style={{ fontStyle: "italic" }}>{rowLabel(k)}</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(rowVal(e, k))}</td>)}
+ <td className="wb-num" style={{ fontWeight: 500 }}>{formatAmt(rowVal(data.totals, k))}</td>
  </tr>
  ))}
- <tr className="border-t-2 border-border font-bold">
- <td className="py-1">Balance, end of year</td>
- {ents.map(e => <td key={e.name} className="text-right tabular-nums px-2 py-1">{formatAmt(e.closing)}</td>)}
- <td className="text-right tabular-nums px-2 py-1">{formatAmt(data.totals.closing)}</td>
+ <tr className="wb-total-row">
+ <td>Balance, end of year</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.closing)}</td>)}
+ <td className="wb-num">{formatAmt(data.totals.closing)}</td>
  </tr>
  </tbody>
  </table>
@@ -680,8 +686,8 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  <div className="flex flex-col gap-4">
  {(ents.length ? ents : [totalEntity]).map(e => (
  <div key={e.name}>
- <p className="font-semibold mb-1">{e.name}</p>
- <div className="pl-3 flex flex-col gap-0.5">
+ <p style={{ fontWeight: 600, marginBottom: 4 }}>{e.name}</p>
+ <div style={{ paddingLeft: 12, display: "flex", flexDirection: "column", gap: 2 }}>
  <CapRow label="Balance, beginning of year" v={e.opening} />
  <CapRow label={labels.contributions} v={e.contributions} />
  <CapRow label="Net income allocated" v={e.ni} />
@@ -693,13 +699,12 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  ))}
  </div>
  )}
- <div className="mt-4">
+ <div style={{ marginTop: 16 }}>
  {data.rows.length === 0 ? null : Math.abs(data.totals.closing - data.balanceSheetCapital) < 0.005 ? (
- <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600"><Check className="h-3.5 w-3.5" /> Agrees with Balance Sheet {labels.capitalLabel.toLowerCase()}</span>
+ <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}><Check className="h-3.5 w-3.5" /> Agrees with Balance Sheet {labels.capitalLabel.toLowerCase()}</span>
  ) : (
- <span className="text-xs font-semibold text-destructive">Difference vs. Balance Sheet: {formatAmt(data.totals.closing - data.balanceSheetCapital)}</span>
+ <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference vs. Balance Sheet: {formatAmt(data.totals.closing - data.balanceSheetCapital)}</span>
  )}
- </div>
  </div>
  </div>
  );
@@ -733,21 +738,21 @@ function NotesScreen({ engagementId }: { engagementId: string }) {
  </DropdownMenu>
  </div>
  {notes.length === 0 ? (
- <div className="flex flex-col items-center justify-center gap-3 py-24 text-muted-foreground border border-dashed border-border rounded-xl">
+ <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: "96px 0", color: "var(--wb-text-3)", border: "1px dashed var(--wb-border)", borderRadius: "var(--wb-radius-md)" }}>
  <FolderOpen className="h-10 w-10" />
- <p className="font-medium text-foreground">No notes added yet</p>
+ <p style={{ fontWeight: 500, color: "var(--wb-text)" }}>No notes added yet</p>
  </div>
  ) : (
  <div className="flex flex-col gap-4">
  {notes.map(n => (
- <div key={n.id} className="border border-border rounded-xl p-4 bg-card">
+ <div key={n.id} className="wb-card" style={{ padding: 16 }}>
  <div className="flex items-center justify-between mb-2">
  <Input
  value={n.title}
  onChange={e => updateNote(n.id, { title: e.target.value })}
  className="font-semibold border-none px-0 h-7 text-base focus-visible:ring-0"
  />
- <button onClick={() => removeNote(n.id)} className="text-muted-foreground hover:text-destructive">
+ <button onClick={() => removeNote(n.id)} style={{ color: "var(--wb-text-3)", background: "none", border: "none", cursor: "pointer" }}>
  <Trash2 className="h-4 w-4" />
  </button>
  </div>
@@ -792,9 +797,9 @@ function ScheduleDetailScreen({ schedule, onRename, onDelete }: {
  return (
  <div className="max-w-5xl mx-auto">
  <div className="flex items-center gap-2 mb-4">
- <button onClick={() => setBold(v => !v)} className={cn("h-8 w-8 rounded border border-border flex items-center justify-center", bold && "bg-primary/10 text-primary")}><Bold className="h-3.5 w-3.5" /></button>
- <button onClick={() => setItalic(v => !v)} className={cn("h-8 w-8 rounded border border-border flex items-center justify-center", italic && "bg-primary/10 text-primary")}><Italic className="h-3.5 w-3.5" /></button>
- <button onClick={() => setUnderline(v => !v)} className={cn("h-8 w-8 rounded border border-border flex items-center justify-center", underline && "bg-primary/10 text-primary")}><Underline className="h-3.5 w-3.5" /></button>
+ <button onClick={() => setBold(v => !v)} className={cn("h-8 w-8 rounded border flex items-center justify-center", bold && "font-bold")} style={{ borderColor: "var(--wb-border)", color: bold ? "var(--wb-primary)" : "var(--wb-text-2)" }}><Bold className="h-3.5 w-3.5" /></button>
+ <button onClick={() => setItalic(v => !v)} className={cn("h-8 w-8 rounded border flex items-center justify-center")} style={{ borderColor: "var(--wb-border)", color: italic ? "var(--wb-primary)" : "var(--wb-text-2)" }}><Italic className="h-3.5 w-3.5" /></button>
+ <button onClick={() => setUnderline(v => !v)} className={cn("h-8 w-8 rounded border flex items-center justify-center")} style={{ borderColor: "var(--wb-border)", color: underline ? "var(--wb-primary)" : "var(--wb-text-2)" }}><Underline className="h-3.5 w-3.5" /></button>
  <Button variant="secondary" size="sm" onClick={() => setEditing(false)}>Apply</Button>
  <Button variant="ghost" size="sm" onClick={() => { setRows(seedRows); setEditing(false); }}>Cancel</Button>
  <div className="ml-auto flex items-center gap-2">
@@ -810,51 +815,52 @@ function ScheduleDetailScreen({ schedule, onRename, onDelete }: {
  autoFocus
  defaultValue={schedule.name}
  onBlur={e => { onRename(e.target.value); setEditing(false); }}
- className="text-center border border-border rounded px-2 py-1"
+ className="text-center border rounded px-2 py-1"
+ style={{ borderColor: "var(--wb-border)" }}
  />
  ) : schedule.name}
  </h2>
  </div>
- <div className="rounded-lg border border-border bg-card overflow-hidden">
- <table className="w-full text-sm">
+ <div className="wb-card" style={{ overflow: "hidden" }}>
+ <table className="wb-data-table">
  <thead>
- <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-muted-foreground">
- <th className="px-3 py-3 text-left">Description</th>
- <th className="px-3 py-3 text-left w-40">Search</th>
- <th className="px-3 py-3 text-right w-36">Current Year</th>
- <th className="px-3 py-3 text-right w-36">Prior Year</th>
+ <tr>
+ <th>Description</th>
+ <th style={{ width: 160 }}>Search</th>
+ <th className="wb-num" style={{ width: 144 }}>Current Year</th>
+ <th className="wb-num" style={{ width: 144 }}>Prior Year</th>
  </tr>
  </thead>
  <tbody>
  {rows.map(r => (
- <tr key={r.id} className="border-t border-border">
- <td className="px-3 py-2">
+ <tr key={r.id}>
+ <td>
  <Input value={r.description} onChange={e => updateRow(r.id, { description: e.target.value })} className="h-8" />
  </td>
- <td className="px-3 py-2">
+ <td>
  <div className="relative">
- <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+ <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: "var(--wb-text-3)" }} />
  <Input placeholder="Search" className="h-8 pl-7" />
  </div>
  </td>
- <td className="px-3 py-2">
+ <td>
  <Input type="number" value={r.cy} onChange={e => updateRow(r.id, { cy: Number(e.target.value) || 0 })} className="h-8 text-right" />
  </td>
- <td className="px-3 py-2">
+ <td>
  <Input type="number" value={r.py} onChange={e => updateRow(r.id, { py: Number(e.target.value) || 0 })} className="h-8 text-right" />
  </td>
  </tr>
  ))}
  <tr>
- <td colSpan={4} className="px-3 py-2">
- <button onClick={addRow} className="text-sm font-medium text-primary flex items-center gap-1"><Plus className="h-3.5 w-3.5" />Add Row</button>
+ <td colSpan={4}>
+ <button onClick={addRow} style={{ fontSize: 13.5, fontWeight: 500, color: "var(--wb-link)", display: "flex", alignItems: "center", gap: 4, border: "none", background: "none", cursor: "pointer" }}><Plus className="h-3.5 w-3.5" />Add Row</button>
  </td>
  </tr>
- <tr className="border-t-2 border-border bg-muted/30 font-semibold">
- <td className="px-3 py-2">Total</td>
+ <tr className="wb-total-row">
+ <td>Total</td>
  <td />
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(total.cy)}</td>
- <td className="px-3 py-2 text-right tabular-nums">{formatAmt(total.py)}</td>
+ <td className="wb-num">{formatAmt(total.cy)}</td>
+ <td className="wb-num">{formatAmt(total.py)}</td>
  </tr>
  </tbody>
  </table>
@@ -875,12 +881,19 @@ export default function Workbook() {
  const [sidebarOpen, setSidebarOpen] = useState(true);
  const [schedules, setSchedules] = useState<ScheduleDef[]>(() => loadSchedules(engId));
 
- // Force light theme on this page for consistent white workbook experience
+ // Force light theme on this page for consistent white workbook experience. A MutationObserver
+ // (not just a one-time removal) is needed because the app's ThemeProvider sets the "dark" class
+ // in its own effect, which can fire after this one on initial mount and re-add it.
  useEffect(() => {
  const root = document.documentElement;
  const hadDark = root.classList.contains("dark");
- if (hadDark) root.classList.remove("dark");
+ root.classList.remove("dark");
+ const observer = new MutationObserver(() => {
+ if (root.classList.contains("dark")) root.classList.remove("dark");
+ });
+ observer.observe(root, { attributes: true, attributeFilter: ["class"] });
  return () => {
+ observer.disconnect();
  if (hadDark) root.classList.add("dark");
  };
  }, []);
@@ -980,54 +993,39 @@ export default function Workbook() {
  const showPreview = active === "balance-sheet" || active === "income" || active === "capital-statement" || !!activeSchedule;
 
  return (
- <div className="flex flex-col h-screen w-screen bg-background text-foreground overflow-hidden">
- {/* Top navy bar */}
- <header className="shrink-0 bg-[hsl(213,68%,28%)] text-white">
- <div className="flex items-center justify-between px-6 py-3 text-sm">
- <div className="flex items-center gap-3">
- <div className="flex items-center gap-2 px-2 py-0.5 rounded-md bg-white/10 font-semibold text-xs tracking-wide">
- <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-white/15 text-[10px]">
- {engagement.type.startsWith("Audit") ? "AUD" : engagement.type.startsWith("Review") ? "REV" : engagement.type.startsWith("Tax") ? "TAX" : "COM"}
+ <div className="workbook-shell flex flex-col h-screen w-screen overflow-hidden">
+ {/* Top navy gradient header */}
+ <header className="wb-app-header">
+ <div className="wb-header-left">
+ <span className="wb-com-badge">
+ {engagement.type.startsWith("Audit") ? "A" : engagement.type.startsWith("Review") ? "R" : engagement.type.startsWith("Tax") ? "T" : "C"}
  </span>
+ <span className="wb-header-label">Engagement Name:</span>
+ <span className="wb-header-value">{engagement.id}</span>
  </div>
- <span className="opacity-80">Engagement Name:</span>
- <span className="font-semibold">{engagement.id}</span>
- </div>
- <div className="flex items-center gap-2">
- <span className="opacity-80">Client Name:</span>
- <span className="font-semibold">{engagement.client}</span>
+ <div className="wb-header-center">
+ <span className="wb-header-label">Client Name:</span>{" "}
+ <span className="wb-header-value">{engagement.client}</span>
  {engagement.entityType !== "Corporation" && (
- <span className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white/15">{engagement.entityType}</span>
+ <span className="wb-header-value" style={{ marginLeft: 6, padding: "1px 6px", borderRadius: 4, fontSize: 10, background: "rgba(255,255,255,0.15)" }}>{engagement.entityType}</span>
  )}
  </div>
- <div className="flex items-center gap-2">
- <span className="opacity-80">Year End Date:</span>
- <span className="font-semibold">{engagement.yearEnd}</span>
- </div>
+ <div className="wb-header-right">
+ <span className="wb-header-label">Year End Date:</span>
+ <span className="wb-header-value">{engagement.yearEnd}</span>
  </div>
  </header>
 
- {/* Body */}
- <div className="flex flex-1 min-h-0">
- {/* LHS menu */}
+ {/* Three-panel body */}
+ <div className="wb-app-main min-h-0">
+ {/* LHS nav panel — fully hidden (no band) while closed; opened/closed solely via
+ the menu icon in the main toolbar. */}
  {sidebarOpen && (
- <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col">
- <div className="flex items-center justify-end px-3 py-2 border-b border-border">
- <button
- onClick={() => setSidebarOpen(false)}
- className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
- aria-label="Collapse sidebar"
- >
- <ChevronRight className="h-4 w-4 rotate-180" />
- </button>
- </div>
- <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
+ <aside className="wb-panel wb-lhs-panel">
+ <nav className="wb-lhs-inner">
  <button
  onClick={() => setActive("tb-grouping")}
- className={cn(
- "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
- active === "tb-grouping" ? "bg-primary/10 text-primary font-semibold" : "text-foreground hover:bg-muted",
- )}
+ className={cn("wb-nav-item", active === "tb-grouping" && "wb-active")}
  >
  Trial Balance Grouping
  </button>
@@ -1035,25 +1033,19 @@ export default function Workbook() {
  <button
  key={item.id}
  onClick={() => setActive(item.id)}
- className={cn(
- "w-full text-left px-3 py-2 rounded-md text-sm transition-colors truncate",
- active === item.id ? "bg-primary/10 text-primary font-semibold" : "text-foreground hover:bg-muted",
- )}
+ className={cn("wb-nav-item", active === item.id && "wb-active")}
  >
  {item.label}
  </button>
  ))}
- <div className="flex items-center justify-between px-3 py-2 mt-1 group">
- <span className="text-sm font-semibold text-muted-foreground">Schedules</span>
+ <div className="wb-nav-group">
+ <span>Schedules</span>
  </div>
  {schedules.map(s => (
  <button
  key={s.id}
  onClick={() => setActive(`schedule:${s.id}`)}
- className={cn(
- "w-full text-left pl-6 pr-3 py-2 rounded-md text-sm transition-colors truncate",
- active === `schedule:${s.id}` ? "bg-primary/10 text-primary font-semibold" : "text-foreground hover:bg-muted",
- )}
+ className={cn("wb-nav-subitem", active === `schedule:${s.id}` && "wb-active")}
  >
  {s.name}
  </button>
@@ -1062,50 +1054,59 @@ export default function Workbook() {
  </aside>
  )}
 
- {/* Main */}
- <main className="flex-1 min-w-0 overflow-hidden bg-background flex flex-col">
- <div className="px-8 py-6 flex-1 min-h-0 overflow-hidden flex flex-col">
- {/* Toolbar (collapse / refresh) */}
- <div className="flex items-center gap-2 mb-4 shrink-0">
- {!sidebarOpen && (
+ {/* Main panel */}
+ <section className="wb-panel wb-main-panel">
+ <div className="wb-main-toolbar">
  <button
- onClick={() => setSidebarOpen(true)}
- className="h-9 w-9 rounded-md flex items-center justify-center border border-border bg-card hover:bg-muted text-foreground"
- aria-label="Open sidebar"
+ onClick={() => setSidebarOpen(v => !v)}
+ className="wb-icon-btn"
+ aria-label={sidebarOpen ? "Close menu" : "Open menu"}
+ title={sidebarOpen ? "Close menu" : "Open menu"}
  >
- <ChevronRight className="h-4 w-4" />
+ <PanelLeft className="h-4 w-4" />
  </button>
- )}
- <button className="h-9 w-9 rounded-md flex items-center justify-center border border-border bg-card hover:bg-muted text-foreground">
+ <button className="wb-icon-btn">
  <Minimize2 className="h-4 w-4" />
  </button>
- <button className="h-9 w-9 rounded-md flex items-center justify-center border border-border bg-card hover:bg-muted text-foreground">
+ <button className="wb-icon-btn wb-subtle">
  <RefreshCw className="h-4 w-4" />
  </button>
+ {showPreview && (
+ <button
+ onClick={() => setPreviewCollapsed(v => !v)}
+ className="wb-icon-btn"
+ style={{ marginLeft: "auto" }}
+ aria-label={previewCollapsed ? "Show preview" : "Hide preview"}
+ title={previewCollapsed ? "Show preview" : "Hide preview"}
+ >
+ <PanelRight className="h-4 w-4" />
+ </button>
+ )}
  </div>
 
+ <div className="wb-main-content">
  {/* Title */}
  {active === "tb-grouping" && (
- <div className="text-center mb-6 shrink-0">
- <h1 className="text-2xl font-bold text-foreground">Trial Balance Grouping</h1>
- <p className="text-sm text-muted-foreground mt-1">As at {engagement.yearEnd}</p>
+ <div className="wb-view-title">
+ <h1>Trial Balance Grouping</h1>
+ <div className="wb-subtitle">As at {engagement.yearEnd}</div>
  </div>
  )}
  {active !== "tb-grouping" && !activeSchedule && (
- <div className="text-center mb-6 shrink-0 flex items-center justify-center gap-2">
- <h1 className="text-2xl font-bold text-foreground">{title}</h1>
- <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+ <div className="wb-view-title" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+ <h1>{title}</h1>
+ <Pencil className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />
  </div>
  )}
 
  {/* Filters row */}
  {active !== "notes" && !activeSchedule && (
- <div className="flex items-end justify-between gap-4 mb-4 flex-wrap shrink-0">
+ <div className="wb-view-controls" style={{ justifyContent: "space-between" }}>
  <div className="flex items-end gap-4">
- <div className="flex flex-col gap-1.5">
- <label className="text-xs font-medium text-foreground">Entity Name</label>
+ <div className="wb-field">
+ <label>Entity Name</label>
  <Select defaultValue={engagement.client}>
- <SelectTrigger className="w-[240px] h-9">
+ <SelectTrigger className="w-[240px] h-9" style={{ background: "var(--wb-panel-alt)", borderColor: "var(--wb-border)", color: "var(--wb-text)" }}>
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -1113,10 +1114,10 @@ export default function Workbook() {
  </SelectContent>
  </Select>
  </div>
- <div className="flex flex-col gap-1.5">
- <label className="text-xs font-medium text-foreground">Year End Date</label>
+ <div className="wb-field">
+ <label>Year End Date</label>
  <Select defaultValue={engagement.yearEnd}>
- <SelectTrigger className="w-[200px] h-9">
+ <SelectTrigger className="w-[200px] h-9" style={{ background: "var(--wb-panel-alt)", borderColor: "var(--wb-border)", color: "var(--wb-text)" }}>
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -1146,20 +1147,23 @@ export default function Workbook() {
  )}
  </div>
  <div className="flex items-center gap-2">
- <div className="relative">
- <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+ <div className="wb-search-field" style={{ minWidth: 260 }}>
+ <span className="wb-search-icon"><Search className="h-4 w-4" /></span>
  <Input
  placeholder="Search"
  value={search}
  onChange={(e) => setSearch(e.target.value)}
  className="pl-9 w-[260px] h-9"
+ style={{ background: "var(--wb-panel)", borderColor: "var(--wb-border)", color: "var(--wb-text)" }}
  />
  </div>
+ {active === "tb-grouping" && (
  <Button className="h-9 gap-2">
  <Download className="h-4 w-4" />
  Export
  <ChevronDown className="h-3 w-3 opacity-80" />
  </Button>
+ )}
  </div>
  </div>
  )}
@@ -1167,21 +1171,21 @@ export default function Workbook() {
  {/* Content */}
  <div className="flex-1 min-w-0 min-h-0 overflow-y-auto">
  {active === "tb-grouping" && (
- <table className="w-full text-sm rounded-lg border border-border bg-card overflow-hidden shadow-[0_2px_8px_hsl(213_40%_20%/0.04)]">
+ <table className="wb-data-table">
  <thead>
- <tr className="bg-muted text-xs font-semibold uppercase tracking-wider text-muted-foreground">
- <th className="w-10 px-3 py-3"></th>
- <th className="px-3 py-3 text-left w-16">LS</th>
- <th className="px-3 py-3 text-left w-24">Map No.</th>
- <th className="px-3 py-3 text-left w-20">Acc No.</th>
- <th className="px-3 py-3 text-left">Description</th>
- <th className="px-3 py-3 text-right w-28">Original</th>
- <th className="px-3 py-3 text-right w-20">Adj</th>
- <th className="px-3 py-3 text-right w-28">Final</th>
- <th className="px-3 py-3 text-right w-28">PY1</th>
- <th className="px-3 py-3 text-right w-32">Change (%)</th>
- <th className="px-3 py-3 text-center w-16">Notes</th>
- <th className="px-3 py-3 text-center w-16">Ref</th>
+ <tr>
+ <th style={{ width: 40 }}></th>
+ <th style={{ width: 64 }}>LS</th>
+ <th style={{ width: 96 }}>Map No.</th>
+ <th style={{ width: 80 }}>Acc No.</th>
+ <th>Description</th>
+ <th className="wb-num" style={{ width: 112 }}>Original</th>
+ <th className="wb-num" style={{ width: 80 }}>Adj</th>
+ <th className="wb-num" style={{ width: 112 }}>Final</th>
+ <th className="wb-num" style={{ width: 112 }}>PY1</th>
+ <th className="wb-num" style={{ width: 128 }}>Change (%)</th>
+ <th style={{ textAlign: "center", width: 64 }}>Notes</th>
+ <th style={{ textAlign: "center", width: 64 }}>Ref</th>
  </tr>
  </thead>
  <tbody>
@@ -1190,16 +1194,16 @@ export default function Workbook() {
  const t = totals(group.rows);
  return (
  <Fragment key={group.id}>
- <tr className="bg-muted/50 border-t border-border border-l-2 border-l-primary">
- <td colSpan={12} className="px-3 py-2.5">
+ <tr className="wb-group-header" style={{ borderLeft: "2px solid var(--wb-primary)" }}>
+ <td colSpan={12}>
  <button
  onClick={() => toggleGroup(group.id)}
- className="flex items-center gap-2 text-sm font-semibold text-foreground"
+ style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 600, color: "var(--wb-text)", border: "none", background: "transparent", cursor: "pointer", padding: 0 }}
  >
  {collapsed ? (
- <ChevronRight className="h-4 w-4 text-muted-foreground" />
+ <ChevronRight className="h-4 w-4" style={{ color: "var(--wb-text-3)" }} />
  ) : (
- <ChevronDown className="h-4 w-4 text-muted-foreground" />
+ <ChevronDown className="h-4 w-4" style={{ color: "var(--wb-text-3)" }} />
  )}
  {group.title}
  </button>
@@ -1207,49 +1211,39 @@ export default function Workbook() {
  </tr>
  {!collapsed &&
  group.rows.map((row) => (
- <tr
- key={row.id}
- className="border-t border-border hover:bg-muted/30 transition-colors"
- >
- <td className="px-3 py-2.5">
- <input
- type="checkbox"
- className="h-4 w-4 rounded border-border accent-primary"
- />
+ <tr key={row.id}>
+ <td>
+ <input type="checkbox" />
  </td>
- <td className="px-3 py-2.5">
- <span className="text-primary font-semibold">{row.ls}</span>
+ <td><a className="wb-map-link">{row.ls}</a></td>
+ <td><a className="wb-map-link">{row.mapNo}</a></td>
+ <td>{row.accNo}</td>
+ <td className="truncate">{row.description}</td>
+ <td className="wb-num">{formatAmt(row.original)}</td>
+ <td className="wb-num"><a className="wb-map-link">{formatAmt(row.adj)}</a></td>
+ <td className="wb-num">{formatAmt(row.final)}</td>
+ <td className="wb-num">{formatAmt(row.py1)}</td>
+ <td className="wb-num" style={{ color: "var(--wb-text-2)" }}>{row.changePct}</td>
+ <td style={{ textAlign: "center" }}>
+ <FileText className="h-4 w-4 inline-block" style={{ color: "var(--wb-text-3)" }} />
  </td>
- <td className="px-3 py-2.5">
- <span className="text-primary">{row.mapNo}</span>
- </td>
- <td className="px-3 py-2.5 text-foreground">{row.accNo}</td>
- <td className="px-3 py-2.5 text-foreground truncate">{row.description}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(row.original)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-primary">{formatAmt(row.adj)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(row.final)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(row.py1)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{row.changePct}</td>
- <td className="px-3 py-2.5 text-center">
- <FileText className="h-4 w-4 text-muted-foreground inline-block" />
- </td>
- <td className="px-3 py-2.5 text-center">
+ <td style={{ textAlign: "center" }}>
  {row.ref ? (
- <span className="text-primary font-medium">{row.ref}</span>
+ <span style={{ color: "var(--wb-primary)", fontWeight: 500 }}>{row.ref}</span>
  ) : (
- <span className="text-muted-foreground">-</span>
+ <span style={{ color: "var(--wb-text-3)" }}>-</span>
  )}
  </td>
  </tr>
  ))}
  {!collapsed && (
- <tr className="border-t-2 border-border bg-muted/30 font-semibold">
+ <tr className="wb-total-row">
  <td colSpan={4}></td>
- <td className="px-3 py-2.5 text-foreground">Total {group.title.replace(/^[A-Z0-9]+\s*-\s*/, "")}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(t.original)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(t.adj)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(t.final)}</td>
- <td className="px-3 py-2.5 text-right tabular-nums text-foreground">{formatAmt(t.py1)}</td>
+ <td>Total {group.title.replace(/^[A-Z0-9]+\s*-\s*/, "")}</td>
+ <td className="wb-num">{formatAmt(t.original)}</td>
+ <td className="wb-num">{formatAmt(t.adj)}</td>
+ <td className="wb-num">{formatAmt(t.final)}</td>
+ <td className="wb-num">{formatAmt(t.py1)}</td>
  <td colSpan={3}></td>
  </tr>
  )}
@@ -1278,10 +1272,10 @@ export default function Workbook() {
  />
  )}
  {active === "cash-flows" && (
- <div className="flex flex-col items-center justify-center gap-3 py-24 text-muted-foreground border border-dashed border-border rounded-xl">
+ <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: "96px 0", color: "var(--wb-text-3)", border: "1px dashed var(--wb-border)", borderRadius: "var(--wb-radius-md)" }}>
  <FileText className="h-10 w-10" />
- <p className="font-medium text-foreground">Statement of Cash Flows is not built yet</p>
- <p className="text-xs">Planned for a later Workbook package.</p>
+ <p style={{ fontWeight: 500, color: "var(--wb-text)" }}>Statement of Cash Flows is not built yet</p>
+ <p style={{ fontSize: 12 }}>Planned for a later Workbook package.</p>
  </div>
  )}
  {active === "notes" && <NotesScreen engagementId={engId} />}
@@ -1297,40 +1291,14 @@ export default function Workbook() {
  )}
  </div>
  </div>
- </main>
+ </section>
 
- {/* RHS preview — a direct sibling of the sidebar/main (like <aside> above), not nested inside
- main's padded content, so it always runs the full height of the body top to bottom, flush
- against the header above and the bottom edge below, in both the collapsed and open state. */}
- {showPreview && (active === "balance-sheet" || active === "income" || active === "capital-statement") && (
- <div
- className={cn(
- "shrink-0 border-l border-border bg-card overflow-hidden transition-all duration-300 ease-in-out",
- previewCollapsed ? "w-9" : "w-[420px]",
- )}
- >
- {previewCollapsed ? (
- <button
- type="button"
- onClick={() => setPreviewCollapsed(false)}
- className="h-full w-full flex flex-col items-center justify-center gap-2 py-4 bg-card hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
- aria-label="Show preview"
- title="Show preview"
- >
- <ChevronRight className="h-4 w-4 rotate-180" />
- <span className="text-[11px] font-semibold tracking-wide [writing-mode:vertical-rl] rotate-180">Preview</span>
- </button>
- ) : (
- <div className="h-full overflow-y-auto relative">
- <button
- type="button"
- onClick={() => setPreviewCollapsed(true)}
- className="absolute top-3 right-3 z-10 h-7 w-7 rounded-md flex items-center justify-center border border-border bg-card/90 hover:bg-muted text-muted-foreground hover:text-foreground"
- aria-label="Minimize preview"
- title="Minimize preview"
- >
- <ChevronRight className="h-4 w-4" />
- </button>
+ {/* RHS preview — a direct sibling of the LHS/main panels (same as the prototype's three-
+ panel layout), so it always runs the full height of the body top to bottom. Hidden
+ entirely (no persistent band) while collapsed; the toggle lives in the main toolbar. */}
+ {showPreview && !previewCollapsed && (active === "balance-sheet" || active === "income" || active === "capital-statement") && (
+ <aside className="wb-panel wb-preview-panel">
+ <div className="wb-preview-inner">
  {active === "balance-sheet" && (
  <BalanceSheetPreview bs={balanceSheet} client={engagement.client} yearEnd={engagement.yearEnd} scheduleByGroupId={scheduleByGroupId} />
  )}
@@ -1341,8 +1309,7 @@ export default function Workbook() {
  <CapitalStatementPreview data={capitalStatement} labels={labels} client={engagement.client} yearEnd={engagement.yearEnd} layout={capLayout} detail={capDetail} />
  )}
  </div>
- )}
- </div>
+ </aside>
  )}
  </div>
  </div>

@@ -2828,9 +2828,15 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  id: "pr-equity", label: "Equity", icon: "folder",
  children: [
  {
- id: "pr-sc", label: "Share capital", icon: "folder",
+ id: "pr-sc", label: capitalLabels ? capitalLabels.capitalLabel : "Share capital", icon: "folder",
  children: [
- { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "book", route: "procedure/pr-sc-tt" },
+ capitalLabels
+ // Partnership/Trust: route straight to the same Partnership Agreement & Capital
+ // worksheet (roll-forward + TB/GIFI-mapped reconciliation) instead of the generic
+ // Procedures page, which has no per-participant view and reads an unrelated static
+ // mock TB with no partner/capital rows at all.
+ ? { id: "pr-sc-tt", code: capitalLabels.worksheetCode, label: capitalLabels.capitalLabel, icon: "book" as const, route: "checklist/pw-worksheet" }
+ : { id: "pr-sc-tt", code: "TT", label: "Equity", icon: "book" as const, route: "procedure/pr-sc-tt" },
  ]
  },
  ]
