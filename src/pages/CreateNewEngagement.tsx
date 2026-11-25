@@ -19,8 +19,6 @@ import { TemplatePickerPanel } from "@/components/TemplatePickerPanel";
 import { TEMPLATE_CONFIG, TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTemplatesData";
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 import { getAccountingStandardsOptions } from "@/lib/accountingStandards";
-import { ParticipantsSection, validateParticipants } from "@/components/ParticipantsSection";
-import { type Participant, type OwnershipMode, saveParticipants, findPriorEngagementParticipants } from "@/store/participantsStore";
 import { getClientConnectionState, rowProvider, CLIENT_CONNECTION_EVENT, type AccountingProvider } from "@/lib/clientSource";
 import { accountingProviders } from "@/lib/accountingProviders";
 import { savedYearSources } from "@/lib/yearSourceSave";
@@ -459,16 +457,6 @@ export default function CreateNewEngagement() {
     : CLIENT_DATA[clientName] ?? null;
   const isAudit = engagementType === "Audit (AUD)";
   const isTax = TAX_ENGAGEMENT_TYPE_LABELS.has(engagementType);
-  const isPartnershipOrTrust = clientInfo?.entityType === "Partnership" || clientInfo?.entityType === "Trust";
-
-  // Participants (P5) — shown only for Partnership/Trust clients.
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [ownershipMode, setOwnershipMode] = useState<OwnershipMode>("percentage");
-  const [capitalPresentation, setCapitalPresentation] = useState<"itemised" | "totalOnly">("totalOnly");
-  const [capitalVisibility, setCapitalVisibility] = useState<"open" | "restricted" | "partnerOnly">("open");
-  const priorParticipants = isPartnershipOrTrust
-    ? findPriorEngagementParticipants(engagements.filter(e => e.client === clientName).map(e => e.id), "")
-    : null;
 
   // Section 2: Engagement Details
   const [engagementId, setEngagementId] = useState("");
@@ -655,8 +643,6 @@ export default function CreateNewEngagement() {
     engagementType !== "" &&
     accountingStandards !== "";
 
-  const participantsValidation = isPartnershipOrTrust ? validateParticipants(participants, ownershipMode, clientInfo?.entityType ?? "") : null;
-
   const isFormValid =
     clientName.trim() !== "" &&
     engagementType !== "" &&
@@ -667,8 +653,7 @@ export default function CreateNewEngagement() {
     additionalDisclosures !== "" &&
     currentYearStart.trim() !== "" &&
     currentYearEnd.trim() !== "" &&
-    teamMembers.length > 0 &&
-    (!participantsValidation || participantsValidation.errors.length === 0);
+    teamMembers.length > 0;
 
   // Team handlers
   const getRecommendedCategory = () => {
@@ -773,13 +758,7 @@ export default function CreateNewEngagement() {
       yearSourceProviders: yearFields.yearSourceProviders,
       sourceYears: savedDataSource === "source" ? Math.max(1, sourceRows.length) : undefined,
       sourceProvider: savedDataSource === "source" ? rowProvider(sourceRows[0]) : undefined,
-      ownershipMode: isPartnershipOrTrust ? ownershipMode : undefined,
-      capitalPresentation: isPartnershipOrTrust ? capitalPresentation : undefined,
-      capitalVisibility: isPartnershipOrTrust ? capitalVisibility : undefined,
     });
-    if (isPartnershipOrTrust) {
-      saveParticipants(engagementId, participants.map(p => ({ ...p, engagementId })));
-    }
     if (isAudit && firstYearAudit) {
       toast.success("Engagement created — IE checklist and predecessor letter added.");
     } else {
@@ -1088,23 +1067,6 @@ export default function CreateNewEngagement() {
                   </div>
                 )}
               </SectionCard>
-            )}
-
-            {/* Participants — Partnership/Trust only */}
-            {isPartnershipOrTrust && (
-              <ParticipantsSection
-                entityType={clientInfo?.entityType ?? ""}
-                engagementId={engagementId}
-                participants={participants}
-                onChange={setParticipants}
-                ownershipMode={ownershipMode}
-                onOwnershipModeChange={setOwnershipMode}
-                capitalPresentation={capitalPresentation}
-                onCapitalPresentationChange={setCapitalPresentation}
-                capitalVisibility={capitalVisibility}
-                onCapitalVisibilityChange={setCapitalVisibility}
-                priorParticipants={priorParticipants}
-              />
             )}
 
             {/* SECTION 5: ASSIGNED TEAM — gated on engagementDetailsValid */}

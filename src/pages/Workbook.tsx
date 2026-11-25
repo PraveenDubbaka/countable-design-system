@@ -426,22 +426,20 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
 }
 
 // ── Statement of Partners'/Unitholders' Capital (P10) ───────────────────────────────────────
-function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capitalVisibility = "open", onGoToIncome }: {
+function CapitalStatementCentre({ data, labels, layout, detail, capitalVisibility = "open", onGoToIncome }: {
  data: CapitalStatementData;
  labels: EntityLabels;
- client: string;
- yearEnd: string;
+ layout: CapLayout;
  detail: CapDetail;
  capitalVisibility?: "open" | "restricted" | "partnerOnly";
  onGoToIncome: () => void;
 }) {
  const hasAdj = Math.abs(data.totals.adjustments) > 0.005;
+ const ents = capitalEntities(data, detail);
  const manyHolders = data.rows.length > 12;
  const visibilityRestricted = capitalVisibility !== "open";
  return (
  <div className="flex flex-col gap-6">
- <CapitalStatementHeader client={client} title={labels.statementTitle} yearEnd={yearEnd} />
-
  {(manyHolders && detail === "individual") || visibilityRestricted ? (
  <div className="flex flex-col gap-1">
  {manyHolders && detail === "individual" && (
@@ -460,13 +458,13 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  <td style={{ fontWeight: 500 }}>Balance, beginning of year</td>
  <td colSpan={3} />
  <td className="wb-num">{formatAmt(data.totals.opening)}</td>
- <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
+ <td className="wb-num">{formatAmt(data.totalsPy.opening)}</td>
  </tr>
  <tr>
  <td style={{ fontWeight: 500 }}>{labels.contributions}</td>
  <td colSpan={3} />
  <td className="wb-num">{formatAmt(data.totals.contributions)}</td>
- <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
+ <td className="wb-num">{formatAmt(data.totalsPy.contributions)}</td>
  </tr>
  <tr>
  <td>
@@ -476,13 +474,13 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  </td>
  <td colSpan={3} />
  <td className="wb-num">{formatAmt(data.totals.ni)}</td>
- <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
+ <td className="wb-num">{formatAmt(data.totalsPy.ni)}</td>
  </tr>
  <tr>
  <td style={{ fontWeight: 500 }}>{labels.drawings}</td>
  <td colSpan={3} />
  <td className="wb-num">{formatAmt(-data.totals.drawings)}</td>
- <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
+ <td className="wb-num">{formatAmt(-data.totalsPy.drawings)}</td>
  </tr>
  {hasAdj && (
  <tr>
@@ -496,7 +494,7 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  <td>Balance, end of year</td>
  <td colSpan={3} />
  <td className="wb-num">{formatAmt(data.totals.closing)}</td>
- <td className="wb-num" style={{ color: "var(--wb-text-3)" }}>—</td>
+ <td className="wb-num">{formatAmt(data.totalsPy.closing)}</td>
  </tr>
  </GroupingTableShell>
 
@@ -509,6 +507,53 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  </div>
  ) : (
  <>
+ {layout === "horizontal" ? (
+ <div style={{ overflowX: "auto" }}>
+ <table className="wb-data-table">
+ <thead>
+ <tr>
+ <th></th>
+ {ents.map(e => <th key={e.name} className="wb-num" style={{ whiteSpace: "nowrap" }}>{e.name}</th>)}
+ <th className="wb-num">Total</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>Opening</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.opening)}</td>)}
+ <td className="wb-num">{formatAmt(data.totals.opening)}</td>
+ </tr>
+ <tr>
+ <td>{labels.contributions}</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.contributions)}</td>)}
+ <td className="wb-num">{formatAmt(data.totals.contributions)}</td>
+ </tr>
+ <tr>
+ <td>Net income</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.ni)}</td>)}
+ <td className="wb-num">{formatAmt(data.totals.ni)}</td>
+ </tr>
+ <tr>
+ <td>{labels.drawings}</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(-e.drawings)}</td>)}
+ <td className="wb-num">{formatAmt(-data.totals.drawings)}</td>
+ </tr>
+ {hasAdj && (
+ <tr>
+ <td>Adjustments</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.adjustments)}</td>)}
+ <td className="wb-num">{formatAmt(data.totals.adjustments)}</td>
+ </tr>
+ )}
+ <tr className="wb-total-row">
+ <td>Closing</td>
+ {ents.map(e => <td key={e.name} className="wb-num">{formatAmt(e.closing)}</td>)}
+ <td className="wb-num">{formatAmt(data.totals.closing)}</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ ) : detail === "class" ? (
  <table className="wb-data-table">
  <thead>
  <tr>
@@ -544,6 +589,40 @@ function CapitalStatementCentre({ data, labels, client, yearEnd, detail, capital
  </tr>
  </tbody>
  </table>
+ ) : (
+ <table className="wb-data-table">
+ <thead>
+ <tr>
+ <th>{detail === "individual" ? labels.holder : "Total"}</th>
+ <th className="wb-num">Opening</th>
+ <th className="wb-num">{labels.contributions}</th>
+ <th className="wb-num">Net income</th>
+ <th className="wb-num">{labels.drawings}</th>
+ <th className="wb-num">Closing</th>
+ </tr>
+ </thead>
+ <tbody>
+ {ents.map(e => (
+ <tr key={e.name}>
+ <td>{e.name}</td>
+ <td className="wb-num">{formatAmt(e.opening)}</td>
+ <td className="wb-num">{formatAmt(e.contributions)}</td>
+ <td className="wb-num">{formatAmt(e.ni)}</td>
+ <td className="wb-num">{formatAmt(-e.drawings)}</td>
+ <td className="wb-num">{formatAmt(e.closing)}</td>
+ </tr>
+ ))}
+ <tr className="wb-total-row">
+ <td>Total</td>
+ <td className="wb-num">{formatAmt(data.totals.opening)}</td>
+ <td className="wb-num">{formatAmt(data.totals.contributions)}</td>
+ <td className="wb-num">{formatAmt(data.totals.ni)}</td>
+ <td className="wb-num">{formatAmt(-data.totals.drawings)}</td>
+ <td className="wb-num">{formatAmt(data.totals.closing)}</td>
+ </tr>
+ </tbody>
+ </table>
+ )}
  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
  {Math.abs(data.totals.closing - data.balanceSheetCapital) < 0.005 ? (
  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}>
@@ -578,15 +657,6 @@ function capitalEntities(data: CapitalStatementData, detail: CapDetail): CapEnti
  return [];
 }
 
-function CapRow({ label, v, bold }: { label: string; v: number; bold?: boolean }) {
- return (
- <div className={cn("wb-preview-row", bold && "wb-total")} style={!bold ? { fontStyle: "italic" } : undefined}>
- <span>{label}</span>
- <span className="wb-amt wb-amt-cy" style={{ width: 96, textAlign: "right" }}>{formatAmt(v)}</span>
- </div>
- );
-}
-
 // Shared statement header — same serif title block the centre builder and the preview both show,
 // so opening the preview never looks like a different document from what you were just editing.
 function CapitalStatementHeader({ client, title, yearEnd }: { client: string; title: string; yearEnd: string }) {
@@ -606,19 +676,21 @@ function CapitalStatementHeader({ client, title, yearEnd }: { client: string; ti
 function CapControlDropdown({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string; disabled?: boolean }[]; onChange: (v: string) => void }) {
  const current = options.find(o => o.value === value);
  return (
+ <div className="wb-field">
+ <label>{label}</label>
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
  <button
  type="button"
  className="wb-dropdown-trigger"
  style={{
- display: "inline-flex", alignItems: "center", gap: 6, height: 36, padding: "0 12px",
+ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6,
+ height: 36, minWidth: 170, padding: "0 12px",
  border: "1px solid var(--wb-border)", borderRadius: "var(--wb-radius-sm)",
- background: "var(--wb-panel-alt)", color: "var(--wb-text)", fontSize: 13.5, cursor: "pointer",
+ background: "var(--wb-panel-alt)", color: "var(--wb-text)", fontSize: 16, fontWeight: 500, cursor: "pointer",
  }}
  >
- <span style={{ color: "var(--wb-text-2)", fontWeight: 500 }}>{label}:</span>
- <span style={{ fontWeight: 600 }}>{current?.label}</span>
+ <span>{current?.label}</span>
  <ChevronDown className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />
  </button>
  </DropdownMenuTrigger>
@@ -631,6 +703,7 @@ function CapControlDropdown({ label, value, options, onChange }: { label: string
  ))}
  </DropdownMenuContent>
  </DropdownMenu>
+ </div>
  );
 }
 
@@ -640,16 +713,26 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
 }) {
  const hasAdj = Math.abs(data.totals.adjustments) > 0.005;
  const ents = capitalEntities(data, detail);
+ // There's no participant-level prior-year breakdown anywhere in the system, so the statement
+ // is grouped by year — current year shows the Layout/Show breakdown, prior year is always
+ // totals-only. The CY summary row reads "Total {year}" when there's a breakdown above it to
+ // distinguish it from those rows, or just "{year}" on its own when detail is "total" already.
+ const cyYear = (yearEnd.match(/\d{4}/) ?? [])[0] ?? "";
+ const pyYear = cyYear ? String(Number(cyYear) - 1) : "";
+ // PY never shows its own breakdown rows, but its "Total" prefix still follows whether the
+ // statement has a breakdown AT ALL (i.e. CY's), so the two year-groups read as a matched pair.
+ const totalPrefix = ents.length ? "Total " : "";
+ const cyLabel = `${totalPrefix}${cyYear}`;
+ const pyLabel = `${totalPrefix}${pyYear}`;
+
  const rowKeys: CapRowKey[] = ["opening", "contributions", "ni", "drawings", ...(hasAdj ? ["adjustments" as const] : [])];
  const rowLabel = (k: CapRowKey) =>
- k === "opening" ? "Balance, beginning of year" :
+ k === "opening" ? "Opening" :
  k === "contributions" ? labels.contributions :
  k === "ni" ? "Net income allocated" :
  k === "drawings" ? labels.drawings : "Adjustments";
  const rowVal = (o: { opening: number; contributions: number; ni: number; drawings: number; adjustments: number }, k: CapRowKey) =>
  k === "drawings" ? -o.drawings : o[k];
-
- const totalEntity: CapEntity = { name: "Total", opening: data.totals.opening, contributions: data.totals.contributions, ni: data.totals.ni, drawings: data.totals.drawings, adjustments: data.totals.adjustments, closing: data.totals.closing };
 
  return (
  <div>
@@ -667,6 +750,7 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  </tr>
  </thead>
  <tbody>
+ <tr className="wb-preview-year-row"><td colSpan={ents.length + 2}>{cyYear}</td></tr>
  {rowKeys.map(k => (
  <tr key={k}>
  <td style={{ fontStyle: "italic" }}>{rowLabel(k)}</td>
@@ -675,29 +759,62 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  </tr>
  ))}
  <tr className="wb-total-row">
- <td>Balance, end of year</td>
+ <td>{cyLabel}</td>
  {ents.map(e => <td key={e.name} className="wb-num wb-amt-cy">{formatAmt(e.closing)}</td>)}
  <td className="wb-num wb-amt-cy">{formatAmt(data.totals.closing)}</td>
+ </tr>
+ <tr className="wb-preview-year-row"><td colSpan={ents.length + 2}>{pyYear}</td></tr>
+ <tr className="wb-total-row">
+ <td>{pyLabel}</td>
+ {ents.map(e => <td key={e.name} className="wb-num wb-amt-py">—</td>)}
+ <td className="wb-num wb-amt-py">{formatAmt(data.totalsPy.closing)}</td>
  </tr>
  </tbody>
  </table>
  </div>
  ) : (
- <div className="flex flex-col gap-4">
- {(ents.length ? ents : [totalEntity]).map(e => (
- <div key={e.name}>
- <p style={{ fontWeight: 600, marginBottom: 4 }}>{e.name}</p>
- <div style={{ paddingLeft: 12, display: "flex", flexDirection: "column", gap: 2 }}>
- <CapRow label="Balance, beginning of year" v={e.opening} />
- <CapRow label={labels.contributions} v={e.contributions} />
- <CapRow label="Net income allocated" v={e.ni} />
- <CapRow label={labels.drawings} v={-e.drawings} />
- {hasAdj && <CapRow label="Adjustments" v={e.adjustments} />}
- <CapRow label="Balance, end of year" v={e.closing} bold />
- </div>
- </div>
+ <table className="wb-data-table" style={{ fontSize: 13 }}>
+ <thead>
+ <tr>
+ <th></th>
+ <th className="wb-num">Opening</th>
+ <th className="wb-num">{labels.contributions}</th>
+ <th className="wb-num">Net income</th>
+ <th className="wb-num">{labels.drawings}</th>
+ <th className="wb-num">Closing</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr className="wb-preview-year-row"><td colSpan={5}>{cyYear}</td></tr>
+ {ents.map(e => (
+ <tr key={e.name}>
+ <td style={{ fontStyle: "italic" }}>{e.name}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(e.opening)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(e.contributions)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(e.ni)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(-e.drawings)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(e.closing)}</td>
+ </tr>
  ))}
- </div>
+ <tr className="wb-total-row">
+ <td>{cyLabel}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(data.totals.opening)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(data.totals.contributions)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(data.totals.ni)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(-data.totals.drawings)}</td>
+ <td className="wb-num wb-amt-cy">{formatAmt(data.totals.closing)}</td>
+ </tr>
+ <tr className="wb-preview-year-row"><td colSpan={5}>{pyYear}</td></tr>
+ <tr className="wb-total-row">
+ <td>{pyLabel}</td>
+ <td className="wb-num wb-amt-py">{formatAmt(data.totalsPy.opening)}</td>
+ <td className="wb-num wb-amt-py">{formatAmt(data.totalsPy.contributions)}</td>
+ <td className="wb-num wb-amt-py">{formatAmt(data.totalsPy.ni)}</td>
+ <td className="wb-num wb-amt-py">{formatAmt(-data.totalsPy.drawings)}</td>
+ <td className="wb-num wb-amt-py">{formatAmt(data.totalsPy.closing)}</td>
+ </tr>
+ </tbody>
+ </table>
  )}
  <div style={{ marginTop: 16 }}>
  {data.rows.length === 0 ? null : Math.abs(data.totals.closing - data.balanceSheetCapital) < 0.005 ? (
@@ -932,8 +1049,8 @@ export default function Workbook() {
  const participants = useMemo<Participant[]>(() => (isPartnershipOrTrust ? loadParticipants(engId) : []), [engId, isPartnershipOrTrust]);
  const pwWorksheet = useMemo(() => loadPWWorksheet(engId), [engId]);
  const capitalStatement = useMemo(
- () => (isPartnershipOrTrust ? buildCapitalStatement(engId, engagement.entityType as EntityKind, participants, pwWorksheet, engagement.trustVariant) : null),
- [engId, isPartnershipOrTrust, engagement.entityType, engagement.trustVariant, participants, pwWorksheet]
+ () => (isPartnershipOrTrust ? buildCapitalStatement(engId, engagement.entityType as EntityKind, participants, pwWorksheet, engagement.trustVariant, incomeStatement.netIncomePy) : null),
+ [engId, isPartnershipOrTrust, engagement.entityType, engagement.trustVariant, participants, pwWorksheet, incomeStatement.netIncomePy]
  );
  // Layout/Show now live in the centre panel (not the preview) and control what the preview
  // renders when expanded — the preview itself is left settings-free, matching the centre area.
@@ -989,6 +1106,12 @@ export default function Workbook() {
  active === "notes" ? "Notes to Financial Information" :
  activeSchedule ? activeSchedule.name :
  "Trial Balance Grouping";
+ // A point-in-time statement reads "As at", a period statement "For the year ended" —
+ // a schedule is neither, so it just shows the date on its own.
+ const titleSubtitle =
+ activeSchedule ? engagement.yearEnd :
+ (active === "tb-grouping" || active === "balance-sheet") ? `As at ${engagement.yearEnd}` :
+ `For the year ended ${engagement.yearEnd}`;
 
  const showPreview = active === "balance-sheet" || active === "income" || active === "capital-statement" || !!activeSchedule;
 
@@ -1056,7 +1179,11 @@ export default function Workbook() {
 
  {/* Main panel */}
  <section className="wb-panel wb-main-panel">
- <div className="wb-main-toolbar">
+ {/* Title block — icons, centered title/subtitle, and the preview toggle all share
+ one row with its own border-bottom, matching production's page-title-block
+ (icons + title live together, not a separate toolbar strip above the title). */}
+ <div className="wb-title-block">
+ <div className="wb-title-block-left">
  <button
  onClick={() => setSidebarOpen(v => !v)}
  className="wb-icon-btn"
@@ -1071,11 +1198,28 @@ export default function Workbook() {
  <button className="wb-icon-btn wb-subtle">
  <RefreshCw className="h-4 w-4" />
  </button>
+ </div>
+ <div className="wb-title-block-center">
+ <div className="wb-view-title">
+ <div className="wb-view-entity">{engagement.client}</div>
+ {activeSchedule ? (
+ <div className="wb-subtitle">{titleSubtitle}</div>
+ ) : (
+ <>
+ <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+ <h1>{title}</h1>
+ {active !== "tb-grouping" && <Pencil className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />}
+ </div>
+ <div className="wb-subtitle">{titleSubtitle}</div>
+ </>
+ )}
+ </div>
+ </div>
+ <div className="wb-title-block-right">
  {showPreview && (
  <button
  onClick={() => setPreviewCollapsed(v => !v)}
  className="wb-icon-btn"
- style={{ marginLeft: "auto" }}
  aria-label={previewCollapsed ? "Show preview" : "Hide preview"}
  title={previewCollapsed ? "Show preview" : "Hide preview"}
  >
@@ -1083,22 +1227,9 @@ export default function Workbook() {
  </button>
  )}
  </div>
+ </div>
 
  <div className="wb-main-content">
- {/* Title */}
- {active === "tb-grouping" && (
- <div className="wb-view-title">
- <h1>Trial Balance Grouping</h1>
- <div className="wb-subtitle">As at {engagement.yearEnd}</div>
- </div>
- )}
- {active !== "tb-grouping" && !activeSchedule && (
- <div className="wb-view-title" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
- <h1>{title}</h1>
- <Pencil className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />
- </div>
- )}
-
  {/* Filters row */}
  {active !== "notes" && !activeSchedule && (
  <div className="wb-view-controls" style={{ justifyContent: "space-between" }}>
@@ -1264,8 +1395,7 @@ export default function Workbook() {
  <CapitalStatementCentre
  data={capitalStatement}
  labels={labels}
- client={engagement.client}
- yearEnd={engagement.yearEnd}
+ layout={capLayout}
  detail={capDetail}
  capitalVisibility={engagement.capitalVisibility}
  onGoToIncome={() => setActive("income")}
@@ -1294,12 +1424,23 @@ export default function Workbook() {
  </section>
 
  {/* RHS preview — an absolutely-positioned overlay that floats on top of the main
- panel's right edge (matching production exactly) rather than a layout sibling, so
- opening/closing it never resizes the main panel. Not rendered at all while
- collapsed, so there's no band — the toggle lives in the main toolbar. */}
+ panel's right edge, including its toolbar (matching production exactly) rather
+ than a layout sibling, so opening/closing it never resizes the main panel. Not
+ rendered at all while collapsed, so there's no band. Because it floats above the
+ main toolbar, its own toggle button there is covered once open, so the preview
+ carries its own close button too. */}
  {showPreview && !previewCollapsed && (active === "balance-sheet" || active === "income" || active === "capital-statement") && (
  <aside className="wb-panel wb-preview-panel">
  <div className="wb-preview-inner">
+ <button
+ type="button"
+ onClick={() => setPreviewCollapsed(true)}
+ className="wb-icon-btn wb-preview-close"
+ aria-label="Hide preview"
+ title="Hide preview"
+ >
+ <X className="h-4 w-4" />
+ </button>
  {active === "balance-sheet" && (
  <BalanceSheetPreview bs={balanceSheet} client={engagement.client} yearEnd={engagement.yearEnd} scheduleByGroupId={scheduleByGroupId} />
  )}

@@ -83,6 +83,13 @@ export interface ReconciliationRow {
 export interface CapitalStatementData {
  rows: CapitalRow[];
  totals: { opening: number; contributions: number; ni: number; drawings: number; adjustments: number; closing: number };
+ // Prior-year totals — real figures from each mapped TB row's own py1 column and the Statement
+ // of Income (Loss)'s own prior-year net income, not an invented comparative. There is no
+ // participant-level prior-year breakdown anywhere in the system (contributions in particular
+ // have no TB row at all, current or prior year), so this is TOTALS only: closing is always the
+ // current year's own opening (by roll-forward definition — last year's ending balance IS this
+ // year's beginning balance), and contributions is 0 (no prior-year contributions data exists).
+ totalsPy: { opening: number; contributions: number; ni: number; drawings: number; closing: number };
  classTotals: CapitalClassTotal[];
  reconciliation: ReconciliationRow[];
  pctTotal: number;
@@ -100,6 +107,10 @@ export function buildCapitalStatement(
  participants: Participant[],
  worksheet: PWWorksheetState,
  trustVariant: "unit" | "other" = "other",
+ // From the Statement of Income (Loss)'s own netIncomePy (revenue.pyTotal - expenses.pyTotal) —
+ // passed in rather than recomputed here, so the two statements can never show a different
+ // prior-year net income for the same engagement.
+ netIncomePy = 0,
 ): CapitalStatementData {
  const labels = getEntityLabels(entityType, trustVariant);
  const netIncome = getNetIncomeForEngagement(engagementId, entityType, participants);
@@ -153,6 +164,17 @@ export function buildCapitalStatement(
  closing: sumField(rows, r => r.closing),
  };
 
+ const totalsPy = {
+ opening: rows.reduce((s, r) => s + (tbCapital[r.participant.id]?.openingPy ?? 0), 0),
+ contributions: 0,
+ ni: netIncomePy,
+ drawings: rows.reduce((s, r) => s + (tbCapital[r.participant.id]?.drawingsPy ?? 0), 0),
+ // Last year's ending balance IS this year's beginning balance — always, by definition of a
+ // roll-forward — so this ties to the worksheet's own current-year opening rather than being
+ // computed independently (which could float a cent apart from a separately-summed TB figure).
+ closing: totals.opening,
+ };
+
  const tbOpeningFor = (list: CapitalRow[]) =>
  list.reduce((s, r) => s + (tbCapital[r.participant.id]?.openingFromTB ?? 0), 0);
  const balanceSheetCapital = rows.reduce((s, r) => s + (tbCapital[r.participant.id]?.closingFromTB ?? 0), 0);
@@ -181,7 +203,7 @@ export function buildCapitalStatement(
 
  const recOK = reconciliation.every(r => r.agrees) && pctOK;
 
- return { rows, totals, classTotals, reconciliation, pctTotal, pctOK, recOK, netIncome, balanceSheetCapital };
+ return { rows, totals, totalsPy, classTotals, reconciliation, pctTotal, pctOK, recOK, netIncome, balanceSheetCapital };
 }
 
 /** A capital row stripped to name + the roll-forward numbers only — never `taxIdentifier`,

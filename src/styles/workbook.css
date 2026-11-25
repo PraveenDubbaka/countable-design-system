@@ -259,19 +259,31 @@
   font-weight: 400;
 }
 
-/* ---- TOOLBAR + ICON BUTTONS ---- */
-.workbook-shell .wb-main-toolbar {
+/* ---- TITLE BLOCK (icons + centered title/subtitle, one row) ----
+   Matches production's page-title-block: the collapse/refresh/preview icons live in
+   the same row as the centered title, with a single border-bottom under all of it —
+   not a separate toolbar strip stacked above a second, unbordered title row. */
+.workbook-shell .wb-title-block {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--wb-active-border);
+  background: var(--wb-panel);
+  flex-shrink: 0;
+  min-height: 53px;
+}
+.workbook-shell .wb-title-block-left,
+.workbook-shell .wb-title-block-right {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--wb-divider);
-  background: var(--wb-panel);
-  flex-shrink: 0;
-  /* Stacked above the preview overlay (z-index: 10) so its toggle button — including the
-     one that closes the preview — is never covered and unclickable once the preview is open. */
-  position: relative;
-  z-index: 20;
+  flex: 0 0 auto;
+}
+.workbook-shell .wb-title-block-center {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .workbook-shell .wb-icon-btn {
   width: 32px;
@@ -291,7 +303,13 @@
 
 /* ---- MAIN CONTENT + TITLE ---- */
 .workbook-shell .wb-main-content { flex: 1; overflow-y: auto; padding: 20px 28px 36px; }
-.workbook-shell .wb-view-title { text-align: center; margin: 6px 0 20px; }
+.workbook-shell .wb-view-title { text-align: center; }
+.workbook-shell .wb-view-entity {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--wb-text);
+  margin-bottom: 2px;
+}
 .workbook-shell .wb-view-title h1,
 .workbook-shell .wb-view-title h2 {
   margin: 0 0 4px;
@@ -376,6 +394,12 @@
   background: var(--wb-panel-alt);
   border-top: 1px solid var(--wb-border);
 }
+/* Current-year / prior-year section divider inside the Capital Statement preview table */
+.workbook-shell .wb-preview-year-row td {
+  font-weight: 700;
+  padding-top: 14px;
+  border-bottom: none;
+}
 .workbook-shell .wb-map-link { color: var(--wb-link); font-weight: 500; }
 .workbook-shell .wb-map-link:hover { text-decoration: underline; }
 .workbook-shell .wb-indent-1 { padding-left: 24px; }
@@ -423,6 +447,13 @@
   position: relative;
   overflow-y: auto;
   flex: 1;
+}
+.workbook-shell .wb-preview-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: 1px solid var(--wb-border);
+  background: var(--wb-panel);
 }
 .workbook-shell .wb-statement-header { text-align: center; }
 .workbook-shell .wb-statement-header h2,

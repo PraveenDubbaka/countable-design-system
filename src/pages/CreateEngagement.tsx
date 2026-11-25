@@ -17,8 +17,6 @@ import { TEMPLATE_CONFIG, TAX_ENGAGEMENT_TYPE_LABELS } from "@/lib/engagementTem
 import { SHOW_NFP_PCAOB_TEMPLATES } from "@/lib/featureFlags";
 import { getAccountingStandardsOptions } from "@/lib/accountingStandards";
 import { DateField } from "@/components/DateField";
-import { ParticipantsSection, validateParticipants } from "@/components/ParticipantsSection";
-import { type Participant, type OwnershipMode, saveParticipants, findPriorEngagementParticipants } from "@/store/participantsStore";
 import { loadClients } from "@/data/clientsData";
 
 const INDUSTRIES = [
@@ -660,16 +658,6 @@ export default function CreateEngagement() {
  isUsTaxpayer: realClient.isUsTaxpayer ?? false,
  }
  : CLIENT_DATA[clientName] ?? null;
- const isPartnershipOrTrust = clientInfo?.entityType === "Partnership" || clientInfo?.entityType === "Trust";
-
- // Participants (P5) — shown only for Partnership/Trust clients.
- const [participants, setParticipants] = useState<Participant[]>([]);
- const [ownershipMode, setOwnershipMode] = useState<OwnershipMode>("percentage");
- const [capitalPresentation, setCapitalPresentation] = useState<"itemised" | "totalOnly">("totalOnly");
- const [capitalVisibility, setCapitalVisibility] = useState<"open" | "restricted" | "partnerOnly">("open");
- const priorParticipants = isPartnershipOrTrust
- ? findPriorEngagementParticipants(engagements.filter(e => e.client === clientName).map(e => e.id), "")
- : null;
  const [engagementType, setEngagementType] = useState(prefill.engagementType || "Review (REV)");
  const prefillIsAudit = (prefill.engagementType || "Review (REV)") === "Audit (AUD)";
  const [engagementId, setEngagementId] = useState(prefillIsAudit ? "AUD-HFL-Mar312024" : "REV-DEF-Nov302023");
@@ -867,8 +855,6 @@ export default function CreateEngagement() {
  engagementType !== "" &&
  accountingStandards !== "";
 
- const participantsValidation = isPartnershipOrTrust ? validateParticipants(participants, ownershipMode, clientInfo?.entityType ?? "") : null;
-
  const isFormValid =
  clientName.trim() !== "" &&
  engagementId.trim() !== "" &&
@@ -879,8 +865,7 @@ export default function CreateEngagement() {
  additionalDisclosures !== "" &&
  currentYearStart.trim() !== "" &&
  currentYearEnd.trim() !== "" &&
- teamMembers.length > 0 &&
- (!participantsValidation || participantsValidation.errors.length === 0);
+ teamMembers.length > 0;
 
  const handleCreate = () => {
  const record: EngagementRecord = {
@@ -910,13 +895,7 @@ export default function CreateEngagement() {
  auditPeriodType: isAudit ? periodType : undefined,
  annualizeInterim: isAudit && periodType === "Interim (6-month)" ? annualizeInterim : undefined,
  firstTimeAdoption: isAudit ? firstTimeAdoption : undefined,
- ownershipMode: isPartnershipOrTrust ? ownershipMode : undefined,
- capitalPresentation: isPartnershipOrTrust ? capitalPresentation : undefined,
- capitalVisibility: isPartnershipOrTrust ? capitalVisibility : undefined,
  });
- if (isPartnershipOrTrust) {
- saveParticipants(engagementId, participants.map(p => ({ ...p, engagementId })));
- }
  if (isAudit && teamMembers.length > 0) {
  const roleMap: Record<string, string> = {
  "Engagement Partner": "partner",
@@ -1190,23 +1169,6 @@ export default function CreateEngagement() {
  ))}
  </SectionCard>
  </div>
-
- {/* Participants — Partnership/Trust only */}
- {isPartnershipOrTrust && (
- <ParticipantsSection
- entityType={clientInfo?.entityType ?? ""}
- engagementId={engagementId}
- participants={participants}
- onChange={setParticipants}
- ownershipMode={ownershipMode}
- onOwnershipModeChange={setOwnershipMode}
- capitalPresentation={capitalPresentation}
- onCapitalPresentationChange={setCapitalPresentation}
- capitalVisibility={capitalVisibility}
- onCapitalVisibilityChange={setCapitalVisibility}
- priorParticipants={priorParticipants}
- />
- )}
 
  {/* Assigned Team — full page width, gated */}
  {engagementDetailsValid && (

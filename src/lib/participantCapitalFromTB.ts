@@ -19,6 +19,11 @@ export interface ParticipantTBCapital {
  // Positive = amount drawn/distributed, from the Drawings / Distributions-mapped TB row(s) only
  // (sign-flipped from the row's own negative/contra-equity balance) — 0 when nothing is mapped.
  drawingsFromTB: number;
+ // Same two figures, but from each row's own `py1` (prior-year comparative) column instead of
+ // its current-year original/final — the real prior-year opening/drawings this participant's
+ // mapped TB rows carry, not an invented comparative.
+ openingPy: number;
+ drawingsPy: number;
 }
 
 function reconstructRows(engagementId: string, entityType: string, participants: Participant[]): TBRow[] {
@@ -57,6 +62,8 @@ export function getParticipantCapitalFromTB(
  openingFromTB: linked.filter(r => r.subGrouping === "Partners' capital").reduce((s, r) => s + r.original, 0),
  closingFromTB: linked.reduce((s, r) => s + r.final, 0),
  drawingsFromTB: -linked.filter(r => r.subGrouping === "Drawings / Distributions").reduce((s, r) => s + r.final, 0),
+ openingPy: linked.filter(r => r.subGrouping === "Partners' capital").reduce((s, r) => s + r.py1, 0),
+ drawingsPy: -linked.filter(r => r.subGrouping === "Drawings / Distributions").reduce((s, r) => s + r.py1, 0),
  };
  });
  return result;
