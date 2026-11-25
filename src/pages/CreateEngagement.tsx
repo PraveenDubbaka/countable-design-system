@@ -39,9 +39,6 @@ const ACCOUNTING_FRAMEWORKS = [
  "ASPE — Canadian Accounting Standards for Private Enterprises",
  "IFRS — International Financial Reporting Standards",
  "US GAAP — Generally Accepted Accounting Principles (United States)",
- "Tax Basis",
- "Cash Basis",
- "Modified Cash Basis",
 ];
 const ENTITY_CLASSIFICATIONS = ["Private", "Public", "Manufacturing"];
 const AUDIT_ROLES = [
@@ -813,7 +810,6 @@ export default function CreateEngagement() {
   "ASPE — Canadian Accounting Standards for Private Enterprises",
   "IFRS — International Financial Reporting Standards",
   "US GAAP — Generally Accepted Accounting Principles (United States)",
-  "Tax Basis", "Cash Basis", "Modified Cash Basis",
  ];
  if (clientInfo?.clientCountry === "us") {
   const usFirst = frameworks.filter(fw => fw.includes("US GAAP") || fw.includes("PCAOB"));
