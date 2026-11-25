@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { memberKey, migrateMemberKeys } from "@/lib/roleAliases";
 import { useParams } from "react-router-dom";
 import { CheckSquare, Square, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -51,10 +52,6 @@ function buildDefault(): FinalReviewData {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function memberKey(role: string): string {
-  return role.toLowerCase().replace(/[^a-z0-9]/g, "_");
-}
 
 function initials(name: string): string {
   return name.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
@@ -110,7 +107,14 @@ export function AuditFinalReviewWorksheet() {
 
   const [data, setData] = useState<FinalReviewData>(() => {
     const stored = readJsonFromLocalStorage<FinalReviewData>(storageKey, buildDefault());
-    return stored ? { ...buildDefault(), ...stored } : buildDefault();
+    if (!stored) return buildDefault();
+    const merged = { ...buildDefault(), ...stored };
+    // Saved sign-offs from before roles came from Settings are keyed by the old role names.
+    return {
+      ...merged,
+      finalSignoffs: migrateMemberKeys(merged.finalSignoffs),
+      teamChecks: Object.fromEntries(Object.entries(merged.teamChecks ?? {}).map(([row, checks]) => [row, migrateMemberKeys(checks)])),
+    };
   });
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

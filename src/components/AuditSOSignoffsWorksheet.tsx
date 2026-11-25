@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { memberKey, migrateMemberKeys } from "@/lib/roleAliases";
 import { useParams } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -207,10 +208,6 @@ const SIGNOFF_SECTIONS: SignoffSection[] = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function memberKey(role: string): string {
-  return role.toLowerCase().replace(/[^a-z0-9]/g, "_");
-}
-
 function initials(name: string): string {
   return name.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
 }
@@ -254,7 +251,11 @@ export function AuditSOSignoffsWorksheet() {
   const storageKey = `audit-so-signoffs-${engagementId ?? "default"}`;
 
   const [data, setData] = useState<SignoffsData>(
-    () => readJsonFromLocalStorage<SignoffsData>(storageKey, { signoffs: {} }) ?? { signoffs: {} }
+    () => {
+      const stored = readJsonFromLocalStorage<SignoffsData>(storageKey, { signoffs: {} }) ?? { signoffs: {} };
+      // Saved sign-offs from before roles came from Settings are keyed by the old role names.
+      return { ...stored, signoffs: Object.fromEntries(Object.entries(stored.signoffs ?? {}).map(([item, byMember]) => [item, migrateMemberKeys(byMember)])) };
+    }
   );
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

@@ -153,18 +153,22 @@ const EXTRA_PEOPLE_US = ["C. Brooks", "T. Nguyen", "A. Rivera", "S. Hughes", "D.
 // The four production roles and the other seeded titles are not demo team members.
 const SEEDED_WITHOUT_PERSON = new Set(["role-preparer", "role-1st-reviewer", "role-2nd-reviewer", "role-admin", "role-admin-staff", "role-qc-reviewer"]);
 
+// Display order: most senior sign-off level first, then store order.
+const LEVEL_RANK: Record<string, number> = { "2nd Reviewer": 0, "1st Reviewer": 1, "Preparer": 2, "Admin": 3 };
+
 function buildTeam(isUS: boolean, engagementId: string): { role: string; name: string }[] {
  const people = isUS ? DEMO_PEOPLE_US : DEMO_PEOPLE_CA;
  const extras = isUS ? EXTRA_PEOPLE_US : EXTRA_PEOPLE_CA;
  const type = engagementTypeKey(loadEngagements().find(e => e.id === engagementId)?.type) ?? "Audit";
  let extra = 0;
- const team: { role: string; name: string }[] = [];
+ const team: { role: string; name: string; rank: number }[] = [];
  for (const r of getActiveRoles(getRoles(), type)) {
   const known = people[r.name.trim().toLowerCase()];
-  if (known) team.push({ role: r.name, name: known });
-  else if (!SEEDED_WITHOUT_PERSON.has(r.id)) team.push({ role: r.name, name: extras[extra++ % extras.length] });
+  if (known) team.push({ role: r.name, name: known, rank: LEVEL_RANK[r.signoffLevel] ?? 9 });
+  else if (!SEEDED_WITHOUT_PERSON.has(r.id)) team.push({ role: r.name, name: extras[extra++ % extras.length], rank: LEVEL_RANK[r.signoffLevel] ?? 9 });
  }
- return team;
+ // Array.sort is stable, so equal levels keep store order.
+ return team.sort((a, b) => a.rank - b.rank).map(({ role, name }) => ({ role, name }));
 }
 
 // ── Profiles (derived per engagement) ─────────────────────────────────────────
