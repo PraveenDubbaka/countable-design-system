@@ -31,12 +31,22 @@ const InlineField = ({
   </div>
 );
 
-const PhoneInput = ({ placeholder = "(555) 000-0000" }: { placeholder?: string }) => {
+const formatNational = (v: string) => {
+  const d = v.replace(/\D/g, "").slice(0, 10);
+  if (!d) return "";
+  const a = d.slice(0, 3), b = d.slice(3, 6), c = d.slice(6, 10);
+  return `(${a}${d.length >= 3 ? ")" : ""}${b ? ` ${b}` : ""}${c ? `-${c}` : ""}`;
+};
+
+// Controlled: value/onChange carry the full string, e.g. "+1 (604) 555-0192"
+const PhoneInput = ({ value, onChange, placeholder = "(000) 000-0000" }: { value: string; onChange: (v: string) => void; placeholder?: string }) => {
   const [dialCode, setDialCode] = React.useState("ca");
   const sel = DIAL_CODES.find(d => d.value === dialCode) ?? DIAL_CODES[31];
+  const national = value.startsWith(sel.code) ? value.slice(sel.code.length).trim() : value;
+  const emit = (code: string, nat: string) => onChange(nat ? `${code} ${nat}` : "");
   return (
     <div className="flex gap-2">
-      <Select value={dialCode} onValueChange={setDialCode}>
+      <Select value={dialCode} onValueChange={v => { setDialCode(v); emit((DIAL_CODES.find(d => d.value === v) ?? sel).code, national); }}>
         <SelectTrigger className="w-24 shrink-0 [&>span]:shrink-0">
           <span className="flex items-center gap-1 text-sm">{sel.code}</span>
         </SelectTrigger>
@@ -48,7 +58,7 @@ const PhoneInput = ({ placeholder = "(555) 000-0000" }: { placeholder?: string }
           ))}
         </SelectContent>
       </Select>
-      <Input className="flex-1" placeholder={placeholder} />
+      <Input className="flex-1" placeholder={placeholder} value={national} onChange={e => emit(sel.code, formatNational(e.target.value))} />
     </div>
   );
 };
@@ -695,6 +705,7 @@ export default function AddNewClientV2() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [businessPhone, setBusinessPhone] = useState("");
+  const [cellPhone, setCellPhone] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
@@ -737,7 +748,7 @@ export default function AddNewClientV2() {
     setFirstName("David");
     setLastName("Chen");
     setEmail("david.chen@northline.ca");
-    setBusinessPhone("6045550192");
+    setBusinessPhone("+1 (604) 555-0192");
     setAddressLine1("120 Industrial Parkway");
     setCity("Mississauga");
     setProvince("on");
@@ -779,8 +790,8 @@ export default function AddNewClientV2() {
       repository: 'Repository',
       assignedPartner: '',
       assignedTeam: null,
-      businessPhone: null,
-      cellPhone: null,
+      businessPhone: businessPhone || null,
+      cellPhone: cellPhone || null,
       clientCountry: country as 'ca' | 'us',
       industryType: industryType || undefined,
       groupName: resolvedGroup || undefined,
@@ -1131,10 +1142,10 @@ export default function AddNewClientV2() {
                       <Input type="email" placeholder="contact@company.com" value={email} onChange={e => setEmail(e.target.value)} />
                     </InlineField>
                     <InlineField label="Business Phone">
-                      <Input placeholder="(555) 000-0000" value={businessPhone} onChange={e => setBusinessPhone(e.target.value)} />
+                      <PhoneInput value={businessPhone} onChange={setBusinessPhone} />
                     </InlineField>
                     <InlineField label="Cell Phone">
-                      <PhoneInput />
+                      <PhoneInput value={cellPhone} onChange={setCellPhone} />
                     </InlineField>
                     <InlineField label="Address Line 1">
                       <Input placeholder="Address Line 1" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} />
