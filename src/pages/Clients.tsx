@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useColumnLayout, DraggableTh } from "@/hooks/useColumnLayout";
 import { cn } from "@/lib/utils";
 import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
@@ -20,7 +21,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, ChevronDown, ChevronUp, Columns3, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
+import { Search, ChevronDown, Columns3, Pencil, Trash2, Download, Mail, ClipboardPlus, UserPlus, RefreshCw, Users, UserX, UserCheck, Clock, UsersRound, Globe2, ListFilter, Check } from "lucide-react";
 import { ExpandableIconButton } from "@/components/ui/expandable-icon-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -328,32 +329,8 @@ export default function Clients() {
   ) },
  ];
 
- const [columnOrder, setColumnOrder] = useState<string[]>(() => columns.map(c => c.id));
- const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
-
- const toggleColumn = (id: string) => setHiddenColumns(prev => {
-  const next = new Set(prev);
-  if (next.has(id)) next.delete(id); else next.add(id);
-  return next;
- });
-
- // Index in `order` of the nearest visible column from `from` in `direction`, skipping hidden ones (-1 if there is none).
- const visibleNeighbour = (order: string[], from: number, direction: -1 | 1) => {
-  for (let i = from + direction; i >= 0 && i < order.length; i += direction) {
-   if (!hiddenColumns.has(order[i])) return i;
-  }
-  return -1;
- };
-
- // Swaps with the nearest visible neighbour in that direction; hidden columns stay where they are.
- const moveColumn = (id: string, direction: -1 | 1) => setColumnOrder(prev => {
-  const from = prev.indexOf(id);
-  const to = from < 0 ? -1 : visibleNeighbour(prev, from, direction);
-  if (to < 0) return prev;
-  const next = [...prev];
-  [next[from], next[to]] = [next[to], next[from]];
-  return next;
- });
+ const layout = useColumnLayout("clients-columns-v1", columns.map(c => c.id));
+ const { columnOrder, hiddenColumns, toggleColumn } = layout;
 
  const visibleColumns = columnOrder
   .filter(id => !hiddenColumns.has(id))
@@ -491,7 +468,7 @@ export default function Clients() {
  <ExpandableIconButton variant="secondary" icon={<Columns3 className="h-4 w-4" />} label="Columns" />
  </PopoverTrigger>
  <PopoverContent className="p-1 bg-card min-w-max max-h-[70vh] overflow-y-auto" align="end">
-  {columnOrder.map((id, index) => {
+  {columnOrder.map(id => {
    const col = columns.find(c => c.id === id);
    if (!col) return null;
    return (
@@ -500,24 +477,6 @@ export default function Clients() {
       <Checkbox checked={!hiddenColumns.has(id)} onCheckedChange={() => toggleColumn(id)} />
       {col.label}
      </label>
-     <button
-      type="button"
-      aria-label={`Move ${col.label} up`}
-      disabled={visibleNeighbour(columnOrder, index, -1) < 0}
-      onClick={() => moveColumn(id, -1)}
-      className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
-     >
-      <ChevronUp className="h-3.5 w-3.5" />
-     </button>
-     <button
-      type="button"
-      aria-label={`Move ${col.label} down`}
-      disabled={visibleNeighbour(columnOrder, index, 1) < 0}
-      onClick={() => moveColumn(id, 1)}
-      className="p-0.5 rounded text-muted-foreground hover:bg-black/10 hover:text-foreground transition-colors disabled:opacity-30 disabled:pointer-events-none"
-     >
-      <ChevronDown className="h-3.5 w-3.5" />
-     </button>
     </div>
    );
   })}
@@ -553,9 +512,9 @@ export default function Clients() {
  <Checkbox />
  </th>
  {visibleColumns.map(col => (
- <th key={col.id} className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
+ <DraggableTh key={col.id} layout={layout} id={col.id} className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">
  {col.header ?? col.label}
- </th>
+ </DraggableTh>
  ))}
  <th className="text-left px-6 py-4 text-xs font-semibold text-foreground uppercase tracking-wider whitespace-nowrap">Actions</th>
  </tr>
