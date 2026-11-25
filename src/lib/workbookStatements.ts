@@ -2,7 +2,7 @@
 // table and the right-hand live preview on the Balance Sheet / Statement of Income pages, so
 // the two panes can never drift apart — same rule the Financial Statements folder preview
 // should eventually read from too (P10).
-import { GROUPS, LS_META, type Group } from "@/lib/tbGroups";
+import { GROUPS, LS_META, type Group, type Row } from "@/lib/tbGroups";
 
 export interface StatementLine {
  id: string;
@@ -153,6 +153,124 @@ export function buildIncomeStatement(balanceSheet: BalanceSheetData): IncomeStat
  closingRetainedEarningsCy, closingRetainedEarningsPy,
  differenceCy: closingRetainedEarningsCy - equityRetainedEarningsCy,
  differencePy: closingRetainedEarningsPy - equityRetainedEarningsPy,
+ };
+}
+
+// ── Statement of Cash Flows ──────────────────────────────────────────────────────────────
+// Built on the same per-Group-line convention as the Balance Sheet/Income Statement above —
+// every GROUPS entry that isn't cash itself or a P&L (revenue/expense) account gets classified
+// into exactly one cash-flow category (CFO/CFI/CFF), defaulted by its LS code and overridable
+// per row (the preparer can move an individual account into a different category, same idea as
+// a real indirect-method mapping grid). Investing/financing roll up each Group's NET change
+// (gross asset cost together with any contra/accumulated-amortization row in the same Group) as
+// one line, the same simplified "net book value delta" shortcut many small-business cash flow
+// templates use in place of a separate non-cash depreciation add-back — so depreciation never
+// needs its own operating add-back line, it's already netted inside the Investing line it sits
+// under.
+export type CfCategory = "CFO" | "CFI" | "CFF" | "Excl";
+
+// "TT - Common shares" bundles genuine balance accounts (Share Capital, Common Shares) together
+// with what are actually period-flow accounts (Dividend Paid, an RE adjustment) that reset each
+// year rather than roll forward — the demo TB has no separate ls/flag distinguishing the two, so
+// these two ids are called out by hand. A flow account's `final` *is* this year's cash effect
+// (negated, since paying a dividend is a cash outflow); a balance account's effect is its own
+// year-over-year change.
+const CF_FLOW_ROW_IDS = new Set(["div-paid", "oth-re"]);
+// Retained earnings/opening-equity rows are already captured via net income (operating) and the
+// Income Statement's own opening-RE rollforward — including them here would double-count.
+const CF_EXCLUDED_ROW_IDS = new Set(["ret-earn", "ob-eq"]);
+
+export function defaultCfCategory(ls: string, rowId: string): CfCategory {
+ if (ls === "A") return "Excl"; // the cash balance itself — the thing being reconciled to, not a flow
+ if (CF_EXCLUDED_ROW_IDS.has(rowId)) return "Excl";
+ if (["B", "C", "D", "E", "I", "BB", "CC"].includes(ls)) return "CFO";
+ if (["H", "K", "L"].includes(ls)) return "CFI";
+ if (["DD", "JJ", "KK", "TT"].includes(ls)) return "CFF";
+ return "Excl"; // revenue/expense (20/30/40/80) — already rolled into net income, not mapped here
+}
+
+// A row's own cash effect this year. For an ordinary balance-sheet row this is simply its prior-
+// year balance minus its current-year balance: using the *raw* (unflipped) TB value works
+// uniformly for assets AND liabilities/equity alike — the sign convention that makes a
+// liability's increase a source of cash falls out of the same subtraction once you work in raw
+// values (see the BalanceSheet signFlip: displayed liability/equity total = -1 * raw sum, so an
+// *increase* in the displayed balance is a *decrease* in the raw sum, i.e. py1 - final is
+// already a positive "source of cash" in both cases). A flow account (see CF_FLOW_ROW_IDS) uses
+// its own current-year column directly instead of a delta.
+export function rowCashEffect(row: Row): number {
+ if (CF_FLOW_ROW_IDS.has(row.id)) return -row.final;
+ return row.py1 - row.final;
+}
+
+export interface CashFlowLine {
+ id: string;
+ label: string;
+ cy: number;
+ rows: Row[];
+}
+
+export interface CashFlowSection {
+ label: string;
+ lines: CashFlowLine[];
+ total: number;
+}
+
+export interface CashFlowData {
+ netIncomeCy: number;
+ operating: CashFlowSection;
+ netCashOperatingCy: number;
+ investing: CashFlowSection;
+ netCashInvestingCy: number;
+ financing: CashFlowSection;
+ netCashFinancingCy: number;
+ netChangeInCashCy: number;
+ cashBeginningCy: number;
+ cashEndingCy: number;
+ // The Balance Sheet's own actual ending cash — a real reconciliation check against the
+ // computed roll-forward above, same "Difference" idiom as every other statement's preview.
+ cashEndingActualCy: number;
+ differenceCy: number;
+}
+
+export function buildCashFlow(incomeStatement: IncomeStatementData, overrides: Record<string, CfCategory>): CashFlowData {
+ const cashGroups = GROUPS.filter(g => g.rows[0]?.ls === "A");
+ const cashBeginningCy = cashGroups.reduce((s, g) => s + g.rows.reduce((rs, r) => rs + r.py1, 0), 0);
+ const cashEndingActualCy = cashGroups.reduce((s, g) => s + g.rows.reduce((rs, r) => rs + r.final, 0), 0);
+
+ const bucket = (cat: CfCategory, label: string): CashFlowSection => {
+ const lines: CashFlowLine[] = [];
+ for (const g of GROUPS) {
+ const ls = g.rows[0]?.ls ?? "";
+ const rows = g.rows.filter(r => (overrides[r.id] ?? defaultCfCategory(ls, r.id)) === cat);
+ if (rows.length === 0) continue;
+ lines.push({
+ id: g.id,
+ label: g.title.replace(/^[A-Z0-9]+\s*-\s*/, ""),
+ cy: rows.reduce((s, r) => s + rowCashEffect(r), 0),
+ rows,
+ });
+ }
+ return { label, lines, total: lines.reduce((s, l) => s + l.cy, 0) };
+ };
+
+ const operating = bucket("CFO", "Changes in operating assets and liabilities");
+ const investing = bucket("CFI", "Investing activities");
+ const financing = bucket("CFF", "Financing activities");
+
+ const netCashOperatingCy = incomeStatement.netIncomeCy + operating.total;
+ const netCashInvestingCy = investing.total;
+ const netCashFinancingCy = financing.total;
+ const netChangeInCashCy = netCashOperatingCy + netCashInvestingCy + netCashFinancingCy;
+ const cashEndingCy = cashBeginningCy + netChangeInCashCy;
+
+ return {
+ netIncomeCy: incomeStatement.netIncomeCy,
+ operating, netCashOperatingCy,
+ investing, netCashInvestingCy,
+ financing, netCashFinancingCy,
+ netChangeInCashCy,
+ cashBeginningCy, cashEndingCy, cashEndingActualCy,
+ differenceCy: cashEndingCy - cashEndingActualCy,
  };
 }
 

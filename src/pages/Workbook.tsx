@@ -44,11 +44,18 @@ import { loadClients } from "@/data/clientsData";
 import {
  buildBalanceSheet,
  buildIncomeStatement,
+ buildCashFlow,
+ defaultCfCategory,
+ rowCashEffect,
  type BalanceSheetData,
  type IncomeStatementData,
  type StatementLine,
  type StatementSection,
+ type CashFlowData,
+ type CashFlowLine,
+ type CfCategory,
 } from "@/lib/workbookStatements";
+import { loadCfOverrides, saveCfOverrides } from "@/store/cashFlowMappingStore";
 import { loadParticipants, type Participant } from "@/store/participantsStore";
 import { loadPWWorksheet } from "@/store/partnershipWorksheetStore";
 import { getEntityLabels, type EntityKind, type EntityLabels } from "@/lib/entityLabels";
@@ -462,6 +469,280 @@ function IncomeStatementPreview({ is, client, yearEnd }: { is: IncomeStatementDa
  );
 }
 
+// ── Statement of Cash Flows ───────────────────────────────────────────────────────────────
+const CF_CATEGORY_OPTIONS: { value: CfCategory; label: string }[] = [
+ { value: "CFO", label: "CFO" },
+ { value: "CFI", label: "CFI" },
+ { value: "CFF", label: "CFF" },
+ { value: "Excl", label: "Excl" },
+];
+
+function CfCategorySelect({ value, onChange }: { value: CfCategory; onChange: (v: CfCategory) => void }) {
+ return (
+ <Select value={value} onValueChange={v => onChange(v as CfCategory)}>
+ <SelectTrigger className="h-8 w-[84px] text-xs" style={{ background: "var(--wb-panel-alt)", borderColor: "var(--wb-border)", color: "var(--wb-text)" }}>
+ <SelectValue />
+ </SelectTrigger>
+ <SelectContent>
+ {CF_CATEGORY_OPTIONS.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+ </SelectContent>
+ </Select>
+ );
+}
+
+// A blank, prototype-only row the preparer can type a description/amount into — kept in local
+// component state (not persisted), same scope as everything else "+ Add Row"/"+ Manual Entry"
+// touches: a demonstrable affordance, not a durable ledger entry.
+interface CfManualRow { id: string; description: string; amount: number }
+
+function CfAddRowButton({ onClick }: { onClick: () => void }) {
+ return (
+ <button onClick={onClick} type="button" style={{ fontSize: 13.5, fontWeight: 500, color: "var(--wb-link)", display: "flex", alignItems: "center", gap: 4, border: "none", background: "none", cursor: "pointer", padding: "6px 0" }}>
+ <Plus className="h-3.5 w-3.5" />Add Row
+ </button>
+ );
+}
+
+function CfManualRows({ rows, onChange }: { rows: CfManualRow[]; onChange: (rows: CfManualRow[]) => void }) {
+ const update = (id: string, patch: Partial<CfManualRow>) => onChange(rows.map(r => (r.id === id ? { ...r, ...patch } : r)));
+ return (
+ <>
+ {rows.map(r => (
+ <tr key={r.id}>
+ <td className="wb-indent-2">
+ <Input value={r.description} onChange={e => update(r.id, { description: e.target.value })} placeholder="Description" className="h-8" />
+ </td>
+ <td />
+ <td />
+ <td>
+ <Input type="number" value={r.amount} onChange={e => update(r.id, { amount: Number(e.target.value) || 0 })} className="h-8 text-right" />
+ </td>
+ </tr>
+ ))}
+ </>
+ );
+}
+
+function CashFlowLineGroup({ line, expanded, onToggle, overrides, onChangeCategory }: {
+ line: CashFlowLine;
+ expanded: boolean;
+ onToggle: () => void;
+ overrides: Record<string, CfCategory>;
+ onChangeCategory: (rowId: string, cat: CfCategory) => void;
+}) {
+ const [manualRows, setManualRows] = useState<CfManualRow[]>([]);
+ const manualTotal = manualRows.reduce((s, r) => s + r.amount, 0);
+ const addRow = () => setManualRows(prev => [...prev, { id: Math.random().toString(36).slice(2, 9), description: "", amount: 0 }]);
+ return (
+ <>
+ <tr>
+ <td>
+ <button onClick={onToggle} type="button" className="wb-row-inner" style={{ border: "none", background: "transparent", cursor: "pointer", padding: 0, color: "inherit", font: "inherit", fontWeight: 500 }}>
+ {expanded ? <ChevronDown className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} /> : <ChevronRight className="h-3.5 w-3.5" style={{ color: "var(--wb-text-3)" }} />}
+ {line.label}
+ </button>
+ </td>
+ <td /><td />
+ <td className="wb-num">{formatAmt(line.cy + manualTotal)}</td>
+ </tr>
+ {expanded && line.rows.map(r => (
+ <tr key={r.id} style={{ color: "var(--wb-text-2)" }}>
+ <td className="wb-indent-2">{r.mapNo || r.accNo} &nbsp; {r.description}</td>
+ <td><CfCategorySelect value={overrides[r.id] ?? defaultCfCategory(r.ls, r.id)} onChange={v => onChangeCategory(r.id, v)} /></td>
+ <td style={{ color: "var(--wb-text-3)" }}>{line.label}</td>
+ <td className="wb-num">{formatAmt(rowCashEffect(r))}</td>
+ </tr>
+ ))}
+ {expanded && <CfManualRows rows={manualRows} onChange={setManualRows} />}
+ {expanded && (
+ <tr>
+ <td colSpan={4}><CfAddRowButton onClick={addRow} /></td>
+ </tr>
+ )}
+ </>
+ );
+}
+
+function CashFlowSectionBlock({ title, section, expandedIds, toggleId, overrides, onChangeCategory, subheader }: {
+ title: string;
+ section: CashFlowSection;
+ expandedIds: Set<string>;
+ toggleId: (id: string) => void;
+ overrides: Record<string, CfCategory>;
+ onChangeCategory: (rowId: string, cat: CfCategory) => void;
+ subheader?: string;
+}) {
+ const [manualRows, setManualRows] = useState<CfManualRow[]>([]);
+ const manualTotal = manualRows.reduce((s, r) => s + r.amount, 0);
+ const addManual = () => setManualRows(prev => [...prev, { id: Math.random().toString(36).slice(2, 9), description: "", amount: 0 }]);
+ return (
+ <>
+ <tr className="wb-group-header"><td colSpan={4} style={{ fontWeight: 700 }}>{title}</td></tr>
+ {subheader && (
+ <tr><td colSpan={4} style={{ fontWeight: 600, paddingTop: 8 }}>{subheader}:</td></tr>
+ )}
+ {section.lines.map(line => (
+ <CashFlowLineGroup
+ key={line.id}
+ line={line}
+ expanded={expandedIds.has(line.id)}
+ onToggle={() => toggleId(line.id)}
+ overrides={overrides}
+ onChangeCategory={onChangeCategory}
+ />
+ ))}
+ <CfManualRows rows={manualRows} onChange={setManualRows} />
+ <tr><td colSpan={4}><CfAddRowButton onClick={addManual} /></td></tr>
+ </>
+ );
+}
+
+function CashFlowCentre({ cashFlow, overrides, onChangeCategory }: {
+ cashFlow: CashFlowData;
+ overrides: Record<string, CfCategory>;
+ onChangeCategory: (rowId: string, cat: CfCategory) => void;
+}) {
+ const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+ const toggleId = (id: string) => setExpandedIds(prev => {
+ const n = new Set(prev);
+ n.has(id) ? n.delete(id) : n.add(id);
+ return n;
+ });
+ const netIncomeLabel = cashFlow.netIncomeCy < 0 ? "Net Loss" : "Net income";
+ return (
+ <table className="wb-data-table">
+ <thead>
+ <tr>
+ <th>Group / Account</th>
+ <th style={{ width: 96 }}>Classification</th>
+ <th style={{ width: 160 }}>Maps to</th>
+ <th className="wb-num" style={{ width: 144 }}>Amount</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr className="wb-group-header"><td colSpan={4} style={{ fontWeight: 700 }}>Operating activities</td></tr>
+ <tr style={{ fontStyle: "italic" }}>
+ <td className="wb-indent-2">{netIncomeLabel}</td><td /><td />
+ <td className="wb-num">{formatAmt(cashFlow.netIncomeCy)}</td>
+ </tr>
+ <CashFlowSectionBlock
+ title=""
+ subheader={cashFlow.operating.label}
+ section={cashFlow.operating}
+ expandedIds={expandedIds}
+ toggleId={toggleId}
+ overrides={overrides}
+ onChangeCategory={onChangeCategory}
+ />
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Net cash generated from (used in) operating activities <Pencil className="h-3 w-3 inline-block" style={{ color: "var(--wb-text-3)", marginLeft: 4 }} /></td>
+ <td colSpan={2} />
+ <td className="wb-num">{formatAmt(cashFlow.netCashOperatingCy)}</td>
+ </tr>
+
+ <CashFlowSectionBlock
+ title="Investing activities"
+ section={cashFlow.investing}
+ expandedIds={expandedIds}
+ toggleId={toggleId}
+ overrides={overrides}
+ onChangeCategory={onChangeCategory}
+ />
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Net cash generated from (used in) investing activities</td>
+ <td colSpan={2} />
+ <td className="wb-num">{formatAmt(cashFlow.netCashInvestingCy)}</td>
+ </tr>
+
+ <CashFlowSectionBlock
+ title="Financing activities"
+ section={cashFlow.financing}
+ expandedIds={expandedIds}
+ toggleId={toggleId}
+ overrides={overrides}
+ onChangeCategory={onChangeCategory}
+ />
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Net cash generated from financing activities</td>
+ <td colSpan={2} />
+ <td className="wb-num">{formatAmt(cashFlow.netCashFinancingCy)}</td>
+ </tr>
+
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Net increase (decrease) in cash &amp; cash equivalents</td>
+ <td colSpan={2} />
+ <td className="wb-num">{formatAmt(cashFlow.netChangeInCashCy)}</td>
+ </tr>
+ <tr>
+ <td>Cash and cash equivalents, beginning of year</td><td colSpan={2} />
+ <td className="wb-num">{formatAmt(cashFlow.cashBeginningCy)}</td>
+ </tr>
+ <tr className="wb-total-row" style={{ fontWeight: 700 }}>
+ <td>Cash and cash equivalents, end of year</td><td colSpan={2} />
+ <td className="wb-num">{formatAmt(cashFlow.cashEndingCy)}</td>
+ </tr>
+ </tbody>
+ </table>
+ );
+}
+
+function CashFlowPreview({ cf, client, yearEnd }: { cf: CashFlowData; client: string; yearEnd: string }) {
+ const line = (label: string, cy: number) => (
+ <div key={label} className="wb-preview-row wb-indent" style={{ fontStyle: "italic" }}>
+ <span>{label}</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
+ </div>
+ );
+ const subtotal = (label: string, cy: number, bold = false) => (
+ <div className={cn("wb-preview-row wb-subtotal", bold && "wb-total")}>
+ <span>{label}</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(cy)}</span>
+ </div>
+ );
+ const netIncomeLabel = cf.netIncomeCy < 0 ? "Net Loss" : "Net income";
+ const hasDifference = Math.abs(cf.differenceCy) >= 0.005;
+ return (
+ <div>
+ <div className="wb-statement-header">
+ <h2>{client}</h2>
+ <h3>Statement of Cash Flows</h3>
+ <p>For the year ended {yearEnd}</p>
+ </div>
+ <div className="wb-preview-rule" />
+ {/* A Cash Flow statement's own prior-year column would need a prior-PRIOR-year balance
+ sheet to difference against — one more year back than this demo data carries anywhere
+ else (the same gap documented on IncomeStatementData.openingRetainedEarningsPy) — so,
+ same as production itself, this preview shows the current year only. */}
+ <div className="wb-preview-datecols" style={{ justifyContent: "flex-end" }}>
+ <span className="wb-amt-cy" style={{ width: 80 }}>{yearEnd}</span>
+ </div>
+ <p className="wb-preview-section-title">Operating activities</p>
+ {line(netIncomeLabel, cf.netIncomeCy)}
+ {cf.operating.lines.length > 0 && (
+ <p style={{ fontWeight: 600, paddingLeft: 8, marginTop: 8 }}>{cf.operating.label}:</p>
+ )}
+ {cf.operating.lines.map(l => line(l.label, l.cy))}
+ {subtotal("Net cash generated from (used in) operating activities", cf.netCashOperatingCy, true)}
+ <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Investing activities</p>
+ {cf.investing.lines.map(l => line(l.label, l.cy))}
+ {subtotal("Net cash generated from (used in) investing activities", cf.netCashInvestingCy, true)}
+ <p className="wb-preview-section-title" style={{ marginTop: 16 }}>Financing activities</p>
+ {cf.financing.lines.map(l => line(l.label, l.cy))}
+ {subtotal("Net cash generated from (used in) financing activities", cf.netCashFinancingCy, true)}
+ {subtotal("Net increase (decrease) in cash & cash equivalents", cf.netChangeInCashCy, true)}
+ {subtotal("Cash and cash equivalents, beginning of year", cf.cashBeginningCy)}
+ {subtotal("Cash and cash equivalents, end of year", cf.cashEndingCy, true)}
+ {hasDifference && (
+ <div className="wb-preview-row wb-difference">
+ <span>Difference</span>
+ <span className="wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(cf.differenceCy)}</span>
+ </div>
+ )}
+ <div className="wb-preview-footer">See accompanying notes to financial information</div>
+ </div>
+ );
+}
+
 // ── Statement of Partners'/Unitholders' Capital (P10) ───────────────────────────────────────
 function CapitalStatementCentre({ data, labels, layout, detail, capitalVisibility = "open", onGoToIncome }: {
  data: CapitalStatementData;
@@ -853,13 +1134,12 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  </tbody>
  </table>
  )}
- <div style={{ marginTop: 16 }}>
- {data.rows.length === 0 ? null : Math.abs(data.totals.closing - data.balanceSheetCapital) < 0.005 ? (
- <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--wb-success)" }}><Check className="h-3.5 w-3.5" /> Agrees with Balance Sheet {labels.capitalLabel.toLowerCase()}</span>
- ) : (
- <span className="wb-preview-mismatch" style={{ fontSize: 12 }}>Difference vs. Balance Sheet: {formatAmt(data.totals.closing - data.balanceSheetCapital)}</span>
- )}
+ {data.rows.length > 0 && Math.abs(data.totals.closing - data.balanceSheetCapital) >= 0.005 && (
+ <div className="wb-preview-row wb-difference">
+ <span>Difference vs. Balance Sheet {labels.capitalLabel.toLowerCase()}</span>
+ <span className="wb-amt wb-amt-cy" style={{ width: 80, textAlign: "right" }}>{formatAmt(data.totals.closing - data.balanceSheetCapital)}</span>
  </div>
+ )}
  <div className="wb-preview-footer">See accompanying notes to financial information</div>
  </div>
  );
@@ -1081,6 +1361,14 @@ export default function Workbook() {
 
  const balanceSheet = useMemo(() => buildBalanceSheet(), []);
  const incomeStatement = useMemo(() => buildIncomeStatement(balanceSheet), [balanceSheet]);
+ const [cfOverrides, setCfOverrides] = useState<Record<string, CfCategory>>(() => loadCfOverrides(engId));
+ const cashFlow = useMemo(() => buildCashFlow(incomeStatement, cfOverrides), [incomeStatement, cfOverrides]);
+ const updateCfCategory = (rowId: string, cat: CfCategory) =>
+ setCfOverrides(prev => {
+ const next = { ...prev, [rowId]: cat };
+ saveCfOverrides(engId, next);
+ return next;
+ });
 
  const isPartnershipOrTrust = engagement.entityType === "Partnership" || engagement.entityType === "Trust";
  const labels = isPartnershipOrTrust ? getEntityLabels(engagement.entityType as EntityKind, engagement.trustVariant) : null;
@@ -1151,7 +1439,7 @@ export default function Workbook() {
  (active === "tb-grouping" || active === "balance-sheet") ? `As at ${engagement.yearEnd}` :
  `For the year ended ${engagement.yearEnd}`;
 
- const showPreview = active === "balance-sheet" || active === "income" || active === "capital-statement" || !!activeSchedule;
+ const showPreview = active === "balance-sheet" || active === "income" || active === "capital-statement" || active === "cash-flows" || !!activeSchedule;
 
  return (
  <div className="workbook-shell flex flex-col h-screen w-screen overflow-hidden">
@@ -1440,11 +1728,7 @@ export default function Workbook() {
  />
  )}
  {active === "cash-flows" && (
- <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: "96px 0", color: "var(--wb-text-3)", border: "1px dashed var(--wb-border)", borderRadius: "var(--wb-radius-md)" }}>
- <FileText className="h-10 w-10" />
- <p style={{ fontWeight: 500, color: "var(--wb-text)" }}>Statement of Cash Flows is not built yet</p>
- <p style={{ fontSize: 12 }}>Planned for a later Workbook package.</p>
- </div>
+ <CashFlowCentre cashFlow={cashFlow} overrides={cfOverrides} onChangeCategory={updateCfCategory} />
  )}
  {active === "notes" && <NotesScreen engagementId={engId} />}
  {activeSchedule && (
@@ -1467,7 +1751,7 @@ export default function Workbook() {
  rendered at all while collapsed, so there's no band. Because it floats above the
  main toolbar, its own toggle button there is covered once open, so the preview
  carries its own close button too. */}
- {showPreview && !previewCollapsed && (active === "balance-sheet" || active === "income" || active === "capital-statement") && (
+ {showPreview && !previewCollapsed && (active === "balance-sheet" || active === "income" || active === "capital-statement" || active === "cash-flows") && (
  <aside className="wb-panel wb-preview-panel">
  <div className="wb-preview-inner">
  <button
@@ -1487,6 +1771,9 @@ export default function Workbook() {
  )}
  {active === "capital-statement" && capitalStatement && labels && (
  <CapitalStatementPreview data={capitalStatement} labels={labels} client={engagement.client} yearEnd={engagement.yearEnd} layout={capLayout} detail={capDetail} />
+ )}
+ {active === "cash-flows" && (
+ <CashFlowPreview cf={cashFlow} client={engagement.client} yearEnd={engagement.yearEnd} />
  )}
  </div>
  </aside>
