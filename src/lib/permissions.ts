@@ -9,3 +9,21 @@ export const getCurrentUserAccessType = (): string => {
 };
 
 export const canManageFirmSettings = (): boolean => getCurrentUserAccessType() === "Admin";
+
+const USER_ID_KEY = "cds_current_user_id_v1";
+export const USER_PERMS_KEY = "user-access-perms-v1";
+
+// Id of the signed-in user in the User & Access list. The demo user is the firm owner (id "9"); set localStorage[USER_ID_KEY] to preview another member.
+export const getCurrentUserId = (): string => {
+  try { return localStorage.getItem(USER_ID_KEY) || "9"; } catch { return "9"; }
+};
+
+// May this user send client portal invites? Super admins always can; everyone else needs the "Send client portal invites"
+// permission ticked for them in Settings › User & Access (saved in localStorage "user-access-perms-v1").
+export const canSendInvites = (userId: string = getCurrentUserId()): boolean => {
+  if (canManageFirmSettings()) return true;
+  try {
+    const saved = JSON.parse(localStorage.getItem(USER_PERMS_KEY) || "{}") as Record<string, { sendInvites?: boolean }>;
+    return saved?.[userId]?.sendInvites === true;
+  } catch { return false; }
+};

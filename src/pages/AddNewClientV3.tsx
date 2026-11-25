@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { canSendInvites } from "@/lib/permissions";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Building2, User, FileText, ChevronLeft, ChevronDown, CalendarDays, Plus, CheckCircle2, X, Sparkles, Search, Trash2, Pencil, Check, MapPin, Users, SlidersHorizontal } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -829,6 +830,7 @@ export default function AddNewClientV3() {
   };
 
   const addDisabled = fetching;
+  const canInvite = canSendInvites();
 
   const legalPreview = legalEntityName.trim() || "Legal entity name";
   const dbaPreview = dbaName.trim() || "Operating name";
@@ -883,12 +885,13 @@ export default function AddNewClientV3() {
             </Button>
             <div className="inline-flex">
               <Button
-                className="h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white rounded-r-none"
+                className={`h-9 px-4 text-sm bg-[#1C63A6] hover:bg-[#1a5a9e] text-white ${canInvite ? "rounded-r-none" : ""}`}
                 disabled={addDisabled}
                 onClick={() => handleAdd("add")}
               >
                 Add Client
               </Button>
+              {canInvite && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -905,6 +908,7 @@ export default function AddNewClientV3() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              )}
             </div>
           </div>
         </div>

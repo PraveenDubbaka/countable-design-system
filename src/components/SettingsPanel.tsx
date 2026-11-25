@@ -24,7 +24,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { getEngagementMeta } from "@/store/engagementsStore";
 import { useRoles, addRole, updateRole, moveRole, deleteRole, isRoleNameTaken, ENGAGEMENT_TYPES, SIGNOFF_LEVELS, type Role, type EngagementType, type SignoffLevel } from "@/lib/rolesStore";
-import { canManageFirmSettings } from "@/lib/permissions";
+import { canManageFirmSettings, USER_PERMS_KEY } from "@/lib/permissions";
 import { SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib/featureFlags";
 
 // ── Firm types & constants (shared with Sidebar via localStorage) ─────────────
@@ -641,7 +641,7 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
  type UAView = 'list' | 'permissions' | 'engagement-access';
  type Perms = {
   addTeam: boolean; modifyTeam: boolean; deleteTeam: boolean;
-  addClient: boolean; viewClients: boolean; modifyClients: boolean; deleteClient: boolean;
+  addClient: boolean; sendInvites: boolean; viewClients: boolean; modifyClients: boolean; deleteClient: boolean;
   viewEngagements: boolean; createEngagement: boolean; modifyEngagement: boolean;
   deleteEngagement: boolean; archiveEngagement: boolean; reopenEngagement: boolean;
   editTimeSummary: boolean; exportTimeSummary: boolean; toggleTracking: boolean;
@@ -687,7 +687,7 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
 
  const DEFAULT_PERMS: Perms = {
   addTeam: false, modifyTeam: false, deleteTeam: false,
-  addClient: false, viewClients: true, modifyClients: true, deleteClient: false,
+  addClient: false, sendInvites: false, viewClients: true, modifyClients: true, deleteClient: false,
   viewEngagements: true, createEngagement: false, modifyEngagement: true,
   deleteEngagement: false, archiveEngagement: false, reopenEngagement: false,
   editTimeSummary: false, exportTimeSummary: false, toggleTracking: true,
@@ -695,7 +695,16 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
 
  const [view, setView] = useState<UAView>('list');
  const [selected, setSelected] = useState<Member | null>(null);
- const [allPerms, setAllPerms] = useState<Record<string, Perms>>({});
+ const [allPerms, setAllPerms] = useState<Record<string, Perms>>(() => {
+  try {
+   const saved = JSON.parse(localStorage.getItem(USER_PERMS_KEY) || "{}") as Record<string, Partial<Perms>>;
+   return Object.fromEntries(Object.entries(saved).map(([id, p]) => [id, { ...DEFAULT_PERMS, ...p }]));
+  } catch { return {}; }
+ });
+ // Saved so other pages can read them (canSendInvites in lib/permissions.ts).
+ useEffect(() => {
+  try { localStorage.setItem(USER_PERMS_KEY, JSON.stringify(allPerms)); } catch { /* storage unavailable */ }
+ }, [allPerms]);
  const [engAccess, setEngAccess] = useState<Record<string, { access: boolean; tt: boolean }>>(
   Object.fromEntries(ENGAGEMENTS.map((e, i) => [e.id, { access: [0, 2, 4, 5, 8].includes(i), tt: false }]))
  );
@@ -884,6 +893,19 @@ function UserAccessContent({ onClose }: { onClose: () => void }) {
 
      <SectionHeader title="Clients" />
      <PRow id={selected.id} k="addClient"    label="Add Client" />
+     <PRow id={selected.id} k="sendInvites"  label="Send client portal invites" disabled={!canManageFirmSettings()} extra={
+      <>
+       <Tooltip>
+        <TooltipTrigger asChild>
+         <span tabIndex={0} className="inline-flex shrink-0"><Info className="h-3.5 w-3.5 text-muted-foreground" /></span>
+        </TooltipTrigger>
+        <TooltipContent>Shows the Add and Invite option when adding a client, and invite actions for client users</TooltipContent>
+       </Tooltip>
+       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border border-amber-200 dark:border-amber-700 shrink-0">
+        Super admin only
+       </span>
+      </>
+     } />
      <PRow id={selected.id} k="viewClients"  label="View Clients" extra={p.viewClients ? (
       <button className="text-xs text-primary hover:underline ml-1 shrink-0">Modify Client Access</button>
      ) : undefined} />
