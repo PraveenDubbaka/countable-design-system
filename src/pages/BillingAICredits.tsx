@@ -233,7 +233,7 @@ function EditLimitsForm({
 
 function CardFooter({ checked, onChange, onManage }: { checked: boolean; onChange: (v: boolean) => void; onManage: () => void }) {
   return (
-    <div className="flex min-h-[52px] items-center justify-between border-t border-border bg-muted px-5 py-2.5">
+    <div className="flex h-[53px] items-center justify-between border-t border-border bg-muted px-5 py-2.5">
       <span className="text-sm">Auto-refill</span>
       <div className="flex items-center gap-3">
         {checked && <Button variant="link" size="sm" className="text-[14px]" onClick={onManage}>Manage</Button>}
@@ -320,6 +320,8 @@ export default function BillingAICredits() {
     const tax = Math.round(subtotal * TAX_RATE);
     return { creditsTotal, creditRateCents, apTotal, discount, subtotal, tax, total: subtotal + tax };
   }, [creditQty, qty, couponApplied]);
+
+  const packageDiscount = PACKAGES.find((p) => p.qty === creditQty)?.saving.replace("Save ", "") ?? "";
 
   const cartEmpty = creditQty === 0 && qty === 0;
 
@@ -446,7 +448,7 @@ export default function BillingAICredits() {
                         onClick={() => selectPack(pkg.qty)}
                         className={cn(
                           "inline-flex h-9 items-center gap-2 rounded-full border pl-3 transition-colors",
-                          pkg.saving ? "pr-1.5" : "pr-3",
+                          "pr-3",
                           selected ? "border-[#1C63A6] bg-[#e1eefa]" : "border-border bg-background hover:bg-muted"
                         )}
                       >
@@ -454,17 +456,6 @@ export default function BillingAICredits() {
                         <span className={cn("text-[14px] font-bold", selected ? "text-[#074075]" : "text-foreground")}>
                           {pkg.qty.toLocaleString()}
                         </span>
-                        <span className="text-[13px] font-medium text-muted-foreground">{fmt(pkg.price)}</span>
-                        {pkg.saving && (
-                          <span
-                            className={cn(
-                              "rounded-full px-2 py-0.5 text-[11px] font-bold",
-                              selected ? "bg-white text-[#074075]" : "bg-muted text-foreground/70"
-                            )}
-                          >
-                            {pkg.saving}
-                          </span>
-                        )}
                       </button>
                     );
                   })}
@@ -499,7 +490,6 @@ export default function BillingAICredits() {
                     </div>
                   </div>
                 )}
-                <p className="text-[13px] text-muted-foreground">Larger packages cost less per credit.</p>
               </div>
             </div>
             <CardFooter
@@ -539,9 +529,6 @@ export default function BillingAICredits() {
                     <span aria-hidden className="text-base leading-none">+</span>
                   </Button>
                 </div>
-                <p className="text-[13px] text-muted-foreground">
-                  {fmt(AUTOPILOT_PRICE)} / workspace autopilot · Apply your coupon below for {fmt(AUTOPILOT_PRICE - COUPON_DISCOUNT).replace(".00", "")} / autopilot.
-                </p>
               </div>
             </div>
             <CardFooter
@@ -604,7 +591,7 @@ export default function BillingAICredits() {
               <h3 className="text-[15px] font-semibold">Order summary</h3>
               <SummaryLine
                 label="Thread credits"
-                sub={creditQty > 0 ? `${creditQty.toLocaleString("en-US")} × ${fmt(totals.creditRateCents)}` : undefined}
+                sub={creditQty > 0 ? `${creditQty.toLocaleString("en-US")} × ${fmt(totals.creditRateCents)}/credit${packageDiscount ? ` · ${packageDiscount} package discount` : ""}` : undefined}
                 amount={fmt(totals.creditsTotal)}
               />
               <SummaryLine
