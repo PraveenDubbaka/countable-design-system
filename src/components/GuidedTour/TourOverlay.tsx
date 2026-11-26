@@ -1,23 +1,20 @@
-// Renders the active guided tour's spotlight highlight + step tooltip on top of the REAL app
+// Renders the active guided tour's spotlight highlight + step instructions on top of the REAL app
 // screens (no mock/separate prototype) so a PO can click through an actual use case end to end.
 // Mounted once in App.tsx, inside the router, as a sibling of <Routes>.
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+//
+// The instruction panel is DOCKED to a fixed spot on screen (bottom-center) rather than positioned
+// relative to the target element. Earlier versions tried to float the panel next to the highlight,
+// but that made the panel — and with it, the only "click here" cue — disappear whenever the target
+// was off-screen, mid-scroll, or in an awkward spot where the two would overlap. Docking it removes
+// that failure mode entirely: the instructions are always in the same place, always visible, and
+// the spotlight ring + bouncing badge on the target itself are a secondary, best-effort local cue.
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, MousePointerClick, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, MousePointerClick, SearchX, X } from "lucide-react";
 import { useTour } from "@/store/tourStore";
 
-const TOOLTIP_WIDTH = 320;
-const GAP = 14;
-
-const EST_HEIGHT = 190;
-
-function fitsViewport(top: number, left: number, vw: number, vh: number): boolean {
-  return top >= 8 && left >= 8 && top + EST_HEIGHT <= vh - 8 && left + TOOLTIP_WIDTH <= vw - 8;
-}
-
-function overlapsRect(top: number, left: number, rect: DOMRect): boolean {
-  return left < rect.right && left + TOOLTIP_WIDTH > rect.left && top < rect.bottom && top + EST_HEIGHT > rect.top;
-}
+const PANEL_WIDTH = 380;
+const PANEL_MARGIN = 20;
 
 const CLICK_BADGE_WIDTH = 96;
 const CLICK_BADGE_HEIGHT = 26;
@@ -26,17 +23,23 @@ function boxesOverlap(a: { top: number; left: number; width: number; height: num
   return a.left < b.left + b.width && a.left + a.width > b.left && a.top < b.top + b.height && a.top + a.height > b.top;
 }
 
-// Prefers sitting just above the target (closest to a user's natural "look down, then click"
-// path), but steps aside — below, then left/right of the ring — whenever the tooltip itself (which
-// can land on any side, including a far corner when nothing fits cleanly) would otherwise cover it.
-function clickBadgeStyle(rect: DOMRect, tooltipBox: { top: number; left: number }): CSSProperties {
+/** The docked panel's own box, in pixels, so the click-badge placement can steer clear of it. */
+function panelBox(panelHeight: number) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const tooltip = { ...tooltipBox, width: TOOLTIP_WIDTH, height: EST_HEIGHT };
+  return { top: vh - PANEL_MARGIN - panelHeight, left: (vw - PANEL_WIDTH) / 2, width: PANEL_WIDTH, height: panelHeight };
+}
+
+// Prefers sitting just above the target (closest to a user's natural "look down, then click"
+// path), but steps aside — below, then left/right of the ring — whenever the docked panel would
+// otherwise cover it (mainly when the target itself sits low on the screen).
+function clickBadgeStyle(rect: DOMRect, panel: { top: number; left: number; width: number; height: number }) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
   const centerX = Math.min(Math.max(rect.left + rect.width / 2, CLICK_BADGE_WIDTH / 2 + 8), vw - CLICK_BADGE_WIDTH / 2 - 8);
   const centerY = Math.min(Math.max(rect.top + rect.height / 2, CLICK_BADGE_HEIGHT / 2 + 8), vh - CLICK_BADGE_HEIGHT / 2 - 8);
 
-  const candidates: { box: { top: number; left: number; width: number; height: number }; style: CSSProperties }[] = [
+  const candidates = [
     {
       box: { top: rect.top - 14 - CLICK_BADGE_HEIGHT, left: centerX - CLICK_BADGE_WIDTH / 2, width: CLICK_BADGE_WIDTH, height: CLICK_BADGE_HEIGHT },
       style: { top: rect.top - 14, left: centerX, transform: "translate(-50%, -100%)", animation: "tour-bounce-up 1.2s ease-in-out infinite" },
@@ -55,41 +58,9 @@ function clickBadgeStyle(rect: DOMRect, tooltipBox: { top: number; left: number 
     },
   ];
 
-  const clear = candidates.find(c => c.box.top >= 4 && c.box.left >= 4 && c.box.top + c.box.height <= vh - 4 && c.box.left + c.box.width <= vw - 4 && !boxesOverlap(c.box, tooltip));
-  // z-index already guarantees visibility even in the fallback case, so a plain "above" default is fine.
+  const clear = candidates.find(c => c.box.top >= 4 && c.box.left >= 4 && c.box.top + c.box.height <= vh - 4 && c.box.left + c.box.width <= vw - 4 && !boxesOverlap(c.box, panel));
+  // The badge's own z-index already guarantees it's visible even in the fallback case.
   return (clear ?? candidates[0]).style;
-}
-
-// The tooltip must never cover the element it's pointing at — a click meant for the highlighted
-// control would land on the (non-interactive) tooltip card instead and silently do nothing. So
-// this tries every side, in the caller's preferred order first, and only accepts a position that
-// both fits the viewport AND doesn't overlap the target; if nothing qualifies (a very large target
-// on a small viewport) it falls back to a fixed viewport corner, away from the target entirely.
-function clampTooltipStyle(rect: DOMRect, placement: "top" | "bottom" | "left" | "right" | undefined): CSSProperties {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  const candidates: Record<string, { top: number; left: number }> = {
-    right: { top: rect.top, left: rect.right + GAP },
-    left: { top: rect.top, left: rect.left - TOOLTIP_WIDTH - GAP },
-    bottom: { top: rect.bottom + GAP, left: rect.left },
-    top: { top: rect.top - EST_HEIGHT - GAP, left: rect.left },
-  };
-  const order = [placement ?? "right", "right", "left", "bottom", "top"].filter((v, i, a) => a.indexOf(v) === i);
-
-  for (const key of order) {
-    const c = candidates[key as keyof typeof candidates];
-    if (c && fitsViewport(c.top, c.left, vw, vh) && !overlapsRect(c.top, c.left, rect)) {
-      return { top: c.top, left: c.left, width: TOOLTIP_WIDTH };
-    }
-  }
-  // Nothing clean fits — park in whichever viewport corner is farthest from the target's center,
-  // so it never sits on top of it.
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const top = cy < vh / 2 ? vh - EST_HEIGHT - 16 : 16;
-  const left = cx < vw / 2 ? vw - TOOLTIP_WIDTH - 16 : 16;
-  return { top, left, width: TOOLTIP_WIDTH };
 }
 
 export function TourOverlay() {
@@ -98,6 +69,8 @@ export function TourOverlay() {
   const location = useLocation();
   const [rect, setRect] = useState<DOMRect | null>(null);
   const targetRef = useRef<Element | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const [panelHeight, setPanelHeight] = useState(220);
 
   const step = activeTour?.steps[stepIndex] ?? null;
 
@@ -127,7 +100,7 @@ export function TourOverlay() {
       if (el) {
         targetRef.current = el;
         setRect(el.getBoundingClientRect());
-        el.scrollIntoView({ block: "center", behavior: "smooth" });
+        el.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
       } else if (attempts++ < 400) {
         raf = requestAnimationFrame(tryFind);
       }
@@ -155,6 +128,16 @@ export function TourOverlay() {
       window.clearInterval(interval);
     };
   }, [step]);
+
+  // Track the docked panel's real height so the click-badge placement can steer clear of it.
+  useEffect(() => {
+    const measure = () => {
+      if (panelRef.current) setPanelHeight(panelRef.current.getBoundingClientRect().height);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [step, rect]);
 
   // Click-to-advance: clicking the real, highlighted control moves the tour forward. Listens on
   // pointerdown rather than click — several Radix primitives (Select, among others) call
@@ -184,7 +167,7 @@ export function TourOverlay() {
 
   const stepNum = stepIndex + 1;
   const total = activeTour.steps.length;
-  const tooltipStyle = rect ? clampTooltipStyle(rect, step.placement) : null;
+  const panel = panelBox(panelHeight);
 
   return (
     <>
@@ -203,66 +186,71 @@ export function TourOverlay() {
           }}
         />
       )}
-      {/* A badge glued to the highlighted control itself — independent of where the tooltip ends
-          up (it can land far away when the overlap-avoidance logic falls back to a corner), so
-          there's always an unmistakable "click here" cue right at the thing to click. */}
-      {rect && tooltipStyle && step.advance !== "next" && (
+      {/* A badge glued to the highlighted control itself — a secondary, local "click here" cue on
+          top of the docked panel below, which is the one guaranteed to always be visible. */}
+      {rect && step.advance !== "next" && (
         <div
           className="fixed z-[10000] flex items-center gap-1 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold px-2.5 py-1 shadow-lg whitespace-nowrap"
-          style={{ pointerEvents: "none", ...clickBadgeStyle(rect, tooltipStyle as { top: number; left: number }) }}
+          style={{ pointerEvents: "none", ...clickBadgeStyle(rect, panel) }}
         >
           <MousePointerClick className="h-3 w-3" />
           Click here
         </div>
       )}
-      {rect && tooltipStyle && (
-        <div
-          className="fixed z-[9999] bg-card border border-border rounded-xl shadow-2xl p-4"
-          style={tooltipStyle}
-        >
-          <div className="flex items-center justify-between mb-1.5 gap-2">
-            <span className="text-[10px] font-semibold text-primary uppercase tracking-wide truncate">
-              {activeTour.title} &middot; Step {stepNum} of {total}
-            </span>
-            <button onClick={exitTour} className="text-muted-foreground hover:text-foreground shrink-0" aria-label="Exit walkthrough">
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-          <h4 className="text-sm font-semibold text-foreground mb-1 leading-snug">{step.title}</h4>
-          <p className="text-xs text-muted-foreground leading-relaxed mb-3">{step.body}</p>
-          <div className="flex items-center justify-between gap-2">
-            <button
-              onClick={prevStep}
-              disabled={stepIndex === 0}
-              className="text-xs text-muted-foreground disabled:opacity-30 flex items-center gap-1 hover:text-foreground"
-            >
-              <ArrowLeft className="h-3 w-3" /> Back
-            </button>
-            {step.advance === "next" ? (
-              <button
-                onClick={nextStep}
-                className="text-xs font-medium text-primary-foreground bg-primary px-3 py-1.5 rounded-lg flex items-center gap-1 hover:opacity-90"
-              >
-                {stepNum === total ? "Finish" : "Next"} <ArrowRight className="h-3 w-3" />
-              </button>
-            ) : (
-              <span className="text-xs text-primary-foreground font-medium flex items-center gap-1.5 bg-primary rounded-full px-2.5 py-1">
-                <MousePointerClick className="h-3.5 w-3.5" />
-                Click the highlighted spot
-              </span>
-            )}
-          </div>
-          <div className="flex gap-1 mt-3">
-            {activeTour.steps.map((_, i) => (
-              <div
-                key={i}
-                className="h-1 flex-1 rounded-full"
-                style={{ backgroundColor: i <= stepIndex ? "hsl(var(--primary))" : "hsl(var(--muted))" }}
-              />
-            ))}
-          </div>
+      {/* The instructions, docked to the bottom-center of the screen — always in the same place,
+          regardless of where the target is, whether it's found yet, or how the page is scrolled. */}
+      <div
+        ref={panelRef}
+        className="fixed z-[9999] bg-card border border-border rounded-xl shadow-2xl p-4"
+        style={{ bottom: PANEL_MARGIN, left: "50%", transform: "translateX(-50%)", width: PANEL_WIDTH }}
+      >
+        <div className="flex items-center justify-between mb-1.5 gap-2">
+          <span className="text-[10px] font-semibold text-primary uppercase tracking-wide truncate">
+            {activeTour.title} &middot; Step {stepNum} of {total}
+          </span>
+          <button onClick={exitTour} className="text-muted-foreground hover:text-foreground shrink-0" aria-label="Exit walkthrough">
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
-      )}
+        <h4 className="text-sm font-semibold text-foreground mb-1 leading-snug">{step.title}</h4>
+        <p className="text-xs text-muted-foreground leading-relaxed mb-3">{step.body}</p>
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={prevStep}
+            disabled={stepIndex === 0}
+            className="text-xs text-muted-foreground disabled:opacity-30 flex items-center gap-1 hover:text-foreground shrink-0"
+          >
+            <ArrowLeft className="h-3 w-3" /> Back
+          </button>
+          {step.advance === "next" ? (
+            <button
+              onClick={nextStep}
+              className="text-xs font-medium text-primary-foreground bg-primary px-3 py-1.5 rounded-lg flex items-center gap-1 hover:opacity-90 shrink-0"
+            >
+              {stepNum === total ? "Finish" : "Next"} <ArrowRight className="h-3 w-3" />
+            </button>
+          ) : rect ? (
+            <span className="text-xs text-primary-foreground font-medium flex items-center gap-1.5 bg-primary rounded-full px-2.5 py-1 shrink-0">
+              <MousePointerClick className="h-3.5 w-3.5" />
+              Click the highlighted spot
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5 shrink-0">
+              <SearchX className="h-3.5 w-3.5 animate-pulse" />
+              Finding this step on the page&hellip;
+            </span>
+          )}
+        </div>
+        <div className="flex gap-1 mt-3">
+          {activeTour.steps.map((_, i) => (
+            <div
+              key={i}
+              className="h-1 flex-1 rounded-full"
+              style={{ backgroundColor: i <= stepIndex ? "hsl(var(--primary))" : "hsl(var(--muted))" }}
+            />
+          ))}
+        </div>
+      </div>
       <style>{`
         @keyframes tour-pulse {
           0%, 100% { box-shadow: 0 0 0 3px hsl(var(--primary)), 0 0 0 7px hsl(var(--primary) / 0.35), 0 0 0 9999px rgba(15, 23, 42, 0.45); }
