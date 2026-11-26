@@ -19,6 +19,47 @@ function overlapsRect(top: number, left: number, rect: DOMRect): boolean {
   return left < rect.right && left + TOOLTIP_WIDTH > rect.left && top < rect.bottom && top + EST_HEIGHT > rect.top;
 }
 
+const CLICK_BADGE_WIDTH = 96;
+const CLICK_BADGE_HEIGHT = 26;
+
+function boxesOverlap(a: { top: number; left: number; width: number; height: number }, b: { top: number; left: number; width: number; height: number }): boolean {
+  return a.left < b.left + b.width && a.left + a.width > b.left && a.top < b.top + b.height && a.top + a.height > b.top;
+}
+
+// Prefers sitting just above the target (closest to a user's natural "look down, then click"
+// path), but steps aside — below, then left/right of the ring — whenever the tooltip itself (which
+// can land on any side, including a far corner when nothing fits cleanly) would otherwise cover it.
+function clickBadgeStyle(rect: DOMRect, tooltipBox: { top: number; left: number }): CSSProperties {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const tooltip = { ...tooltipBox, width: TOOLTIP_WIDTH, height: EST_HEIGHT };
+  const centerX = Math.min(Math.max(rect.left + rect.width / 2, CLICK_BADGE_WIDTH / 2 + 8), vw - CLICK_BADGE_WIDTH / 2 - 8);
+  const centerY = Math.min(Math.max(rect.top + rect.height / 2, CLICK_BADGE_HEIGHT / 2 + 8), vh - CLICK_BADGE_HEIGHT / 2 - 8);
+
+  const candidates: { box: { top: number; left: number; width: number; height: number }; style: CSSProperties }[] = [
+    {
+      box: { top: rect.top - 14 - CLICK_BADGE_HEIGHT, left: centerX - CLICK_BADGE_WIDTH / 2, width: CLICK_BADGE_WIDTH, height: CLICK_BADGE_HEIGHT },
+      style: { top: rect.top - 14, left: centerX, transform: "translate(-50%, -100%)", animation: "tour-bounce-up 1.2s ease-in-out infinite" },
+    },
+    {
+      box: { top: rect.bottom + 14, left: centerX - CLICK_BADGE_WIDTH / 2, width: CLICK_BADGE_WIDTH, height: CLICK_BADGE_HEIGHT },
+      style: { top: rect.bottom + 14, left: centerX, transform: "translate(-50%, 0)", animation: "tour-bounce-down 1.2s ease-in-out infinite" },
+    },
+    {
+      box: { top: centerY - CLICK_BADGE_HEIGHT / 2, left: rect.right + 10, width: CLICK_BADGE_WIDTH, height: CLICK_BADGE_HEIGHT },
+      style: { top: centerY, left: rect.right + 10, transform: "translate(0, -50%)", animation: "tour-bounce-right 1.2s ease-in-out infinite" },
+    },
+    {
+      box: { top: centerY - CLICK_BADGE_HEIGHT / 2, left: rect.left - 10 - CLICK_BADGE_WIDTH, width: CLICK_BADGE_WIDTH, height: CLICK_BADGE_HEIGHT },
+      style: { top: centerY, left: rect.left - 10, transform: "translate(-100%, -50%)", animation: "tour-bounce-left 1.2s ease-in-out infinite" },
+    },
+  ];
+
+  const clear = candidates.find(c => c.box.top >= 4 && c.box.left >= 4 && c.box.top + c.box.height <= vh - 4 && c.box.left + c.box.width <= vw - 4 && !boxesOverlap(c.box, tooltip));
+  // z-index already guarantees visibility even in the fallback case, so a plain "above" default is fine.
+  return (clear ?? candidates[0]).style;
+}
+
 // The tooltip must never cover the element it's pointing at — a click meant for the highlighted
 // control would land on the (non-interactive) tooltip card instead and silently do nothing. So
 // this tries every side, in the caller's preferred order first, and only accepts a position that
@@ -143,6 +184,7 @@ export function TourOverlay() {
 
   const stepNum = stepIndex + 1;
   const total = activeTour.steps.length;
+  const tooltipStyle = rect ? clampTooltipStyle(rect, step.placement) : null;
 
   return (
     <>
@@ -154,17 +196,29 @@ export function TourOverlay() {
             left: rect.left - 5,
             width: rect.width + 10,
             height: rect.height + 10,
-            boxShadow: "0 0 0 3px hsl(var(--primary) / 0.9), 0 0 0 6px hsl(var(--primary) / 0.25), 0 0 0 9999px rgba(15, 23, 42, 0.28)",
+            boxShadow: "0 0 0 3px hsl(var(--primary)), 0 0 0 7px hsl(var(--primary) / 0.35), 0 0 0 9999px rgba(15, 23, 42, 0.45)",
             pointerEvents: "none",
             transition: "top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease",
-            animation: "tour-pulse 1.6s ease-in-out infinite",
+            animation: "tour-pulse 1.4s ease-in-out infinite",
           }}
         />
       )}
-      {rect && (
+      {/* A badge glued to the highlighted control itself — independent of where the tooltip ends
+          up (it can land far away when the overlap-avoidance logic falls back to a corner), so
+          there's always an unmistakable "click here" cue right at the thing to click. */}
+      {rect && tooltipStyle && step.advance !== "next" && (
+        <div
+          className="fixed z-[10000] flex items-center gap-1 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold px-2.5 py-1 shadow-lg whitespace-nowrap"
+          style={{ pointerEvents: "none", ...clickBadgeStyle(rect, tooltipStyle as { top: number; left: number }) }}
+        >
+          <MousePointerClick className="h-3 w-3" />
+          Click here
+        </div>
+      )}
+      {rect && tooltipStyle && (
         <div
           className="fixed z-[9999] bg-card border border-border rounded-xl shadow-2xl p-4"
-          style={clampTooltipStyle(rect, step.placement)}
+          style={tooltipStyle}
         >
           <div className="flex items-center justify-between mb-1.5 gap-2">
             <span className="text-[10px] font-semibold text-primary uppercase tracking-wide truncate">
@@ -192,7 +246,7 @@ export function TourOverlay() {
                 {stepNum === total ? "Finish" : "Next"} <ArrowRight className="h-3 w-3" />
               </button>
             ) : (
-              <span className="text-xs text-primary font-medium flex items-center gap-1">
+              <span className="text-xs text-primary-foreground font-medium flex items-center gap-1.5 bg-primary rounded-full px-2.5 py-1">
                 <MousePointerClick className="h-3.5 w-3.5" />
                 Click the highlighted spot
               </span>
@@ -211,8 +265,24 @@ export function TourOverlay() {
       )}
       <style>{`
         @keyframes tour-pulse {
-          0%, 100% { box-shadow: 0 0 0 3px hsl(var(--primary) / 0.9), 0 0 0 6px hsl(var(--primary) / 0.25), 0 0 0 9999px rgba(15, 23, 42, 0.28); }
-          50% { box-shadow: 0 0 0 3px hsl(var(--primary) / 0.9), 0 0 0 10px hsl(var(--primary) / 0.12), 0 0 0 9999px rgba(15, 23, 42, 0.28); }
+          0%, 100% { box-shadow: 0 0 0 3px hsl(var(--primary)), 0 0 0 7px hsl(var(--primary) / 0.35), 0 0 0 9999px rgba(15, 23, 42, 0.45); }
+          50% { box-shadow: 0 0 0 3px hsl(var(--primary)), 0 0 0 12px hsl(var(--primary) / 0.15), 0 0 0 9999px rgba(15, 23, 42, 0.45); }
+        }
+        @keyframes tour-bounce-up {
+          0%, 100% { transform: translate(-50%, -100%); }
+          50% { transform: translate(-50%, calc(-100% - 6px)); }
+        }
+        @keyframes tour-bounce-down {
+          0%, 100% { transform: translate(-50%, 0); }
+          50% { transform: translate(-50%, 6px); }
+        }
+        @keyframes tour-bounce-right {
+          0%, 100% { transform: translate(0, -50%); }
+          50% { transform: translate(6px, -50%); }
+        }
+        @keyframes tour-bounce-left {
+          0%, 100% { transform: translate(-100%, -50%); }
+          50% { transform: translate(calc(-100% - 6px), -50%); }
         }
       `}</style>
     </>
