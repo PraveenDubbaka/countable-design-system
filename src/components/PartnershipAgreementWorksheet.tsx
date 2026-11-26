@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, Plus, RefreshCw } from "lucide-react";
+import { AlertTriangle, Check, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { StyledCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -109,6 +109,12 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  displayOrder: participants.length,
  };
  persistParticipants([...participants, next]);
+ };
+
+ const removePartner = (id: string) => {
+ persistParticipants(participants.filter(p => p.id !== id));
+ const { [id]: _removed, ...restOverrides } = worksheet.overridesByParticipantId;
+ persistWorksheet({ ...worksheet, overridesByParticipantId: restOverrides });
  };
 
  const pullBalances = () => {
@@ -230,7 +236,8 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  <th className="py-1.5 pr-3 font-medium text-center">Signing</th>
  <th className="py-1.5 pr-3 font-medium text-right">PY %</th>
  <th className="py-1.5 pr-3 font-medium text-right">{labels.allocationHeader}</th>
- <th className="py-1.5 font-medium text-right">Change</th>
+ <th className="py-1.5 pr-3 font-medium text-right">Change</th>
+ <th className="py-1.5 font-medium text-right"></th>
  </tr>
  </thead>
  <tbody>
@@ -271,14 +278,26 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  <td className="py-1.5 pr-3">
  <Input type="number" value={p.ownershipValue} onChange={e => updateParticipant(p.id, { ownershipValue: Number(e.target.value) || 0 })} className="h-8 w-20 text-xs text-right ml-auto" />
  </td>
- <td className="py-1.5 text-right">{change === 0 ? "No change" : `${change > 0 ? "+" : ""}${change.toFixed(1)}`}</td>
+ <td className="py-1.5 pr-3 text-right">{change === 0 ? "No change" : `${change > 0 ? "+" : ""}${change.toFixed(1)}`}</td>
+ <td className="py-1.5 text-right">
+ <button
+ type="button"
+ onClick={() => removePartner(p.id)}
+ aria-label={`Remove ${p.name || labels.holder.toLowerCase()}`}
+ title={`Remove ${labels.holder.toLowerCase()}`}
+ className="text-muted-foreground hover:text-destructive"
+ style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}
+ >
+ <Trash2 className="h-3.5 w-3.5" />
+ </button>
+ </td>
  </tr>
  );
  })}
  {labels.hasClassSplit && (
  <>
- <tr className="font-medium"><td colSpan={4}>{labels.classGeneral} ({generalRows.length})</td><td /><td className="text-right">{sumField(generalRows, r => r.participant.ownershipValue)}</td><td /></tr>
- <tr className="font-medium"><td colSpan={4}>{labels.classLimited} ({limitedRows.length})</td><td /><td className="text-right">{sumField(limitedRows, r => r.participant.ownershipValue)}</td><td /></tr>
+ <tr className="font-medium"><td colSpan={4}>{labels.classGeneral} ({generalRows.length})</td><td /><td className="text-right">{sumField(generalRows, r => r.participant.ownershipValue)}</td><td /><td /></tr>
+ <tr className="font-medium"><td colSpan={4}>{labels.classLimited} ({limitedRows.length})</td><td /><td className="text-right">{sumField(limitedRows, r => r.participant.ownershipValue)}</td><td /><td /></tr>
  </>
  )}
  <tr className="font-semibold border-t-2 border-border">
