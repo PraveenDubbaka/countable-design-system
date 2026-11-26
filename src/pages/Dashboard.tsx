@@ -477,7 +477,7 @@ export default function Dashboard() {
 
  <div className="flex gap-6 h-full">
  {/* Main Content */}
- <div className="flex-1 flex flex-col gap-6 min-h-0">
+ <div className="flex-1 flex flex-col gap-6 min-h-0 min-w-0">
  {/* All Offices / This Office pill switcher */}
  {SHOW_MULTI_OFFICE && hasMultipleFirms && (
   <div className="flex items-center gap-1 p-0.5 bg-muted rounded-full w-fit flex-shrink-0">
@@ -524,9 +524,12 @@ export default function Dashboard() {
  })}
  </div>
 
+ <div className="flex items-start gap-3 flex-shrink-0 min-w-0">
+ <div className="flex-1 min-w-0">
  <EntityEngagementShortcuts />
-
+ </div>
  <UseCasesPanel />
+ </div>
 
  {/* Engagements Table - Enhanced styling */}
  <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0">
