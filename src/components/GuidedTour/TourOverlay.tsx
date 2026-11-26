@@ -71,8 +71,6 @@ export function TourOverlay() {
   const targetRef = useRef<Element | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [panelHeight, setPanelHeight] = useState(220);
-  const panelHeightRef = useRef(220);
-  panelHeightRef.current = panelHeight;
   // The panel docks at the bottom by default, but a target in the lower half of the screen (e.g.
   // the last row of a tall table) would otherwise render right behind it with no way to scroll it
   // clear — the row's own container can already be scrolled to its max. Docking to the top for
@@ -106,39 +104,25 @@ export function TourOverlay() {
       const el = document.querySelector(step.selector);
       if (el) {
         targetRef.current = el;
-        const r0 = el.getBoundingClientRect();
-        setRect(r0);
-        // Decide the panel's side for this step from the target's un-scrolled position: a target
-        // already in the lower half of the screen is exactly the case the bottom dock would cover
-        // with no room left to scroll it clear (its own container may already be at max scroll),
-        // so flip the panel to the top instead and give the target the rest of the viewport.
-        const shouldDockTop = r0.top > window.innerHeight * 0.55;
-        setDockTop(shouldDockTop);
-        // Instant, not smooth: the panel-overlap correction below reads the settled position
-        // right after this call. Poking scrollTop while a smooth scroll on the same scrollable
-        // ancestor is still animating aborts that animation mid-flight (observed truncating the
-        // horizontal scroll on wide tables), so the jump has to be instant and complete before
-        // the correction runs.
-        el.scrollIntoView({ block: "center", inline: "center", behavior: "auto" });
-        // Belt-and-suspenders: even with the dock flipped to the right side, nudge the nearest
-        // scrollable ancestor so the target clears the panel's reserved area by a small margin.
-        requestAnimationFrame(() => {
-          if (cancelled || targetRef.current !== el) return;
-          const r = el.getBoundingClientRect();
-          const panel = panelBox(panelHeightRef.current, shouldDockTop);
-          const overflow = shouldDockTop ? panel.top + panel.height + 16 - r.top : r.bottom - (panel.top - 16);
-          if (overflow > 0) {
-            let node: HTMLElement | null = el.parentElement;
-            while (node) {
-              const cs = getComputedStyle(node);
-              if (/(auto|scroll)/.test(cs.overflowY) && node.scrollHeight > node.clientHeight) {
-                node.scrollTop += shouldDockTop ? -overflow : overflow;
-                break;
-              }
-              node = node.parentElement;
-            }
-            setRect(el.getBoundingClientRect());
-          }
+        setRect(el.getBoundingClientRect());
+        // Re-center on the target a few times over the next ~700ms, not just once: some of these
+        // tables finish computing derived columns (mappings, rollups) a beat after their rows
+        // first mount, which widens/grows the scrollable area right after the first scrollIntoView
+        // call already ran — under-scrolling it and leaving the target off-screen for good, since
+        // nothing re-triggers the scroll afterwards. Repeating catches that late layout settling.
+        // Also re-decides which side the panel docks on from the latest position each time: a
+        // target already in the lower half of the screen is exactly the case the bottom dock would
+        // cover with no room left to scroll it clear (its own container may already be at max
+        // scroll), so the panel flips to the top instead and gives the target the rest of the
+        // viewport.
+        [0, 120, 350, 700].forEach(delay => {
+          window.setTimeout(() => {
+            if (cancelled || targetRef.current !== el) return;
+            el.scrollIntoView({ block: "center", inline: "center", behavior: "auto" });
+            const r = el.getBoundingClientRect();
+            setDockTop(r.top > window.innerHeight * 0.55);
+            setRect(r);
+          }, delay);
         });
       } else if (attempts++ < 400) {
         raf = requestAnimationFrame(tryFind);
@@ -242,13 +226,18 @@ export function TourOverlay() {
       <div
         ref={panelRef}
         className="fixed z-[9999] bg-card border border-border rounded-xl shadow-2xl p-4"
-        style={{ [dockTop ? "top" : "bottom"]: PANEL_MARGIN, left: "50%", transform: "translateX(-50%)", width: PANEL_WIDTH }}
+        // pointerEvents: "none" on the card itself, re-enabled only on its buttons below — so that
+        // when the panel visually overlaps the real target (a target low on the screen, a table
+        // wider than the viewport, a window shorter than the panel is tall), a click still reaches
+        // the real control underneath instead of landing on empty panel padding. Seeing the
+        // instructions and being able to click the target are no longer in tension.
+        style={{ [dockTop ? "top" : "bottom"]: PANEL_MARGIN, left: "50%", transform: "translateX(-50%)", width: PANEL_WIDTH, pointerEvents: "none" }}
       >
         <div className="flex items-center justify-between mb-1.5 gap-2">
           <span className="text-[10px] font-semibold text-primary uppercase tracking-wide truncate">
             {activeTour.title} &middot; Step {stepNum} of {total}
           </span>
-          <button onClick={exitTour} className="text-muted-foreground hover:text-foreground shrink-0" aria-label="Exit walkthrough">
+          <button onClick={exitTour} className="text-muted-foreground hover:text-foreground shrink-0" style={{ pointerEvents: "auto" }} aria-label="Exit walkthrough">
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -259,6 +248,7 @@ export function TourOverlay() {
             onClick={prevStep}
             disabled={stepIndex === 0}
             className="text-xs text-muted-foreground disabled:opacity-30 flex items-center gap-1 hover:text-foreground shrink-0"
+            style={{ pointerEvents: "auto" }}
           >
             <ArrowLeft className="h-3 w-3" /> Back
           </button>
@@ -266,6 +256,7 @@ export function TourOverlay() {
             <button
               onClick={nextStep}
               className="text-xs font-medium text-primary-foreground bg-primary px-3 py-1.5 rounded-lg flex items-center gap-1 hover:opacity-90 shrink-0"
+              style={{ pointerEvents: "auto" }}
             >
               {stepNum === total ? "Finish" : "Next"} <ArrowRight className="h-3 w-3" />
             </button>
