@@ -14,6 +14,7 @@ import { SHOW_REGION_LABELS, SHOW_MULTI_OFFICE, activeFirmIdOrMain } from "@/lib
 import { loadClients } from "@/data/clientsData";
 import { EntityBadge } from "@/components/EntityBadge";
 import { EntityEngagementShortcuts } from "@/components/EntityEngagementShortcuts";
+import { UseCasesPanel } from "@/components/GuidedTour/UseCasesPanel";
 import intuitQuickbooksLogo from "@/assets/intuit-quickbooks-logo.svg";
 import sageLogo from "@/assets/sage-logo.svg";
 
@@ -524,6 +525,8 @@ export default function Dashboard() {
  </div>
 
  <EntityEngagementShortcuts />
+
+ <UseCasesPanel />
 
  {/* Engagements Table - Enhanced styling */}
  <StyledCard className="overflow-hidden flex flex-col flex-1 min-h-0">

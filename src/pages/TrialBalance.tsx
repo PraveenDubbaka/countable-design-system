@@ -1072,6 +1072,7 @@ export default function TrialBalance() {
  <tr
  key={row.id}
  className="border-b border-border hover:bg-muted/30 transition-colors cursor-pointer"
+ data-tour={`tb-row-${row.id}`}
  >
  <td className="p-0 relative" style={{ width: "16px", minWidth: "16px", maxWidth: "16px" }}>
  <div
@@ -1118,6 +1119,7 @@ export default function TrialBalance() {
  value={row.mapNo === "" ? "" : row.mapNo}
  onChange={e => updateRowMapping(row.id, { mapNo: e.target.value === "" ? "" : Number(e.target.value) })}
  className="h-7 w-20 text-xs text-right ml-auto"
+ data-tour={`tb-mapno-${row.id}`}
  />
  </td>
  <td className="px-6 py-2 text-center whitespace-nowrap">
@@ -1146,7 +1148,7 @@ export default function TrialBalance() {
  <td className="px-6 py-2 whitespace-nowrap">
  {participantScoped ? (
  <Select value={row.participantId ?? ""} onValueChange={v => updateRowMapping(row.id, { participantId: v })}>
- <SelectTrigger className="h-7 w-36 text-xs"><SelectValue placeholder="Select…" /></SelectTrigger>
+ <SelectTrigger className="h-7 w-36 text-xs" data-tour={`tb-participant-${row.id}`}><SelectValue placeholder="Select…" /></SelectTrigger>
  <SelectContent>
  {participants.map(p => (
  <SelectItem key={p.id} value={p.id}>{p.name || "Unnamed"}</SelectItem>

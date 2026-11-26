@@ -3136,6 +3136,7 @@ export function Sidebar({ pageTitle, showBackButton, onBack }: SidebarProps) {
  isActive && "bg-primary/10 ring-1 ring-primary/25"
  )}
  style={{ paddingLeft: `${depth * 16 + 8}px` }}
+ data-tour={`checklist-node-${node.id}`}
  onClick={() => {
  if (node.code === 'NT') {
  window.dispatchEvent(new CustomEvent('open-notes-modal', { detail: {} }));

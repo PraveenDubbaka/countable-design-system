@@ -757,7 +757,7 @@ function CapitalStatementCentre({ data, labels, layout, detail, capitalVisibilit
  const manyHolders = data.rows.length > 12;
  const visibilityRestricted = capitalVisibility !== "open";
  return (
- <div className="flex flex-col gap-6">
+ <div className="flex flex-col gap-6" data-tour="wb-capital-centre">
  {(manyHolders && detail === "individual") || visibilityRestricted ? (
  <div className="flex flex-col gap-1">
  {manyHolders && detail === "individual" && (
@@ -816,7 +816,7 @@ function CapitalStatementCentre({ data, labels, layout, detail, capitalVisibilit
  </tr>
  </GroupingTableShell>
 
- <div className="wb-card" style={{ padding: 16 }}>
+ <div className="wb-card" style={{ padding: 16 }} data-tour="wb-allocation-by-holder">
  <h3 style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 12 }}>Allocation by {labels.holder.toLowerCase()} (from worksheet {labels.worksheetCode})</h3>
  {data.rows.length === 0 ? (
  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "40px 0", color: "var(--wb-text-3)", border: "1px dashed var(--wb-border)", borderRadius: "var(--wb-radius-md)" }}>
@@ -1053,7 +1053,7 @@ function CapitalStatementPreview({ data, labels, client, yearEnd, layout, detail
  k === "drawings" ? -o.drawings : o[k];
 
  return (
- <div>
+ <div data-tour="wb-capital-preview">
  <div style={{ marginBottom: 24 }}>
  <CapitalStatementHeader client={client} title={labels.statementTitle} yearEnd={yearEnd} />
  </div>
@@ -1483,6 +1483,7 @@ export default function Workbook() {
  key={item.id}
  onClick={() => setActive(item.id)}
  className={cn("wb-nav-item", active === item.id && "wb-active")}
+ data-tour={`wb-nav-${item.id}`}
  >
  {item.label}
  </button>
@@ -1548,6 +1549,7 @@ export default function Workbook() {
  className="wb-icon-btn"
  aria-label={previewCollapsed ? "Show preview" : "Hide preview"}
  title={previewCollapsed ? "Show preview" : "Hide preview"}
+ data-tour="wb-toggle-preview"
  >
  <PanelRight className="h-4 w-4" />
  </button>

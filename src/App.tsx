@@ -29,6 +29,8 @@ import FinancialStatementTemplates from "./pages/FinancialStatementTemplates";
 import AuditDependencyRegister from "./pages/AuditDependencyRegister";
 import NotFound from "./pages/NotFound";
 import { EngagementsProvider } from "./store/EngagementsContext";
+import { TourProvider } from "./store/tourStore";
+import { TourOverlay } from "./components/GuidedTour/TourOverlay";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +42,7 @@ const App = () => (
  <Sonner />
  <BrowserRouter basename={import.meta.env.BASE_URL}>
  <EngagementsProvider>
+ <TourProvider>
  <Routes>
  <Route path="/" element={<Navigate to="/dashboard" replace />} />
  <Route path="/dashboard" element={<Dashboard />} />
@@ -70,6 +73,8 @@ const App = () => (
  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
  <Route path="*" element={<NotFound />} />
  </Routes>
+ <TourOverlay />
+ </TourProvider>
  </EngagementsProvider>
  </BrowserRouter>
  </TooltipProvider>

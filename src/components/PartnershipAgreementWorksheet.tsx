@@ -28,6 +28,20 @@ const pwParticipantUid = () => `participant-${Date.now()}-${++_pwParticipantUid}
 const STALE_KEY = (engagementId: string) => `cds_allocation_stale_${engagementId}`;
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatDate = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+/** The register has no separate "is this a continuing partner" flag — admissionDate/retirementDate
+ * being set IS that signal (SEED_PARTICIPANTS follows this convention: a carried-forward partner's
+ * admissionDate is null). This badge makes that otherwise-invisible distinction visible in the UI. */
+function CapitalHistoryBadge({ p }: { p: Participant }) {
+ if (p.retirementDate) {
+ return <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700 whitespace-nowrap">Retiring {formatDate(p.retirementDate)}</Badge>;
+ }
+ if (p.admissionDate) {
+ return <Badge variant="outline" className="border-sky-300 bg-sky-50 text-sky-700 whitespace-nowrap">New — admitted {formatDate(p.admissionDate)}</Badge>;
+ }
+ return <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-700 whitespace-nowrap">Carried forward</Badge>;
+}
 
 interface Props {
  engagementId: string;
@@ -103,7 +117,10 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  priorYearOwnershipValue: 0,
  signingAuthority: false,
  openingCapital: 0,
- admissionDate: null,
+ // Defaults to today, not null: adding a partner through this button is someone joining now,
+ // not a continuing partner being entered for the first time — so it should read as "new"
+ // (see CapitalHistoryBadge) rather than silently looking "carried forward" with a $0 opening.
+ admissionDate: new Date().toISOString().slice(0, 10),
  retirementDate: null,
  taxIdentifier: "",
  displayOrder: participants.length,
@@ -224,10 +241,10 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  <h2 className="text-sm font-semibold text-foreground">{labels.holder} register &amp; allocation</h2>
  <p className="text-xs text-muted-foreground mt-0.5">Signing authority and allocation % for this year vs last year.</p>
  </div>
- <Button size="sm" variant="secondary" className="gap-1.5" onClick={addPartner}><Plus className="h-3.5 w-3.5" />Add {labels.holder.toLowerCase()}</Button>
+ <Button size="sm" variant="secondary" className="gap-1.5" onClick={addPartner} data-tour="pw-add-partner"><Plus className="h-3.5 w-3.5" />Add {labels.holder.toLowerCase()}</Button>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-xs" data-tour="pw-register-table">
  <thead>
  <tr className="text-left text-muted-foreground border-b border-border">
  <th className="py-1.5 pr-3 font-medium">{labels.holder}</th>
@@ -237,6 +254,7 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  <th className="py-1.5 pr-3 font-medium text-right">PY %</th>
  <th className="py-1.5 pr-3 font-medium text-right">{labels.allocationHeader}</th>
  <th className="py-1.5 pr-3 font-medium text-right">Change</th>
+ <th className="py-1.5 pr-3 font-medium">Capital history</th>
  <th className="py-1.5 font-medium text-right"></th>
  </tr>
  </thead>
@@ -276,9 +294,18 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  <Input type="number" value={py} onChange={e => updateParticipant(p.id, { priorYearOwnershipValue: Number(e.target.value) || 0 })} className="h-8 w-20 text-xs text-right ml-auto" />
  </td>
  <td className="py-1.5 pr-3">
- <Input type="number" value={p.ownershipValue} onChange={e => updateParticipant(p.id, { ownershipValue: Number(e.target.value) || 0 })} className="h-8 w-20 text-xs text-right ml-auto" />
+ <Input type="number" value={p.ownershipValue} onChange={e => updateParticipant(p.id, { ownershipValue: Number(e.target.value) || 0 })} className="h-8 w-20 text-xs text-right ml-auto" data-tour={`pw-alloc-${p.id}`} />
  </td>
  <td className="py-1.5 pr-3 text-right">{change === 0 ? "No change" : `${change > 0 ? "+" : ""}${change.toFixed(1)}`}</td>
+ <td className="py-1.5 pr-3" data-tour={`pw-history-${p.id}`}>
+ <div className="flex flex-col gap-1">
+ <CapitalHistoryBadge p={p} />
+ <div className="flex items-center gap-1">
+ <Input type="date" value={p.admissionDate ?? ""} onChange={e => updateParticipant(p.id, { admissionDate: e.target.value || null })} title="Admission date" className="h-7 w-[118px] text-[11px] px-1.5" data-tour={`pw-admission-${p.id}`} />
+ <Input type="date" value={p.retirementDate ?? ""} onChange={e => updateParticipant(p.id, { retirementDate: e.target.value || null })} title="Retirement date" className="h-7 w-[118px] text-[11px] px-1.5" data-tour={`pw-retirement-${p.id}`} />
+ </div>
+ </div>
+ </td>
  <td className="py-1.5 text-right">
  <button
  type="button"
@@ -287,6 +314,7 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  title={`Remove ${labels.holder.toLowerCase()}`}
  className="text-muted-foreground hover:text-destructive"
  style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}
+ data-tour={`pw-remove-${p.id}`}
  >
  <Trash2 className="h-3.5 w-3.5" />
  </button>
@@ -296,8 +324,8 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  })}
  {labels.hasClassSplit && (
  <>
- <tr className="font-medium"><td colSpan={4}>{labels.classGeneral} ({generalRows.length})</td><td /><td className="text-right">{sumField(generalRows, r => r.participant.ownershipValue)}</td><td /><td /></tr>
- <tr className="font-medium"><td colSpan={4}>{labels.classLimited} ({limitedRows.length})</td><td /><td className="text-right">{sumField(limitedRows, r => r.participant.ownershipValue)}</td><td /><td /></tr>
+ <tr className="font-medium"><td colSpan={4}>{labels.classGeneral} ({generalRows.length})</td><td /><td className="text-right">{sumField(generalRows, r => r.participant.ownershipValue)}</td><td /><td /><td /></tr>
+ <tr className="font-medium"><td colSpan={4}>{labels.classLimited} ({limitedRows.length})</td><td /><td className="text-right">{sumField(limitedRows, r => r.participant.ownershipValue)}</td><td /><td /><td /></tr>
  </>
  )}
  <tr className="font-semibold border-t-2 border-border">
@@ -327,7 +355,7 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  <Button size="sm" variant="secondary" className="gap-1.5" onClick={pullBalances}><RefreshCw className="h-3.5 w-3.5" />Pull balances</Button>
  </div>
  <div className="overflow-x-auto">
- <table className="w-full text-xs">
+ <table className="w-full text-xs" data-tour="pw-rollforward-table">
  <thead>
  <tr className="text-left text-muted-foreground border-b border-border">
  <th className="py-1.5 pr-3 font-medium">{labels.holder}</th>
@@ -343,11 +371,16 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  {rows.map(r => (
  <tr key={r.participant.id} className="border-b border-border/50">
  <td className="py-1.5 pr-3">{r.participant.name || "—"}</td>
- <td className="py-1.5 pr-3 text-right bg-muted/30">{fmt(r.opening)}</td>
+ <td className="py-1.5 pr-3 text-right bg-muted/30" data-tour={`pw-opening-${r.participant.id}`}>
+ <div>{fmt(r.opening)}</div>
+ <div className="text-[10px] font-normal text-muted-foreground whitespace-nowrap">
+ {r.participant.admissionDate ? `New — admitted ${formatDate(r.participant.admissionDate)}` : "Carried fwd. from prior year"}
+ </div>
+ </td>
  <td className="py-1.5 pr-3">
  <Input type="number" value={r.override.contributions || ""} onChange={e => updateOverride(r.participant.id, { contributions: Number(e.target.value) || 0 })} className="h-8 w-24 text-xs text-right ml-auto" />
  </td>
- <td className="py-1.5 pr-3 text-right bg-muted/30">{fmt(r.niAllocated)}</td>
+ <td className="py-1.5 pr-3 text-right bg-muted/30" data-tour={`pw-ni-${r.participant.id}`}>{fmt(r.niAllocated)}</td>
  <td className="py-1.5 pr-3">
  <Input type="number" value={r.override.drawings || ""} onChange={e => updateOverride(r.participant.id, { drawings: Number(e.target.value) || 0 })} className="h-8 w-24 text-xs text-right ml-auto" />
  </td>
@@ -373,7 +406,7 @@ export function PartnershipAgreementWorksheet({ engagementId, entityType, trustV
  </StyledCard>
 
  {/* 4. Reconciliation */}
- <StyledCard className="p-5 flex flex-col gap-4">
+ <StyledCard className="p-5 flex flex-col gap-4" data-tour="pw-reconciliation">
  <h2 className="text-sm font-semibold text-foreground">Reconciliation</h2>
  <table className="w-full text-xs">
  <thead>
