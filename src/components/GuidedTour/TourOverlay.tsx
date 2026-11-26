@@ -24,10 +24,10 @@ function boxesOverlap(a: { top: number; left: number; width: number; height: num
 }
 
 /** The docked panel's own box, in pixels, so the click-badge placement can steer clear of it. */
-function panelBox(panelHeight: number) {
+function panelBox(panelHeight: number, dockTop: boolean) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  return { top: vh - PANEL_MARGIN - panelHeight, left: (vw - PANEL_WIDTH) / 2, width: PANEL_WIDTH, height: panelHeight };
+  return { top: dockTop ? PANEL_MARGIN : vh - PANEL_MARGIN - panelHeight, left: (vw - PANEL_WIDTH) / 2, width: PANEL_WIDTH, height: panelHeight };
 }
 
 // Prefers sitting just above the target (closest to a user's natural "look down, then click"
@@ -71,6 +71,13 @@ export function TourOverlay() {
   const targetRef = useRef<Element | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [panelHeight, setPanelHeight] = useState(220);
+  const panelHeightRef = useRef(220);
+  panelHeightRef.current = panelHeight;
+  // The panel docks at the bottom by default, but a target in the lower half of the screen (e.g.
+  // the last row of a tall table) would otherwise render right behind it with no way to scroll it
+  // clear — the row's own container can already be scrolled to its max. Docking to the top for
+  // that step instead gives the target the whole rest of the viewport to be reachable in.
+  const [dockTop, setDockTop] = useState(false);
 
   const step = activeTour?.steps[stepIndex] ?? null;
 
@@ -99,8 +106,40 @@ export function TourOverlay() {
       const el = document.querySelector(step.selector);
       if (el) {
         targetRef.current = el;
-        setRect(el.getBoundingClientRect());
-        el.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
+        const r0 = el.getBoundingClientRect();
+        setRect(r0);
+        // Decide the panel's side for this step from the target's un-scrolled position: a target
+        // already in the lower half of the screen is exactly the case the bottom dock would cover
+        // with no room left to scroll it clear (its own container may already be at max scroll),
+        // so flip the panel to the top instead and give the target the rest of the viewport.
+        const shouldDockTop = r0.top > window.innerHeight * 0.55;
+        setDockTop(shouldDockTop);
+        // Instant, not smooth: the panel-overlap correction below reads the settled position
+        // right after this call. Poking scrollTop while a smooth scroll on the same scrollable
+        // ancestor is still animating aborts that animation mid-flight (observed truncating the
+        // horizontal scroll on wide tables), so the jump has to be instant and complete before
+        // the correction runs.
+        el.scrollIntoView({ block: "center", inline: "center", behavior: "auto" });
+        // Belt-and-suspenders: even with the dock flipped to the right side, nudge the nearest
+        // scrollable ancestor so the target clears the panel's reserved area by a small margin.
+        requestAnimationFrame(() => {
+          if (cancelled || targetRef.current !== el) return;
+          const r = el.getBoundingClientRect();
+          const panel = panelBox(panelHeightRef.current, shouldDockTop);
+          const overflow = shouldDockTop ? panel.top + panel.height + 16 - r.top : r.bottom - (panel.top - 16);
+          if (overflow > 0) {
+            let node: HTMLElement | null = el.parentElement;
+            while (node) {
+              const cs = getComputedStyle(node);
+              if (/(auto|scroll)/.test(cs.overflowY) && node.scrollHeight > node.clientHeight) {
+                node.scrollTop += shouldDockTop ? -overflow : overflow;
+                break;
+              }
+              node = node.parentElement;
+            }
+            setRect(el.getBoundingClientRect());
+          }
+        });
       } else if (attempts++ < 400) {
         raf = requestAnimationFrame(tryFind);
       }
@@ -167,7 +206,7 @@ export function TourOverlay() {
 
   const stepNum = stepIndex + 1;
   const total = activeTour.steps.length;
-  const panel = panelBox(panelHeight);
+  const panel = panelBox(panelHeight, dockTop);
 
   return (
     <>
@@ -197,12 +236,13 @@ export function TourOverlay() {
           Click here
         </div>
       )}
-      {/* The instructions, docked to the bottom-center of the screen — always in the same place,
-          regardless of where the target is, whether it's found yet, or how the page is scrolled. */}
+      {/* The instructions, docked to the top- or bottom-center of the screen — always in the same
+          place for a given step, regardless of how the page is scrolled. Bottom by default; top
+          when the target itself sits low on the screen and would otherwise end up behind it. */}
       <div
         ref={panelRef}
         className="fixed z-[9999] bg-card border border-border rounded-xl shadow-2xl p-4"
-        style={{ bottom: PANEL_MARGIN, left: "50%", transform: "translateX(-50%)", width: PANEL_WIDTH }}
+        style={{ [dockTop ? "top" : "bottom"]: PANEL_MARGIN, left: "50%", transform: "translateX(-50%)", width: PANEL_WIDTH }}
       >
         <div className="flex items-center justify-between mb-1.5 gap-2">
           <span className="text-[10px] font-semibold text-primary uppercase tracking-wide truncate">
